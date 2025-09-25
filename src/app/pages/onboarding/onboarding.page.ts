@@ -29,23 +29,20 @@ export class OnboardingPage implements OnInit {
       subtitle:
         "Votre plateforme en ligne de formation et d'apprentissage pluridisciplinaire",
       buttonText: 'Suivant',
-      buttonColor: 'primary',
-      colorText: 'white',
+      buttonColor: '#005ADD',
     },
     {
       title: 'Des programmes complets',
       subtitle:
         "Plusieurs profils d'apprentissage\nDes formations complètes accélérées",
       buttonText: 'Suivant',
-      buttonColor: 'primary',
-      colorText: 'white',
+      buttonColor: '#005ADD',
     },
     {
       title: 'Des experts formateurs',
       subtitle: 'Apprenez avec les meilleurs.',
       buttonText: 'Commencer !',
-      buttonColor: 'success',
-      colorText: 'white',
+      buttonColor: '#0DB20D',
     },
   ];
 

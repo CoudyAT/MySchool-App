@@ -15,7 +15,7 @@
   <swiper-container
     #swiperEl
     slides-per-view="1"
-    pagination="true"
+    pagination="false"
     class="onboarding-slides">
     
     <!-- Slide 1 -->
@@ -69,12 +69,15 @@
   <!-- Section inférieure avec bouton et indicateurs -->
   <div class="bottom-section">
     <ion-button 
-      [color]="onboardingData[currentSlide].buttonColor"
+      [ngStyle]="{
+    '--background': onboardingData[currentSlide].buttonColor,
+    '--color': '#fff'
+  }"
       expand="block"
       size="large"
       (click)="nextSlide()"
-      [ngStyle]="{ 'color': onboardingData[currentSlide].colorText }"
-      class="action-button">
+      class="action-button"
+      >
       {{ onboardingData[currentSlide].buttonText }}
     </ion-button>
 
