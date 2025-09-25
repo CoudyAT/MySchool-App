@@ -1,0 +1,207 @@
+.onboarding-container {
+  --background: #f8f9fa;
+}
+
+.header-content {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+}
+
+.skip-button {
+  --color: #666;
+  font-size: 16px;
+}
+
+.onboarding-slides {
+  height: calc(100vh - 200px);
+}
+
+.slide-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.slide-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 350px;
+  width: 100%;
+}
+
+// Logo styles
+.logo-container {
+  margin-bottom: 60px;
+}
+
+.logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.book-pages {
+  width: 60px;
+  height: 70px;
+  background: white;
+  border-radius: 6px;
+  position: relative;
+  box-shadow: 0 4px 15px rgba(25, 118, 210, 0.3);
+  border: 3px solid #1976d2;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 12px;
+    right: 12px;
+    height: 3px;
+    background: #1976d2;
+    border-radius: 2px;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 28px;
+    left: 12px;
+    right: 12px;
+    height: 3px;
+    background: #1976d2;
+    border-radius: 2px;
+  }
+}
+
+.leaf-icon {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  font-size: 35px;
+  animation: bounce 3s infinite;
+  filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
+}
+
+.logo-text {
+  font-size: 42px;
+  font-weight: bold;
+  color: #1976d2;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+// Content styles
+.content-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.slide-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 20px 0;
+  line-height: 1.3;
+}
+
+.slide-subtitle {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
+  white-space: pre-line;
+}
+
+// Bottom section
+.bottom-section {
+  position: absolute;
+  bottom: 40px;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+.action-button {
+  width: 100%;
+  max-width: 300px;
+  height: 50px;
+  font-size: 16px;
+  font-weight: 600;
+  --border-radius: 25px;
+}
+
+
+
+// Pagination indicators
+.pagination-indicators {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.indicator {
+  width: 30px;
+  height: 4px;
+  background: #ccc;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &.active {
+    background: #1976d2;
+    width: 40px;
+  }
+  
+  &:not(.active):hover {
+    background: #999;
+  }
+}
+
+// Animations
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-8px);
+  }
+  60% {
+    transform: translateY(-4px);
+  }
+}
+
+// Responsive
+@media (max-width: 480px) {
+  .logo-text {
+    font-size: 36px;
+  }
+  
+  .slide-title {
+    font-size: 24px;
+  }
+  
+  .slide-subtitle {
+    font-size: 15px;
+  }
+  
+  .book-icon {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .book-pages {
+    width: 50px;
+    height: 60px;
+  }
+
+}

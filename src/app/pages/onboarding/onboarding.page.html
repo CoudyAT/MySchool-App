@@ -1,0 +1,90 @@
+<ion-content [fullscreen]="true" class="onboarding-container">
+  
+  <!-- Header avec bouton Skip -->
+  <div class="header-content">
+    <ion-button 
+      fill="clear" 
+      color="medium" 
+      (click)="skipOnboarding()"
+      class="skip-button">
+      Passer
+    </ion-button>
+  </div>
+
+  <!-- Slider principal -->
+  <swiper-container
+    #swiperEl
+    slides-per-view="1"
+    pagination="true"
+    class="onboarding-slides">
+    
+    <!-- Slide 1 -->
+    <swiper-slide class="slide-content">
+      <div class="slide-inner">
+        <!-- Logo + texte -->
+        <div class="logo-container">
+          <div class="logo">
+            <img src="assets/logo.svg" alt="MySchool Logo" />
+          </div>
+        </div>
+        <div class="content-section">
+          <h1 class="slide-title">{{ onboardingData[0].title }}</h1>
+          <p class="slide-subtitle">{{ onboardingData[0].subtitle }}</p>
+        </div>
+      </div>
+    </swiper-slide>
+
+    <!-- Slide 2 -->
+    <swiper-slide class="slide-content">
+      <div class="slide-inner">
+        <div class="logo-container">
+          <div class="logo">
+            <img src="assets/logo.svg" alt="MySchool Logo" />
+          </div>
+        </div>
+        <div class="content-section">
+          <h1 class="slide-title">{{ onboardingData[1].title }}</h1>
+          <p class="slide-subtitle">{{ onboardingData[1].subtitle }}</p>
+        </div>
+      </div>
+    </swiper-slide>
+
+    <!-- Slide 3 -->
+    <swiper-slide class="slide-content">
+      <div class="slide-inner">
+        <div class="logo-container">
+          <div class="logo">
+            <img src="assets/logo.svg" alt="MySchool Logo" />
+          </div>
+        </div>
+        <div class="content-section">
+          <h1 class="slide-title">{{ onboardingData[2].title }}</h1>
+          <p class="slide-subtitle">{{ onboardingData[2].subtitle }}</p>
+        </div>
+      </div>
+    </swiper-slide>
+
+  </swiper-container>
+
+  <!-- Section inférieure avec bouton et indicateurs -->
+  <div class="bottom-section">
+    <ion-button 
+      [color]="onboardingData[currentSlide].buttonColor"
+      expand="block"
+      size="large"
+      (click)="nextSlide()"
+      [ngStyle]="{ 'color': onboardingData[currentSlide].colorText }"
+      class="action-button">
+      {{ onboardingData[currentSlide].buttonText }}
+    </ion-button>
+
+    <div class="pagination-indicators">
+      <div 
+        *ngFor="let item of onboardingData; let i = index"
+        [class]="'indicator ' + (i === currentSlide ? 'active' : '')"
+        >
+      </div>
+    </div>
+  </div>
+
+</ion-content>

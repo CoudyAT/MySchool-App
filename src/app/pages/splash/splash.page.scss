@@ -1,0 +1,163 @@
+// ion-content.splash-screen {
+//   --background: #005ADD; // Fond bleu
+
+//   .logo-container {
+//     text-align: center;
+
+//     img {
+//       width: 120px;
+//       margin-bottom: 20px;
+//     }
+
+//     h1 {
+//       font-weight: bold;
+//       color: white;
+//     }
+
+//     p {
+//       color: white;
+//     }
+//   }
+// }
+
+// // Utilitaire hauteur pleine
+// .h-full {
+//   height: 100%;
+// }
+
+
+// Styles communs
+.logo {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.leaf-icon-blue, .leaf-icon-white {
+  position: absolute;
+  top: -10px;
+  right: -15px;
+  font-size: 30px;
+  color: #4caf50;
+  animation: bounce 2s infinite;
+}
+
+.logo-container-blue, .logo-container-white {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeInUp 1s ease-out;
+}
+
+// Thème BLEU (version originale)
+.splash-container-blue {
+  --background: #1976d2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.splash-content-blue {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  text-align: center;
+  color: white;
+}
+
+.book-icon-blue {
+  font-size: 60px;
+  color: white;
+}
+
+.app-name-blue {
+  font-size: 32px;
+  font-weight: bold;
+  margin: 20px 0 10px 0;
+  letter-spacing: 1px;
+  color: white;
+}
+
+.app-tagline-blue {
+  font-size: 16px;
+  opacity: 0.9;
+  margin: 0;
+  color: white;
+}
+
+// Thème BLANC
+// .splash-container-white {
+//   --background: #f5f5f5;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   height: 100vh;
+// }
+
+// .splash-content-white {
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   justify-content: center;
+//   height: 100%;
+//   width: 100%;
+//   text-align: center;
+// }
+
+// .book-icon-white {
+//   font-size: 60px;
+//   color: #1976d2;
+// }
+
+// .app-name-white {
+//   font-size: 32px;
+//   font-weight: bold;
+//   margin: 20px 0 10px 0;
+//   letter-spacing: 1px;
+//   color: #1976d2;
+// }
+
+// .app-tagline-white {
+//   font-size: 16px;
+//   color: #666;
+//   margin: 0;
+// }
+
+// // Bouton toggle (optionnel)
+// .theme-toggle {
+//   position: absolute;
+//   top: 20px;
+//   right: 20px;
+//   --color: rgba(255, 255, 255, 0.7);
+// }
+
+// .splash-container-white .theme-toggle {
+//   --color: rgba(25, 118, 210, 0.7);
+// }
+
+// Animations
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
