@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { SplashPage } from './pages/splash/splash.page';
 import { OnboardingPage } from './pages/onboarding/onboarding.page';
+import { SignupFlowComponent } from './pages/signup-flow/signup-flow.component';
 
 export const routes: Routes = [
   // {
@@ -23,4 +24,8 @@ export const routes: Routes = [
   { path: '', redirectTo: 'splash', pathMatch: 'full' },
   { path: 'splash', component: SplashPage },
   { path: 'onboarding', component: OnboardingPage },
+  {
+    path: 'signup',
+    component: SignupFlowComponent,
+  },
 ];

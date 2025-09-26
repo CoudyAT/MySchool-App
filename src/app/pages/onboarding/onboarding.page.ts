@@ -74,7 +74,7 @@ export class OnboardingPage implements OnInit {
 
   finishOnboarding() {
     localStorage.setItem('onboardingCompleted', 'true');
-    this.router.navigate(['/signin'], { replaceUrl: true });
+    this.router.navigate(['/signup'], { replaceUrl: true });
   }
 
   skipOnboarding() {
