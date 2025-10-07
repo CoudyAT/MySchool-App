@@ -1,0 +1,30 @@
+<!-- src/app/components/bottom-menu/bottom-menu.component.html -->
+<ion-footer class="ion-no-border">
+  <ion-toolbar class="bottom-menu">
+    <div class="menu-container">
+      <div 
+        class="menu-item" 
+        [class.active]="activePage === 'courses'"
+        (click)="navigateTo('courses')">
+        <ion-icon name="book-outline"></ion-icon>
+        <span class="menu-label">Cours</span>
+      </div>
+      
+      <div 
+        class="menu-item" 
+        [class.active]="activePage === 'messages'"
+        (click)="navigateTo('messages')">
+        <ion-icon name="chatbubbles-outline"></ion-icon>
+        <span class="menu-label">Messages</span>
+      </div>
+      
+      <div 
+        class="menu-item" 
+        [class.active]="activePage === 'achievements'"
+        (click)="navigateTo('achievements')">
+        <ion-icon name="trophy-outline"></ion-icon>
+        <span class="menu-label">Réussites</span>
+      </div>
+    </div>
+  </ion-toolbar>
+</ion-footer>

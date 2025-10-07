@@ -72,11 +72,11 @@ interface UserData {
     IonSelect,
     IonSelectOption,
     IonProgressBar,
-    IonBackButton,
-    IonButtons,
-    IonIcon,
-    IonCard,
-    IonCardContent,
+    // IonBackButton,
+    // IonButtons,
+    // IonIcon,
+    // IonCard,
+    // IonCardContent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
@@ -339,7 +339,7 @@ export class SignupFlowComponent {
       localStorage.setItem('userData', JSON.stringify(this.userData));
 
       // Navigation vers le dashboard
-      this.router.navigate(['/dashboard'], { replaceUrl: true });
+      this.router.navigate(['/courses'], { replaceUrl: true });
     } catch (error) {
       console.error("Erreur lors de l'inscription:", error);
       // Gérer l'erreur (afficher un toast, etc.)

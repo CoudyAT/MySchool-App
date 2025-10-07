@@ -1,0 +1,115 @@
+<ion-content class="ion-padding">
+  <div class="content-wrapper">
+    <!-- Logo -->
+    <div class="logo-container">
+      <img src="assets/logo.svg" alt="MySchool Logo" class="logo">
+    </div>
+
+    <!-- Titre -->
+    <h1 class="main-title">Mes cours</h1>
+
+    <!-- Barre de recherche et filtres -->
+    <div class="search-filter-container">
+      <ion-searchbar 
+        placeholder="Rechercher un cours"
+        (ionFocus)="searchCourse()"
+        class="custom-searchbar">
+      </ion-searchbar>
+      
+      <ion-button 
+        fill="clear" 
+        class="filter-button"
+        (click)="openFilters()">
+        <ion-icon slot="start" name="options-outline"></ion-icon>
+        Filtres
+      </ion-button>
+    </div>
+
+    <!-- Liste des cours par catégorie -->
+    <div class="courses-container">
+      <!-- Maths au collège -->
+      <h2 class="category-title">Maths au collège</h2>
+      <div class="courses-row">
+        <ion-card 
+          *ngFor="let course of courses.slice(0, 2)" 
+          class="course-card"
+          (click)="openCourse(course)">
+          <div class="card-image">
+            <img src="assets/algo.svg" alt="MySchool Logo" >
+            <div class="card-badge">
+              <ion-icon name="lock-open-outline"></ion-icon>
+            </div>
+          </div>
+          <ion-card-content>
+            <div class="status-badge">
+              <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
+              <span>Certificat disponible</span>
+            </div>
+            <h3 class="course-title">{{course.title}}</h3>
+            <div class="course-info">
+              <span class="sessions">{{course.sessions}} Sessions</span>
+              <span class="separator">•</span>
+              <span class="exercises">{{course.exercises}} Exercices</span>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+
+      <!-- PC au collège -->
+      <h2 class="category-title">PC au collège</h2>
+      <div class="courses-row">
+        <ion-card 
+          *ngFor="let course of courses.slice(2, 4)" 
+          class="course-card"
+          (click)="openCourse(course)">
+          <div class="card-image">
+           <img src="assets/algo.svg" alt="MySchool Logo" >
+            <div class="card-badge">
+              <ion-icon name="lock-open-outline"></ion-icon>
+            </div>
+          </div>
+          <ion-card-content>
+            <div class="status-badge">
+              <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
+              <span>Certificat disponible</span>
+            </div>
+            <h3 class="course-title">{{course.title}}</h3>
+            <div class="course-info">
+              <span class="sessions">{{course.sessions}} Sessions</span>
+              <span class="separator">•</span>
+              <span class="exercises">{{course.exercises}} Exercices</span>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+
+      <!-- Sciences de la Vie et de la Terre -->
+      <h2 class="category-title">Sciences de la Vie et de la Terre</h2>
+      <div class="courses-row">
+        <ion-card 
+          *ngFor="let course of courses.slice(4, 6)" 
+          class="course-card"
+          (click)="openCourse(course)">
+          <div class="card-image">
+            <img src="assets/algo.svg" alt="MySchool Logo" >
+            <div class="card-badge">
+              <ion-icon name="lock-open-outline"></ion-icon>
+            </div>
+          </div>
+          <ion-card-content>
+            <div class="status-badge">
+              <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
+              <span>Certificat disponible</span>
+            </div>
+            <h3 class="course-title">{{course.title}}</h3>
+            <div class="course-info">
+              <span class="sessions">{{course.sessions}} Sessions</span>
+              <span class="separator">•</span>
+              <span class="exercises">{{course.exercises}} Exercices</span>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
+  </div>
+</ion-content>

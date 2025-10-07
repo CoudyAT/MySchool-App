@@ -1,0 +1,95 @@
+ion-footer {
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.bottom-menu {
+  --background: #0066FF;
+  --padding-top: 8px;
+  --padding-bottom: 8px;
+  height: 70px;
+}
+
+.menu-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 100%;
+  padding: 0 20px;
+}
+
+.menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex: 1;
+  padding: 8px 0;
+  border-radius: 8px;
+  
+  ion-icon {
+    font-size: 24px;
+    color: rgba(255, 255, 255, 0.7);
+    transition: all 0.3s ease;
+  }
+  
+  .menu-label {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 4px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+  
+  // État actif
+  &.active {
+    background: rgba(255, 255, 255, 0.15);
+    
+    ion-icon {
+      color: #FFFFFF;
+      transform: scale(1.1);
+    }
+    
+    .menu-label {
+      color: #FFFFFF;
+      font-weight: 600;
+    }
+  }
+  
+  // Effet au survol
+  &:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.08);
+    
+    ion-icon {
+      transform: scale(1.05);
+      color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .menu-label {
+      color: rgba(255, 255, 255, 0.9);
+    }
+  }
+  
+  // Effet au clic
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// Responsive pour petits écrans
+@media (max-width: 360px) {
+  .menu-container {
+    padding: 0 16px;
+  }
+  
+  .menu-item {
+    ion-icon {
+      font-size: 22px;
+    }
+    
+    .menu-label {
+      font-size: 10px;
+    }
+  }
+}

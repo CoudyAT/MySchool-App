@@ -1,0 +1,207 @@
+ion-header {
+  ion-toolbar {
+    --background: #f5f5f5;
+    
+    ion-title {
+      font-size: 20px;
+      font-weight: 400;
+      color: #c4c4c4;
+      text-align: left;
+      padding-left: 8px;
+    }
+  }
+}
+
+ion-content {
+  --background: #f5f5f5;
+}
+
+.content-wrapper {
+  max-width: 600px;
+  margin: 0 auto;
+  background: white;
+  min-height: 100%;
+  padding: 20px 16px;
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+  
+  .logo {
+    height: 45px;
+    width: auto;
+  }
+}
+
+.main-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #000;
+  margin: 0 0 20px 0;
+}
+
+.search-filter-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  background: #f8f8f8;
+  border-radius: 12px;
+  padding: 4px;
+  
+  .custom-searchbar {
+    flex: 1;
+    --background: #f8f8f8;
+    --border-radius: 12px;
+    --box-shadow: none;
+    --placeholder-color: #666;
+    --placeholder-opacity: 1;
+    --icon-color: #4CAF50;
+    padding: 0;
+    
+    .searchbar-input-container {
+      height: 40px;
+    }
+  }
+  
+  .filter-button {
+    --color: #2650BB;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0;
+    height: 40px;
+    
+    ion-icon {
+      color: #2196F3;
+      margin-right: 4px;
+    }
+  }
+}
+
+.courses-container {
+  .category-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2650BB;
+    margin: 0 0 12px 0;
+  }
+  
+  .courses-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    
+    &::-webkit-scrollbar {
+      display: none; /* Chrome, Safari */
+    }
+    
+    .course-card {
+      flex: 0 0 calc(50% - 6px);
+      min-width: 160px;
+      margin: 0;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      
+      @media (max-width: 480px) {
+        flex: 0 0 calc(50% - 6px);
+      }
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+      
+      .card-image {
+        position: relative;
+        height: 120px;
+        overflow: hidden;
+        
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        
+        .card-badge {
+          position: absolute;
+          top: 8px;
+          left: 8px;
+          background: white;
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          
+          ion-icon {
+            color: #666;
+            font-size: 18px;
+          }
+        }
+      }
+      
+      ion-card-content {
+        padding: 12px;
+        background-color: white !important;  
+        
+        .status-badge {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          margin-bottom: 8px;
+          color: white;
+          
+          .check-icon {
+            color: #2650BB;
+            font-size: 14px;
+          }
+          
+          span {
+            font-size: 11px;
+            color: #2650BB;
+            font-weight: 900;
+
+          }
+        }
+        
+        .course-title {
+          font-size: 18px;
+          font-weight: 700;
+          color: #000;
+          margin: 0 0 8px 0;
+        }
+        
+        .course-info {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 12px;
+          color: #666;
+          
+          .sessions {
+            font-weight: 600;
+            color: #000;
+          }
+          
+          .separator {
+            color: #ccc;
+          }
+          
+          .exercises {
+            color: #FF9800;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+  }
+}

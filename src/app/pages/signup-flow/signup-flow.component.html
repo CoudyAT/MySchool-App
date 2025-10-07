@@ -253,7 +253,7 @@
       </form>
     </div>
 
-    <!-- Step 4: Objectives -->
+    <!-- Step 4: Objectives
     <div *ngIf="currentStep === 3" class="step-content active">
       <div class="objectives-container">
         <div class="objectives-grid">
@@ -283,7 +283,37 @@
           </p>
         </div>
       </div>
+    </div>  -->
+
+    <!-- Step 4: Objectives -->
+<div *ngIf="currentStep === 3" class="step-content active">
+  <div class="objectives-container">
+    <div class="objectives-grid">
+      <button
+        *ngFor="let objective of availableObjectives"
+        class="objective-chip"
+        [class.selected]="objective.selected"
+        (click)="toggleObjective(objective.id)">
+        
+        <ion-icon [name]="objective.icon" class="chip-icon"></ion-icon>
+        <span class="chip-label">{{ objective.label }}</span>
+
+        <ion-icon
+          *ngIf="objective.selected"
+          name="checkmark-circle"
+          class="chip-check">
+        </ion-icon>
+      </button>
     </div>
+
+    <div class="selection-summary" *ngIf="getSelectedObjectivesCount() > 0">
+      <p class="summary-text">
+        {{ getSelectedObjectivesCount() }} objectif(s) sélectionné(s)
+      </p>
+    </div>
+  </div>
+</div>
+
   </div>
 
   <!-- Bouton de navigation -->

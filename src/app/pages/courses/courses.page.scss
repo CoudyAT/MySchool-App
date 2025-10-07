@@ -1,0 +1,306 @@
+ion-header {
+  ion-toolbar {
+    --background: #FFFFFF;
+    --min-height: 60px;
+  }
+}
+
+.header-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+  
+  .logo {
+    height: 40px;
+    width: auto;
+  }
+}
+
+ion-content {
+  --background: #FFFFFF;
+}
+
+.content-wrapper {
+  padding-bottom: 80px; // Pour le menu du bas
+}
+// .simple-carousel {
+//   width: 100%;
+//   height: 100%;
+//   position: relative;
+  
+//   .carousel-slide {
+//     position: absolute;
+//     width: 100%;
+//     height: 100%;
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+//     opacity: 0;
+//     transition: opacity 0.5s ease;
+    
+//     &.active {
+//       opacity: 1;
+//     }
+    
+//     .hero-image {
+//       width: 100%; // ✅ Prend toute la largeur
+//       height: 100%; // ✅ Prend toute la hauteur
+//       object-fit: cover; // ✅ Remplit tout l'espace sans déformation
+//       border: 2px solid rgba(255, 255, 255, 0.3);
+//     }
+//   }
+// }
+
+// Hero Section - CARROUSEL SWIPER
+.hero-section {
+  background: linear-gradient(180deg, #004D00 0%, #00331A 100%);
+  margin: 0 16px 24px 16px;
+  border-radius: 20px;
+  border: 1px solid #00331A;
+  position: relative;
+  height: 340px;
+  overflow: hidden;
+
+  // Swiper container
+  .hero-swiper {
+    width: 100%;
+    height: 100%;
+    
+    swiper-slide {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .slide-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    .slide-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; // ✅ Remplit tout l'espace
+      object-position: center;
+    }
+    
+    .slide-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.1) 0%,
+        rgba(0, 0, 0, 0.3) 100%
+      );
+      pointer-events: none;
+    }
+  }
+
+  // Pagination dots
+  .pagination-dots {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    z-index: 10;
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.5);
+      transition: all 0.3s ease;
+
+      &.active {
+        background-color: white;
+        transform: scale(1.2);
+        width: 20px;
+        border-radius: 4px;
+      }
+    }
+  }
+}
+
+// Section Mes cours
+.courses-section {
+  padding: 0 24px 32px 24px;
+  
+  .section-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #000000;
+    margin: 0 0 16px 0;
+  }
+  
+  .section-description {
+    font-size: 15px;
+    color: #666666;
+    line-height: 1.5;
+    margin: 0 0 32px 0;
+    text-align: center;
+  }
+  
+  .add-button-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+    
+    .circular-progress {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      border: 4px solid #0066FF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0, 102, 255, 0.2);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      
+      .add-icon {
+        font-size: 40px;
+        color: #0066FF;
+      }
+      
+      &:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 16px rgba(0, 102, 255, 0.3);
+      }
+      
+      &:active {
+        transform: scale(0.95);
+      }
+    }
+  }
+  
+.suivant-button {
+  --background: #0066FF;
+  --border-radius: 12px;
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: none;
+  margin-top: 8px;
+  height: 50px;
+  --color: #FFFFFF; // ✅ CORRECTION : Utilisez --color au lieu de color
+  
+  &:active {
+    --background: #0052cc;
+  }
+}
+}
+
+// Section Instructeurs
+.instructors-section {
+  padding: 0 24px 24px 24px;
+  
+  .section-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #000000;
+    margin: 0 0 20px 0;
+  }
+  
+  .instructors-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    
+    .instructor-card {
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      aspect-ratio: 1;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      
+      &:active {
+        transform: translateY(-4px);
+      }
+      
+      .instructor-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block; // Important pour éviter l'espace réservé
+      }
+      
+      .instructor-name {
+        position: absolute;
+        bottom: 8px;
+        left: 8px;
+        color: #FFFFFF;
+        font-size: 13px;
+        font-weight: 700;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        letter-spacing: 0.5px;
+        z-index: 2;
+      }
+      
+      // Overlay pour améliorer la lisibilité du texte
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 40%;
+        background: linear-gradient(transparent 0%, rgba(0, 0, 0, 0.5) 100%);
+        pointer-events: none;
+      }
+    }
+  }
+}
+
+// Responsive pour petits écrans
+@media (max-width: 375px) {
+  .hero-section {
+    height: 280px;
+    margin: 0 12px 20px 12px;
+    padding: 16px;
+  }
+  
+  .courses-section {
+    padding: 0 20px 24px 20px;
+    
+    .section-title {
+      font-size: 24px;
+    }
+    
+    .add-button-container .circular-progress {
+      width: 70px;
+      height: 70px;
+      
+      .add-icon {
+        font-size: 35px;
+      }
+    }
+  }
+  
+  .instructors-section {
+    padding: 0 20px 20px 20px;
+    
+    .instructors-grid {
+      gap: 8px;
+      
+      .instructor-card .instructor-name {
+        font-size: 11px;
+        bottom: 6px;
+        left: 6px;
+      }
+    }
+  }
+}

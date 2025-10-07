@@ -1,0 +1,141 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <div class="header-content">
+      <img src="assets/logo.svg" alt="MySchool Logo" class="logo" />
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="content-wrapper">
+
+<!-- Hero Section - CARROUSEL SWIPER -->
+<div class="hero-section">
+  
+  <swiper-container
+    class="hero-swiper"
+    [config]="slideOpts"
+    (swiperslidechange)="onSlideChange($event)"
+    (swiperinit)="onSwiperInit($event)"
+  >
+    <!-- Slide 1 -->
+    <swiper-slide>
+      <div class="slide-container">
+        <img
+          src="assets/slide1.svg"
+          alt="Formation 1"
+          class="slide-image"
+        />
+        <div class="slide-overlay"></div>
+      </div>
+    </swiper-slide>
+
+    <!-- Slide 2 -->
+    <swiper-slide>
+      <div class="slide-container">
+        <img
+          src="assets/logo.svg"
+          alt="Formation 2"
+          class="slide-image"
+        />
+        <div class="slide-overlay"></div>
+      </div>
+    </swiper-slide>
+
+    <!-- Slide 3 -->
+    <swiper-slide>
+      <div class="slide-container">
+        <img
+          src="assets/slide1.svg"
+          alt="Formation 3"
+          class="slide-image"
+        />
+        <div class="slide-overlay"></div>
+      </div>
+    </swiper-slide>
+  </swiper-container>
+
+  <!-- Pagination -->
+  <div class="pagination-dots">
+    <span class="dot" [class.active]="currentSlide === 0"></span>
+    <span class="dot" [class.active]="currentSlide === 1"></span>
+    <span class="dot" [class.active]="currentSlide === 2"></span>
+  </div>
+</div>
+
+    <!-- Section Mes cours -->
+    <div class="courses-section">
+      <h1 class="section-title">Mes cours</h1>
+
+      <p class="section-description">
+        Parcourez plus de 150 cours et contenus de formation qui vous
+        correspondent
+      </p>
+
+      <!-- Bouton d'ajout -->
+      <div class="add-button-container">
+        <div class="circular-progress" (click)="goToCoursesPage()">
+          <!-- ✅ CORRECTION : Utilisez le bon nom d'icône -->
+          <ion-icon name="add-outline" class="add-icon"></ion-icon>
+        </div>
+      </div>
+
+      <!-- Bouton Suivant -->
+      <ion-button expand="block" class="suivant-button"> 
+        Suivant 
+      </ion-button>
+    </div>
+
+    <!-- Section Instructeurs -->
+    <div class="instructors-section">
+      <h2 class="section-title">Instructeurs</h2>
+
+      <div class="instructors-grid">
+        <div class="instructor-card" style="background-color: #0066ff">
+          <img
+            src="assets/slide1.svg"
+            alt="Instructeur"
+            class="instructor-image"
+          />
+          <div class="instructor-name">KAYE</div>
+        </div>
+
+        <div class="instructor-card" style="background-color: #00d66a">
+          <img src="assets/slide1.svg" alt="Curtis" class="instructor-image" />
+          <div class="instructor-name">CURTIS</div>
+        </div>
+
+        <div class="instructor-card" style="background-color: #5a5a5a">
+          <img src="assets/slide1.svg" alt="Ndiaye" class="instructor-image" />
+          <div class="instructor-name">NDIAYE</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section Certifications -->
+    <div class="courses-section">
+      <h1 class="section-title">Certifications</h1>
+
+      <p class="section-description">
+        Parcourez plus de 150 cours et contenus de formation qui vous
+        correspondent
+      </p>
+
+      <!-- Bouton d'ajout -->
+      <div class="add-button-container">
+        <div class="circular-progress">
+          <!-- ✅ CORRECTION : Utilisez le bon nom d'icône -->
+          <ion-icon name="add-outline" class="add-icon"></ion-icon>
+        </div>
+      </div>
+
+      <!-- Bouton Suivant -->
+      <ion-button expand="block" class="suivant-button"> 
+        Suivant 
+      </ion-button>
+    </div>
+  </div>
+</ion-content>
+
+<!-- Menu du bas réutilisable -->
+<app-bottom-menu activePage="courses"></app-bottom-menu>
