@@ -86,6 +86,6 @@ export class SubscriptionPlansPage implements OnInit {
   selectPlan(plan: any) {
     console.log('Plan sélectionné:', plan);
     // Rediriger vers la page de paiement ou traiter l'inscription
-    // this.router.navigate(['/payment'], { state: { plan } });
+     this.router.navigate(['/payment-method'], { state: { plan } });
   }
 }

@@ -6,6 +6,7 @@ import { CoursesPage } from './pages/courses/courses.page';
 import { MesCoursPage } from './pages/mes-cours/mes-cours.page';
 import { CoursDetailPage } from './pages/cours-detail/cours-detail.page';
 import { SubscriptionPlansPage } from './pages/subscription-plans/subscription-plans.page';
+import { PaymentMethodPage } from './pages/payment-method/payment-method.page';
 
 export const routes: Routes = [
   {
@@ -43,6 +44,6 @@ export const routes: Routes = [
   },
   {
     path: 'payment-method',
-    loadComponent: () => import('./pages/payment-method/payment-method.page').then( m => m.PaymentMethodPage)
+    component: PaymentMethodPage,
   },
 ];

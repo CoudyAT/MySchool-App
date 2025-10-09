@@ -1,13 +1,41 @@
-<ion-header [translucent]="true">
+<ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-title>payment-method</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Retour</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">payment-method</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <div class="page-container">
+    <h1 class="page-title">Choisir une méthode<br>de paiement</h1>
+
+    <div class="payment-methods">
+      <!-- Wave -->
+      <div class="wave-card" (click)="selectPaymentMethod(paymentMethods[0])">
+          <img src="assets/wave.svg" alt="MySchool Logo" class="penguin-svg">
+      </div>
+
+      <!-- Orange Money -->
+      <div (click)="selectPaymentMethod(paymentMethods[1])">
+        <img src="assets/orange-money.svg" alt="MySchool Logo" class="penguin-svg">
+      </div>
+
+      <!-- Yas Mixx -->
+      <div (click)="selectPaymentMethod(paymentMethods[2])">
+        <img src="assets/yas.svg" alt="MySchool Logo" class="penguin-svg">
+      </div>
+
+      <!-- Carte bancaire -->
+      <div class="payment-card card-payment" (click)="selectPaymentMethod(paymentMethods[3])">
+        <div class="card-content">
+          <div class="card-chip"></div>
+          <span class="card-text">Carte bancaire</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </ion-content>
