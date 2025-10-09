@@ -1,0 +1,102 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Retour</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="page-container">
+    <h1 class="page-title">Choisir une formule</h1>
+
+    <!-- Plan Individuel -->
+    <div class="plan-card">
+      <div class="plan-header">
+        <div class="plan-type-wrapper">
+          <ion-icon name="person-outline" class="type-icon"></ion-icon>
+          <span class="plan-type">Individuelle</span>
+        </div>
+        <div class="discount-badge">-10 %</div>
+      </div>
+
+      <div class="plan-price">
+        <span class="price-amount">1 800 Frs</span>
+        <span class="price-period">/ ANNÉE</span>
+      </div>
+
+      <div class="features-list">
+        <div class="feature-item">
+          <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
+          <span>Cours complets</span>
+        </div>
+        <div class="feature-item">
+          <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
+          <span>Suivi instructeurs</span>
+        </div>
+        <div class="feature-item">
+          <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
+          <span>Certificat de réussite</span>
+        </div>
+        <div class="feature-item">
+          <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
+          <span>Ressources disponibles</span>
+        </div>
+        <div class="feature-item">
+          <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
+          <span>Sessions en ligne</span>
+        </div>
+      </div>
+
+      <ion-button expand="block" class="pay-button" (click)="selectPlan(plans[0])">
+        Payer
+      </ion-button>
+    </div>
+
+    <!-- Plan Entreprise -->
+    <div class="plan-card">
+      <div class="plan-header">
+        <div class="plan-type-wrapper">
+          <ion-icon name="person-outline" class="type-icon"></ion-icon>
+          <span class="plan-type">Entreprise</span>
+        </div>
+        <div class="discount-badge">-10 %</div>
+      </div>
+
+      <div class="plan-price">
+        <span class="price-amount">99 000 Frs</span>
+        <span class="price-period">, ANNÉE</span>
+      </div>
+
+      <div class="features-list">
+        <div class="feature-item">
+          <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
+          <span>Cours complets</span>
+        </div>
+        <div class="feature-item">
+          <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
+          <span>Suivi instructeurs</span>
+        </div>
+        <div class="feature-item">
+          <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
+          <span>Suivi instructeurs</span>
+        </div>
+        <div class="feature-item">
+          <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
+          <span>Ressources disponibles</span>
+        </div>
+        <div class="feature-item">
+          <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
+          <span>Sessions en ligne</span>
+        </div>
+      </div>
+
+      <ion-button expand="block" class="pay-button" (click)="selectPlan(plans[1])">
+        Payer
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

@@ -1,0 +1,136 @@
+ion-header {
+  ion-toolbar {
+    --background: #fff;
+    --border-width: 0;
+    
+    ion-title {
+      font-size: 16px;
+      font-weight: 500;
+      color: #000;
+    }
+    
+    ion-button {
+      --color: #000;
+    }
+  }
+}
+
+ion-content {
+  --background: #f5f5f5;
+}
+
+.page-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 16px 20px 16px;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #000;
+  margin: 24px 0 30px 0;
+  text-align: center;
+}
+
+.plan-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.plan-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.plan-type-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  .type-icon {
+    font-size: 20px;
+    color: #2650BB;
+  }
+  
+  .plan-type {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2650BB;
+  }
+}
+
+.discount-badge {
+  background: #fff;
+  color: #000;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1px solid #e0e0e0;
+}
+
+.plan-price {
+  margin-bottom: 24px;
+  
+  .price-amount {
+    font-size: 40px;
+    font-weight: 700;
+    color: #2650BB;
+    letter-spacing: -0.5px;
+  }
+  
+  .price-period {
+    font-size: 13px;
+    color: #2650BB;
+    font-weight: 400;
+    margin-left: 4px;
+  }
+}
+
+.features-list {
+  margin-bottom: 24px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+  
+  .check-icon {
+    font-size: 24px;
+    color: #00c853;
+    flex-shrink: 0;
+  }
+  
+  span {
+    font-size: 15px;
+    color: #333;
+    font-weight: 400;
+  }
+}
+
+.pay-button {
+  --background: #00c853;
+  --background-hover: #00b048;
+  --background-activated: #00a03e;
+  --border-radius: 12px;
+  --box-shadow: none;
+  --color: #fff;
+  
+  height: 52px;
+  font-size: 20px;
+  font-weight: 600;
+  text-transform: none;
+  margin: 0;
+}

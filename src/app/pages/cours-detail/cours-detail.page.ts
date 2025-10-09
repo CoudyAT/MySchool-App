@@ -98,6 +98,8 @@ export class CoursDetailPage implements OnInit {
 
   enrollNow() {
     console.log("S'inscrire au cours:", this.course.title);
-    // Logique d'inscription
+    this.router.navigate(['/subscription-plans']);
   }
+
+
 }
