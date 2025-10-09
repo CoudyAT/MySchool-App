@@ -12,6 +12,7 @@ import {
   IonIcon,
   IonSearchbar,
 } from '@ionic/angular/standalone';
+import { Router } from '@angular/router';
 
 interface Course {
   id: number;
@@ -38,8 +39,8 @@ interface Course {
     IonButton,
     IonCard,
     IonIcon,
-    IonCardContent
-],
+    IonCardContent,
+  ],
 })
 export class MesCoursPage implements OnInit {
   courses: Course[] = [
@@ -99,7 +100,7 @@ export class MesCoursPage implements OnInit {
     },
   ];
 
-  constructor() {}
+  constructor(private router: Router) {}
 
   ngOnInit() {}
 
@@ -113,5 +114,6 @@ export class MesCoursPage implements OnInit {
 
   openCourse(course: Course) {
     console.log('Ouvrir le cours:', course);
+    this.router.navigate(['/course-detail', course.id]);
   }
 }
