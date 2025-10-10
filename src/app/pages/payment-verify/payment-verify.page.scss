@@ -1,0 +1,247 @@
+ion-header {
+  ion-toolbar {
+    --background: #fff;
+    --border-width: 0;
+    
+    ion-title {
+      font-size: 16px;
+      font-weight: 500;
+      color: #000;
+    }
+    
+    ion-button {
+      --color: #000;
+    }
+  }
+}
+
+ion-content {
+  --background: #f5f5f5;
+}
+
+.page-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 16px 100px 16px; // Augmenté le padding bottom
+}
+
+.page-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #000;
+  margin: 24px 0 30px 0;
+}
+
+// Carte résumé
+.summary-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #000;
+  margin: 0 0 20px 0;
+}
+
+.summary-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+  
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  
+  .label {
+    font-size: 15px;
+    color: #666;
+  }
+  
+  .value {
+    font-size: 15px;
+    color: #000;
+    font-weight: 500;
+  }
+}
+
+.total-row {
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 2px solid #f0f0f0;
+  
+  .label-total {
+    font-size: 16px;
+    color: #000;
+    font-weight: 700;
+  }
+  
+  .value-total {
+    font-size: 18px;
+    color: #000;
+    font-weight: 700;
+  }
+}
+
+// Carte options de paiement
+.payment-options-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  
+  .card-icon {
+    font-size: 24px;
+    color: #000;
+  }
+}
+
+// Options de paiement
+.payment-option {
+  padding: 16px 0;
+  border-bottom: 1px solid #f0f0f0;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.option-header {
+  margin-bottom: 12px;
+  
+  .option-type {
+    font-size: 12px;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+.option-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.option-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  
+  .option-name {
+    font-size: 15px;
+    color: #000;
+    font-weight: 500;
+  }
+}
+
+.custom-radio {
+  --color: #000;
+  --color-checked: #000;
+  
+  &::part(container) {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #000;
+    border-radius: 50%;
+  }
+  
+  &::part(mark) {
+    background: #000;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+}
+
+.option-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.wave-logo-small,
+.orange-logo-small,
+.yas-logo-small {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.wave-svg-small,
+.orange-svg-small,
+.yas-svg-small {
+  width: 100%;
+  height: 100%;
+}
+
+.payment-number {
+  font-size: 15px;
+  color: #000;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.change-button {
+  background: none;
+  border: none;
+  color: #007AFF;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  margin-top: 8px;
+  
+  &:active {
+    opacity: 0.7;
+  }
+}
+
+// Conteneur du bouton de paiement
+.proceed-button-container {
+  margin-top: 32px; // Ajouté une marge en haut
+  padding-bottom: 20px; // Ajouté un padding en bas
+}
+
+// Bouton de paiement
+.proceed-button {
+  --background: #00c853;
+  --background-hover: #00b048;
+  --background-activated: #00a03e;
+  --border-radius: 12px;
+  --box-shadow: none;
+  color: #fff;
+  
+  height: 52px;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: none;
+  margin: 0;
+}
+
+ion-radio-group {
+  display: flex;
+  flex-direction: column;
+}

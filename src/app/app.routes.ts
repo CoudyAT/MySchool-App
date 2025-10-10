@@ -7,6 +7,7 @@ import { MesCoursPage } from './pages/mes-cours/mes-cours.page';
 import { CoursDetailPage } from './pages/cours-detail/cours-detail.page';
 import { SubscriptionPlansPage } from './pages/subscription-plans/subscription-plans.page';
 import { PaymentMethodPage } from './pages/payment-method/payment-method.page';
+import { PaymentVerifyPage } from './pages/payment-verify/payment-verify.page';
 
 export const routes: Routes = [
   {
@@ -45,5 +46,9 @@ export const routes: Routes = [
   {
     path: 'payment-method',
     component: PaymentMethodPage,
+  },
+  {
+    path: 'payment-verify',
+    component: PaymentVerifyPage,
   },
 ];

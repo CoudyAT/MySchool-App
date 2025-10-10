@@ -81,10 +81,9 @@ export class PaymentMethodPage implements OnInit {
   selectPaymentMethod(method: any) {
     console.log('Méthode de paiement sélectionnée:', method);
     console.log('Plan:', this.selectedPlan);
-
-    // Rediriger vers la page de paiement appropriée
-    // this.router.navigate(['/payment-process'], {
-    //   state: { method, plan: this.selectedPlan }
-    // });
+   // Rediriger vers la page de paiement appropriée
+    this.router.navigate(['/payment-verify'], {
+      state: { method, plan: this.selectedPlan },
+    });
   }
 }
