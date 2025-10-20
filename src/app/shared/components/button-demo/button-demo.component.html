@@ -1,0 +1,124 @@
+  <div class="flex flex-col space-y-6 h-full mx-auto">
+    <h1 class="text-2xl font-bold text-center mb-4">Démo du Bouton Personnalisable</h1>
+    
+    <!-- Contrôles de démonstration -->
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <ion-label>Texte</ion-label>
+        <ion-input [(ngModel)]="buttonText" placeholder="Texte du bouton"></ion-input>
+      </div>
+      
+      <div>
+        <ion-label>Taille</ion-label>
+        <ion-select [(ngModel)]="size" interface="popover">
+          <ion-select-option value="sm">Petit</ion-select-option>
+          <ion-select-option value="md">Moyen</ion-select-option>
+          <ion-select-option value="lg">Grand</ion-select-option>
+          <ion-select-option value="xl">Très grand</ion-select-option>
+        </ion-select>
+      </div>
+      
+      <div>
+        <ion-label>Radius</ion-label>
+        <ion-select [(ngModel)]="radius" interface="popover">
+          <ion-select-option value="none">Aucun</ion-select-option>
+          <ion-select-option value="sm">Petit</ion-select-option>
+          <ion-select-option value="md">Moyen</ion-select-option>
+          <ion-select-option value="lg">Grand</ion-select-option>
+          <ion-select-option value="full">Complet</ion-select-option>
+        </ion-select>
+      </div>
+      
+      <div>
+        <ion-label>Variante</ion-label>
+        <ion-select [(ngModel)]="variant" interface="popover">
+          <ion-select-option value="solid">Solide</ion-select-option>
+          <ion-select-option value="light">Léger</ion-select-option>
+          <ion-select-option value="transparent">Transparent</ion-select-option>
+        </ion-select>
+      </div>
+      
+      <div>
+        <ion-label>Couleur</ion-label>
+        <ion-select [(ngModel)]="color" interface="popover">
+          <ion-select-option value="primary">Primaire</ion-select-option>
+          <ion-select-option value="secondary">Secondaire</ion-select-option>
+          <ion-select-option value="warning">Avertissement</ion-select-option>
+          <ion-select-option value="danger">Danger</ion-select-option>
+          <ion-select-option value="dark">Sombre</ion-select-option>
+          <ion-select-option value="light">Clair</ion-select-option>
+        </ion-select>
+      </div>
+      
+      <div>
+        <ion-label>Largeur</ion-label>
+        <ion-select [(ngModel)]="width" interface="popover">
+          <ion-select-option value="auto">Auto</ion-select-option>
+          <ion-select-option value="xs">XS</ion-select-option>
+          <ion-select-option value="sm">SM</ion-select-option>
+          <ion-select-option value="md">MD</ion-select-option>
+          <ion-select-option value="lg">LG</ion-select-option>
+          <ion-select-option value="xl">XL</ion-select-option>
+          <ion-select-option value="2xl">2XL</ion-select-option>
+          <ion-select-option value="full">Pleine largeur</ion-select-option>
+        </ion-select>
+      </div>
+      
+      <div>
+        <ion-label>Icône début</ion-label>
+        <ion-select [(ngModel)]="iconStart" interface="popover">
+          <ion-select-option value="">Aucune</ion-select-option>
+          <ion-select-option value="heart">Cœur</ion-select-option>
+          <ion-select-option value="star">Étoile</ion-select-option>
+          <ion-select-option value="checkmark">Validation</ion-select-option>
+          <ion-select-option value="arrow-forward">Flèche avant</ion-select-option>
+          <ion-select-option value="trash">Poubelle</ion-select-option>
+        </ion-select>
+      </div>
+      
+      <div>
+        <ion-label>Icône fin</ion-label>
+        <ion-select [(ngModel)]="iconEnd" interface="popover">
+          <ion-select-option value="">Aucune</ion-select-option>
+          <ion-select-option value="heart">Cœur</ion-select-option>
+          <ion-select-option value="star">Étoile</ion-select-option>
+          <ion-select-option value="checkmark">Validation</ion-select-option>
+          <ion-select-option value="arrow-forward">Flèche avant</ion-select-option>
+          <ion-select-option value="trash">Poubelle</ion-select-option>
+        </ion-select>
+      </div>
+      
+      <div>
+        <ion-checkbox [(ngModel)]="isLoading">Chargement</ion-checkbox>
+      </div>
+      
+      <div>
+        <ion-checkbox [(ngModel)]="disabled">Désactivé</ion-checkbox>
+      </div>
+    </div>
+    
+    <!-- Aperçu du bouton -->
+    <div class="mt-8 flex justify-center">
+      <app-button
+        [text]="buttonText"
+        [size]="size"
+        [radius]="radius"
+        [variant]="variant"
+        [color]="color"
+        [width]="width"
+        [iconStart]="iconStart"
+        [iconEnd]="iconEnd"
+        [isLoading]="isLoading"
+        [disabled]="disabled"
+        (buttonClick)="showAlert()">
+      </app-button>
+    </div>
+    
+    <!-- Code généré -->
+    <div class="mt-8">
+      <h2 class="text-lg font-semibold mb-2">Code généré</h2>
+      <div class="bg-gray-100 p-4 rounded-md overflow-x-auto">
+        <pre class="text-sm">{{generatedCode}}</pre>
+      </div>
+    </div>
+  </div>

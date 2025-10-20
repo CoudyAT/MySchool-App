@@ -1,13 +1,16 @@
 import { Routes } from '@angular/router';
-import { SplashPage } from './pages/splash/splash.page';
-import { OnboardingPage } from './pages/onboarding/onboarding.page';
-import { SignupFlowComponent } from './pages/signup-flow/signup-flow.component';
-import { CoursesPage } from './pages/courses/courses.page';
-import { MesCoursPage } from './pages/mes-cours/mes-cours.page';
-import { CoursDetailPage } from './pages/cours-detail/cours-detail.page';
-import { SubscriptionPlansPage } from './pages/subscription-plans/subscription-plans.page';
-import { PaymentMethodPage } from './pages/payment-method/payment-method.page';
-import { PaymentVerifyPage } from './pages/payment-verify/payment-verify.page';
+import { SplashPage } from './features/home/pages/splash/splash.page';
+import { OnboardingPage } from './features/home/pages/onboarding/onboarding.page';
+import { CoursesPage } from './features/cours/pages/courses/courses.page';
+import { MesCoursPage } from './features/cours/pages/mes-cours/mes-cours.page';
+import { CoursDetailPage } from './features/cours/pages/cours-detail/cours-detail.page';
+import { PaymentMethodPage } from './features/payments/payment-method/payment-method.page';
+import { PaymentVerifyPage } from './features/payments/payment-verify/payment-verify.page';
+import { CourseVideoPage } from './features/cours/pages/course-video/course-video.page';
+import { SignupFlowComponent } from './features/auth/signup-flow/signup-flow.component';
+import { SubscriptionPlansPage } from './features/auth/subscription-plans/subscription-plans.page';
+import { BaseLayoutAdminComponent } from './Admin/base-layout-admin/base-layout-admin.component';
+import { ListCoursPage } from './Admin/pages/cours/pages/list-cours/list-cours.page';
 
 export const routes: Routes = [
   {
@@ -50,5 +53,24 @@ export const routes: Routes = [
   {
     path: 'payment-verify',
     component: PaymentVerifyPage,
+  },
+  {
+    path: 'course-video',
+    component: CourseVideoPage,
+  },
+
+  {
+    path: 'admin-login',
+    component: BaseLayoutAdminComponent,
+    children: [
+      { path: 'list-cours', component: ListCoursPage },
+    ],
+  },
+  {
+    path: 'detail-cours',
+    loadComponent: () =>
+      import('./Admin/pages/cours/pages/detail-cours/detail-cours.page').then(
+        (m) => m.DetailCoursPage
+      ),
   },
 ];

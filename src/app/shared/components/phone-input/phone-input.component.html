@@ -1,0 +1,72 @@
+<!-- phone-input.component.html -->
+<!-- class="flex items-center cursor-pointer h-12 p-2 border border-gray-300 rounded-l-lg bg-white hover:bg-gray-50" -->
+<div class="relative flex items-center">
+  <!-- Sélecteur de pays -->
+  <div class="relative text-gray-800">
+    <div 
+      (click)="toggleCountrySelect()"
+      class="flex items-center cursor-pointer h-12 p-2 border-gray-200 w-full bg-gray-50 focus:bg-white text-gray-700 rounded-l-lg placeholder-gray-400 border-0 border-t-2 border-b-2 border-l-2 pb-2 focus:outline-none focus:ring-0 focus:border-green-500 transition-colors"
+      [class.opacity-50]="disabled"
+      [class.cursor-not-allowed]="disabled"
+      [ngClass]="{'!border-red-500': !isValid && touched, 'focus:ring-red-500': !isValid && phoneNumber, '!focus:border-red-500': !isValid && phoneNumber}"
+    >
+      <img title="{{selectedCountry.code}}" [src]="selectedCountry.flag" class="w-6 h-4 mr-2" [alt]="selectedCountry.name">
+      <span class="text-sm font-medium">{{ selectedCountry.dialCode }}</span>
+      <svg class="w-4 h-4 ml-1 text-gray-500 transition-transform" 
+           [class.rotate-180]="isCountrySelectOpen"
+           fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+      </svg>
+    </div>
+
+    <!-- Liste des pays -->
+    <div 
+      *ngIf="isCountrySelectOpen && !disabled"
+      class="absolute z-10 mt-1 w-64 bg-gray-200 border-none rounded-lg shadow-lg max-h-60 overflow-y-auto"
+    >
+      <div 
+        *ngFor="let country of countries"
+        (click)="selectCountry(country, $event)"
+        class="flex items-center p-3 hover:bg-primary cursor-pointer transition-colors"
+        [class.bg-primary]="country.code === selectedCountry.code"
+      >
+        <img title="{{country.code}}" [src]="country.flag" class="w-6 h-4 mr-3" [alt]="country.name">
+        <div class="flex-grow">
+          <div class="text-sm font-medium">{{ country.name }}</div>
+          <div class="text-xs text-gray-500">{{ country.dialCode }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Champ de saisie -->
+  <div class="relative flex-grow">
+    <input
+      type="tel"
+      [value]="displayPhoneNumber"
+      (input)="onPhoneNumberInput($event)"
+      (blur)="onInputBlur()"
+      [placeholder]="getExampleNumber()"
+      [disabled]="disabled"
+      class="w-full p-2 h-12 border-gray-200 bg-gray-50 text-gray-700 placeholder-gray-400 border-2 rounded-r-lg pb-2 focus:outline-none focus:ring-0 focus:border-gray-200 transition-colors"
+      [ngClass]="{'!border-red-500': !isValid && touched, 'focus:ring-red-500': !isValid && phoneNumber, '!focus:border-red-500': !isValid && phoneNumber}"
+      >
+      <!-- [class.border-green-500]="isValid && phoneNumber" -->
+    
+    <!-- Indicateur de validation -->
+    <div class="absolute right-3 top-1/2 transform -translate-y-1/2" *ngIf="phoneNumber">
+      <svg *ngIf="isValid" class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+      </svg>
+      <svg *ngIf="!isValid" class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- Message de validation optionnel -->
+<div *ngIf="phoneNumber && !isValid" class="mt-1 text-sm text-red-600">
+  Numéro de téléphone invalide
+</div>
+  <!-- class="flex-grow p-2 border h-12 text-gray-800 border-gray-300 rounded-r-lg focus:border-green-500 focus:outline-none focus:ring-0 flex" -->

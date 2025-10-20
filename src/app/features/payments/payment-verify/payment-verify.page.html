@@ -1,0 +1,100 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Retour</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="page-container">
+    <h1 class="page-title">Vérifiez vos informations</h1>
+
+    <!-- Résumé de la souscription -->
+    <div class="summary-card">
+      <h2 class="card-title">Résumé de la souscription</h2>
+      
+      <div class="summary-content">
+        <div class="summary-row">
+          <span class="label">{{ summary.formula }}</span>
+          <span class="value">{{ summary.price }} FCFA</span>
+        </div>
+        
+        <div class="summary-row">
+          <span class="label">Code promo</span>
+          <span class="value">{{ summary.promoCode }}%</span>
+        </div>
+        
+        <div class="summary-row">
+          <span class="label">TVA</span>
+          <span class="value">{{ summary.tva }}</span>
+        </div>
+        
+        <div class="summary-row total-row">
+          <span class="label-total">TOTAL</span>
+          <span class="value-total">{{ summary.total }} FCFA</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Option de paiement -->
+    <div class="payment-options-card">
+      <div class="card-header">
+        <h2 class="card-title">Option de paiement</h2>
+        <ion-icon name="card-outline" class="card-icon"></ion-icon>
+      </div>
+
+      <ion-radio-group 
+        [value]="selectedPaymentOption" 
+        (ionChange)="onPaymentMethodChange($event.detail.value)">
+        <div *ngFor="let method of displayedPaymentMethods" class="payment-option">
+          <div class="option-header">
+            <span class="option-type">{{ method.type }}</span>
+          </div>
+          
+          <div class="option-content">
+            <div class="option-left">
+              <ion-radio [value]="method.id" class="custom-radio"></ion-radio>
+              <span class="option-name">{{ method.name }}</span>
+            </div>
+            
+            <div class="option-right">
+              <!-- Logo Wave -->
+              <div *ngIf="method.id === 'wave'" class="wave-logo-small">
+                  <img src="assets/wave.svg" alt="MySchool Logo" class="penguin-svg">
+              </div>
+
+              <!-- Logo Orange Money -->
+              <div *ngIf="method.id === 'orange-money'" class="orange-logo-small">
+                  <img src="assets/orange-money.svg" alt="MySchool Logo" class="penguin-svg">
+              </div>
+
+              <!-- Logo Yas Mixx -->
+              <div *ngIf="method.id === 'yas-mixx'" class="yas-logo-small">
+                <svg viewBox="0 0 40 40" class="yas-svg-small">
+                  <rect width="40" height="40" rx="8" fill="#FFD500"/>
+                  <circle cx="20" cy="20" r="12" fill="#003DA5"/>
+                  <text x="13" y="25" font-size="10" font-weight="bold" fill="#fff">yas</text>
+                </svg>
+              </div>
+              
+              <span class="payment-number">{{ method.displayNumber }}</span>
+            </div>
+          </div>
+          
+          <button class="change-button" (click)="changePaymentMethod()">Changer</button>
+        </div>
+      </ion-radio-group>
+    </div>
+
+    <!-- Bouton de paiement -->
+    <div class="proceed-button-container">
+      <ion-button expand="block" class="proceed-button" (click)="proceedToPayment()">
+        Procéder au paiement
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

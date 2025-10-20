@@ -1,0 +1,29 @@
+// ::ng-deep .mat-datepicker-content {
+//   background-color: #f9fafb !important; // Fond du calendrier
+// }
+
+::ng-deep .mat-calendar-body-selected {
+  background-color: #16a34a !important; // Couleur du jour sélectionné (ex: vert-500)
+  color: white;
+}
+
+::ng-deep .mat-calendar-body-today {
+  border-color: #16a34a !important; // Cercle autour du jour d’aujourd’hui
+}
+
+// ::ng-deep .mat-calendar-body-cell-content {
+//     color: #1f2937 !important; // Couleur du texte
+// }
+
+::ng-deep .mat-calendar-body-cell:hover {
+  background-color: #bbf7d0 !important; // Survol d’un jour (ex: vert clair)
+}
+
+// /* Personnalisation de l'en-tête */
+// ::ng-deep .mat-calendar-header {
+//   color: #1f2937 !important; /* Couleur du texte */
+// }
+
+// ::ng-deep .mat-calendar-header .mat-calendar-period-button {
+//   color: #1f2937 !important; /* Couleur des boutons de navigation */
+// }

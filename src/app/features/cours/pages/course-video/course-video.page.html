@@ -1,0 +1,86 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Cours vidéo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="page-container">
+    
+    <!-- Video Thumbnail avec Play Button -->
+    <div class="video-container">
+      <div class="video-thumbnail">
+        <div class="video-overlay">
+          <div class="play-button" (click)="startCourse()">
+            <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+              <circle cx="40" cy="40" r="40" fill="white"/>
+              <path d="M32 25L55 40L32 55V25Z" fill="#000"/>
+            </svg>
+          </div>
+        </div>
+        <!--  Image placeholder -  -->
+        <div class="thumbnail-placeholder">
+        </div>
+      </div>
+      
+      <!-- Bouton Commencer -->
+      <button class="start-button" (click)="startCourse()">
+        Commencer
+      </button>
+    </div>
+
+    <!-- Category -->
+    <div class="category">{{ course.category }}</div>
+
+    <!-- Titre du cours -->
+    <h1 class="course-title">{{ course.title }}</h1>
+
+    <!-- Durée et chapitres -->
+    <div class="course-meta">
+      <span class="duration">{{ course.duration }}</span>
+      <span class="separator">·</span>
+      <span class="chapters">{{ course.chapters }} Chapitres</span>
+    </div>
+
+    <!-- Barre de progression -->
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="course.progress"></div>
+      </div>
+      <span class="progress-text">{{ course.progress }}%</span>
+    </div>
+
+    <!-- Langue et Instructeur -->
+    <div class="info-row">
+      <div class="info-item">
+        <ion-icon name="language-outline" class="info-icon"></ion-icon>
+        <span class="info-text">Cours en <strong>{{ course.language }}</strong></span>
+      </div>
+      <span class="instructor">Par <strong>{{ course.instructor }}</strong></span>
+    </div>
+
+    <!-- Rating -->
+    <div class="rating-container">
+      <div class="stars">
+        <ion-icon name="star" class="star-icon filled"></ion-icon>
+        <ion-icon name="star" class="star-icon filled"></ion-icon>
+        <ion-icon name="star" class="star-icon filled"></ion-icon>
+        <ion-icon name="star" class="star-icon filled"></ion-icon>
+        <ion-icon name="star-half" class="star-icon filled"></ion-icon>
+      </div>
+      <span class="rating-text">{{ course.rating }}/{{ course.maxRating }}</span>
+    </div>
+
+    <!-- Description -->
+    <div class="description-section">
+      <h2 class="section-title">Description cours</h2>
+      <p class="description-text">{{ course.description }}</p>
+    </div>
+
+  </div>
+</ion-content>

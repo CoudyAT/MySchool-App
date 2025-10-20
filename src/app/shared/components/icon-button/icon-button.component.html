@@ -1,0 +1,64 @@
+<!-- icon-button.component.html -->
+<button
+  (click)="onClick($event)"
+  [disabled]="isLoading || disabled"
+  [attr.title]="tooltip"
+  [ngClass]="[
+    'flex items-center justify-center focus:outline-none transition-all duration-300 transform',
+    dimensionClasses,
+    sizeClasses,
+    shapeClasses,
+    backgroundClasses,
+    disabledClasses,
+    'hover:scale-105',
+    'active:scale-95',
+    'relative overflow-hidden'
+  ]"
+>
+  <!-- Ripple effect on click -->
+  <span 
+    class="ripple-effect absolute rounded-full bg-white bg-opacity-30 animate-ripple"
+    *ngIf="rippleActive"
+    [style.left]="rippleX + 'px'"
+    [style.top]="rippleY + 'px'"
+  ></span>
+  
+  <!-- Inner shadow effect -->
+  <span class="absolute inset-0 rounded-[inherit] opacity-0 bg-current mix-blend-overlay transition-opacity duration-500 pointer-events-none hover:opacity-10"></span>
+  
+  <!-- Press effect -->
+  <span class="absolute inset-0 bg-current opacity-0 mix-blend-overlay transition-opacity pointer-events-none active:opacity-20 active:duration-75"></span>
+  
+  <!-- Loading indicator with enhanced animation -->
+  <div 
+    *ngIf="isLoading" 
+    class="relative flex justify-center items-center"
+  >
+    <ion-spinner 
+      [ngClass]="iconSizeClasses"
+      class="animate-pulse"
+    ></ion-spinner>
+  </div>
+  
+  <!-- Icon with animation -->
+  <ion-icon 
+    *ngIf="icon && !isLoading" 
+    [name]="icon" 
+    [ngClass]="[
+      iconSizeClasses,
+      animationClasses
+    ]"
+  ></ion-icon>
+  
+  <!-- Badge notification -->
+  <span 
+    *ngIf="badge && !isLoading" 
+    [ngClass]="[
+      'absolute -top-1 -right-1 flex items-center justify-center',
+      'min-w-4 min-h-4 px-1 py-0.5 rounded-full text-xs font-bold',
+      badgeClasses
+    ]"
+  >
+    {{ badge }}
+  </span>
+</button>

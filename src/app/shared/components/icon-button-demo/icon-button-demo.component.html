@@ -1,0 +1,317 @@
+<!-- icon-button-demo.component.html -->
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold mb-6">Icon Button Component Demo</h1>
+  
+  <!-- Interactive Playground -->
+  <section class="demo-section">
+    <h2 class="text-2xl font-semibold demo-title">Interactive Playground</h2>
+    
+    <!-- Preview Panel -->
+    <div class="preview-panel">
+      <app-icon-button
+        [icon]="selectedIcon"
+        [color]="selectedColor"
+        [size]="selectedSize"
+        [shape]="selectedShape"
+        [variant]="selectedVariant"
+        [animation]="selectedAnimation"
+        [badge]="hasBadge ? badgeValue : ''"
+        [tooltip]="hasTooltip ? tooltipValue : ''"
+        [isLoading]="isLoading"
+        [disabled]="isDisabled"
+        (buttonClick)="onDemoButtonClick()"
+      ></app-icon-button>
+      
+      <div class="mt-4 text-center text-sm text-gray-500">
+        <p>Hover or click the button to see animations and effects</p>
+      </div>
+    </div>
+    
+    <!-- Configuration Panel -->
+    <div class="config-panel">
+      <h3 class="text-lg font-medium mb-4">Customize Icon Button</h3>
+      
+      <div class="controls-grid">
+        <!-- Left Column -->
+        <div>
+          <!-- Icon Selection -->
+          <div class="control-item">
+            <div class="control-label">Icon</div>
+            <select [(ngModel)]="selectedIcon" class="w-full p-2 border rounded">
+              <option *ngFor="let icon of icons" [value]="icon">{{ icon }}</option>
+            </select>
+          </div>
+          
+          <!-- Size Selection -->
+          <div class="control-item">
+            <div class="control-label">Size</div>
+            <div class="flex flex-wrap gap-2">
+              <label *ngFor="let size of sizes" class="flex items-center">
+                <input type="radio" [(ngModel)]="selectedSize" [value]="size" class="mr-1">
+                {{ size }}
+              </label>
+            </div>
+          </div>
+          
+          <!-- Shape Selection -->
+          <div class="control-item">
+            <div class="control-label">Shape</div>
+            <div class="flex flex-wrap gap-2">
+              <label *ngFor="let shape of shapes" class="flex items-center">
+                <input type="radio" [(ngModel)]="selectedShape" [value]="shape" class="mr-1">
+                {{ shape }}
+              </label>
+            </div>
+          </div>
+          
+          <!-- Animation Selection -->
+          <div class="control-item">
+            <div class="control-label">Animation</div>
+            <div class="flex flex-wrap gap-2">
+              <label *ngFor="let animation of animations" class="flex items-center">
+                <input type="radio" [(ngModel)]="selectedAnimation" [value]="animation" class="mr-1">
+                {{ animation }}
+              </label>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Right Column -->
+        <div>
+          <!-- Color Selection -->
+          <div class="control-item">
+            <div class="control-label">Color</div>
+            <div class="flex flex-wrap gap-2">
+              <label *ngFor="let color of colors" class="flex items-center">
+                <input type="radio" [(ngModel)]="selectedColor" [value]="color" class="mr-1">
+                {{ color }}
+              </label>
+            </div>
+          </div>
+          
+          <!-- Variant Selection -->
+          <div class="control-item">
+            <div class="control-label">Variant</div>
+            <div class="flex flex-wrap gap-2">
+              <label *ngFor="let variant of variants" class="flex items-center">
+                <input type="radio" [(ngModel)]="selectedVariant" [value]="variant" class="mr-1">
+                {{ variant }}
+              </label>
+            </div>
+          </div>
+          
+          <!-- Badge Configuration -->
+          <div class="control-item">
+            <div class="flex items-center mb-2">
+              <label class="flex items-center">
+                <input type="checkbox" [(ngModel)]="hasBadge" class="mr-1">
+                <span class="control-label">Badge</span>
+              </label>
+            </div>
+            <input *ngIf="hasBadge" type="text" [(ngModel)]="badgeValue" class="w-full p-2 border rounded" placeholder="Badge value">
+          </div>
+          
+          <!-- Tooltip Configuration -->
+          <div class="control-item">
+            <div class="flex items-center mb-2">
+              <label class="flex items-center">
+                <input type="checkbox" [(ngModel)]="hasTooltip" class="mr-1">
+                <span class="control-label">Tooltip</span>
+              </label>
+            </div>
+            <input *ngIf="hasTooltip" type="text" [(ngModel)]="tooltipValue" class="w-full p-2 border rounded" placeholder="Tooltip text">
+          </div>
+        </div>
+      </div>
+      
+      <!-- States -->
+      <div class="mt-4">
+        <div class="control-label">States</div>
+        <div class="flex gap-4">
+          <label class="flex items-center">
+            <input type="checkbox" [(ngModel)]="isLoading" (change)="isLoading ? isDisabled = false : null" class="mr-1">
+            Loading
+          </label>
+          <label class="flex items-center">
+            <input type="checkbox" [(ngModel)]="isDisabled" (change)="isDisabled ? isLoading = false : null" class="mr-1">
+            Disabled
+          </label>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Code Snippet -->
+    <div class="mt-4">
+      <div class="flex justify-between items-center mb-2">
+        <h3 class="text-lg font-medium">Code Snippet</h3>
+        <app-button
+          text="Copy Code"
+          color="primary"
+          size="sm"
+          iconEnd="copy"
+          (buttonClick)="copyCodeToClipboard()"
+        ></app-button>
+      </div>
+      <pre class="bg-gray-800 text-white p-4 rounded overflow-x-auto"><code>{{ codeSnippet }}</code></pre>
+    </div>
+  </section>
+  
+  <!-- Size Variants -->
+  <section class="demo-section">
+    <h2 class="text-2xl font-semibold demo-title">Size Variants</h2>
+    <div class="demo-grid">
+      <div *ngFor="let size of sizes" class="flex flex-col items-center">
+        <app-icon-button
+          icon="heart"
+          [size]="size"
+          color="primary"
+        ></app-icon-button>
+        <span class="mt-2 text-sm text-gray-600">{{ size }}</span>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Shape Variants -->
+  <section class="demo-section">
+    <h2 class="text-2xl font-semibold demo-title">Shape Variants</h2>
+    <div class="demo-grid">
+      <div *ngFor="let shape of shapes" class="flex flex-col items-center">
+        <app-icon-button
+          icon="star"
+          [shape]="shape"
+          color="secondary"
+        ></app-icon-button>
+        <span class="mt-2 text-sm text-gray-600">{{ shape }}</span>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Color Variants -->
+  <section class="demo-section">
+    <h2 class="text-2xl font-semibold demo-title">Color Variants</h2>
+    <div class="demo-grid">
+      <div *ngFor="let color of colors" class="flex flex-col items-center">
+        <app-icon-button
+          icon="thumbs-up"
+          [color]="color"
+        ></app-icon-button>
+        <span class="mt-2 text-sm text-gray-600">{{ color }}</span>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Style Variants -->
+  <section class="demo-section">
+    <h2 class="text-2xl font-semibold demo-title">Style Variants</h2>
+    <div class="demo-option-grid">
+      <div *ngFor="let variant of variants" class="mb-4">
+        <h3 class="text-lg font-medium mb-2">{{ variant }}</h3>
+        <div class="flex flex-wrap gap-3">
+          <app-icon-button
+            *ngFor="let color of colors"
+            icon="add"
+            [variant]="variant"
+            [color]="color"
+          ></app-icon-button>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Animation Variants -->
+  <section class="demo-section">
+    <h2 class="text-2xl font-semibold demo-title">Animation Variants</h2>
+    <div class="demo-grid">
+      <div *ngFor="let animation of animations" class="flex flex-col items-center">
+        <app-icon-button
+          icon="refresh"
+          color="primary"
+          [animation]="animation"
+        ></app-icon-button>
+        <span class="mt-2 text-sm text-gray-600">{{ animation }}</span>
+      </div>
+    </div>
+  </section>
+  
+  <!-- With Badge -->
+  <section class="demo-section">
+    <h2 class="text-2xl font-semibold demo-title">With Badge</h2>
+    <div class="demo-grid">
+      <div *ngFor="let color of colors" class="flex flex-col items-center">
+        <app-icon-button
+          icon="notifications"
+          [color]="color"
+          [badge]="3"
+        ></app-icon-button>
+        <span class="mt-2 text-sm text-gray-600">{{ color }}</span>
+      </div>
+    </div>
+  </section>
+  
+  <!-- States -->
+  <section class="demo-section">
+    <h2 class="text-2xl font-semibold demo-title">States</h2>
+    <div class="flex flex-wrap gap-8 items-center">
+      <div class="flex flex-col items-center">
+        <app-icon-button
+          icon="heart"
+          color="primary"
+        ></app-icon-button>
+        <span class="mt-2 text-sm text-gray-600">Normal</span>
+      </div>
+      <div class="flex flex-col items-center">
+        <app-icon-button
+          icon="heart"
+          color="primary"
+          [isLoading]="true"
+        ></app-icon-button>
+        <span class="mt-2 text-sm text-gray-600">Loading</span>
+      </div>
+      <div class="flex flex-col items-center">
+        <app-icon-button
+          icon="heart"
+          color="primary"
+          [disabled]="true"
+        ></app-icon-button>
+        <span class="mt-2 text-sm text-gray-600">Disabled</span>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Common Use Cases -->
+  <section class="demo-section">
+    <h2 class="text-2xl font-semibold demo-title">Common Use Cases</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Social Media Actions -->
+      <div class="p-4 border rounded-lg shadow-sm">
+        <h3 class="text-lg font-medium mb-3">Social Media Actions</h3>
+        <div class="flex gap-4">
+          <app-icon-button icon="heart" color="danger" tooltip="Like"></app-icon-button>
+          <app-icon-button icon="chatbubble" color="primary" tooltip="Comment"></app-icon-button>
+          <app-icon-button icon="share" color="secondary" tooltip="Share"></app-icon-button>
+        </div>
+      </div>
+      
+      <!-- Navigation -->
+      <div class="p-4 border rounded-lg shadow-sm">
+        <h3 class="text-lg font-medium mb-3">Navigation</h3>
+        <div class="flex gap-4">
+          <app-icon-button icon="menu" color="dark" variant="light" tooltip="Menu"></app-icon-button>
+          <app-icon-button icon="search" color="dark" variant="light" tooltip="Search"></app-icon-button>
+          <app-icon-button icon="notifications" color="warning" variant="light" badge="2" tooltip="Notifications"></app-icon-button>
+        </div>
+      </div>
+      
+      <!-- Form Actions -->
+      <div class="p-4 border rounded-lg shadow-sm">
+        <h3 class="text-lg font-medium mb-3">Form Actions</h3>
+        <div class="flex gap-4">
+          <app-icon-button icon="save" color="primary" tooltip="Save"></app-icon-button>
+          <app-icon-button icon="close" color="danger" tooltip="Cancel"></app-icon-button>
+          <app-icon-button icon="refresh" color="secondary" animation="rotate" tooltip="Reset"></app-icon-button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

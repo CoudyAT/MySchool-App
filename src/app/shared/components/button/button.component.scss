@@ -1,0 +1,14 @@
+@keyframes rippleEffect {
+    0% {
+      transform: scale(0);
+      opacity: 0.5;
+    }
+    100% {
+      transform: scale(10);
+      opacity: 0;
+    }
+  }
+  
+  .animate-ripple {
+    animation: rippleEffect 0.8s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+  }

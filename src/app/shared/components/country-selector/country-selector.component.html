@@ -1,0 +1,58 @@
+    <div class="relative">
+      <!-- Bouton déclencheur -->
+      <div 
+        (click)="toggleOpen()"
+        [class.border-green-500]="isOpen"
+        class="flex items-center justify-between p-1 px-3 border-b-2 border-white cursor-pointer bg-transparent transition-all h-12"
+      >
+        <div class="flex items-center">
+          <span *ngIf="selectedOption?.icon" class="mr-4">
+            <i [class]="selectedOption?.icon"></i>
+          </span>
+          <span *ngIf="selectedOption?.flag" class="mr-4">
+            <img title="{{selectedOption?.country}}" [src]="selectedOption?.flag" class="w-5 h-5 object-contain">
+          </span>
+          <span class="text-white truncate">
+            {{ selectedOption?.nationality || placeholder }}
+          </span>
+        </div>
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          class="h-5 w-5 text-gray-500 transition-transform" 
+          [class.transform]="isOpen" 
+          [class.rotate-180]="isOpen" 
+          viewBox="0 0 20 20" 
+          fill="currentColor"
+        >
+          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </div>
+      
+      <!-- Options custom -->
+      <div 
+        *ngIf="isOpen"
+        (click)="$event.stopPropagation()"
+        class="absolute z-10 w-full mt-1 bg-white border text-gray-800 border-gray-200 rounded-lg shadow-lg overflow-y-auto max-h-60"
+      >
+        <div 
+          *ngFor="let option of options; let last = last"
+          (click)="selectOption(option)"
+          class="p-3 hover:bg-green-100 cursor-pointer transition-colors flex items-center"
+          [class.text-green-700]="option.country === selectedOption?.country"
+          [class.font-medium]="option.country === selectedOption?.country"
+          [class.border-b]="!last"
+          [class.bg-green-50]="option.country === selectedOption?.country"
+        >
+          <!-- Icône ou drapeau -->
+          <span *ngIf="option.icon" class="mr-4">
+            <i [class]="option.icon"></i>
+          </span>
+          <span *ngIf="option.flag" class="mr-4">
+            <img title="{{selectedOption?.country}}" [src]="option.flag" class="w-5 h-5 object-contain">
+          </span>
+          
+          <!-- Texte -->
+          <span class="truncate">{{ option.nationality }}</span>
+        </div>
+      </div>
+    </div>
