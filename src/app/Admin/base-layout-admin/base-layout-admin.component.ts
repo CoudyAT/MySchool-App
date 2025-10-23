@@ -11,7 +11,7 @@ import { RouterModule } from '@angular/router';
   imports: [RouterOutlet, CommonModule],
 })
 export class BaseLayoutAdminComponent {
-  activePage = 'users';
+  activePage = 'list-cours';
   activeTab: string = 'dashboard';
 
   constructor(private router: Router) {}

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AddCoursComponent } from 'src/app/Admin/component/add-cours/add-cours.component';
 //import { Course } from '../../model/cours.interface';
 
 export interface Course {
@@ -25,13 +26,14 @@ export interface Course {
   templateUrl: './list-cours.page.html',
   styleUrls: ['./list-cours.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AddCoursComponent],
 })
 export class ListCoursPage implements OnInit {
   searchText: string = '';
   selectedCategory: string = 'all';
   currentPage: number = 1;
   itemsPerPage: number = 6;
+  showAddCourseModal = false;
 
   allCourses: Course[] = [
     {
@@ -224,23 +226,51 @@ export class ListCoursPage implements OnInit {
     this.applyFilters();
   }
 
-  addCourse() {
-    // Votre logique pour ajouter un cours
-    console.log('Ajouter un cours');
-    // Exemple : this.router.navigate(['/admin-login/add-course']);
-    // Ou ouvrir un modal, etc.
+  onCourseFormSubmit(courseData: any) {
+    console.log('Nouveau cours à créer:', courseData);
+    this.createCourse(courseData);
   }
 
-  // calculateStats(): void {
-  //   this.stats.total = this.allCourses.length;
-  //   this.stats.completed = this.allCourses.filter((c) =>
-  //     c.levels.every((l) => l.completed)
-  //   ).length;
-  //   this.stats.inProgress = this.allCourses.filter(
-  //     (c) =>
-  //       c.levels.some((l) => l.completed) && !c.levels.every((l) => l.completed)
-  //   ).length;
-  // }
+  submitForm() {
+    // Cette méthode sera appelée par le bouton du modal
+    // Vous pouvez récupérer les données du formulaire via le formSubmit
+  }
+
+  createCourse(courseData: any) {
+    // Générer un ID unique
+    const newCourse: Course = {
+      id: Math.max(...this.allCourses.map((c) => c.id)) + 1,
+      title: courseData.title,
+      category: courseData.category,
+      sessions: courseData.sessions || 0,
+      exercises: courseData.exercises || 0,
+      language: 'Français',
+      instructor: courseData.instructor,
+      rating: 4.5,
+      maxRating: 5,
+      image:
+        courseData.image ||
+        'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&h=250&fit=crop',
+      certificateAvailable: courseData.certificateAvailable || false,
+      description: courseData.description || '',
+      levels: [
+        { icon: '📚', completed: false },
+        { icon: '💻', completed: false },
+        { icon: '🎯', completed: false },
+      ],
+    };
+
+    // Ajouter le nouveau cours
+    this.allCourses.unshift(newCourse);
+
+    // Mettre à jour les filtres
+    this.applyFilters();
+
+    // Fermer le modal
+    this.closeAddCourseModal();
+
+    console.log('Cours ajouté avec succès:', newCourse);
+  }
 
   applyFilters(): void {
     this.filteredCourses = this.allCourses.filter((course) => {
@@ -341,5 +371,13 @@ export class ListCoursPage implements OnInit {
 
   trackByCourseId(index: number, course: Course): number {
     return course.id;
+  }
+
+  openAddCourseModal() {
+    this.showAddCourseModal = true;
+  }
+
+  closeAddCourseModal() {
+    this.showAddCourseModal = false;
   }
 }

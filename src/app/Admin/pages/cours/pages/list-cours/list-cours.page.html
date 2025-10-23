@@ -8,7 +8,7 @@
           <h1 class="title">Catalogue des Cours</h1>
           <p class="subtitle">Découvrez et gérez vos formations</p>
         </div>
-        <button class="add-button" (click)="addCourse()">
+        <button class="add-button" (click)="openAddCourseModal()">
           <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
           </svg>
@@ -126,7 +126,7 @@
       </div>
       <h3 class="empty-title">Aucun cours trouvé</h3>
       <p class="empty-text">Aucun cours ne correspond à vos critères de recherche</p>
-      <button class="add-button add-button-empty" (click)="addCourse()">
+      <button class="add-button add-button-empty" (click)="openAddCourseModal()">
         <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
         </svg>
@@ -243,6 +243,37 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
         </svg>
       </button>
+    </div>
+  </div>
+
+
+<!-- Modal d'ajout de cours -->
+  <div *ngIf="showAddCourseModal" class="modal-overlay" (click)="closeAddCourseModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <!-- En-tête du modal -->
+      <div class="modal-header">
+        <h2 class="modal-title">Ajouter un nouveau cours</h2>
+        <button class="modal-close" (click)="closeAddCourseModal()">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Formulaire -->
+      <div class="modal-body">
+        <app-add-cours (formSubmit)="onCourseFormSubmit($event)"></app-add-cours>
+      </div>
+
+      <!-- Footer avec boutons -->
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" (click)="closeAddCourseModal()">
+          Annuler
+        </button>
+        <button type="button" class="enroll-button" (click)="submitForm()">
+          Créer le cours
+        </button>
+      </div>
     </div>
   </div>
 </div>
