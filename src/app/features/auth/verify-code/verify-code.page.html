@@ -1,0 +1,74 @@
+<ion-content class="verify-container" [fullscreen]="true">
+  <div class="verify-wrapper">
+    <!-- Icône de vérification -->
+    <div class="icon-container">
+      <div class="icon-circle">
+        <ion-icon name="mail-outline" class="verify-icon"></ion-icon>
+      </div>
+    </div>
+
+    <!-- En-tête -->
+    <div class="header-section">
+      <h1 class="verify-title">Vérifiez votre numéro</h1>
+      <p class="verify-subtitle">
+        Entrez le code à 6 chiffres envoyé par SMS au<br>
+        <span class="phone-number">{{ phoneNumber }}</span>
+      </p>
+    </div>
+
+    <!-- Formulaire avec input de code -->
+    <form [formGroup]="codeForm" class="form-container">
+      <div class="code-input-group">
+        <label class="input-label">Code de vérification</label>
+        
+        <!-- Input stylisé pour le code -->
+        <div class="code-inputs">
+          <input
+            *ngFor="let input of codeInputs; let i = index"
+            #codeInput
+            type="tel"
+            maxlength="1"
+            class="code-digit"
+            [class.filled]="input.value"
+            [class.error]="isFieldInvalid('code')"
+            [(ngModel)]="input.value"
+            [ngModelOptions]="{standalone: true}"
+            (input)="onCodeInput($event, i)"
+            (keydown)="onKeyDown($event, i)"
+            (paste)="onPaste($event)"
+          />
+        </div>
+      </div>
+
+      <div class="error-message" [hidden]="!isFieldInvalid('code')">
+        {{ getFieldError('code') }}
+      </div>
+
+      <!-- Bouton de validation -->
+      <ion-button
+        expand="block"
+        class="verify-button"
+        (click)="verifyCode()"
+        [disabled]="!codeForm.valid || loading"
+      >
+        <ion-spinner name="crescent" *ngIf="loading"></ion-spinner>
+        <span *ngIf="!loading">Valider</span>
+      </ion-button>
+
+      <!-- Lien de renvoi du code -->
+      <div class="resend-section">
+        <p class="resend-text">
+          Vous n'avez pas reçu le code ?
+        </p>
+        <button
+          type="button"
+          class="resend-button"
+          (click)="resendCode()"
+          [disabled]="resendTimer > 0"
+        >
+          {{ resendTimer > 0 ? 'Renvoyer dans ' + resendTimer + 's' : 'Renvoyer le code' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</ion-content>

@@ -136,7 +136,7 @@
 
     <!-- Liste des cours -->
     <div *ngIf="filteredCourses.length > 0" class="courses-grid">
-      <div *ngFor="let course of paginatedCourses; trackBy: trackByCourseId" class="course-card">
+      <div *ngFor="let course of paginatedCourses; trackBy: trackByCourseId" class="course-card" (click)="goToDetail(course)">
         <!-- Image -->
         <div class="image-container">
           <img [src]="course.image" [alt]="course.title" class="course-image">

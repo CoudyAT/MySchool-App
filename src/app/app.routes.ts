@@ -11,6 +11,9 @@ import { SignupFlowComponent } from './features/auth/signup-flow/signup-flow.com
 import { SubscriptionPlansPage } from './features/auth/subscription-plans/subscription-plans.page';
 import { BaseLayoutAdminComponent } from './Admin/base-layout-admin/base-layout-admin.component';
 import { ListCoursPage } from './Admin/pages/cours/pages/list-cours/list-cours.page';
+import { DetailCoursPage } from './Admin/pages/cours/pages/detail-cours/detail-cours.page';
+import { LoginComponent } from './features/auth/login/login.component';
+import { VerifyCodePage } from './features/auth/verify-code/verify-code.page';
 
 export const routes: Routes = [
   {
@@ -60,10 +63,21 @@ export const routes: Routes = [
   },
 
   {
+    path: 'login',
+    component: LoginComponent,
+  },
+
+  {
+    path: 'verify-code',
+    component: VerifyCodePage,
+  },
+
+  {
     path: 'admin-login',
     component: BaseLayoutAdminComponent,
     children: [
       { path: 'list-cours', component: ListCoursPage },
+      { path: 'cours/:id', component: DetailCoursPage },
     ],
   },
   {

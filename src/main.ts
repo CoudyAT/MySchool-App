@@ -1,5 +1,6 @@
 import { register } from 'swiper/element/bundle';
 register();
+
 import { bootstrapApplication } from '@angular/platform-browser';
 import {
   RouteReuseStrategy,
@@ -15,10 +16,25 @@ import {
 import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
 
+// 👇 Import Firebase
+import { provideFirebaseApp, initializeApp, getApp } from '@angular/fire/app';
+import { provideAuth, getAuth } from '@angular/fire/auth';
+import { provideFirestore, getFirestore } from '@angular/fire/firestore';
+import { provideStorage, getStorage } from '@angular/fire/storage';
+import { environment } from './environments/environment';
+
 bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideIonicAngular(),
     provideRouter(routes, withPreloading(PreloadAllModules)),
+
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideAuth(() => getAuth()),
+
+    // UTILISE L'APP INITIALISÉE + NOM DE LA BASE
+    provideFirestore(() => getFirestore(getApp(), 'myschool-1')), // CORRIGÉ
+
+    provideStorage(() => getStorage()),
   ],
 });

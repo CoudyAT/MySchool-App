@@ -1,13 +1,93 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>detail-cours</ion-title>
-  </ion-toolbar>
-</ion-header>
+<div class="page">
+  <div class="header">
+    <button class="back-btn" routerLink="/courses">← Retour</button>
+    <h1>{{ course.title }}</h1>
+  </div>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">detail-cours</ion-title>
-    </ion-toolbar>
-  </ion-header>
-</ion-content>
+  <div class="card">
+    <!-- Informations générales -->
+    <section>
+      <h2>Informations générales</h2>
+      <div class="grid">
+        <div class="info-block">
+          <p class="label">Titre du cours</p>
+          <p class="value">{{ course.title }}</p>
+        </div>
+        <div class="info-block">
+          <p class="label">Catégorie</p>
+          <p class="value">{{ course.category }}</p>
+        </div>
+        <div class="info-block">
+          <p class="label">Langue</p>
+          <p class="value">{{ course.language }}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Détails -->
+    <section>
+      <h2>Détails du cours</h2>
+      <div class="grid">
+        <div class="info-block">
+          <p class="label">Sessions</p>
+          <p class="value">{{ course.sessions }}</p>
+        </div>
+        <div class="info-block">
+          <p class="label">Exercices</p>
+          <p class="value">{{ course.exercises }}</p>
+        </div>
+        <div class="info-block">
+          <p class="label">Certificat</p>
+          <p class="value">
+            {{ course.certificateAvailable ? 'Disponible' : 'Non disponible' }}
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Formateur -->
+    <section>
+      <h2>Formateur</h2>
+      <div class="grid">
+        <div class="info-block">
+          <p class="label">Nom du formateur</p>
+          <p class="value">{{ course.instructor }}</p>
+        </div>
+        <div class="info-block">
+          <p class="label">Note</p>
+          <p class="value">⭐ {{ course.rating }} / {{ course.maxRating }}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Description -->
+    <section>
+      <h2>Description</h2>
+      <p class="description">{{ course.description }}</p>
+    </section>
+
+    <!-- Progression 
+    <section>
+      <h2>Progression</h2>
+      <div class="progress">
+        <div
+          class="level"
+          *ngFor="let lvl of course.levels"
+          [class.completed]="lvl.completed"
+        >
+          {{ lvl.icon }}
+        </div>
+      </div>
+    </section> -->
+
+    <!-- Image
+    <section>
+      <h2>Illustration du cours</h2>
+      <img
+        [src]="course.image"
+        [alt]="course.title"
+        class="course-image"
+      />
+    </section> -->
+  </div>
+</div>

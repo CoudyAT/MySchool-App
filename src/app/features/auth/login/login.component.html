@@ -1,0 +1,43 @@
+<ion-content class="login-container" [fullscreen]="true">
+  <div class="login-wrapper">
+    <!-- Logo -->
+    <div class="logo-container">
+      <img src="assets/logo.svg" alt="Logo" class="logo" />
+    </div>
+
+    <!-- Titre de bienvenue -->
+    <div class="welcome-section">
+      <h1 class="welcome-title">Bienvenue dans MySchool</h1>
+      <p class="welcome-subtitle">Connectez-vous ou créez un compte</p>
+    </div>
+
+    <!-- Formulaire -->
+    <form [formGroup]="phoneForm" class="form-container">
+      <div class="input-group">
+        <label class="input-label">Identifiant</label>
+        <ion-input
+          type="tel"
+          formControlName="phone"
+          placeholder="Numéro de téléphone"
+          class="custom-input"
+        ></ion-input>
+        <div class="input-underline"></div>
+      </div>
+      
+      <div class="error-message" *ngIf="isFieldInvalid('phone')">
+        {{ getFieldError('phone') }}
+      </div>
+
+      <div id="recaptcha-container"></div>
+
+      <ion-button
+        expand="block"
+        class="continue-button"
+        (click)="submitPhone()"
+        [disabled]="!phoneForm.valid || loading"
+      >
+        {{ loading ? 'Vérification...' : 'Continuer' }}
+      </ion-button>
+    </form>
+  </div>
+</ion-content>

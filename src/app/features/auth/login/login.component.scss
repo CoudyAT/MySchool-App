@@ -1,0 +1,157 @@
+.login-container {
+  --background: #f5f5f5;
+}
+
+.login-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
+  background: #ffffff;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.logo-container {
+  margin-bottom: 40px;
+  
+  .logo {
+    width: 200px;
+    height: auto;
+    max-width: 100%;
+  }
+}
+
+.welcome-section {
+  text-align: center;
+  margin-bottom: 40px;
+  
+  .welcome-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 12px 0;
+  }
+  
+  .welcome-subtitle {
+    font-size: 16px;
+    color: #666666;
+    margin: 0;
+    font-weight: 400;
+  }
+}
+
+.form-container {
+  width: 100%;
+  max-width: 440px;
+}
+
+.input-group {
+  margin-bottom: 24px;
+  position: relative;
+  
+  .input-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333333;
+    margin-bottom: 8px;
+  }
+  
+  .custom-input {
+    --background: #f8f9fa;
+    --padding-start: 0;
+    --padding-end: 0;
+    --padding-top: 12px;
+    --padding-bottom: 12px;
+    font-size: 16px;
+    color: #1a1a1a;
+    
+    &::part(native) {
+      border: none;
+      border-bottom: 2px solid #e0e0e0;
+      border-radius: 0;
+      background: transparent;
+    }
+    
+    &:focus-within::part(native) {
+      border-bottom-color: #0066ff;
+    }
+  }
+  
+  .input-underline {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 0;
+    background: #0066ff;
+    transition: width 0.3s ease;
+  }
+  
+  ion-input:focus-within ~ .input-underline {
+    width: 100%;
+  }
+}
+
+.error-message {
+  color: #d32f2f;
+  font-size: 12px;
+  margin-top: -16px;
+  margin-bottom: 16px;
+  padding-left: 4px;
+}
+
+.continue-button {
+  --background: #0066ff;
+  --background-hover: #0052cc;
+  --background-activated: #0052cc;
+  --border-radius: 8px;
+  --box-shadow: none;
+  height: 48px;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: none;
+  margin-top: 24px;
+  letter-spacing: 0;
+  
+  &::part(native) {
+    border-radius: 8px;
+  }
+  
+  &:disabled {
+    --background: #cccccc;
+    opacity: 0.6;
+  }
+}
+
+#recaptcha-container {
+  margin: 20px 0;
+  display: flex;
+  justify-content: center;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  .login-wrapper {
+    padding: 20px 16px;
+  }
+  
+  .logo-container .logo {
+    width: 160px;
+  }
+  
+  .welcome-section {
+    margin-bottom: 32px;
+    
+    .welcome-title {
+      font-size: 20px;
+    }
+    
+    .welcome-subtitle {
+      font-size: 14px;
+    }
+  }
+}

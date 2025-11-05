@@ -1,4 +1,15 @@
 // signup-flow.component.scss
+$primary-color: #1D4354;
+$primary-light: #2c5f75;
+$success-color: #10b981;
+$text-dark: #1a1a1a;
+$text-gray: #666666;
+$text-light: #999999;
+$border-color: #e0e0e0;
+$background-light: #f8f9fa;
+
+
+
 ion-content.signup-container {
   --background: #ffffff !important;
   color: white !important; // forcer le texte en blanc
@@ -708,4 +719,362 @@ body{
     .signup-container ion-select::part(text) {
   color: black !important;
   font-weight: 500;
+}
+
+.welcome-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 32px 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+// Illustration
+.illustration-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+
+  .phone-icon-wrapper {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, $primary-color 0%, $primary-light 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px rgba(29, 67, 84, 0.2);
+    animation: float 3s ease-in-out infinite;
+
+    .phone-icon {
+      font-size: 48px;
+      color: #ffffff;
+    }
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+// Description
+.welcome-description {
+  text-align: center;
+  margin-bottom: 32px;
+
+  .description-text {
+    font-size: 15px;
+    color: $text-gray;
+    line-height: 1.6;
+    margin: 0;
+  }
+}
+
+// Formulaire moderne
+.form-container-modern {
+  width: 100%;
+}
+
+.input-group-modern {
+  margin-bottom: 24px;
+
+  .input-label-modern {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: $text-dark;
+    margin-bottom: 8px;
+  }
+
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: $background-light;
+    border: 2px solid $border-color;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    overflow: hidden;
+
+
+    &:focus-within:not(.disabled) {
+      border-color: $primary-color;
+      background: black;
+      box-shadow: 0 0 0 4px rgba(29, 67, 84, 0.1);
+    }
+
+    &.disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .input-icon {
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      color: $text-gray;
+
+      ion-icon {
+        font-size: 20px;
+      }
+    }
+
+    ion-input {
+      --padding-start: 0;
+      --padding-end: 16px;
+      --padding-top: 14px;
+      --padding-bottom: 14px;
+
+      &::part(native) {
+        font-size: 16px;
+        color: $text-dark;
+      }
+    }
+  }
+
+  .input-helper {
+    font-size: 12px;
+    color: $text-light;
+    margin-top: 6px;
+    padding-left: 4px;
+  }
+}
+
+// Recaptcha
+.recaptcha-wrapper {
+  margin: 24px 0;
+  display: flex;
+  justify-content: center;
+}
+
+// Bouton principal modernisé
+.modern-primary-button {
+  --background: linear-gradient(135deg, #{$primary-color} 0%, #{$primary-light} 100%);
+  --background-hover: #{$primary-color};
+  --background-activated: #{$primary-color};
+  --border-radius: 12px;
+  --box-shadow: 0 4px 12px rgba(29, 67, 84, 0.3);
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+  height: auto;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: none;
+  margin: 0;
+
+  &::part(native) {
+    border-radius: 12px;
+  }
+
+  ion-icon {
+    font-size: 20px;
+  }
+
+  &.success-state {
+    --background: linear-gradient(135deg, #{$success-color} 0%, #059669 100%);
+    --box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  }
+}
+
+// Section de vérification du code
+.code-verification-section {
+  margin-top: 32px;
+  animation: slideIn 0.4s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.separator {
+  position: relative;
+  text-align: center;
+  margin: 24px 0;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: $border-color;
+  }
+
+  .separator-text {
+    position: relative;
+    display: inline-block;
+    padding: 0 16px;
+    background: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-gray;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+// Input du code
+.code-input-group {
+  margin-bottom: 24px;
+
+  .code-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: $text-dark;
+    margin-bottom: 12px;
+
+    ion-icon {
+      font-size: 18px;
+      color: $primary-color;
+    }
+  }
+
+  .code-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: $background-light;
+    border: 2px solid $border-color;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+
+    &:focus-within {
+      border-color: $primary-color;
+      background: black;
+      box-shadow: 0 0 0 4px rgba(29, 67, 84, 0.1);
+    }
+
+    ion-input {
+      --padding-start: 48px;
+      --padding-end: 16px;
+      --padding-top: 14px;
+      --padding-bottom: 14px;
+
+      &::part(native) {
+        font-size: 20px;
+        font-weight: 600;
+        letter-spacing: 4px;
+        color: $text-dark;
+      }
+
+      ion-icon[slot="start"] {
+        position: absolute;
+        left: 16px;
+        font-size: 20px;
+        color: $text-gray;
+      }
+    }
+  }
+
+  .code-helper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: $text-gray;
+    margin-top: 8px;
+    padding-left: 4px;
+
+    ion-icon {
+      font-size: 16px;
+      color: $primary-color;
+      flex-shrink: 0;
+    }
+  }
+}
+
+// Bouton de vérification
+.verify-button-modern {
+  --background: linear-gradient(135deg, #{$success-color} 0%, #059669 100%);
+  --background-hover: #{$success-color};
+  --background-activated: #{$success-color};
+  --border-radius: 12px;
+  --box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+  height: auto;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: none;
+  margin: 0;
+
+  &::part(native) {
+    border-radius: 12px;
+  }
+
+  ion-icon {
+    font-size: 20px;
+  }
+
+  &:not([disabled]):hover {
+    --box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+  }
+}
+
+// Section renvoi
+.resend-section {
+  margin-top: 24px;
+  text-align: center;
+
+  .resend-text {
+    font-size: 14px;
+    color: $text-gray;
+    margin: 0 0 8px 0;
+  }
+
+  .resend-link {
+    background: none;
+    border: none;
+    color: $primary-color;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: rgba(29, 67, 84, 0.1);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 576px) {
+  .welcome-card {
+    padding: 24px 16px;
+    border-radius: 16px;
+  }
+
+  .illustration-container .phone-icon-wrapper {
+    width: 80px;
+    height: 80px;
+
+    .phone-icon {
+      font-size: 40px;
+    }
+  }
+
+  .welcome-description .description-text {
+    font-size: 14px;
+  }
 }

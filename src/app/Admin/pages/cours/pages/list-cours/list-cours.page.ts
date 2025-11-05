@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AddCoursComponent } from 'src/app/Admin/component/add-cours/add-cours.component';
+import { Router } from '@angular/router';
 //import { Course } from '../../model/cours.interface';
 
 export interface Course {
@@ -34,6 +35,9 @@ export class ListCoursPage implements OnInit {
   currentPage: number = 1;
   itemsPerPage: number = 6;
   showAddCourseModal = false;
+
+
+  constructor(private router: Router) {}
 
   allCourses: Course[] = [
     {
@@ -208,6 +212,10 @@ export class ListCoursPage implements OnInit {
     'Data Science',
     'Sécurité',
   ];
+
+  goToDetail(course: Course) {
+    this.router.navigate(['/admin-login/cours', course.id]);
+  }
 
   filteredCourses: Course[] = [];
   paginatedCourses: Course[] = [];
