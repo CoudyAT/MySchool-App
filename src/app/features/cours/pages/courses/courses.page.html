@@ -2,6 +2,14 @@
   <ion-toolbar>
     <div class="header-content">
       <img src="assets/logo.svg" alt="MySchool Logo" class="logo" />
+      <ion-button
+        fill="clear"
+        color="danger"
+        (click)="logout()"
+        class="logout-button"
+      >
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
     </div>
   </ion-toolbar>
 </ion-header>

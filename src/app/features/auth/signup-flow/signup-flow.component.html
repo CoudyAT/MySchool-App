@@ -43,20 +43,6 @@
     <!-- Step 1: Welcome -->
 <div *ngIf="currentStep === 0" class="step-content active">
   <div class="welcome-card">
-    <!-- Illustration
-    <div class="illustration-container">
-      <div class="phone-icon-wrapper">
-        <ion-icon name="phone-portrait-outline" class="phone-icon"></ion-icon>
-      </div>
-    </div>  -->
-
-    <!-- Description
-    <div class="welcome-description">
-      <p class="description-text">
-        Nous allons vous envoyer un code de vérification par SMS pour sécuriser votre compte
-      </p>
-    </div>  -->
-
     <!-- Formulaire -->
     <form [formGroup]="welcomeForm" class="form-container-modern">
       <!-- Input téléphone modernisé -->
@@ -210,15 +196,29 @@
         <div class="form-group">
           <ion-item 
             class="custom-item"
-            [class.item-error]="isFieldInvalid(personalInfoForm, 'birthDate')">
+            [class.item-error]="isFieldInvalid(personalInfoForm, 'birthDate')"
+            (click)="openDatePicker()">
             <ion-label position="stacked">Date de naissance</ion-label>
             <ion-input
-              type="date"
-              formControlName="birthDate"
+              readonly
+              [value]="getFormattedDate()"
+              placeholder="Sélectionnez votre date de naissance"
               class="custom-input">
-              <ion-icon name="calendar" slot="start"></ion-icon>
+              <ion-icon name="calendar-outline" slot="start"></ion-icon>
             </ion-input>
           </ion-item>
+          
+          <!-- Input caché pour le sélecteur -->
+          <input
+            #dateInput
+            type="date"
+            formControlName="birthDate"
+            [max]="maxDate"
+            [min]="minDate"
+            style="position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0;"
+            (change)="onDateChange($event)"
+          />
+          
           <div class="error-text" *ngIf="isFieldInvalid(personalInfoForm, 'birthDate')">
             {{ getFieldError(personalInfoForm, 'birthDate') }}
           </div>
@@ -255,20 +255,22 @@
     <div *ngIf="currentStep === 2" class="step-content active">
       <form [formGroup]="userInfoForm" class="form-container">
         <div class="form-group">
-          <ion-item 
-            class="custom-item"
-            [class.item-error]="isFieldInvalid(userInfoForm, 'country')">
-            <ion-label position="stacked">Pays / Ville</ion-label>
-            <ion-select 
-              formControlName="country" 
-              placeholder="Sélectionnez votre pays"
-              class="custom-select">
-              <ion-icon name="location" slot="start"></ion-icon>
-              <ion-select-option *ngFor="let country of countries" [value]="country">
-                {{ country }}
-              </ion-select-option>
-            </ion-select>
-          </ion-item>
+            <ion-item 
+              class="custom-item"
+              [class.item-error]="isFieldInvalid(userInfoForm, 'country')">
+              <ion-label position="stacked">Pays / Ville</ion-label>
+              <ion-select 
+                formControlName="country" 
+                placeholder="Sélectionnez votre pays"
+                class="custom-select">
+
+                <ion-select-option *ngFor="let item of countries" [value]="item.country">
+                  <img [src]="item.flag" alt="{{ item.country }}" width="20" height="14" style="margin-right:8px;">
+                  {{ item.country }}
+                </ion-select-option>
+
+              </ion-select>
+            </ion-item>
           <div class="error-text" *ngIf="isFieldInvalid(userInfoForm, 'country')">
             {{ getFieldError(userInfoForm, 'country') }}
           </div>
@@ -291,25 +293,6 @@
             {{ getFieldError(userInfoForm, 'address') }}
           </div>
         </div>
-<!-- 
-        <div class="form-group">
-          <ion-item 
-            class="custom-item"
-            [class.item-error]="isFieldInvalid(userInfoForm, 'phone')">
-            <ion-label position="stacked">Numéro de téléphone</ion-label>
-            <ion-input
-              type="tel"
-              formControlName="phone"
-              placeholder="+221 77 123 45 67"
-              class="custom-input">
-              <ion-icon name="call" slot="start"></ion-icon>
-            </ion-input>
-          </ion-item>
-          <div class="error-text" *ngIf="isFieldInvalid(userInfoForm, 'phone')">
-            {{ getFieldError(userInfoForm, 'phone') }}
-          </div>
-        </div>
--->
         <div class="form-group">
           <ion-item 
             class="custom-item"
@@ -345,66 +328,34 @@
       </form>
     </div>
 
-    <!-- Step 4: Objectives
-    <div *ngIf="currentStep === 3" class="step-content active">
-      <div class="objectives-container">
-        <div class="objectives-grid">
-          <ion-card
-            *ngFor="let objective of availableObjectives"
-            class="objective-card"
-            [class.selected]="objective.selected"
-            (click)="toggleObjective(objective.id)"
-            button="true">
-            <ion-card-content class="objective-content">
-              <div class="objective-icon">
-                <ion-icon [name]="objective.icon"></ion-icon>
-              </div>
-              <div class="objective-text">
-                {{ objective.label }}
-              </div>
-              <div class="selection-indicator" *ngIf="objective.selected">
-                <ion-icon name="checkmark-circle" color="primary"></ion-icon>
-              </div>
-            </ion-card-content>
-          </ion-card>
-        </div>
-        
-        <div class="selection-summary" *ngIf="getSelectedObjectivesCount() > 0">
-          <p class="summary-text">
-            {{ getSelectedObjectivesCount() }} objectif(s) sélectionné(s)
-          </p>
-        </div>
-      </div>
-    </div>  -->
-
     <!-- Step 4: Objectives -->
-<div *ngIf="currentStep === 3" class="step-content active">
-  <div class="objectives-container">
-    <div class="objectives-grid">
-      <button
-        *ngFor="let objective of availableObjectives"
-        class="objective-chip"
-        [class.selected]="objective.selected"
-        (click)="toggleObjective(objective.id)">
-        
-        <ion-icon [name]="objective.icon" class="chip-icon"></ion-icon>
-        <span class="chip-label">{{ objective.label }}</span>
+  <div *ngIf="currentStep === 3" class="step-content active">
+    <div class="objectives-container">
+      <div class="objectives-grid">
+        <button
+          *ngFor="let objective of availableObjectives"
+          class="objective-chip"
+          [class.selected]="objective.selected"
+          (click)="toggleObjective(objective.id)">
+          
+          <ion-icon [name]="objective.icon" class="chip-icon"></ion-icon>
+          <span class="chip-label">{{ objective.label }}</span>
 
-        <ion-icon
-          *ngIf="objective.selected"
-          name="checkmark-circle"
-          class="chip-check">
-        </ion-icon>
-      </button>
-    </div>
+          <ion-icon
+            *ngIf="objective.selected"
+            name="checkmark-circle"
+            class="chip-check">
+          </ion-icon>
+        </button>
+      </div>
 
-    <div class="selection-summary" *ngIf="getSelectedObjectivesCount() > 0">
-      <p class="summary-text">
-        {{ getSelectedObjectivesCount() }} objectif(s) sélectionné(s)
-      </p>
+      <div class="selection-summary" *ngIf="getSelectedObjectivesCount() > 0">
+        <p class="summary-text">
+          {{ getSelectedObjectivesCount() }} objectif(s) sélectionné(s)
+        </p>
+      </div>
     </div>
   </div>
-</div>
 
   </div>
 

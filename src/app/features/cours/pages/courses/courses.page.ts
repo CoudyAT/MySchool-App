@@ -6,6 +6,9 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ToastController } from '@ionic/angular';
+import { signOut } from 'firebase/auth';
+import { Auth } from '@angular/fire/auth';
 
 // Import Swiper
 import { register } from 'swiper/element/bundle';
@@ -23,7 +26,12 @@ import {
 import { BottomMenuComponent } from 'src/app/shared/components/bottom-menu/bottom-menu.component';
 
 import { addIcons } from 'ionicons';
-import { addOutline } from 'ionicons/icons';
+import {
+  addOutline,
+  logOutOutline,
+  arrowForwardOutline,
+  ribbonOutline,
+} from 'ionicons/icons';
 import { Router } from '@angular/router';
 
 @Component({
@@ -61,8 +69,12 @@ export class CoursesPage implements OnInit, AfterViewInit {
     },
   };
 
-  constructor(private router: Router) {
-    addIcons({ addOutline });
+  constructor(
+    private router: Router,
+    private toastCtrl: ToastController,
+    private auth: Auth
+  ) {
+    addIcons({ logOutOutline, addOutline, arrowForwardOutline, ribbonOutline });
   }
 
   ngOnInit() {}
@@ -98,5 +110,28 @@ export class CoursesPage implements OnInit, AfterViewInit {
 
   goToCoursesPage() {
     this.router.navigate(['/mes-cours']);
+  }
+
+  async logout() {
+    try {
+      await signOut(this.auth);
+      const toast = await this.toastCtrl.create({
+        message: 'Déconnexion  ✅',
+        duration: 2000,
+        color: 'success',
+      });
+      await toast.present();
+
+      // Redirection après déconnexion
+      this.router.navigate(['/signup'], { replaceUrl: true });
+    } catch (error) {
+      console.error('Erreur de déconnexion :', error);
+      const toast = await this.toastCtrl.create({
+        message: 'Erreur lors de la déconnexion ❌',
+        duration: 2000,
+        color: 'danger',
+      });
+      await toast.present();
+    }
   }
 }
