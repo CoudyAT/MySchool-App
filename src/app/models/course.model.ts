@@ -50,4 +50,9 @@ export interface Course {
   chapters: Chapter[]; // Relation avec les chapitres
   createdAt: Date;
   updatedAt: Date;
+  levels?: Array<{
+    icon: string;
+    completed: boolean;
+  }>;
+  maxRating?: number;
 }

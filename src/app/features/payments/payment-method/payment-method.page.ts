@@ -1,8 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonIcon, IonButton } 
- from '@ionic/angular/standalone';
+import {
+  IonContent,
+  IonHeader,
+  IonTitle,
+  IonToolbar,
+  IonButtons,
+  IonIcon,
+  IonButton,
+} from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { addIcons } from 'ionicons';
 import { cardOutline, chevronBackOutline } from 'ionicons/icons';
@@ -20,11 +27,16 @@ import { cardOutline, chevronBackOutline } from 'ionicons/icons';
     IonToolbar,
     CommonModule,
     FormsModule,
-    IonButton
-] 
+    IonButton,
+  ],
 })
 export class PaymentMethodPage implements OnInit {
   selectedPlan: any;
+
+  // ⭐ AJOUTEZ CES PROPRIÉTÉS
+  courseId: string = '';
+  courseTitle: string = '';
+  courseImage: string = '';
 
   paymentMethods = [
     {
@@ -68,7 +80,24 @@ export class PaymentMethodPage implements OnInit {
     // Récupérer le plan sélectionné depuis la navigation
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras?.state) {
+      console.log(
+        '🔍 PaymentMethodPage - State reçu:',
+        navigation.extras.state
+      );
+
       this.selectedPlan = navigation.extras.state['plan'];
+
+      // ⭐ RÉCUPÉREZ LES DONNÉES DU COURS
+      this.courseId = navigation.extras.state['courseId'];
+      this.courseTitle = navigation.extras.state['courseTitle'];
+      this.courseImage = navigation.extras.state['courseImage'];
+
+      console.log('📋 PaymentMethodPage - Données extraites:', {
+        plan: this.selectedPlan,
+        courseId: this.courseId,
+        courseTitle: this.courseTitle,
+        courseImage: this.courseImage,
+      });
     }
   }
 
@@ -79,11 +108,23 @@ export class PaymentMethodPage implements OnInit {
   }
 
   selectPaymentMethod(method: any) {
-    console.log('Méthode de paiement sélectionnée:', method);
-    console.log('Plan:', this.selectedPlan);
-   // Rediriger vers la page de paiement appropriée
+    console.log('🔍 PaymentMethodPage - Données avant navigation:', {
+      method,
+      plan: this.selectedPlan,
+      courseId: this.courseId,
+      courseTitle: this.courseTitle,
+      courseImage: this.courseImage,
+    });
+
+    // ⭐ PASSEZ TOUTES LES DONNÉES À PaymentVerifyPage
     this.router.navigate(['/payment-verify'], {
-      state: { method, plan: this.selectedPlan },
+      state: {
+        method,
+        plan: this.selectedPlan,
+        courseId: this.courseId,
+        courseTitle: this.courseTitle,
+        courseImage: this.courseImage,
+      },
     });
   }
 }

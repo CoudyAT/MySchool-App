@@ -67,6 +67,11 @@ export class SubscriptionPlansPage implements OnInit {
     },
   ];
 
+  // ⭐ AJOUTEZ CES PROPRIÉTÉS
+  courseId: string = '';
+  courseTitle: string = '';
+  courseImage: string = '';
+
   constructor(private router: Router, private location: Location) {
     // Enregistrer les icônes
     addIcons({
@@ -75,6 +80,25 @@ export class SubscriptionPlansPage implements OnInit {
       'business-outline': businessOutline,
       'checkmark-circle': checkmarkCircle,
     });
+
+    // ⭐ RÉCUPÉREZ LES DONNÉES DU COURS DEPUIS LA NAVIGATION
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation?.extras?.state) {
+      console.log(
+        '🔍 SubscriptionPlansPage - State reçu:',
+        navigation.extras.state
+      );
+
+      this.courseId = navigation.extras.state['courseId'];
+      this.courseTitle = navigation.extras.state['courseTitle'];
+      this.courseImage = navigation.extras.state['courseImage'];
+
+      console.log('📋 SubscriptionPlansPage - Données extraites:', {
+        courseId: this.courseId,
+        courseTitle: this.courseTitle,
+        courseImage: this.courseImage,
+      });
+    }
   }
 
   ngOnInit() {}
@@ -84,8 +108,21 @@ export class SubscriptionPlansPage implements OnInit {
   }
 
   selectPlan(plan: any) {
-    console.log('Plan sélectionné:', plan);
-    // Rediriger vers la page de paiement ou traiter l'inscription
-     this.router.navigate(['/payment-method'], { state: { plan } });
+    console.log('🔍 SubscriptionPlansPage - Données avant navigation:', {
+      plan,
+      courseId: this.courseId,
+      courseTitle: this.courseTitle,
+      courseImage: this.courseImage,
+    });
+
+    // ⭐ PASSEZ TOUTES LES DONNÉES À PaymentMethodPage
+    this.router.navigate(['/payment-method'], {
+      state: {
+        plan,
+        courseId: this.courseId,
+        courseTitle: this.courseTitle,
+        courseImage: this.courseImage,
+      },
+    });
   }
 }

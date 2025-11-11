@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Subscription } from 'rxjs';
 import {
   IonContent,
   IonHeader,
@@ -13,9 +14,25 @@ import {
   IonIcon,
   IonSearchbar,
   IonButtons,
+  IonSpinner,
 } from '@ionic/angular/standalone';
-import { arrowBackOutline, checkmarkCircle, chevronBackOutline, flagOutline, helpCircleOutline, languageOutline, star, starHalf, starOutline, timeOutline, trophyOutline } from 'ionicons/icons';
+import {
+  arrowBackOutline,
+  checkmarkCircle,
+  chevronBackOutline,
+  flagOutline,
+  helpCircleOutline,
+  languageOutline,
+  star,
+  starHalf,
+  starOutline,
+  timeOutline,
+  trophyOutline,
+} from 'ionicons/icons';
 import { addIcons } from 'ionicons';
+import { CourseService } from 'src/app/features/services/courseService';
+import { Course } from 'src/app/models/course.model';
+
 @Component({
   selector: 'app-cours-detail',
   templateUrl: './cours-detail.page.html',
@@ -26,70 +43,118 @@ import { addIcons } from 'ionicons';
     IonHeader,
     CommonModule,
     FormsModule,
-    CommonModule,
-    FormsModule,
     IonButton,
     IonIcon,
     IonTitle,
     IonToolbar,
     IonButtons,
-    IonTitle,
-    IonToolbar,
     RouterModule,
     IonCard,
     IonCardContent,
+    IonSpinner,
   ],
 })
-export class CoursDetailPage implements OnInit {
-  course = {
-    id: 1,
-    title: 'Algorithme',
-    category: 'Maths au collège',
-    sessions: 25,
-    exercises: 15,
-    language: 'Français',
-    instructor: 'René DIATTA',
-    rating: 4.5,
-    maxRating: 5.0,
-    image: 'assets/images/algorithme1.jpg',
-    certificateAvailable: true,
-    description:
-      "Ce cours d'Algorithme en mathématiques a pour objectif d'initier les apprenants aux méthodes de raisonnement logique et aux techniques de résolution de problèmes. À travers des exercices pratiques et progressifs, vous développerez votre capacité à analyser des situations complexes et à concevoir des solutions algorithmiques efficaces.",
-    levels: [
-      { icon: 'flag-outline', completed: true },
-      { icon: 'time-outline', completed: false },
-      { icon: 'help-circle-outline', completed: false },
-      { icon: 'help-circle-outline', completed: false },
-      { icon: 'trophy-outline', completed: false },
-    ],
-  };
+export class CoursDetailPage implements OnInit, OnDestroy {
+  course: Course | null = null;
+  isLoading = true;
+  private courseSubscription: Subscription = new Subscription();
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private location: Location
+    private location: Location,
+    private courseService: CourseService
   ) {
     // Enregistrer toutes les icônes nécessaires
     addIcons({
+      chevronBackOutline,
+      languageOutline,
       star,
-      'star-half': starHalf,
-      'star-outline': starOutline,
-      'checkmark-circle': checkmarkCircle,
-      'language-outline': languageOutline,
-      'flag-outline': flagOutline,
-      'time-outline': timeOutline,
-      'help-circle-outline': helpCircleOutline,
-      'trophy-outline': trophyOutline,
-      'chevron-back-outline': chevronBackOutline,
-      'arrow-back-outline': arrowBackOutline,
+      starHalf,
+      starOutline: starOutline,
+      checkmarkCircle: checkmarkCircle,
+      flagOutline: flagOutline,
+      timeOutline: timeOutline,
+      helpCircleOutline: helpCircleOutline,
+      trophyOutline: trophyOutline,
+      arrowBackOutline: arrowBackOutline,
     });
   }
 
   ngOnInit() {
-    // Récupérer l'ID du cours depuis les paramètres de route
+    this.loadCourseDetails();
+  }
+
+  ngOnDestroy() {
+    this.courseSubscription.unsubscribe();
+  }
+
+  loadCourseDetails() {
     const courseId = this.route.snapshot.paramMap.get('id');
-    console.log('Course ID:', courseId);
-    // Ici vous pouvez charger les détails du cours depuis un service
+
+    if (courseId) {
+      console.log('Loading course details for ID:', courseId);
+
+      this.courseSubscription = this.courseService
+        .getCourse(courseId)
+        .subscribe({
+          next: (courseData) => {
+            if (courseData) {
+              this.course = {
+                ...courseData,
+                // Assurer que les propriétés optionnelles ont des valeurs par défaut
+                levels: courseData.levels || this.getDefaultLevels(),
+                rating: courseData.rating || 0,
+                maxRating: courseData.maxRating || 5,
+                image: courseData.image || 'assets/images/default-course.jpg',
+              };
+              console.log('Course loaded:', this.course);
+            } else {
+              console.error('Course not found');
+              // Rediriger vers la page des cours ou afficher un message d'erreur
+              this.router.navigate(['/mes-cours']);
+            }
+            this.isLoading = false;
+          },
+          error: (error) => {
+            console.error('Error loading course:', error);
+            this.isLoading = false;
+            // Gérer l'erreur (afficher un message, rediriger, etc.)
+          },
+        });
+    } else {
+      console.error('No course ID provided');
+      this.router.navigate(['/mes-cours']);
+    }
+  }
+
+  // Méthode pour générer les niveaux par défaut si non fournis
+  private getDefaultLevels() {
+    return [
+      { icon: 'flag-outline', completed: false },
+      { icon: 'time-outline', completed: false },
+      { icon: 'help-circle-outline', completed: false },
+      { icon: 'help-circle-outline', completed: false },
+      { icon: 'trophy-outline', completed: false },
+    ];
+  }
+
+  // Générer les étoiles pour l'affichage
+  getStars(rating: number, maxRating: number = 5) {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+
+    for (let i = 1; i <= maxRating; i++) {
+      if (i <= fullStars) {
+        stars.push('full');
+      } else if (i === fullStars + 1 && hasHalfStar) {
+        stars.push('half');
+      } else {
+        stars.push('empty');
+      }
+    }
+    return stars;
   }
 
   goBack() {
@@ -97,9 +162,22 @@ export class CoursDetailPage implements OnInit {
   }
 
   enrollNow() {
-    console.log("S'inscrire au cours:", this.course.title);
-    this.router.navigate(['/subscription-plans']);
+    if (this.course) {
+      console.log("S'inscrire au cours:", this.course.title);
+      console.log('🔍 CoursDetailPage - Données avant navigation:', {
+        courseId: this.course.id,
+        courseTitle: this.course.title,
+        courseImage: this.course.image,
+      });
+
+      // ⭐ CORRECTION: PASSEZ LES DONNÉES DU COURS DANS LE STATE
+      this.router.navigate(['/subscription-plans'], {
+        state: {
+          courseId: this.course.id,
+          courseTitle: this.course.title,
+          courseImage: this.course.image || 'assets/images/default-course.jpg',
+        },
+      });
+    }
   }
-
-
 }

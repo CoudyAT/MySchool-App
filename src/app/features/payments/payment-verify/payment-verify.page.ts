@@ -12,13 +12,15 @@ import {
   IonRadio,
   IonRadioGroup,
 } from '@ionic/angular/standalone';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   cardOutline,
   checkmarkCircle,
   chevronBackOutline,
 } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
+import { PaymentData } from 'src/app/models/payment.model';
+import { EnrollmentService } from '../../services/enrollmentService';
 
 interface PaymentMethod {
   id: string;
@@ -54,6 +56,9 @@ export class PaymentVerifyPage implements OnInit {
   selectedPlan: any;
   selectedMethod: any;
   selectedPaymentOption: string = '';
+  courseId: string = '';
+  courseTitle: string = '';
+  courseImage: string = '';
 
   // Informations du résumé
   summary = {
@@ -103,7 +108,42 @@ export class PaymentVerifyPage implements OnInit {
   // Méthodes de paiement à afficher (celle sélectionnée + une autre)
   displayedPaymentMethods: PaymentMethod[] = [];
 
-  constructor(private router: Router, private location: Location) {
+  // constructor(private router: Router, private location: Location) {
+  //   addIcons({
+  //     'chevron-back-outline': chevronBackOutline,
+  //     'card-outline': cardOutline,
+  //     'checkmark-circle': checkmarkCircle,
+  //   });
+
+  //   // Récupérer les données de navigation
+  //   const navigation = this.router.getCurrentNavigation();
+  //   if (navigation?.extras?.state) {
+  //     this.selectedPlan = navigation.extras.state['plan'];
+  //     this.selectedMethod = navigation.extras.state['method'];
+
+  //     // Mettre à jour le résumé en fonction du plan
+  //     if (this.selectedPlan) {
+  //       this.summary.formula = `Formule ${this.selectedPlan.type}`;
+  //       this.summary.price = this.selectedPlan.price;
+  //       this.calculateTotal();
+  //     }
+
+  //     // Configurer les méthodes de paiement affichées
+  //     if (this.selectedMethod) {
+  //       this.selectedPaymentOption = this.selectedMethod.id;
+  //       this.setupDisplayedMethods();
+  //     }
+  //   }
+  // }
+
+  ngOnInit() {}
+
+  constructor(
+    private router: Router,
+    private location: Location,
+    private route: ActivatedRoute,
+    private enrollmentService: EnrollmentService
+  ) {
     addIcons({
       'chevron-back-outline': chevronBackOutline,
       'card-outline': cardOutline,
@@ -115,6 +155,11 @@ export class PaymentVerifyPage implements OnInit {
     if (navigation?.extras?.state) {
       this.selectedPlan = navigation.extras.state['plan'];
       this.selectedMethod = navigation.extras.state['method'];
+      console.log("navigation extras state:", navigation.extras.state);
+      
+      this.courseId = navigation.extras.state['courseId'];
+      this.courseTitle = navigation.extras.state['courseTitle'];
+      this.courseImage = navigation.extras.state['courseImage'];
 
       // Mettre à jour le résumé en fonction du plan
       if (this.selectedPlan) {
@@ -130,8 +175,6 @@ export class PaymentVerifyPage implements OnInit {
       }
     }
   }
-
-  ngOnInit() {}
 
   setupDisplayedMethods() {
     // Trouver la méthode sélectionnée
@@ -179,22 +222,58 @@ export class PaymentVerifyPage implements OnInit {
     this.selectedPaymentOption = methodId;
   }
 
-  proceedToPayment() {
+  // proceedToPayment() {
+  //   const selectedMethod = this.allPaymentMethods.find(
+  //     (m) => m.id === this.selectedPaymentOption
+  //   );
+
+  //   console.log('Procéder au paiement');
+  //   console.log('Plan:', this.selectedPlan);
+  //   console.log('Méthode:', selectedMethod);
+  //   console.log('Total:', this.summary.total);
+  //   // Rediriger vers la page de traitement du paiement
+  //   this.router.navigate(['/course-video'], {
+  //     state: {
+  //       plan: this.selectedPlan,
+  //       method: selectedMethod,
+  //       amount: this.summary.total,
+  //     },
+  //   });
+  // }
+
+  async proceedToPayment() {
     const selectedMethod = this.allPaymentMethods.find(
       (m) => m.id === this.selectedPaymentOption
     );
+    console.log("courseId dans payment-verify", this.courseId);
+    
 
-    console.log('Procéder au paiement');
-    console.log('Plan:', this.selectedPlan);
-    console.log('Méthode:', selectedMethod);
-    console.log('Total:', this.summary.total);
-   // Rediriger vers la page de traitement du paiement
-    this.router.navigate(['/course-video'], {
-      state: {
+    try {
+      // Créer l'enregistrement de paiement
+      const paymentData: PaymentData = {
         plan: this.selectedPlan,
         method: selectedMethod,
         amount: this.summary.total,
-      },
-    });
+        courseId: this.courseId,
+        courseTitle: this.courseTitle,
+        courseImage: this.courseImage,
+      };
+
+      await this.enrollmentService.createEnrollment(paymentData);
+
+      console.log('✅ Paiement enregistré avec succès');
+
+      // Rediriger vers la page du cours
+      this.router.navigate(['/course-video'], {
+        state: {
+          courseId: this.courseId,
+          enrollmentSuccess: true,
+        },
+        replaceUrl: true,
+      });
+    } catch (error) {
+      console.error('❌ Erreur lors du paiement:', error);
+      // Afficher un message d'erreur
+    }
   }
 }

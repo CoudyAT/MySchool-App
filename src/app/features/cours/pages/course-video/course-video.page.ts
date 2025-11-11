@@ -73,7 +73,7 @@ export class CourseVideoPage implements OnInit {
   ngOnInit() {}
 
   goBack() {
-    this.location.back();
+    this.router.navigate(['/courses']);
   }
 
   startCourse() {
