@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
+import { InitializationService } from './Admin/services/initializationService';
 
 @Component({
   selector: 'app-root',
@@ -7,5 +8,10 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
   imports: [IonApp, IonRouterOutlet],
 })
 export class AppComponent {
-  constructor() {}
+  private fixturesService = inject(InitializationService);
+
+  constructor() {
+    // Lance le chargement des fixtures en arrière-plan
+ //   this.fixturesService.loadFixturesInBackground();
+  }
 }

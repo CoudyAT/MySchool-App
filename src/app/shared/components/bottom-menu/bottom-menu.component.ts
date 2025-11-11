@@ -5,35 +5,42 @@ import { IonFooter, IonToolbar, IonIcon } from '@ionic/angular/standalone';
 
 // Import des icônes
 import { addIcons } from 'ionicons';
-import { bookOutline, chatbubblesOutline, trophyOutline } from 'ionicons/icons';
+import {
+  bookOutline,
+  chatbubblesOutline,
+  trophyOutline,
+  homeOutline,
+} from 'ionicons/icons';
 
 @Component({
   selector: 'app-bottom-menu',
   templateUrl: './bottom-menu.component.html',
   styleUrls: ['./bottom-menu.component.scss'],
   standalone: true,
-  imports: [
-    CommonModule, // Important pour [class.active]
-    IonFooter,
-    IonToolbar,
-    IonIcon,
-  ],
+  imports: [CommonModule, IonFooter, IonToolbar, IonIcon],
 })
 export class BottomMenuComponent {
-  @Input() activePage: string = 'courses';
+  @Input() activePage: string | undefined // Changez la valeur par défaut
 
   constructor(private router: Router) {
     // Ajout des icônes au composant
-    addIcons({
-      bookOutline,
-      chatbubblesOutline,
-      trophyOutline,
-    });
+    addIcons({ homeOutline, bookOutline, chatbubblesOutline, trophyOutline });
   }
 
   navigateTo(page: string) {
     if (page !== this.activePage) {
-      this.router.navigate([`/${page}`]);
+      // Mappage des routes
+      const routes: { [key: string]: string } = {
+        home: '/courses', // Accueil → CoursesPage
+        courses: '/mes-cours', // Cours → MesCoursPage
+        messages: '/messages', // Messages → Page messages
+        achievements: '/achievements', // Réussites → Page réussites
+      };
+
+      const route = routes[page];
+      if (route) {
+        this.router.navigate([route]);
+      }
     }
   }
 }

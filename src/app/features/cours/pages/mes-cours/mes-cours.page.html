@@ -6,7 +6,7 @@
     </div>
 
     <!-- Titre -->
-    <h1 class="main-title">Mes cours</h1>
+    <h1 class="main-title">Les cours</h1>
 
     <!-- Barre de recherche et filtres -->
     <div class="search-filter-container">
@@ -41,9 +41,9 @@
             </div>
           </div>
           <ion-card-content>
-            <div class="status-badge">
-              <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
-              <span>Certificat disponible</span>
+           <div *ngIf="course.certificateAvailable" class="status-badge">
+                  <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
+                  <span>Certificat disponible</span>
             </div>
             <h3 class="course-title">{{course.title}}</h3>
             <div class="course-info">
@@ -69,10 +69,10 @@
             </div>
           </div>
           <ion-card-content>
-            <div class="status-badge">
-              <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
-              <span>Certificat disponible</span>
-            </div>
+            <div *ngIf="course.certificateAvailable" class="status-badge">
+                  <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
+                  <span>Certificat disponible</span>
+              </div>
             <h3 class="course-title">{{course.title}}</h3>
             <div class="course-info">
               <span class="sessions">{{course.sessions}} Sessions</span>
@@ -97,9 +97,9 @@
             </div>
           </div>
           <ion-card-content>
-            <div class="status-badge">
-              <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
-              <span>Certificat disponible</span>
+            <div *ngIf="course.certificateAvailable" class="status-badge">
+                  <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
+                  <span>Certificat disponible</span>
             </div>
             <h3 class="course-title">{{course.title}}</h3>
             <div class="course-info">
@@ -113,3 +113,4 @@
     </div>
   </div>
 </ion-content>
+<app-bottom-menu activePage="courses"></app-bottom-menu>

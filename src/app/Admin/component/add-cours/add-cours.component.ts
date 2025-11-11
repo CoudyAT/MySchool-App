@@ -1,13 +1,15 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-add-cours',
   templateUrl: './add-cours.component.html',
   styleUrls: ['./add-cours.component.scss'],
   standalone: true,
+  imports: [CommonModule, ReactiveFormsModule], // ← Ajoutez CommonModule
 })
-export class AddCoursComponent   {
+export class AddCoursComponent {
   @Output() formSubmit = new EventEmitter<any>();
 
   courseForm: FormGroup;
@@ -22,7 +24,7 @@ export class AddCoursComponent   {
       image: [''],
       sessions: [0],
       exercises: [0],
-      certificateAvailable: [false]
+      certificateAvailable: [false],
     });
   }
 
@@ -35,7 +37,7 @@ export class AddCoursComponent   {
   }
 
   private markAllAsTouched() {
-    Object.keys(this.courseForm.controls).forEach(key => {
+    Object.keys(this.courseForm.controls).forEach((key) => {
       this.courseForm.get(key)?.markAsTouched();
     });
   }

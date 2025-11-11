@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Subscription } from 'rxjs'; 
 import {
   IonContent,
   IonHeader,
@@ -13,16 +14,11 @@ import {
   IonSearchbar,
 } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
+import { Course } from 'src/app/models/course.model';
+import { CourseService } from 'src/app/features/services/courseService';
+import { BottomMenuComponent } from "src/app/shared/components/bottom-menu/bottom-menu.component";
 
-interface Course {
-  id: number;
-  category: string;
-  title: string;
-  sessions: number;
-  exercises: number;
-  image: string;
-  available: boolean;
-}
+
 @Component({
   selector: 'app-mes-cours',
   templateUrl: './mes-cours.page.html',
@@ -40,72 +36,85 @@ interface Course {
     IonCard,
     IonIcon,
     IonCardContent,
-  ],
+    BottomMenuComponent
+],
 })
 export class MesCoursPage implements OnInit {
-  courses: Course[] = [
-    {
-      id: 1,
-      category: 'Maths au collège',
-      title: 'Algorithme',
-      sessions: 25,
-      exercises: 15,
-      image: 'assets/images/algorithme1.jpg',
-      available: true,
-    },
-    {
-      id: 2,
-      category: 'Maths au collège',
-      title: 'Algorithme',
-      sessions: 30,
-      exercises: 8,
-      image: 'assets/images/algorithme2.jpg',
-      available: true,
-    },
-    {
-      id: 3,
-      category: 'PC au collège',
-      title: 'Physique',
-      sessions: 59,
-      exercises: 10,
-      image: 'assets/images/physique.jpg',
-      available: true,
-    },
-    {
-      id: 4,
-      category: 'PC au collège',
-      title: 'Chimie',
-      sessions: 75,
-      exercises: 9,
-      image: 'assets/images/chimie.jpg',
-      available: true,
-    },
-    {
-      id: 5,
-      category: 'Sciences de la Vie et de la Terre',
-      title: 'Les Organes',
-      sessions: 59,
-      exercises: 10,
-      image: 'assets/images/organes.jpg',
-      available: true,
-    },
-    {
-      id: 6,
-      category: 'Sciences de la Vie et de la Terre',
-      title: "L'ecosystème",
-      sessions: 75,
-      exercises: 9,
-      image: 'assets/images/ecosysteme.jpg',
-      available: true,
-    },
-  ];
+  courses: Course[] = [];
+  filteredCourses: Course[] = [];
+  categories: string[] = [];
 
-  constructor(private router: Router) {}
+  private subscription: Subscription = new Subscription();
+  isLoading = true;
 
-  ngOnInit() {}
+  constructor(private router: Router, private courseService: CourseService) {}
 
-  searchCourse() {
-    console.log('Rechercher un cours');
+  ngOnInit() {
+    this.loadCourses();
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
+
+  loadCourses() {
+    this.isLoading = true;
+
+    const coursesSub = this.courseService.getCourses().subscribe({
+      next: (firestoreCourses) => {
+        // Transformer les données Firestore en format compatible
+        this.courses = firestoreCourses;
+        this.filteredCourses = [...this.courses];
+
+        // Extraire les catégories uniques
+        this.categories = [
+          ...new Set(this.courses.map((course) => course.category)),
+        ];
+
+        this.isLoading = false;
+        console.log('📚 Cours chargés:', this.courses.length);
+      },
+      error: (error) => {
+        console.error('❌ Erreur chargement cours:', error);
+        this.isLoading = false;
+      },
+    });
+
+    this.subscription.add(coursesSub);
+  }
+
+  // Transformer les données Firestore en format compatible
+  // private transformCourses(firestoreCourses: Course[]): Course[] {
+  //   return firestoreCourses.map((course) => ({
+  //     id: course.id,
+  //     category: course.category,
+  //     title: course.title,
+  //     sessions: course.sessions,
+  //     exercises: course.exercises,
+  //     image: course.image,
+  //     available: course.isPublished,
+  //     certificateAvailable: course.certificateAvailable,
+  //   }));
+  // }
+
+  // Filtrer les cours par catégorie
+  getCoursesByCategory(category: string): Course[] {
+    return this.courses.filter((course) => course.category === category);
+  }
+
+  searchCourse(event?: any) {
+    const searchTerm = event?.detail?.value?.toLowerCase() || '';
+
+    if (!searchTerm) {
+      this.filteredCourses = [...this.courses];
+      return;
+    }
+
+    this.filteredCourses = this.courses.filter(
+      (course) =>
+        course.title.toLowerCase().includes(searchTerm) ||
+        course.category.toLowerCase().includes(searchTerm)
+    );
   }
 
   openFilters() {

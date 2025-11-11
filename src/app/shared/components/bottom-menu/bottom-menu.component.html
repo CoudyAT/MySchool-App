@@ -3,6 +3,14 @@
     <div class="menu-container">
       <div 
         class="menu-item" 
+        [class.active]="activePage === 'home'"
+        (click)="navigateTo('home')">
+        <ion-icon name="home-outline"></ion-icon>
+        <span class="menu-label">Accueil</span>
+      </div>
+      
+      <div 
+        class="menu-item" 
         [class.active]="activePage === 'courses'"
         (click)="navigateTo('courses')">
         <ion-icon name="book-outline"></ion-icon>
