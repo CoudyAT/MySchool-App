@@ -74,8 +74,27 @@
         <h2 class="section-title">Description cours</h2>
         <p class="description-text">{{course?.description}}</p>
       </div>
+      <!-- Bouton d'inscription ou accès au cours -->
+      <ion-card class="enroll-card">
+        <ion-card-content class="enroll-card-content">
+          <!-- Si l'utilisateur est déjà inscrit -->
+          <ion-button *ngIf="isUserEnrolled" expand="block" class="continue-button" (click)="continueCourse()">
+            <div class="button-content">
+              <span class="button-main-text">Continuer le cours</span>
+              <span class="button-subtitle">Progression: {{enrollmentProgress}}%</span>
+            </div>
+          </ion-button>
 
-      <!-- Bouton d'inscription -->
+          <!-- Si l'utilisateur n'est pas inscrit -->
+          <ion-button *ngIf="!isUserEnrolled" expand="block" class="enroll-button" (click)="enrollNow()">
+            <div class="button-content">
+              <span class="button-main-text">S'inscrire maintenant</span>
+              <span class="button-subtitle">Certificat inclus</span>
+            </div>
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+      <!-- Bouton d'inscription 
     <ion-card class="enroll-card">
       <ion-card-content class="enroll-card-content">
         <ion-button expand="block" class="enroll-button" (click)="enrollNow()">
@@ -85,7 +104,7 @@
           </div>
         </ion-button>
       </ion-card-content>
-    </ion-card>
+    </ion-card> -->
     </div>
   </div>
 </ion-content>

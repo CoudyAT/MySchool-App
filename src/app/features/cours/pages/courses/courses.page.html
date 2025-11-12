@@ -16,81 +16,129 @@
 <ion-content>
   <div class="content-wrapper">
 
-<!-- Hero Section - CARROUSEL SWIPER -->
-<div class="hero-section">
-  
-  <swiper-container
-    class="hero-swiper"
-    [config]="slideOpts"
-    (swiperslidechange)="onSlideChange($event)"
-    (swiperinit)="onSwiperInit($event)"
-  >
-    <!-- Slide 1 -->
-    <swiper-slide>
-      <div class="slide-container">
-        <img
-          src="assets/slide1.svg"
-          alt="Formation 1"
-          class="slide-image"
-        />
-        <div class="slide-overlay"></div>
+    <!-- Hero Section - CARROUSEL SWIPER -->
+    <div class="hero-section">
+      <swiper-container
+        class="hero-swiper"
+        [config]="slideOpts"
+        (swiperslidechange)="onSlideChange($event)"
+        (swiperinit)="onSwiperInit($event)"
+      >
+        <!-- Slide 1 -->
+        <swiper-slide>
+          <div class="slide-container">
+            <img
+              src="assets/slide1.svg"
+              alt="Formation 1"
+              class="slide-image"
+            />
+            <div class="slide-overlay"></div>
+          </div>
+        </swiper-slide>
+
+        <!-- Slide 2 -->
+        <swiper-slide>
+          <div class="slide-container">
+            <img
+              src="assets/logo.svg"
+              alt="Formation 2"
+              class="slide-image"
+            />
+            <div class="slide-overlay"></div>
+          </div>
+        </swiper-slide>
+
+        <!-- Slide 3 -->
+        <swiper-slide>
+          <div class="slide-container">
+            <img
+              src="assets/slide1.svg"
+              alt="Formation 3"
+              class="slide-image"
+            />
+            <div class="slide-overlay"></div>
+          </div>
+        </swiper-slide>
+      </swiper-container>
+
+      <!-- Pagination -->
+      <div class="pagination-dots">
+        <span class="dot" [class.active]="currentSlide === 0"></span>
+        <span class="dot" [class.active]="currentSlide === 1"></span>
+        <span class="dot" [class.active]="currentSlide === 2"></span>
       </div>
-    </swiper-slide>
+    </div>
 
-    <!-- Slide 2 -->
-    <swiper-slide>
-      <div class="slide-container">
-        <img
-          src="assets/logo.svg"
-          alt="Formation 2"
-          class="slide-image"
-        />
-        <div class="slide-overlay"></div>
-      </div>
-    </swiper-slide>
-
-    <!-- Slide 3 -->
-    <swiper-slide>
-      <div class="slide-container">
-        <img
-          src="assets/slide1.svg"
-          alt="Formation 3"
-          class="slide-image"
-        />
-        <div class="slide-overlay"></div>
-      </div>
-    </swiper-slide>
-  </swiper-container>
-
-  <!-- Pagination -->
-  <div class="pagination-dots">
-    <span class="dot" [class.active]="currentSlide === 0"></span>
-    <span class="dot" [class.active]="currentSlide === 1"></span>
-    <span class="dot" [class.active]="currentSlide === 2"></span>
-  </div>
-</div>
-
-    <!-- Section Mes cours -->
+    <!-- Section Mes cours achetés -->
+<!-- Section Mes cours achetés -->
     <div class="courses-section">
-      <h1 class="section-title">Mes cours</h1>
-
-      <p class="section-description">
-        Parcourez plus de 150 cours et contenus de formation qui vous
-        correspondent
-      </p>
-
-      <!-- Bouton d'ajout -->
-      <div class="add-button-container">
-        <div class="circular-progress" (click)="goToCoursesPage()">
-          <!-- ✅ CORRECTION : Utilisez le bon nom d'icône -->
-          <ion-icon name="add-outline" class="add-icon"></ion-icon>
-        </div>
+      <div class="section-header-row">
+        <h1 class="section-title">Mes cours</h1>
+        <ion-button fill="clear" (click)="goToCoursesPage()" class="voir-plus-button">
+          Voir plus
+        </ion-button>
       </div>
 
-      <!-- Bouton Suivant -->
-      <ion-button expand="block" class="suivant-button"> 
-        Suivant 
-      </ion-button>
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="loading-courses">
+        <ion-spinner></ion-spinner>
+        <p>Chargement de vos cours...</p>
+      </div>
+
+      <!-- Aucun cours acheté -->
+      <div *ngIf="!isLoading && enrolledCourses.length === 0" class="no-courses">
+        <p>Vous n'avez pas encore de cours achetés</p>
+        <p class="section-description">
+          Parcourez plus de 150 cours et contenus de formation qui vous correspondent
+        </p>
+
+        <!-- Bouton d'ajout -->
+        <div class="add-button-container">
+          <div class="circular-progress" (click)="goToCoursesPage()">
+            <ion-icon name="add-outline" class="add-icon"></ion-icon>
+          </div>
+        </div>
+
+        <!-- Bouton Suivant -->
+        <ion-button expand="block" class="suivant-button" (click)="goToCoursesPage()"> 
+          Découvrir les cours
+        </ion-button>
+      </div>
+
+      <!-- Cours achetés - Grid 2 colonnes -->
+      <div *ngIf="!isLoading && enrolledCourses.length > 0" class="enrolled-courses-grid">
+        <ion-card 
+          *ngFor="let course of enrolledCourses" 
+          class="course-card"
+          (click)="openCourse(course)">
+          
+          <div class="card-image">
+           <img src="assets/algo.svg" alt="MySchool Logo" >
+            <!-- Badge Certificat disponible -->
+            <div class="certificate-badge">
+              <ion-icon name="shield-checkmark"></ion-icon>
+              <span>Certificat disponible</span>
+            </div>
+            
+            <!-- Icône play -->
+            <div class="play-icon">
+              <ion-icon name="play"></ion-icon>
+            </div>
+          </div>
+          
+          <ion-card-content>
+            <h3 class="course-title">{{ course.courseTitle }}</h3>
+            <div class="course-meta">
+              <span>{{ course.courseDetails?.sessions }} Sessions</span>
+              <span class="separator">•</span>
+              <span style="color: #FF9500;">{{ course.courseDetails?.exercises }} Exercices</span>
+            </div>
+            <div class="enrollment-date" *ngIf="course.enrolledAt">
+                Inscrit le {{ getFormattedDate(course.enrolledAt) }}
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
     </div>
 
     <!-- Section Instructeurs -->
@@ -124,14 +172,12 @@
       <h1 class="section-title">Certifications</h1>
 
       <p class="section-description">
-        Parcourez plus de 150 cours et contenus de formation qui vous
-        correspondent
+        Parcourez plus de 150 cours et contenus de formation qui vous correspondent
       </p>
 
       <!-- Bouton d'ajout -->
       <div class="add-button-container">
         <div class="circular-progress">
-          <!-- ✅ CORRECTION : Utilisez le bon nom d'icône -->
           <ion-icon name="add-outline" class="add-icon"></ion-icon>
         </div>
       </div>

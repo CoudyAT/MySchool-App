@@ -1,3 +1,5 @@
+import { Course } from "./course.model";
+
 export interface Enrollment {
   id?: string;
   userId: string;
@@ -11,6 +13,27 @@ export interface Enrollment {
   completedAt?: Date;
   progress: number; // 0-100
   chaptersCompleted: string[];
+  courseDetails?: {
+    // Changez Course[] en objet
+    id: string;
+    title: string;
+    description: string;
+    image: string;
+    sessions: number;
+    exercises: number;
+    rating: number;
+    category: string;
+    certificateAvailable: boolean;
+    duration: number;
+    level: string;
+    price: number;
+    type: string;
+    isPublished: boolean;
+    enrolledUsers: string[];
+    createdAt: any;
+    updatedAt: any;
+    chapters?: any[];
+  };
 }
 
 export interface PaymentData {

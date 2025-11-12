@@ -3,17 +3,14 @@ import {
   OnInit,
   AfterViewInit,
   CUSTOM_ELEMENTS_SCHEMA,
+  OnDestroy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
 import { signOut } from 'firebase/auth';
 import { Auth } from '@angular/fire/auth';
-
-// Import Swiper
 import { register } from 'swiper/element/bundle';
-
-// Register Swiper
 register();
 
 import {
@@ -22,6 +19,9 @@ import {
   IonToolbar,
   IonButton,
   IonIcon,
+  IonCard,
+  IonCardContent,
+  IonSpinner,
 } from '@ionic/angular/standalone';
 import { BottomMenuComponent } from 'src/app/shared/components/bottom-menu/bottom-menu.component';
 
@@ -31,8 +31,14 @@ import {
   logOutOutline,
   arrowForwardOutline,
   ribbonOutline,
+  playCircleOutline,
+  shieldCheckmark,
 } from 'ionicons/icons';
 import { Router } from '@angular/router';
+
+import { Subscription } from 'rxjs';
+import { Enrollment } from 'src/app/models/payment.model';
+import { EnrollmentService } from 'src/app/features/services/enrollmentService';
 
 @Component({
   selector: 'app-courses',
@@ -48,13 +54,18 @@ import { Router } from '@angular/router';
     BottomMenuComponent,
     IonIcon,
     IonButton,
+    IonCard,
+    IonCardContent,
+    IonSpinner,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class CoursesPage implements OnInit, AfterViewInit {
+export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
   currentSlide = 0;
+  enrolledCourses: Enrollment[] = [];
+  isLoading = true;
+  private enrollmentSubscription: Subscription = new Subscription();
 
-  // Configuration SIMPLIFIÉE et CORRECTE
   slideOpts = {
     slidesPerView: 1,
     spaceBetween: 0,
@@ -72,27 +83,92 @@ export class CoursesPage implements OnInit, AfterViewInit {
   constructor(
     private router: Router,
     private toastCtrl: ToastController,
-    private auth: Auth
+    private auth: Auth,
+    private enrollmentService: EnrollmentService
   ) {
-    addIcons({ logOutOutline, addOutline, arrowForwardOutline, ribbonOutline });
+    addIcons({
+      logOutOutline,
+      addOutline,
+      shieldCheckmark,
+      arrowForwardOutline,
+      ribbonOutline,
+      playCircleOutline,
+    });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.loadEnrolledCourses();
+  }
 
   ngAfterViewInit() {
-    // ✅ Initialisation MANUELLE du Swiper
     this.initializeSwiper();
+  }
+
+  ngOnDestroy() {
+    this.enrollmentSubscription.unsubscribe();
+  }
+
+  // loadEnrolledCourses() {
+  //   const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+  //   this.enrollmentSubscription = this.enrollmentService
+  //     .getUserEnrollments()
+  //     .subscribe({
+  //       next: (enrollments) => {
+  //         this.enrolledCourses = enrollments;
+  //         this.isLoading = false;
+  //       },
+  //       error: (error) => {
+  //         console.error('❌ Erreur chargement des cours achetés:', error);
+  //         this.isLoading = false;
+  //       },
+  //     });
+  // }
+
+  loadEnrolledCourses() {
+    const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+
+    console.log('🔄 Chargement des cours avec détails...');
+    console.log('👤 Utilisateur:', localUser?.firstName, localUser?.lastName);
+    console.log('🔑 UID:', localUser?.uid);
+
+    this.enrollmentSubscription = this.enrollmentService
+      .getUserEnrollmentsWithCourseDetails() // Utiliser la nouvelle méthode
+      .subscribe({
+        next: (enrollmentsWithDetails) => {
+          console.log(
+            '✅ Cours avec détails chargés:',
+            enrollmentsWithDetails.length
+          );
+
+          this.enrolledCourses = enrollmentsWithDetails;
+          console.log('📚 Cours assignés:', this.enrolledCourses);
+
+          this.isLoading = false;
+
+          // // Debug: afficher les données récupérées
+          // enrollmentsWithDetails.forEach((item: any) => {
+          //   console.log('📚 Enrollment avec détails:', {
+          //     courseTitle: item.courseTitle,
+          //     courseId: item.courseId,
+          //     hasCourseDetails: !!item.courseDetails,
+          //     sessions: item.courseDetails?.sessions,
+          //     exercises: item.courseDetails?.exercises,
+          //     description: item.courseDetails?.description,
+          //   });
+          // });
+        },
+        error: (error) => {
+          console.error('❌ Erreur chargement des cours avec détails:', error);
+          this.isLoading = false;
+        },
+      });
   }
 
   initializeSwiper() {
     const swiperEl = document.querySelector('swiper-container');
     if (swiperEl) {
-      // ✅ Assignation directe des options
       Object.assign(swiperEl, this.slideOpts);
-
-      // ✅ Initialisation explicite
       swiperEl.initialize();
-
       console.log('✅ Swiper initialisé avec succès');
     } else {
       console.log('❌ Swiper container non trouvé');
@@ -112,6 +188,48 @@ export class CoursesPage implements OnInit, AfterViewInit {
     this.router.navigate(['/mes-cours']);
   }
 
+  // MODIFIER CETTE MÉTHODE : Naviguer vers les détails du cours
+  openCourse(enrollment: Enrollment) {
+    // Naviguer vers la page de détail du cours avec l'ID du cours
+    this.router.navigate(['/cours-detail', enrollment.courseId], {
+      state: {
+        enrollment: enrollment, // Passer les données d'enrollment si besoin
+      },
+    });
+  }
+
+  // Obtenir le texte de progression
+  getProgressText(progress: number): string {
+    return `${progress}% complété`;
+  }
+
+  // Formater la date d'inscription
+  getFormattedDate(timestamp: any): string {
+    if (!timestamp) return '';
+
+    try {
+      let date: Date;
+
+      // Gérer le timestamp Firestore
+      if (timestamp.seconds) {
+        date = new Date(timestamp.seconds * 1000);
+      } else if (timestamp.toDate) {
+        date = timestamp.toDate();
+      } else {
+        date = new Date(timestamp);
+      }
+
+      return date.toLocaleDateString('fr-FR', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      });
+    } catch (error) {
+      console.error('Erreur formatage date:', error);
+      return '';
+    }
+  }
+
   async logout() {
     try {
       await signOut(this.auth);
@@ -122,7 +240,6 @@ export class CoursesPage implements OnInit, AfterViewInit {
       });
       await toast.present();
 
-      // Redirection après déconnexion
       this.router.navigate(['/signup'], { replaceUrl: true });
     } catch (error) {
       console.error('Erreur de déconnexion :', error);

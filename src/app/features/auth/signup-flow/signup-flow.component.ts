@@ -545,10 +545,53 @@ export class SignupFlowComponent {
         throw new Error('Code invalide ou expiré');
       }
 
-      // OTP VALIDE → SUPPRIME ET AUTORISE LA SUITE
+      // OTP VALIDE → SUPPRIME LE CODE UTILISÉ (SYNTAXE CORRECTE)
       await deleteDoc(doc(this.firestore, 'temp_otps', phone));
-      this.isOtpVerified = true; // Autorise l'inscription
 
+      // VÉRIFIER SI L'UTILISATEUR EXISTE DÉJÀ
+      const usersCollection = collection(this.firestore, 'utilisateur');
+      const phoneQuery = query(usersCollection, where('phone', '==', phone));
+      console.log('Vérification utilisateur pour le téléphone:', phone);
+      
+      const querySnapshot = await getDocs(phoneQuery);
+
+        if (!querySnapshot.empty) {
+          // UTILISATEUR EXISTANT → RÉCUPÉRATION COMPLÈTE
+          const userDoc = querySnapshot.docs[0];
+          const userData = userDoc.data();
+
+          console.log('Utilisateur existant trouvé:', userData);
+
+          // RÉCUPÉRER LE VRAI UID DE VOTRE BASE DE DONNÉES
+          const firestoreUid = userData['uid']; // Le UID qui existe dans Firestore
+
+          // STOCKER TOUTES LES DONNÉES AVEC LE BON UID
+          const userProfile = {
+            ...userData,
+            id: userDoc.id,
+            uid: firestoreUid, // LE VRAI UID DE VOTRE BASE
+          };
+
+          localStorage.setItem('currentUser', JSON.stringify(userProfile));
+          localStorage.setItem('userPhone', phone);
+
+          // Connexion anonyme (peut avoir un UID différent, mais on s'en fiche)
+          let authUser = this.auth.currentUser;
+          if (!authUser) {
+            const userCredential = await signInAnonymously(this.auth);
+            authUser = userCredential.user;
+          }
+
+          console.log('UID Firebase Auth:', authUser.uid);
+          console.log('UID Firestore (le vrai):', firestoreUid);
+
+          await this.showToast(`Bienvenue ${userData['firstName'] || ''} !`, 'success');
+          this.router.navigate(['/courses'], { replaceUrl: true });
+          return;
+        }
+
+      // NOUVEL UTILISATEUR → CONTINUER L'INSCRIPTION
+      this.isOtpVerified = true;
       this.currentStep = 1;
       this.prefillNextStep();
 

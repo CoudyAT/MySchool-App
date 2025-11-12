@@ -11,9 +11,11 @@ import {
   setDoc,
   updateDoc,
   arrayUnion,
+  collectionData,
+  getDoc,
 } from '@angular/fire/firestore';
 import { Auth } from '@angular/fire/auth';
-import { Observable, from, map } from 'rxjs';
+import { Observable, from, map, of, switchMap } from 'rxjs';
 import { Enrollment, PaymentData } from 'src/app/models/payment.model';
 
 
@@ -24,84 +26,41 @@ export class EnrollmentService {
   private firestore = inject(Firestore);
   private auth = inject(Auth);
 
-  // Créer un nouvel enregistrement de paiement
-  //   async createEnrollment(paymentData: PaymentData): Promise<string> {
-  //     const user = this.auth.currentUser;
-  //     if (!user) {
-  //       throw new Error('Utilisateur non connecté');
-  //     }
-
-  //     const enrollment: Enrollment = {
-  //       userId: user.uid,
-  //       courseId: paymentData.courseId,
-  //       courseTitle: paymentData.courseTitle,
-  //       courseImage: paymentData.courseImage,
-  //       paymentMethod: paymentData.method.id,
-  //       amount: paymentData.amount,
-  //       status: 'completed', // Ou 'pending' selon votre logique
-  //       enrolledAt: new Date(),
-  //       progress: 0,
-  //       chaptersCompleted: [],
-  //     };
-
-  //     try {
-  //       const enrollmentsRef = collection(this.firestore, 'enrollments');
-  //       const docRef = await addDoc(enrollmentsRef, enrollment);
-
-  //       // Mettre à jour également le cours avec l'utilisateur inscrit
-  //       await this.addUserToCourse(paymentData.courseId, user.uid);
-
-  //       console.log('✅ Inscription créée:', docRef.id);
-  //       return docRef.id;
-  //     } catch (error) {
-  //       console.error('❌ Erreur création inscription:', error);
-  //       throw error;
-  //     }
-  //   }
-
   async createEnrollment(paymentData: PaymentData): Promise<string> {
-    const user = this.auth.currentUser;
-    if (!user) {
+    // UTILISER LE UID DE VOTRE BASE, PAS CELUI DE FIREBASE AUTH
+    const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+
+    if (!localUser || !localUser.uid) {
       throw new Error('Utilisateur non connecté');
     }
 
-    // ⭐ VALIDATION DES DONNÉES
-    if (!paymentData.courseId) {
-      throw new Error('courseId est requis');
-    }
-    if (!paymentData.courseTitle) {
-      throw new Error('courseTitle est requis');
-    }
+    const realUid = localUser.uid; // Le UID qui existe dans votre base
 
-    console.log('📝 Données de paiement reçues:', paymentData);
-    console.log('👤 Utilisateur:', user.uid);
+    console.log('Création inscription avec le vrai UID:', realUid);
+    console.log('UID Firebase Auth (ignoré):', this.auth.currentUser?.uid);
 
-    const enrollment: Enrollment = {
-      userId: user.uid,
+    const enrollmentData = {
+      userId: realUid, // ← UTILISER LE VRAI UID ICI
       courseId: paymentData.courseId,
       courseTitle: paymentData.courseTitle,
-      courseImage: paymentData.courseImage || 'assets/algo.svg', // Valeur par défaut
+      courseImage: paymentData.courseImage,
+      amount: paymentData.amount,
       paymentMethod: paymentData.method?.id || 'unknown',
-      amount: paymentData.amount || 0,
       status: 'completed',
       enrolledAt: new Date(),
       progress: 0,
       chaptersCompleted: [],
     };
 
-    console.log('📄 Données enrollment préparées:', enrollment);
-
     try {
-      const enrollmentsRef = collection(this.firestore, 'enrollments');
-      const docRef = await addDoc(enrollmentsRef, enrollment);
-
-      // Mettre à jour également le cours avec l'utilisateur inscrit
-      await this.addUserToCourse(paymentData.courseId, user.uid);
-
-      console.log('✅ Inscription créée:', docRef.id);
-      return docRef.id;
+      const enrollmentRef = await addDoc(
+        collection(this.firestore, 'enrollments'),
+        enrollmentData
+      );
+      console.log('Inscription créée avec ID:', enrollmentRef.id);
+      return enrollmentRef.id;
     } catch (error) {
-      console.error(' Erreur création inscription:', error);
+      console.error('Erreur création inscription:', error);
       throw error;
     }
   }
@@ -135,30 +94,44 @@ export class EnrollmentService {
   }
 
   // Récupérer tous les cours où l'utilisateur est inscrit
+
   getUserEnrollments(): Observable<Enrollment[]> {
-    const user = this.auth.currentUser;
-    if (!user) {
-      throw new Error('Utilisateur non connecté');
+    const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+
+    if (!localUser || !localUser.uid) {
+      console.warn('❌ Aucun utilisateur trouvé dans localStorage');
+      return of([]);
     }
 
-    const enrollmentsRef = collection(this.firestore, 'enrollments');
-    const q = query(
-      enrollmentsRef,
-      where('userId', '==', user.uid),
-      where('status', '==', 'completed')
-    );
+    const realUid = localUser.uid;
 
-    return from(getDocs(q)).pipe(
-      map((snapshot) =>
-        snapshot.docs.map(
-          (doc) =>
-            ({
-              id: doc.id,
-              ...doc.data(),
-            } as Enrollment)
-        )
-      )
+    console.log('🔍 Recherche des enrollments avec UID:', realUid);
+
+    const enrollmentsRef = collection(this.firestore, 'enrollments');
+    const q = query(enrollmentsRef, where('userId', '==', realUid));
+
+    return collectionData(q, { idField: 'id' }).pipe(
+      map((data: any[]) => {
+        // Convertir les données Firestore en objets Enrollment
+        return data.map((doc) => this.mapToEnrollment(doc));
+      })
     );
+  }
+
+  private mapToEnrollment(data: any): Enrollment {
+    return {
+      id: data.id,
+      userId: data.userId,
+      courseId: data.courseId,
+      courseTitle: data.courseTitle,
+      courseImage: data.courseImage,
+      amount: data.amount || 0,
+      enrolledAt: data.enrolledAt,
+      paymentMethod: data.paymentMethod,
+      progress: data.progress || 0,
+      chaptersCompleted: data.chaptersCompleted || [],
+      status: data.status || 'active',
+    };
   }
 
   // Mettre à jour la progression d'un cours
@@ -175,5 +148,65 @@ export class EnrollmentService {
     }
 
     await updateDoc(enrollmentRef, updates);
+  }
+
+  getUserEnrollmentsWithCourseDetails(): Observable<any[]> {
+    const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+
+    if (!localUser || !localUser.uid) {
+      console.warn('❌ Aucun utilisateur trouvé dans localStorage');
+      return of([]);
+    }
+
+    const realUid = localUser.uid;
+
+    console.log('🔍 Recherche des enrollments avec UID:', realUid);
+
+    const enrollmentsRef = collection(this.firestore, 'enrollments');
+    const q = query(enrollmentsRef, where('userId', '==', realUid));
+
+    return collectionData(q, { idField: 'id' }).pipe(
+      switchMap((enrollments: any[]) => {
+        console.log('📦 Enrollments trouvés:', enrollments.length);
+
+        // Si aucun enrollment, retourner un tableau vide
+        if (enrollments.length === 0) {
+          return of([]);
+        }
+
+        // Pour chaque enrollment, récupérer les données du cours
+        const enrollmentPromises = enrollments.map(async (enrollment) => {
+          try {
+            // Récupérer les données du cours depuis la collection 'courses'
+            const courseDoc = await getDoc(
+              doc(this.firestore, 'courses', enrollment.courseId)
+            );
+
+            if (courseDoc.exists()) {
+              const courseData = courseDoc.data();
+              return {
+                ...this.mapToEnrollment(enrollment),
+                courseDetails: {
+                  id: courseDoc.id,
+                  ...courseData,
+                },
+              };
+            } else {
+              console.warn(`❌ Cours ${enrollment.courseId} non trouvé`);
+              return this.mapToEnrollment(enrollment);
+            }
+          } catch (error) {
+            console.error(
+              `❌ Erreur chargement cours ${enrollment.courseId}:`,
+              error
+            );
+            return this.mapToEnrollment(enrollment);
+          }
+        });
+
+        // Convertir les promesses en observable
+        return from(Promise.all(enrollmentPromises));
+      })
+    );
   }
 }

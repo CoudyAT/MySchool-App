@@ -309,3 +309,65 @@ ion-content {
     }
   }
 }
+
+.enroll-card {
+  margin: 16px;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  
+  .enroll-card-content {
+    padding: 0;
+  }
+}
+
+.enroll-button {
+  --background: linear-gradient(135deg, #3880ff 0%, #5260ff 100%);
+  --background-hover: linear-gradient(135deg, #5260ff 0%, #3880ff 100%);
+  --border-radius: 12px;
+  height: 70px;
+  margin: 0;
+
+  .button-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    .button-main-text {
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+    }
+    
+    .button-subtitle {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.8);
+      margin-top: 2px;
+    }
+  }
+}
+
+.continue-button {
+  --background: linear-gradient(135deg, #2dd36f 0%, #28ba62 100%);
+  --background-hover: linear-gradient(135deg, #28ba62 0%, #2dd36f 100%);
+  --border-radius: 12px;
+  height: 70px;
+  margin: 0;
+
+  .button-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    .button-main-text {
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+    }
+    
+    .button-subtitle {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.8);
+      margin-top: 2px;
+    }
+  }
+}
