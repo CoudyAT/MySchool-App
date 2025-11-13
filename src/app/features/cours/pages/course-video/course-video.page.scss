@@ -260,3 +260,97 @@ ion-content {
   line-height: 1.6;
   margin: 0;
 }
+
+.debug-info {
+  background: #f8f9fa;
+  padding: 16px;
+  border-radius: 12px;
+  margin-top: 20px;
+  
+  h3 {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    color: #666;
+  }
+  
+  p {
+    margin: 4px 0;
+    font-size: 12px;
+    color: #888;
+  }
+}
+
+/* Section Documents */
+.documents-section {
+ margin-top: 34px;
+ // margin-bottom: 100px;
+}
+
+.documents-section .section-title {
+   font-size: 18px;
+    font-weight: 700;
+    color: #2650BB;
+    margin: 0 0 12px 0;
+}
+
+.document-card {
+  margin: 0;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background-color: white;
+}
+
+.document-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+}
+
+.document-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.document-name {
+  font-size: 16px;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.document-type {
+  font-size: 14px;
+  font-weight: 600;
+  color: #4285F4;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.download-button {
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+  margin: 0;
+  height: 44px;
+  width: 44px;
+  border-radius: 50%;
+  background-color: #4285F4;
+}
+
+.download-icon {
+  font-size: 24px;
+  color: white;
+}
+
+/* Effet hover pour le bouton de téléchargement */
+.download-button:hover {
+  background-color: #3367D6;
+}
+
+/* Style alternatif avec un fond pour l'icône */
+.download-button::part(native) {
+  border-radius: 50%;
+}

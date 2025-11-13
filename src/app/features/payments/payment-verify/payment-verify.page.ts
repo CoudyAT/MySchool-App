@@ -59,6 +59,7 @@ export class PaymentVerifyPage implements OnInit {
   courseId: string = '';
   courseTitle: string = '';
   courseImage: string = '';
+  course: any = {};
 
   // Informations du résumé
   summary = {
@@ -155,8 +156,8 @@ export class PaymentVerifyPage implements OnInit {
     if (navigation?.extras?.state) {
       this.selectedPlan = navigation.extras.state['plan'];
       this.selectedMethod = navigation.extras.state['method'];
-      console.log("navigation extras state:", navigation.extras.state);
-      
+      console.log('navigation extras state:', navigation.extras.state);
+      this.course = navigation.extras.state['course'] || {};
       this.courseId = navigation.extras.state['courseId'];
       this.courseTitle = navigation.extras.state['courseTitle'];
       this.courseImage = navigation.extras.state['courseImage'];
@@ -245,8 +246,7 @@ export class PaymentVerifyPage implements OnInit {
     const selectedMethod = this.allPaymentMethods.find(
       (m) => m.id === this.selectedPaymentOption
     );
-    console.log("courseId dans payment-verify", this.courseId);
-    
+    console.log('courseId dans payment-verify', this.courseId);
 
     try {
       // Créer l'enregistrement de paiement
@@ -264,8 +264,9 @@ export class PaymentVerifyPage implements OnInit {
       console.log('✅ Paiement enregistré avec succès');
 
       // Rediriger vers la page du cours
-      this.router.navigate(['/course-video'], {
+      this.router.navigate(['/course-video', this.course.id], {
         state: {
+          course: this.course,
           courseId: this.courseId,
           enrollmentSuccess: true,
         },

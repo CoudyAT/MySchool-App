@@ -71,6 +71,7 @@ export class SubscriptionPlansPage implements OnInit {
   courseId: string = '';
   courseTitle: string = '';
   courseImage: string = '';
+  course: any = {};
 
   constructor(private router: Router, private location: Location) {
     // Enregistrer les icônes
@@ -84,11 +85,7 @@ export class SubscriptionPlansPage implements OnInit {
     // ⭐ RÉCUPÉREZ LES DONNÉES DU COURS DEPUIS LA NAVIGATION
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras?.state) {
-      console.log(
-        '🔍 SubscriptionPlansPage - State reçu:',
-        navigation.extras.state
-      );
-
+      this.course = navigation.extras.state['course'] || {};
       this.courseId = navigation.extras.state['courseId'];
       this.courseTitle = navigation.extras.state['courseTitle'];
       this.courseImage = navigation.extras.state['courseImage'];
@@ -108,16 +105,9 @@ export class SubscriptionPlansPage implements OnInit {
   }
 
   selectPlan(plan: any) {
-    console.log('🔍 SubscriptionPlansPage - Données avant navigation:', {
-      plan,
-      courseId: this.courseId,
-      courseTitle: this.courseTitle,
-      courseImage: this.courseImage,
-    });
-
-    // ⭐ PASSEZ TOUTES LES DONNÉES À PaymentMethodPage
     this.router.navigate(['/payment-method'], {
       state: {
+        course: this.course,
         plan,
         courseId: this.courseId,
         courseTitle: this.courseTitle,

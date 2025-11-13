@@ -57,7 +57,7 @@ export const routes: Routes = [
     component: PaymentVerifyPage,
   },
   {
-    path: 'course-video',
+    path: 'course-video/:id',
     component: CourseVideoPage,
   },
 
@@ -65,8 +65,6 @@ export const routes: Routes = [
     path: 'login',
     component: LoginComponent,
   },
-
- 
 
   {
     path: 'admin-login',

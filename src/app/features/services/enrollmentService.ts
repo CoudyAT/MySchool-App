@@ -150,7 +150,7 @@ export class EnrollmentService {
     await updateDoc(enrollmentRef, updates);
   }
 
-  getUserEnrollmentsWithCourseDetails(): Observable<any[]> {
+  getUserEnrollmentsWithCourseDetails(): Observable<Enrollment[]> {
     const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
 
     if (!localUser || !localUser.uid) {
@@ -163,21 +163,22 @@ export class EnrollmentService {
     console.log('🔍 Recherche des enrollments avec UID:', realUid);
 
     const enrollmentsRef = collection(this.firestore, 'enrollments');
-    const q = query(enrollmentsRef, where('userId', '==', realUid));
+    const q = query(
+      enrollmentsRef,
+      where('userId', '==', realUid),
+      where('status', '==', 'completed') // ← AJOUTEZ CETTE LIGNE pour filtrer seulement les cours payés
+    );
 
     return collectionData(q, { idField: 'id' }).pipe(
       switchMap((enrollments: any[]) => {
-        console.log('📦 Enrollments trouvés:', enrollments.length);
+        console.log('📦 Enrollments "completed" trouvés:', enrollments.length);
 
-        // Si aucun enrollment, retourner un tableau vide
         if (enrollments.length === 0) {
-          return of([]);
+          return of([]); // Retourner tableau vide si aucun cours payé
         }
 
-        // Pour chaque enrollment, récupérer les données du cours
         const enrollmentPromises = enrollments.map(async (enrollment) => {
           try {
-            // Récupérer les données du cours depuis la collection 'courses'
             const courseDoc = await getDoc(
               doc(this.firestore, 'courses', enrollment.courseId)
             );
@@ -188,9 +189,26 @@ export class EnrollmentService {
                 ...this.mapToEnrollment(enrollment),
                 courseDetails: {
                   id: courseDoc.id,
-                  ...courseData,
+                  title: courseData['title'] || '',
+                  description: courseData['description'] || '',
+                  image: courseData['image'] || '',
+                  sessions: courseData['sessions'] || 0,
+                  exercises: courseData['exercises'] || 0,
+                  rating: courseData['rating'] || 0,
+                  category: courseData['category'] || '',
+                  certificateAvailable:
+                    courseData['certificateAvailable'] || false,
+                  duration: courseData['duration'] || 0,
+                  level: courseData['level'] || '',
+                  price: courseData['price'] || 0,
+                  type: courseData['type'] || '',
+                  isPublished: courseData['isPublished'] || false,
+                  enrolledUsers: courseData['enrolledUsers'] || [],
+                  createdAt: courseData['createdAt'],
+                  updatedAt: courseData['updatedAt'],
+                  chapters: courseData['chapters'] || [],
                 },
-              };
+              } as Enrollment;
             } else {
               console.warn(`❌ Cours ${enrollment.courseId} non trouvé`);
               return this.mapToEnrollment(enrollment);
@@ -204,7 +222,6 @@ export class EnrollmentService {
           }
         });
 
-        // Convertir les promesses en observable
         return from(Promise.all(enrollmentPromises));
       })
     );

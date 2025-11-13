@@ -23,8 +23,15 @@
             </svg>
           </div>
         </div>
-        <!--  Image placeholder -  -->
-        <div class="thumbnail-placeholder">
+        <!-- Image du cours -->
+        <img 
+          [src]="course.image || course.courseImage || 'assets/algo.svg'" 
+          [alt]="course.title || course.courseTitle" 
+          class="course-image"
+          *ngIf="course.image || course.courseImage"
+        >
+        <!-- Fallback si pas d'image -->
+        <div class="thumbnail-placeholder" *ngIf="!course.image && !course.courseImage">
         </div>
       </div>
       
@@ -35,51 +42,79 @@
     </div>
 
     <!-- Category -->
-    <div class="category">{{ course.category }}</div>
+    <div class="category">{{ course.category || 'Mathématiques' }}</div>
 
     <!-- Titre du cours -->
-    <h1 class="course-title">{{ course.title }}</h1>
+    <h1 class="course-title">{{ course.title || course.courseTitle || 'Titre du cours' }}</h1>
 
     <!-- Durée et chapitres -->
     <div class="course-meta">
-      <span class="duration">{{ course.duration }}</span>
+      <span class="duration">{{ getFormattedDuration() }}</span>
       <span class="separator">·</span>
-      <span class="chapters">{{ course.chapters }} Chapitres</span>
+      <span class="chapters">{{ getChaptersCount() }} Chapitres</span>
     </div>
 
     <!-- Barre de progression -->
     <div class="progress-container">
       <div class="progress-bar">
-        <div class="progress-fill" [style.width.%]="course.progress"></div>
+        <div class="progress-fill" [style.width.%]="progress"></div>
       </div>
-      <span class="progress-text">{{ course.progress }}%</span>
+      <span class="progress-text">{{ progress }}%</span>
     </div>
 
     <!-- Langue et Instructeur -->
     <div class="info-row">
       <div class="info-item">
         <ion-icon name="language-outline" class="info-icon"></ion-icon>
-        <span class="info-text">Cours en <strong>{{ course.language }}</strong></span>
+        <span class="info-text">Cours en <strong>{{ course.language || 'Français' }}</strong></span>
       </div>
-      <span class="instructor">Par <strong>{{ course.instructor }}</strong></span>
+      <span class="instructor" *ngIf="course.instructor">
+        Par <strong>{{ course.instructor }}</strong>
+      </span>
     </div>
 
-    <!-- Rating -->
-    <div class="rating-container">
+    <!-- Rating 
+    <div class="rating-container" *ngIf="course.rating">
       <div class="stars">
-        <ion-icon name="star" class="star-icon filled"></ion-icon>
-        <ion-icon name="star" class="star-icon filled"></ion-icon>
-        <ion-icon name="star" class="star-icon filled"></ion-icon>
-        <ion-icon name="star" class="star-icon filled"></ion-icon>
-        <ion-icon name="star-half" class="star-icon filled"></ion-icon>
+        <ion-icon 
+          *ngFor="let star of getStars(course.rating, course.maxRating || 5)" 
+          [name]="star === 'full' ? 'star' : star === 'half' ? 'star-half' : 'star-outline'" 
+          class="star-icon" 
+          [class.filled]="star !== 'empty'">
+        </ion-icon>
       </div>
-      <span class="rating-text">{{ course.rating }}/{{ course.maxRating }}</span>
-    </div>
+      <span class="rating-text">{{ course.rating }}/{{ course.maxRating || 5 }}</span>
+    </div> -->
 
     <!-- Description -->
-    <div class="description-section">
+    <div class="description-section" *ngIf="course.description">
       <h2 class="section-title">Description cours</h2>
       <p class="description-text">{{ course.description }}</p>
+    </div>
+
+          <div class="documents-section">
+        <h2 class="section-title">Documents</h2>
+        <ion-card class="document-card">
+          <ion-card-content class="document-card-content">
+            <div class="document-item">
+              <div class="document-info">
+                <span class="document-name">Support de cours</span>
+                <span class="document-type">PDF</span>
+              </div>
+              <ion-button fill="clear" class="download-button" >
+                <ion-icon name="download-outline" class="download-icon"></ion-icon>
+              </ion-button>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+
+    <!-- Informations de paiement (debug) -->
+    <div class="debug-info" *ngIf="enrollment">
+      <h3>Informations d'inscription</h3>
+      <p>Payé: {{ enrollment.amount / 100 }} FCFA</p>
+      <p>Méthode: {{ enrollment.paymentMethod }}</p>
+      <p>Date: {{getFormattedDate(enrollment.enrolledAt) }}</p>
     </div>
 
   </div>

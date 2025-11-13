@@ -83,19 +83,6 @@ export class MesCoursPage implements OnInit {
     this.subscription.add(coursesSub);
   }
 
-  // Transformer les données Firestore en format compatible
-  // private transformCourses(firestoreCourses: Course[]): Course[] {
-  //   return firestoreCourses.map((course) => ({
-  //     id: course.id,
-  //     category: course.category,
-  //     title: course.title,
-  //     sessions: course.sessions,
-  //     exercises: course.exercises,
-  //     image: course.image,
-  //     available: course.isPublished,
-  //     certificateAvailable: course.certificateAvailable,
-  //   }));
-  // }
 
   // Filtrer les cours par catégorie
   getCoursesByCategory(category: string): Course[] {

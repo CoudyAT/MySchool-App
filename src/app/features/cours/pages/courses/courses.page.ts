@@ -108,28 +108,20 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
     this.enrollmentSubscription.unsubscribe();
   }
 
-  // loadEnrolledCourses() {
-  //   const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-  //   this.enrollmentSubscription = this.enrollmentService
-  //     .getUserEnrollments()
-  //     .subscribe({
-  //       next: (enrollments) => {
-  //         this.enrolledCourses = enrollments;
-  //         this.isLoading = false;
-  //       },
-  //       error: (error) => {
-  //         console.error('❌ Erreur chargement des cours achetés:', error);
-  //         this.isLoading = false;
-  //       },
-  //     });
-  // }
-
   loadEnrolledCourses() {
     const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-
-    console.log('🔄 Chargement des cours avec détails...');
-    console.log('👤 Utilisateur:', localUser?.firstName, localUser?.lastName);
+    console.log(
+      '👤 Utilisateur connecté:',
+      localUser?.firstName,
+      localUser?.lastName
+    );
     console.log('🔑 UID:', localUser?.uid);
+
+    if (!localUser || !localUser.uid) {
+      console.error('❌ Aucun utilisateur connecté trouvé');
+      this.isLoading = false;
+      return;
+    }
 
     this.enrollmentSubscription = this.enrollmentService
       .getUserEnrollmentsWithCourseDetails() // Utiliser la nouvelle méthode
@@ -144,18 +136,6 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
           console.log('📚 Cours assignés:', this.enrolledCourses);
 
           this.isLoading = false;
-
-          // // Debug: afficher les données récupérées
-          // enrollmentsWithDetails.forEach((item: any) => {
-          //   console.log('📚 Enrollment avec détails:', {
-          //     courseTitle: item.courseTitle,
-          //     courseId: item.courseId,
-          //     hasCourseDetails: !!item.courseDetails,
-          //     sessions: item.courseDetails?.sessions,
-          //     exercises: item.courseDetails?.exercises,
-          //     description: item.courseDetails?.description,
-          //   });
-          // });
         },
         error: (error) => {
           console.error('❌ Erreur chargement des cours avec détails:', error);
@@ -188,12 +168,10 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
     this.router.navigate(['/mes-cours']);
   }
 
-  // MODIFIER CETTE MÉTHODE : Naviguer vers les détails du cours
   openCourse(enrollment: Enrollment) {
-    // Naviguer vers la page de détail du cours avec l'ID du cours
-    this.router.navigate(['/cours-detail', enrollment.courseId], {
+    this.router.navigate(['/course-detail/', enrollment.courseId], {
       state: {
-        enrollment: enrollment, // Passer les données d'enrollment si besoin
+        enrollment: enrollment,
       },
     });
   }

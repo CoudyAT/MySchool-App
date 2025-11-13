@@ -37,6 +37,7 @@ export class PaymentMethodPage implements OnInit {
   courseId: string = '';
   courseTitle: string = '';
   courseImage: string = '';
+  course: any = {};
 
   paymentMethods = [
     {
@@ -88,6 +89,7 @@ export class PaymentMethodPage implements OnInit {
       this.selectedPlan = navigation.extras.state['plan'];
 
       // ⭐ RÉCUPÉREZ LES DONNÉES DU COURS
+      this.course = navigation.extras.state['course'] || {}; 
       this.courseId = navigation.extras.state['courseId'];
       this.courseTitle = navigation.extras.state['courseTitle'];
       this.courseImage = navigation.extras.state['courseImage'];
@@ -108,15 +110,6 @@ export class PaymentMethodPage implements OnInit {
   }
 
   selectPaymentMethod(method: any) {
-    console.log('🔍 PaymentMethodPage - Données avant navigation:', {
-      method,
-      plan: this.selectedPlan,
-      courseId: this.courseId,
-      courseTitle: this.courseTitle,
-      courseImage: this.courseImage,
-    });
-
-    // ⭐ PASSEZ TOUTES LES DONNÉES À PaymentVerifyPage
     this.router.navigate(['/payment-verify'], {
       state: {
         method,
@@ -124,6 +117,7 @@ export class PaymentMethodPage implements OnInit {
         courseId: this.courseId,
         courseTitle: this.courseTitle,
         courseImage: this.courseImage,
+        course: this.course,
       },
     });
   }

@@ -19,8 +19,7 @@
 
     <!-- Contenu principal -->
     <div class="main-content">
-      <!-- Badge Certificat        
-         <ion-icon name="checkmark-circle" class="cert-icon"></ion-icon>-->
+      <!-- Badge Certificat -->
       <div class="certificate-badge">
         <img src="assets/icon-rosette.svg" alt="" class="cert-icon">
         <span>Certificat Disponible</span>
@@ -36,17 +35,6 @@
         <span class="exercises">{{course?.exercises}} Exercices</span>
       </div>
 
-      <!-- Langue et instructeur 
-      <div class="course-info-row">
-        <div class="info-item">
-          <ion-icon name="language-outline" class="info-icon"></ion-icon>
-          <span>Cours en <strong>{{course?.language}}</strong></span>
-        </div>
-        <div class="info-item">
-          <span>Par <strong class="instructor-name">{{course?.instructor}}</strong></span>
-        </div>
-      </div> -->
-
       <!-- Note avec étoiles -->
       <div class="rating-container">
         <div class="stars">
@@ -59,7 +47,7 @@
         <span class="rating-text">{{course?.rating}}/{{course?.maxRating}}</span>
       </div>
 
-      <!-- Niveaux/Progression  -->
+      <!-- Niveaux/Progression -->
       <div class="levels-container">
         <div *ngFor="let level of course?.levels; let i = index" class="level-item">
           <div class="level-icon-wrapper" [class.completed]="level.completed">
@@ -67,13 +55,32 @@
           </div>
           <div *ngIf="i < (course?.levels?.length || 0) - 1" class="level-connector" [class.completed]="level.completed"></div>
         </div>
-      </div> 
+      </div>
 
       <!-- Description -->
       <div class="description-section">
         <h2 class="section-title">Description cours</h2>
         <p class="description-text">{{course?.description}}</p>
       </div>
+      <!-- Section Documents -->
+      
+      <div class="documents-section">
+        <h2 class="section-title">Documents</h2>
+        <ion-card class="document-card">
+          <ion-card-content class="document-card-content">
+            <div class="document-item">
+              <div class="document-info">
+                <span class="document-name">Support de cours</span>
+                <span class="document-type">PDF</span>
+              </div>
+              <ion-button fill="clear" class="download-button" >
+                <ion-icon name="download-outline" class="download-icon"></ion-icon>
+              </ion-button>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+
       <!-- Bouton d'inscription ou accès au cours -->
       <ion-card class="enroll-card">
         <ion-card-content class="enroll-card-content">
@@ -94,17 +101,6 @@
           </ion-button>
         </ion-card-content>
       </ion-card>
-      <!-- Bouton d'inscription 
-    <ion-card class="enroll-card">
-      <ion-card-content class="enroll-card-content">
-        <ion-button expand="block" class="enroll-button" (click)="enrollNow()">
-          <div class="button-content">
-            <span class="button-main-text">S'inscrire maintenant</span>
-            <span class="button-subtitle">Certificat inclus</span>
-          </div>
-        </ion-button>
-      </ion-card-content>
-    </ion-card> -->
     </div>
   </div>
 </ion-content>
