@@ -8,11 +8,11 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone'; // ✅ Import corrigé
 import { signOut } from 'firebase/auth';
 import { Auth } from '@angular/fire/auth';
 import { register } from 'swiper/element/bundle';
 register();
-
 import {
   IonContent,
   IonHeader,
@@ -33,12 +33,22 @@ import {
   ribbonOutline,
   playCircleOutline,
   shieldCheckmark,
+  checkmarkCircle,
+  cardOutline,
+  shieldCheckmarkOutline,
+  starOutline,
+  personCircleOutline,
+  trendingUpOutline,
+  bookOutline,
+  bulbOutline,
+  calculatorOutline,
 } from 'ionicons/icons';
 import { Router } from '@angular/router';
 
 import { Subscription } from 'rxjs';
 import { Enrollment } from 'src/app/models/payment.model';
 import { EnrollmentService } from 'src/app/features/services/enrollmentService';
+import { PreminumModalComponent } from 'src/app/features/component/preminum-modal/preminum-modal.component';
 
 @Component({
   selector: 'app-courses',
@@ -84,20 +94,35 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private toastCtrl: ToastController,
     private auth: Auth,
-    private enrollmentService: EnrollmentService
+    private enrollmentService: EnrollmentService,
+    private modalCtrl: ModalController
   ) {
     addIcons({
-      logOutOutline,
+      personCircleOutline,
+      starOutline,
       addOutline,
       shieldCheckmark,
-      arrowForwardOutline,
+      trendingUpOutline,
+      bookOutline,
+      bulbOutline,
+      calculatorOutline,
+      logOutOutline,
       ribbonOutline,
+      checkmarkCircle,
+      cardOutline,
+      shieldCheckmarkOutline,
+      arrowForwardOutline,
       playCircleOutline,
     });
   }
 
   ngOnInit() {
     this.loadEnrolledCourses();
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation?.extras?.state?.['premiumActivated']) {
+      this.showPremiumSuccessToast();
+      this.loadEnrolledCourses(); // Recharger les cours
+    }
   }
 
   ngAfterViewInit() {
@@ -168,6 +193,18 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
     this.router.navigate(['/mes-cours']);
   }
 
+  goToBiblio() {
+    this.router.navigate(['/biblio']);
+  }
+
+  goToTutos() {
+    this.router.navigate(['/tutos']);
+  }
+
+  goToExos() {
+    this.router.navigate(['/exos']);
+  }
+
   openCourse(enrollment: Enrollment) {
     this.router.navigate(['/course-detail/', enrollment.courseId], {
       state: {
@@ -228,5 +265,41 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
       });
       await toast.present();
     }
+  }
+
+  async openPremiumModal() {
+    const modal = await this.modalCtrl.create({
+      component: PreminumModalComponent,
+      cssClass: 'premium-modal',
+      breakpoints: [0, 0.5, 0.8, 1],
+      initialBreakpoint: 0.8,
+    });
+
+    await modal.present();
+
+    const { data } = await modal.onWillDismiss();
+
+    if (data?.subscribed) {
+      // L'utilisateur a souscrit
+      const toast = await this.toastCtrl.create({
+        message: 'Bienvenue dans Premium ! 🌟',
+        duration: 2000,
+        color: 'success',
+      });
+      await toast.present();
+    }
+  }
+  private async showPremiumSuccessToast() {
+    const toast = await this.toastCtrl.create({
+      message: '🎉 Félicitations ! Votre abonnement Premium est activé !',
+      duration: 4000,
+      color: 'success',
+      position: 'top',
+    });
+    await toast.present();
+  }
+
+  goToProfile() {
+    this.router.navigate(['/profile']);
   }
 }

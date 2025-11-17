@@ -198,9 +198,7 @@ export class CoursDetailPage implements OnInit, OnDestroy {
   }
 
   goBack() {
-    //this.location.back();
     this.router.navigate(['/mes-cours']);
-
   }
 
   enrollNow() {

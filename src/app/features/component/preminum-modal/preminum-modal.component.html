@@ -1,0 +1,67 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>Passez à Premium</ion-title>
+    <ion-button slot="end" fill="clear" (click)="dismiss()">
+      <ion-icon name="close-outline"></ion-icon>
+    </ion-button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="premium-content">
+  <div class="modal-wrapper">
+    
+    <!-- Hero Section -->
+    <div class="premium-hero">
+      <div class="premium-badge">
+        <ion-icon name="star-outline" class="star-icon"></ion-icon>
+        <span>PREMIUM</span>
+      </div>
+      <h1 class="hero-title">Débloquez tout votre potentiel</h1>
+      <p class="hero-subtitle">
+        Accédez à tous les cours, fonctionnalités exclusives et bien plus encore
+      </p>
+    </div>
+
+    <!-- Features List -->
+    <div class="features-section">
+      <div 
+        *ngFor="let feature of premiumFeatures" 
+        class="feature-item">
+        <div class="feature-icon">
+          <ion-icon [name]="feature.icon"></ion-icon>
+        </div>
+        <div class="feature-content">
+          <h3 class="feature-title">{{ feature.title }}</h3>
+          <p class="feature-description">{{ feature.description }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pricing Section -->
+    <div class="pricing-section">
+      <div class="price-card">
+        <div class="price-header">
+          <span class="price-amount">4 999 FCFA</span>
+          <span class="price-period">/mois</span>
+        </div>
+        <p class="price-description">
+          Annulez à tout moment • Sans engagement
+        </p>
+      </div>
+    </div>
+
+    <!-- CTA Button -->
+    <div class="cta-section">
+      <ion-button 
+        expand="block" 
+        class="premium-button"
+        (click)="subscribeToPremium()">
+        Commencer maintenant
+      </ion-button>
+      <p class="terms-text">
+        En souscrivant, vous acceptez nos conditions d'utilisation
+      </p>
+    </div>
+
+  </div>
+</ion-content>

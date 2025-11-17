@@ -32,6 +32,7 @@ import { cardOutline, chevronBackOutline } from 'ionicons/icons';
 })
 export class PaymentMethodPage implements OnInit {
   selectedPlan: any;
+  isPremiumSubscription: boolean = false;
 
   // ⭐ AJOUTEZ CES PROPRIÉTÉS
   courseId: string = '';
@@ -87,15 +88,20 @@ export class PaymentMethodPage implements OnInit {
       );
 
       this.selectedPlan = navigation.extras.state['plan'];
+      this.isPremiumSubscription =
+        navigation.extras.state['isPremiumSubscription'] || false;
 
-      // ⭐ RÉCUPÉREZ LES DONNÉES DU COURS
-      this.course = navigation.extras.state['course'] || {}; 
-      this.courseId = navigation.extras.state['courseId'];
-      this.courseTitle = navigation.extras.state['courseTitle'];
-      this.courseImage = navigation.extras.state['courseImage'];
+      // ⭐ RÉCUPÉREZ LES DONNÉES DU COURS (seulement si ce n'est pas un abonnement Premium)
+      if (!this.isPremiumSubscription) {
+        this.course = navigation.extras.state['course'] || {};
+        this.courseId = navigation.extras.state['courseId'];
+        this.courseTitle = navigation.extras.state['courseTitle'];
+        this.courseImage = navigation.extras.state['courseImage'];
+      }
 
       console.log('📋 PaymentMethodPage - Données extraites:', {
         plan: this.selectedPlan,
+        isPremiumSubscription: this.isPremiumSubscription,
         courseId: this.courseId,
         courseTitle: this.courseTitle,
         courseImage: this.courseImage,
@@ -110,15 +116,28 @@ export class PaymentMethodPage implements OnInit {
   }
 
   selectPaymentMethod(method: any) {
-    this.router.navigate(['/payment-verify'], {
-      state: {
-        method,
-        plan: this.selectedPlan,
-        courseId: this.courseId,
-        courseTitle: this.courseTitle,
-        courseImage: this.courseImage,
-        course: this.course,
-      },
-    });
+    if (this.isPremiumSubscription) {
+      // Cas d'un abonnement Premium
+      this.router.navigate(['/payment-verify'], {
+        state: {
+          method,
+          plan: this.selectedPlan,
+          isPremiumSubscription: true,
+          // Pas de courseId pour l'abonnement Premium global
+        },
+      });
+    } else {
+      // Cas d'un cours individuel
+      this.router.navigate(['/payment-verify'], {
+        state: {
+          method,
+          plan: this.selectedPlan,
+          courseId: this.courseId,
+          courseTitle: this.courseTitle,
+          courseImage: this.courseImage,
+          course: this.course,
+        },
+      });
+    }
   }
 }

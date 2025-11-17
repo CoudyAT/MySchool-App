@@ -13,6 +13,7 @@ import { BaseLayoutAdminComponent } from './Admin/base-layout-admin/base-layout-
 import { ListCoursPage } from './Admin/pages/cours/pages/list-cours/list-cours.page';
 import { DetailCoursPage } from './Admin/pages/cours/pages/detail-cours/detail-cours.page';
 import { LoginComponent } from './features/auth/login/login.component';
+import { ProfilePage } from './features/auth/profile/profile.page';
 
 export const routes: Routes = [
   {
@@ -64,6 +65,11 @@ export const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
+  },
+
+  {
+    path: 'profile',
+    component: ProfilePage, // Remplacez par votre composant de profil
   },
 
   {

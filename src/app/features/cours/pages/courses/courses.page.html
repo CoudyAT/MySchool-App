@@ -2,14 +2,29 @@
   <ion-toolbar>
     <div class="header-content">
       <img src="assets/logo.svg" alt="MySchool Logo" class="logo" />
+     <!--  <ion-button
+          fill="solid"
+          color="warning"
+          (click)="openPremiumModal()"
+          class="premium-button">
+          <ion-icon name="star-outline" slot="start"></ion-icon>
+          Premium
+      </ion-button> 
+    --> 
       <ion-button
-        fill="clear"
-        color="danger"
-        (click)="logout()"
-        class="logout-button">
-        <ion-icon name="log-out-outline"></ion-icon>
-      </ion-button>
+          fill="clear"
+          (click)="goToProfile()"
+          class="profile-button">
+          <ion-icon class="profile" name="person-circle-outline"></ion-icon>
+        </ion-button>
     </div>
+    <ion-button
+          fill="solid"
+          (click)="openPremiumModal()"
+          class="preminum">
+          <ion-icon name="star-outline" slot="start"></ion-icon>
+          Abonner-vous pour avoir acces a tous les cours
+        </ion-button>
   </ion-toolbar>
 </ion-header>
 
@@ -18,6 +33,9 @@
 
     <!-- Hero Section - CARROUSEL SWIPER -->
     <div class="hero-section">
+
+        
+        
       <swiper-container
         class="hero-swiper"
         [config]="slideOpts"
@@ -69,8 +87,40 @@
       </div>
     </div>
 
-    <!-- Section Mes cours achetés -->
-<!-- Section Mes cours achetés -->
+    <!-- Section Quick Access -->
+    <div class="quick-access-section">
+      <div class="quick-access-grid">
+        <div class="quick-access-item" (click)="goToCoursesPage()">
+          <div class="icon-container" style="background-color: #FF3B30;">
+            <img src="assets/cours.svg" alt="Cours" class="quick-icon">
+          </div>
+          <span class="item-label">Cours</span>
+        </div>
+
+        <div class="quick-access-item" (click)="goToBiblio()">
+          <div class="icon-container" style="background-color: #34C759;">
+            <img src="assets/biblio.svg" alt="Biblio" class="quick-icon">
+          </div>
+          <span class="item-label">Biblio</span>
+        </div>
+
+        <div class="quick-access-item" (click)="goToTutos()">
+          <div class="icon-container" style="background-color: #FFCC00;">
+            <img src="assets/tuto.svg" alt="Tutos" class="quick-icon">
+          </div>
+          <span class="item-label">Tutos</span>
+        </div>
+
+        <div class="quick-access-item" (click)="goToExos()">
+          <div class="icon-container" style="background-color: #FF9500;">
+            <img src="assets/exos.svg" alt="Exos" class="quick-icon">
+          </div>
+          <span class="item-label">Exos</span>
+        </div>
+      </div>
+    </div>
+
+  <!-- Section Mes cours achetés -->
     <div class="courses-section">
       <div class="section-header-row">
         <h1 class="section-title">Mes cours</h1>
@@ -139,7 +189,6 @@
         </ion-card>
       </div>
     </div>
-
     <!-- Section Instructeurs -->
     <div class="instructors-section">
       <h2 class="section-title">Instructeurs</h2>
@@ -170,21 +219,13 @@
     <div class="courses-section">
       <h1 class="section-title">Certifications</h1>
 
-      <p class="section-description">
-        Parcourez plus de 150 cours et contenus de formation qui vous correspondent
-      </p>
-
-      <!-- Bouton d'ajout -->
       <div class="add-button-container">
-        <div class="circular-progress">
-          <ion-icon name="add-outline" class="add-icon"></ion-icon>
-        </div>
+          <img src="assets/tabler.svg" alt="Exos" class="quick-icon">
       </div>
-
-      <!-- Bouton Suivant -->
-      <ion-button expand="block" class="suivant-button"> 
-        Suivant 
-      </ion-button>
+      <p class="section-description">
+          Bénéficiez des certifications de l’OIT 
+          (Organisation Internationale du Travail)      
+      </p>     
     </div>
   </div>
 </ion-content>

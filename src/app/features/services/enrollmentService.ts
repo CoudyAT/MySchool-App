@@ -226,4 +226,26 @@ export class EnrollmentService {
       })
     );
   }
+
+  async activatePremiumAccess(): Promise<void> {
+    const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+
+    if (!localUser || !localUser.uid) {
+      throw new Error('Utilisateur non connecté');
+    }
+
+    // Marquer l'utilisateur comme Premium dans la base
+    const userRef = doc(this.firestore, 'utilisateur', localUser.uid);
+    await setDoc(
+      userRef,
+      {
+        isPremium: true,
+        premiumSince: new Date(),
+        premiumExpiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 jours
+      },
+      { merge: true }
+    );
+
+    console.log('✅ Utilisateur marqué comme Premium');
+  }
 }
