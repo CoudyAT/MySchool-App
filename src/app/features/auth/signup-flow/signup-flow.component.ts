@@ -552,9 +552,11 @@ export class SignupFlowComponent {
       const usersCollection = collection(this.firestore, 'utilisateur');
       const phoneQuery = query(usersCollection, where('phone', '==', phone));
       console.log('Vérification utilisateur pour le téléphone:', phone);
+      console.log('log', phoneQuery);
       
       const querySnapshot = await getDocs(phoneQuery);
-
+      console.log('console de ', querySnapshot);
+    
         if (!querySnapshot.empty) {
           // UTILISATEUR EXISTANT → RÉCUPÉRATION COMPLÈTE
           const userDoc = querySnapshot.docs[0];
@@ -587,6 +589,7 @@ export class SignupFlowComponent {
 
           await this.showToast(`Bienvenue ${userData['firstName'] || ''} !`, 'success');
           this.router.navigate(['/courses'], { replaceUrl: true });
+          window.location.href = '/courses';
           return;
         }
 
@@ -703,6 +706,7 @@ export class SignupFlowComponent {
 
     return `${day}/${month}/${year}`;
   }
+
 }
 
 

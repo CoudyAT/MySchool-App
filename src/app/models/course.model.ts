@@ -55,4 +55,5 @@ export interface Course {
     completed: boolean;
   }>;
   maxRating?: number;
+  enrolled?: boolean;
 }

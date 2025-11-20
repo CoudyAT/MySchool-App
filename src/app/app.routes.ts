@@ -87,4 +87,11 @@ export const routes: Routes = [
         (m) => m.DetailCoursPage
       ),
   },
+  {
+    path: 'instructor-profile/:id',
+    loadComponent: () =>
+      import(
+        './features/instructor/instructor-profile/instructor-profile.page'
+      ).then((m) => m.InstructorProfilePage),
+  },
 ];

@@ -1,0 +1,372 @@
+ion-header {
+  ion-toolbar {
+    --background: transparent;
+    --border-width: 0;
+    position: absolute;
+    top: 0;
+    z-index: 10;
+    
+    ion-button {
+      --color: #FFFFFF;
+      --background: rgba(0, 0, 0, 0.3);
+      --border-radius: 50%;
+      margin: 8px;
+      
+      ion-icon {
+        font-size: 24px;
+      }
+    }
+  }
+}
+
+ion-content {
+  --background: #F8F9FA;
+}
+
+.content-wrapper {
+  padding-bottom: 24px;
+}
+
+// Section Hero
+.hero-section {
+  height: 280px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 40px;
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.3) 0%, transparent 100%);
+  }
+  
+  .instructor-avatar {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 5px solid #FFFFFF;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    z-index: 2;
+    background: #FFFFFF;
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+}
+
+// Informations principales
+.main-info {
+  padding: 24px 24px 16px 24px;
+  background: #FFFFFF;
+  margin-bottom: 16px;
+  
+  .instructor-name {
+    font-size: 32px;
+    font-weight: 800;
+    color: #000000;
+    margin: 0 0 8px 0;
+    text-align: center;
+    letter-spacing: -0.5px;
+  }
+  
+  .instructor-title {
+    font-size: 16px;
+    color: #666666;
+    margin: 0 0 24px 0;
+    text-align: center;
+    font-weight: 500;
+  }
+  
+  .stats-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 16px;
+    background: #F8F9FA;
+    border-radius: 12px;
+    
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      color: #333333;
+      
+      ion-icon {
+        font-size: 18px;
+        color: #0066FF;
+      }
+      
+      .rating-container {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        
+        ion-icon {
+          font-size: 16px;
+          color: #FFCC00;
+        }
+        
+        .rating-number {
+          margin-left: 4px;
+          font-weight: 600;
+          color: #000000;
+        }
+      }
+    }
+    
+    .stat-divider {
+      width: 1px;
+      height: 20px;
+      background: #DDDDDD;
+    }
+  }
+}
+
+// Biographie
+.bio-section {
+  padding: 24px;
+  background: #FFFFFF;
+  margin-bottom: 16px;
+  
+  .section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #000000;
+    margin: 0 0 16px 0;
+  }
+  
+  .bio-text {
+    font-size: 15px;
+    color: #555555;
+    line-height: 1.6;
+    margin: 0;
+  }
+}
+
+// Expertise
+.expertise-section {
+  padding: 24px;
+  background: #FFFFFF;
+  margin-bottom: 16px;
+  
+  .section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #000000;
+    margin: 0 0 16px 0;
+  }
+  
+  .expertise-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    
+    .expertise-tag {
+      padding: 8px 16px;
+      background: #E8F2FF;
+      color: #0066FF;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      border: 1px solid #B3D9FF;
+    }
+  }
+}
+
+// Cours de l'instructeur
+.courses-section {
+  padding: 0 24px 24px 24px;
+  
+  .section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #000000;
+    margin: 0 0 16px 0;
+    background: #FFFFFF;
+    padding: 24px 24px 16px 24px;
+    margin: 0 -24px 16px -24px;
+  }
+  
+  .course-card {
+    margin: 0 0 16px 0;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    
+    &:active {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .card-image {
+      position: relative;
+      width: 100%;
+      height: 180px;
+      overflow: hidden;
+      background-color: white;
+      
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      
+      .certificate-badge {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        background: #FFFFFF;
+        border-radius: 12px;
+        padding: 6px 12px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        
+        ion-icon {
+          font-size: 16px;
+          color: #FFCC00;
+        }
+        
+        span {
+          font-size: 12px;
+          color: #333333;
+          font-weight: 600;
+        }
+      }
+      
+      .play-icon {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 60px;
+        height: 60px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        
+        ion-icon {
+          font-size: 32px;
+          color: #0066FF;
+          margin-left: 2px;
+        }
+      }
+    }
+    
+    ion-card-content {
+      padding: 16px;
+      background-color: white;
+
+      
+      .course-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #000000;
+        margin: 0 0 12px 0;
+        line-height: 1.3;
+      }
+      
+      .course-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+        font-size: 14px;
+        color: #666666;
+        
+        span {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          
+          ion-icon {
+            font-size: 16px;
+          }
+        }
+        
+        .exercises {
+          color: #FF9500;
+          
+          ion-icon {
+            color: #FF9500;
+          }
+        }
+        
+        .separator {
+          margin: 0 4px;
+        }
+      }
+      
+      .course-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 12px;
+        border-top: 1px solid #EEEEEE;
+        
+        .duration,
+        .enrolled {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          font-size: 13px;
+          color: #888888;
+          
+          ion-icon {
+            font-size: 16px;
+            color: #0066FF;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 375px) {
+  .hero-section {
+    height: 240px;
+    padding-bottom: 30px;
+    
+    .instructor-avatar {
+      width: 120px;
+      height: 120px;
+    }
+  }
+  
+  .main-info {
+    .instructor-name {
+      font-size: 28px;
+    }
+    
+    .stats-row {
+      flex-wrap: wrap;
+      gap: 8px;
+      
+      .stat-item {
+        font-size: 13px;
+      }
+    }
+  }
+  
+  .courses-section .course-card .card-image {
+    height: 160px;
+  }
+}

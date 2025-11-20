@@ -12,6 +12,8 @@ export class AppComponent {
 
   constructor() {
     // Lance le chargement des fixtures en arrière-plan
- //   this.fixturesService.loadFixturesInBackground();
+    //this.fixturesService.seedExpertises();
+   // this.fixturesService.seedInstructors();
+  //  this.fixturesService.loadFixturesInBackground();
   }
 }

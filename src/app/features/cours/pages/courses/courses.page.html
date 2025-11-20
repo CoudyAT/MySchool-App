@@ -194,23 +194,18 @@
       <h2 class="section-title">Instructeurs</h2>
 
       <div class="instructors-grid">
-        <div class="instructor-card" style="background-color: #0066ff">
-          <img
-            src="assets/slide1.svg"
-            alt="Instructeur"
-            class="instructor-image"
-          />
-          <div class="instructor-name">KAYE</div>
-        </div>
-
-        <div class="instructor-card" style="background-color: #00d66a">
-          <img src="assets/slide1.svg" alt="Curtis" class="instructor-image" />
-          <div class="instructor-name">CURTIS</div>
-        </div>
-
-        <div class="instructor-card" style="background-color: #5a5a5a">
-          <img src="assets/slide1.svg" alt="Ndiaye" class="instructor-image" />
-          <div class="instructor-name">NDIAYE</div>
+        <div
+          class="instructor-card"
+          *ngFor="let instructor of instructors"
+          [style.background-color]="instructor.backgroundColor"
+          (click)="goToInstructorProfile(instructor.id)"
+        >
+            <img
+              src="assets/slide1.svg"
+              alt="Instructeur"
+              class="instructor-image"
+            />
+          <div class="instructor-name">{{ instructor.name }}</div>
         </div>
       </div>
     </div>

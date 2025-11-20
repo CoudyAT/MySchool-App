@@ -166,7 +166,7 @@ export class EnrollmentService {
     const q = query(
       enrollmentsRef,
       where('userId', '==', realUid),
-      where('status', '==', 'completed') // ← AJOUTEZ CETTE LIGNE pour filtrer seulement les cours payés
+    //  where('status', '==', 'completed') // ← AJOUTEZ CETTE LIGNE pour filtrer seulement les cours payés
     );
 
     return collectionData(q, { idField: 'id' }).pipe(

@@ -49,6 +49,8 @@ import { Subscription } from 'rxjs';
 import { Enrollment } from 'src/app/models/payment.model';
 import { EnrollmentService } from 'src/app/features/services/enrollmentService';
 import { PreminumModalComponent } from 'src/app/features/component/preminum-modal/preminum-modal.component';
+import { InstructorService } from 'src/app/features/services/instructorService';
+import { Instructor } from 'src/app/models/instructor.model';
 
 @Component({
   selector: 'app-courses',
@@ -73,6 +75,7 @@ import { PreminumModalComponent } from 'src/app/features/component/preminum-moda
 export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
   currentSlide = 0;
   enrolledCourses: Enrollment[] = [];
+  instructors: Instructor[] = [];
   isLoading = true;
   private enrollmentSubscription: Subscription = new Subscription();
 
@@ -95,7 +98,8 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
     private toastCtrl: ToastController,
     private auth: Auth,
     private enrollmentService: EnrollmentService,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private instructorService: InstructorService
   ) {
     addIcons({
       personCircleOutline,
@@ -118,6 +122,9 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.loadEnrolledCourses();
+    this.instructorService.getInstructors().subscribe((data) => {
+      this.instructors = data;
+    });
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras?.state?.['premiumActivated']) {
       this.showPremiumSuccessToast();
@@ -301,5 +308,9 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
 
   goToProfile() {
     this.router.navigate(['/profile']);
+  }
+
+  goToInstructorProfile(id: string) {
+    this.router.navigate(['/instructor-profile', id]);
   }
 }
