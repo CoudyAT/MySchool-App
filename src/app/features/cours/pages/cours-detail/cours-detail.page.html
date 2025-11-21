@@ -6,6 +6,12 @@
       </ion-button>
     </ion-buttons>
     <ion-title class="header-title">Page Cours</ion-title>
+    <!-- Icône "Voir plus" en haut à droite
+    <ion-buttons slot="end">
+      <ion-button *ngIf="isUserEnrolled" (click)="goToDetailsCours()" class="details-button">
+        <ion-icon name="eye-outline" class="eye-icon"></ion-icon>
+      </ion-button>
+    </ion-buttons>  -->
   </ion-toolbar>
 </ion-header>
 
@@ -30,7 +36,7 @@
 
       <!-- Info sessions et exercices -->
       <div class="course-meta">
-        <span class="sessions">{{course?.sessions}} Sessions</span>
+        <span class="sessions" *ngIf="isUserEnrolled" (click)="goToDetailsCours()">{{course?.chaptersIds?.length}} Chapitres</span>
         <span class="separator">·</span>
         <span class="exercises">{{course?.exercises}} Exercices</span>
       </div>
@@ -62,8 +68,8 @@
         <h2 class="section-title">Description cours</h2>
         <p class="description-text">{{course?.description}}</p>
       </div>
-      <!-- Section Documents -->
       
+      <!-- Section Documents -->
       <div class="documents-section">
         <h2 class="section-title">Documents</h2>
         <ion-card class="document-card">
@@ -73,7 +79,7 @@
                 <span class="document-name">Support de cours</span>
                 <span class="document-type">PDF</span>
               </div>
-              <ion-button fill="clear" class="download-button" >
+              <ion-button fill="clear" class="download-button">
                 <ion-icon name="download-outline" class="download-icon"></ion-icon>
               </ion-button>
             </div>

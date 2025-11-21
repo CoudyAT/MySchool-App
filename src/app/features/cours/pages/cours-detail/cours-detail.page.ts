@@ -29,6 +29,8 @@ import {
   timeOutline,
   trophyOutline,
   downloadOutline,
+  ellipsisVertical,
+  eyeOutline,
 } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { CourseService } from 'src/app/features/services/courseService';
@@ -74,9 +76,11 @@ export class CoursDetailPage implements OnInit, OnDestroy {
   ) {
     addIcons({
       chevronBackOutline,
+      eyeOutline,
       star,
       starHalf,
       downloadOutline,
+      ellipsisVertical,
       languageOutline,
       starOutline: starOutline,
       checkmarkCircle: checkmarkCircle,
@@ -235,5 +239,11 @@ export class CoursDetailPage implements OnInit, OnDestroy {
         },
       });
     }
+  }
+
+  goToDetailsCours() {
+    this.router.navigate(['/detail'], {
+      queryParams: { courseId: this.course?.id },
+    });
   }
 }

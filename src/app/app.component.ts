@@ -11,9 +11,10 @@ export class AppComponent {
   private fixturesService = inject(InitializationService);
 
   constructor() {
-    // Lance le chargement des fixtures en arrière-plan
-    //this.fixturesService.seedExpertises();
-   // this.fixturesService.seedInstructors();
-  //  this.fixturesService.loadFixturesInBackground();
+    // this.fixturesService.createCourseFixtures();
+   // this.fixturesService.seedExpertises();
+  //  this.fixturesService.seedInstructors();
+    //  this.fixturesService.loadFixturesInBackground();
+   // this.fixturesService.createLessonsFixtures();
   }
 }

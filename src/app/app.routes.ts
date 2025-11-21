@@ -14,6 +14,7 @@ import { ListCoursPage } from './Admin/pages/cours/pages/list-cours/list-cours.p
 import { DetailCoursPage } from './Admin/pages/cours/pages/detail-cours/detail-cours.page';
 import { LoginComponent } from './features/auth/login/login.component';
 import { ProfilePage } from './features/auth/profile/profile.page';
+import { DetailPage } from './features/cours/pages/detail/detail.page';
 
 export const routes: Routes = [
   {
@@ -70,6 +71,11 @@ export const routes: Routes = [
   {
     path: 'profile',
     component: ProfilePage, // Remplacez par votre composant de profil
+  },
+
+  {
+    path: 'detail',
+    component: DetailPage,
   },
 
   {

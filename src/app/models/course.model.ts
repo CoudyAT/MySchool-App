@@ -1,14 +1,46 @@
 // interfaces/course.interface.ts
 export interface Chapter {
   id: string;
+  courseId: string;
   title: string;
-  description: string;
   order: number;
-  duration: number;
-  videos?: Video[];
+  description?: string;
+  duration?: string;
+  exercisesIds?: string[];
   exercises?: Exercise[];
-  createdAt: Date;
-  updatedAt: Date;
+  lessons?: Lesson[];
+  lessonsIds?: string[];
+}
+
+export interface Exercise {
+  id: string;
+  chapterId: string;
+  courseId: string;
+  title: string;
+  type: 'qcm' | 'code' | 'text';
+  difficulty: 'facile' | 'moyen' | 'difficile' | 'avancé';
+  duration: string;
+  questions?: any[];
+  instructions?: string;
+  templateCode?: string;
+  testCases?: any[];
+  score?: number;
+  totalQuestions?: number;
+}
+
+export interface Lesson {
+  id: string;
+  title: string;
+  type: 'video' | 'text' | 'exercise' | 'quiz';
+  duration: string;
+  isCompleted: boolean;
+  order: number;
+  passed?: boolean;
+  score?: string;
+  instructions?: string;
+  templateCode?: string;
+  testCases?: any[];
+  questions?: any[];
 }
 
 export interface Video {
@@ -22,15 +54,15 @@ export interface Video {
   createdAt: Date;
 }
 
-export interface Exercise {
-  id: string;
-  title: string;
-  instructions: string;
-  type: 'QUIZ' | 'ASSIGNMENT' | 'PROJECT';
-  points: number;
-  order: number;
-  createdAt: Date;
-}
+// export interface Exercise {
+//   id: string;
+//   title: string;
+//   instructions: string;
+//   type: 'QUIZ' | 'ASSIGNMENT' | 'PROJECT';
+//   points: number;
+//   order: number;
+//   createdAt: Date;
+// }
 
 export interface Course {
   id: string;
@@ -47,7 +79,8 @@ export interface Course {
   certificateAvailable: boolean;
   price?: number;
   rating?: number;
-  chapters: Chapter[]; // Relation avec les chapitres
+  chapters: Chapter[];
+  chaptersIds?: string[]; // Relation avec les chapitres
   createdAt: Date;
   updatedAt: Date;
   levels?: Array<{
