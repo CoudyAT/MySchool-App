@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Auth } from '@angular/fire/auth';
+import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { signOut } from 'firebase/auth';
 import { ToastController, AlertController } from '@ionic/angular';
 import {
@@ -43,7 +44,6 @@ import {
   styleUrls: ['./profile.page.scss'],
   standalone: true,
   imports: [
-   // IonTitle,
     IonContent,
     IonHeader,
     IonToolbar,
@@ -51,9 +51,7 @@ import {
     IonIcon,
     IonItem,
     IonLabel,
-   // IonAvatar,
     IonList,
-   // IonBackButton,
     IonButtons,
     CommonModule,
     FormsModule,
@@ -65,6 +63,7 @@ export class ProfilePage implements OnInit {
   constructor(
     private router: Router,
     private auth: Auth,
+    private firestore: Firestore,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController
   ) {
@@ -85,15 +84,68 @@ export class ProfilePage implements OnInit {
     });
   }
 
-  ngOnInit() {
-    this.loadUserData();
+  async ngOnInit() {
+    await this.loadUserData();
   }
 
-  loadUserData() {
-    const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-    if (localUser) {
-      this.currentUser = localUser;
+  async loadUserData() {
+    try {
+      const localUser = JSON.parse(
+        localStorage.getItem('currentUser') || 'null'
+      );
+      if (localUser && localUser.uid) {
+        // Charger d'abord depuis localStorage
+        this.currentUser = localUser;
+
+        // Ensuite charger depuis Firestore pour avoir les données à jour
+        await this.loadFromFirestore(localUser.uid);
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des données:', error);
     }
+  }
+
+  private async loadFromFirestore(userId: string): Promise<void> {
+    try {
+      const userRef = doc(this.firestore, 'utilisateur', userId);
+      const userDoc = await getDoc(userRef);
+
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        console.log('📄 Données Firestore chargées:', userData);
+
+        // Fusionner avec les données existantes
+        if (userData?.['firstName'])
+          this.currentUser.firstName = userData['firstName'];
+        if (userData?.['lastName'])
+          this.currentUser.lastName = userData['lastName'];
+        if (userData?.['phone']) this.currentUser.phone = userData['phone'];
+        if (userData?.['email']) this.currentUser.email = userData['email'];
+
+        // Gérer l'image - priorité à profileImageBase64
+        if (userData?.['profileImageBase64']) {
+          this.currentUser.photoURL = userData['profileImageBase64'];
+        } else if (userData?.['photoURL']) {
+          this.currentUser.photoURL = userData['photoURL'];
+        }
+
+        // Mettre à jour localStorage
+        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement Firestore:', error);
+    }
+  }
+
+  getProfileImage(): string {
+    // Retourne l'URL de l'image ou null si pas d'image
+    return this.currentUser?.photoURL || null;
+  }
+
+  getInitials(): string {
+    const firstName = this.currentUser?.firstName || '';
+    const lastName = this.currentUser?.lastName || '';
+    return (firstName.charAt(0) + lastName.charAt(0)).toUpperCase() || 'A';
   }
 
   goBack() {
@@ -101,47 +153,38 @@ export class ProfilePage implements OnInit {
   }
 
   modifyProfile() {
-    // Navigation vers page de modification du profil
-    console.log('Modifier le profil');
+    this.router.navigate(['/edit-profile']);
   }
 
   openPaymentOptions() {
-    // Navigation vers options de paiement
     console.log('Options de paiement');
   }
 
   openNotifications() {
-    // Navigation vers notifications
     console.log('Notifications');
   }
 
   openSecurity() {
-    // Navigation vers sécurité
     console.log('Sécurité');
   }
 
   openLanguage() {
-    // Navigation vers choix de langue
     console.log('Langue');
   }
 
   toggleDarkMode() {
-    // Toggle du mode sombre
     console.log('Mode sombre');
   }
 
   openTerms() {
-    // Navigation vers conditions d'utilisation
     console.log("Conditions d'utilisation");
   }
 
   openHelp() {
-    // Navigation vers centre d'aide
     console.log("Centre d'aide");
   }
 
   inviteFriends() {
-    // Fonction pour parrainer des amis
     console.log('Parrainer des amis');
   }
 
@@ -184,8 +227,34 @@ export class ProfilePage implements OnInit {
     await alert.present();
   }
 
-  changeProfilePicture() {
-    // Fonction pour changer la photo de profil
-    console.log('Changer la photo de profil');
+  async changeProfilePicture() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+
+    input.onchange = async (event: any) => {
+      const file = event.target.files[0];
+      if (file) {
+        if (!file.type.startsWith('image/')) {
+          const toast = await this.toastCtrl.create({
+            message: 'Veuillez sélectionner une image valide',
+            duration: 2000,
+            color: 'warning',
+          });
+          await toast.present();
+          return;
+        }
+
+        // Rediriger vers la page d'édition
+        this.router.navigate(['/edit-profile']);
+      }
+    };
+
+    input.click();
+  }
+
+  async ionViewWillEnter() {
+    console.log('🔄 Rechargement automatique du profil');
+    await this.loadUserData();
   }
 }

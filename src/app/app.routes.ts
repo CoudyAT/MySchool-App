@@ -15,6 +15,8 @@ import { DetailCoursPage } from './Admin/pages/cours/pages/detail-cours/detail-c
 import { LoginComponent } from './features/auth/login/login.component';
 import { ProfilePage } from './features/auth/profile/profile.page';
 import { DetailPage } from './features/cours/pages/detail/detail.page';
+import { Component } from '@angular/core';
+import { EditProfilePage } from './features/auth/edit-profile/edit-profile.page';
 
 export const routes: Routes = [
   {
@@ -76,6 +78,11 @@ export const routes: Routes = [
   {
     path: 'detail',
     component: DetailPage,
+  },
+
+  {
+    path: 'edit-profile',
+    component: EditProfilePage,
   },
 
   {

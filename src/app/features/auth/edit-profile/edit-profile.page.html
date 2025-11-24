@@ -1,0 +1,117 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+        <span class="back-text">Retour</span>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Modifier le profil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="edit-profile-container">
+    
+    <!-- Section Avatar -->
+    <div class="avatar-section">
+      <div class="avatar-container">
+        <div class="avatar-circle">
+          <img 
+            *ngIf="profileForm.photoURL" 
+            [src]="profileForm.photoURL" 
+            alt="Profile picture"
+          />
+          <div *ngIf="!profileForm.photoURL" class="avatar-placeholder">
+            {{ profileForm.firstName?.charAt(0) || 'A' }}
+          </div>
+        </div>
+        <button class="camera-button" (click)="selectImage()">
+          <ion-icon name="camera-outline"></ion-icon>
+        </button>
+      </div>
+      <p class="change-photo-text">Modifier la photo</p>
+    </div>
+
+    <!-- Formulaire de modification -->
+    <form class="profile-form">
+      
+      <!-- Prénom -->
+      <div class="form-group">
+        <label class="form-label">Prénom</label>
+        <ion-item lines="none" class="form-item">
+          <ion-input
+            [(ngModel)]="profileForm.firstName"
+            name="firstName"
+            placeholder="Entrez votre prénom"
+            type="text"
+          ></ion-input>
+        </ion-item>
+      </div>
+
+      <!-- Nom -->
+      <div class="form-group">
+        <label class="form-label">Nom</label>
+        <ion-item lines="none" class="form-item">
+          <ion-input
+            [(ngModel)]="profileForm.lastName"
+            name="lastName"
+            placeholder="Entrez votre nom"
+            type="text"
+          >
+          </ion-input>
+        </ion-item>
+      </div>
+
+      <!-- Email 
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <ion-item lines="none" class="form-item">
+          <ion-input
+            [(ngModel)]="profileForm.email"
+            name="email"
+            placeholder="Entrez votre email"
+            type="email"
+            [disabled]="true"
+          ></ion-input>
+        </ion-item>
+        <p class="helper-text">L'email ne peut pas être modifié</p>
+      </div> -->
+
+      <!-- Téléphone -->
+      <div class="form-group">
+        <label class="form-label">Téléphone</label>
+        <ion-item lines="none" class="form-item">
+          <ion-input
+            [(ngModel)]="profileForm.phone"
+            name="phone"
+            placeholder="Entrez votre numéro"
+            type="tel"
+          ></ion-input>
+        </ion-item>
+      </div>
+
+      <!-- Bouton de sauvegarde -->
+      <ion-button 
+        expand="block" 
+        class="save-button"
+        (click)="saveProfile()"
+        [disabled]="isSaving"
+      >
+        <ion-spinner *ngIf="isSaving" name="crescent"></ion-spinner>
+        <span *ngIf="!isSaving">Enregistrer les modifications</span>
+      </ion-button>
+
+    </form>
+
+    <!-- Input caché pour la sélection d'image -->
+    <input 
+      type="file" 
+      #fileInput 
+      accept="image/*" 
+      (change)="onFileSelected($event)"
+      style="display: none"
+    />
+
+  </div>
+</ion-content>
