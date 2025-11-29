@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
+  apiUrl: 'https://us-central1-myschool-f862b.cloudfunctions.net/api',
   firebase: {
     apiKey: 'AIzaSyAMx6oWTAIsrMqSgcgrn2ykFZpBjW5YlPw',
     authDomain: 'myschool-f862b.firebaseapp.com',

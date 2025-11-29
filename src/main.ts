@@ -12,6 +12,7 @@ import {
   IonicRouteStrategy,
   provideIonicAngular,
 } from '@ionic/angular/standalone';
+import { provideHttpClient, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
@@ -22,6 +23,7 @@ import { provideAuth, getAuth } from '@angular/fire/auth';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { provideStorage, getStorage } from '@angular/fire/storage';
 import { environment } from './environments/environment';
+import { ErrorInterceptor } from './app/core/interceptors/error.interceptor';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -29,12 +31,18 @@ bootstrapApplication(AppComponent, {
     provideIonicAngular(),
     provideRouter(routes, withPreloading(PreloadAllModules)),
 
+    // HTTP Client avec intercepteur d'erreurs
+    provideHttpClient(),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorInterceptor,
+      multi: true
+    },
+
+    // Firebase
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth()),
-
-    // UTILISE L'APP INITIALISÉE + NOM DE LA BASE
-    provideFirestore(() => getFirestore(getApp(), 'myschool-1')), // CORRIGÉ
-
+    provideFirestore(() => getFirestore(getApp(), 'myschool-1')),
     provideStorage(() => getStorage()),
   ],
 });

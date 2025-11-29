@@ -1,36 +1,22 @@
 // services/enrollment.service.ts
 import { Injectable, inject } from '@angular/core';
-import {
-  Firestore,
-  collection,
-  addDoc,
-  query,
-  where,
-  getDocs,
-  doc,
-  setDoc,
-  updateDoc,
-  arrayUnion,
-  collectionData,
-  getDoc,
-} from '@angular/fire/firestore';
 import { Auth } from '@angular/fire/auth';
-import { Observable, from, map, of, switchMap } from 'rxjs';
+import { Observable, of, map, switchMap, from } from 'rxjs';
 import { Enrollment, PaymentData } from 'src/app/models/payment.model';
-
+import { ApiService } from 'src/app/core/services/api.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class EnrollmentService {
-  private firestore = inject(Firestore);
-  private auth = inject(Auth);
+  private readonly api = inject(ApiService);
+  private readonly auth = inject(Auth);
 
   async createEnrollment(paymentData: PaymentData): Promise<string> {
     // UTILISER LE UID DE VOTRE BASE, PAS CELUI DE FIREBASE AUTH
     const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
 
-    if (!localUser || !localUser.uid) {
+    if (!localUser?.uid) {
       throw new Error('Utilisateur non connecté');
     }
 
@@ -40,7 +26,7 @@ export class EnrollmentService {
     console.log('UID Firebase Auth (ignoré):', this.auth.currentUser?.uid);
 
     const enrollmentData = {
-      userId: realUid, // ← UTILISER LE VRAI UID ICI
+      userId: realUid,
       courseId: paymentData.courseId,
       courseTitle: paymentData.courseTitle,
       courseImage: paymentData.courseImage,
@@ -53,66 +39,52 @@ export class EnrollmentService {
     };
 
     try {
-      const enrollmentRef = await addDoc(
-        collection(this.firestore, 'enrollments'),
+      const response = await this.api.post<{ id: string; enrollment: Enrollment }>(
+        '/enrollments',
         enrollmentData
-      );
-      console.log('Inscription créée avec ID:', enrollmentRef.id);
-      return enrollmentRef.id;
+      ).toPromise() as { id: string; enrollment: Enrollment } | undefined;
+
+      console.log('Inscription créée avec ID:', response?.id);
+      return response?.id || '';
     } catch (error) {
       console.error('Erreur création inscription:', error);
       throw error;
     }
   }
 
-  // Ajouter l'utilisateur au cours
-  private async addUserToCourse(
-    courseId: string,
-    userId: string
-  ): Promise<void> {
-    const courseRef = doc(this.firestore, 'courses', courseId);
-    await updateDoc(courseRef, {
-      enrolledUsers: arrayUnion(userId),
-    });
-  }
-
   // Vérifier si l'utilisateur est déjà inscrit à un cours
   async isUserEnrolled(courseId: string): Promise<boolean> {
-    const user = this.auth.currentUser;
-    if (!user) return false;
+    const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+    if (!localUser?.uid) return false;
 
-    const enrollmentsRef = collection(this.firestore, 'enrollments');
-    const q = query(
-      enrollmentsRef,
-      where('userId', '==', user.uid),
-      where('courseId', '==', courseId),
-      where('status', '==', 'completed')
-    );
+    try {
+      const enrollments = await this.api.get<Enrollment[]>(
+        `/enrollments/student/${localUser.uid}`
+      ).toPromise();
 
-    const snapshot = await getDocs(q);
-    return !snapshot.empty;
+      return enrollments?.some(
+        e => e.courseId === courseId && e.status === 'completed'
+      ) || false;
+    } catch (error) {
+      console.error('Erreur vérification inscription:', error);
+      return false;
+    }
   }
 
   // Récupérer tous les cours où l'utilisateur est inscrit
-
   getUserEnrollments(): Observable<Enrollment[]> {
     const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
 
-    if (!localUser || !localUser.uid) {
+    if (!localUser?.uid) {
       console.warn('❌ Aucun utilisateur trouvé dans localStorage');
       return of([]);
     }
 
     const realUid = localUser.uid;
-
     console.log('🔍 Recherche des enrollments avec UID:', realUid);
 
-    const enrollmentsRef = collection(this.firestore, 'enrollments');
-    const q = query(enrollmentsRef, where('userId', '==', realUid));
-
-    return collectionData(q, { idField: 'id' }).pipe(
+    return this.api.get<Enrollment[]>(`/enrollments/student/${realUid}`).pipe(
       map((data: any[]) => {
-        // Convertir les données Firestore en objets Enrollment
         return data.map((doc) => this.mapToEnrollment(doc));
       })
     );
@@ -140,79 +112,52 @@ export class EnrollmentService {
     progress: number,
     chapterId?: string
   ): Promise<void> {
-    const enrollmentRef = doc(this.firestore, 'enrollments', enrollmentId);
     const updates: any = { progress };
 
     if (chapterId) {
-      updates.chaptersCompleted = arrayUnion(chapterId);
+      // Récupérer l'enrollment actuel pour ajouter le chapitre
+      const enrollment = await this.api.get<Enrollment>(
+        `/enrollments/${enrollmentId}`
+      ).toPromise();
+
+      if (enrollment && !enrollment.chaptersCompleted?.includes(chapterId)) {
+        updates.chaptersCompleted = [...(enrollment.chaptersCompleted || []), chapterId];
+      }
     }
 
-    await updateDoc(enrollmentRef, updates);
+    await this.api.put(`/enrollments/${enrollmentId}`, updates).toPromise();
   }
 
   getUserEnrollmentsWithCourseDetails(): Observable<Enrollment[]> {
     const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
 
-    if (!localUser || !localUser.uid) {
+    if (!localUser?.uid) {
       console.warn('❌ Aucun utilisateur trouvé dans localStorage');
       return of([]);
     }
 
     const realUid = localUser.uid;
-
     console.log('🔍 Recherche des enrollments avec UID:', realUid);
 
-    const enrollmentsRef = collection(this.firestore, 'enrollments');
-    const q = query(
-      enrollmentsRef,
-      where('userId', '==', realUid),
-    //  where('status', '==', 'completed') // ← AJOUTEZ CETTE LIGNE pour filtrer seulement les cours payés
-    );
-
-    return collectionData(q, { idField: 'id' }).pipe(
+    return this.api.get<Enrollment[]>(`/enrollments/student/${realUid}`).pipe(
       switchMap((enrollments: any[]) => {
-        console.log('📦 Enrollments "completed" trouvés:', enrollments.length);
+        console.log('📦 Enrollments trouvés:', enrollments.length);
 
         if (enrollments.length === 0) {
-          return of([]); // Retourner tableau vide si aucun cours payé
+          return of([]);
         }
 
+        // Récupérer les détails des cours pour chaque enrollment
         const enrollmentPromises = enrollments.map(async (enrollment) => {
           try {
-            const courseDoc = await getDoc(
-              doc(this.firestore, 'courses', enrollment.courseId)
-            );
+            const courseDetails = await this.api.get<any>(
+              `/courses/${enrollment.courseId}`
+            ).toPromise();
 
-            if (courseDoc.exists()) {
-              const courseData = courseDoc.data();
-              return {
-                ...this.mapToEnrollment(enrollment),
-                courseDetails: {
-                  id: courseDoc.id,
-                  title: courseData['title'] || '',
-                  description: courseData['description'] || '',
-                  image: courseData['image'] || '',
-                  sessions: courseData['sessions'] || 0,
-                  exercises: courseData['exercises'] || 0,
-                  rating: courseData['rating'] || 0,
-                  category: courseData['category'] || '',
-                  certificateAvailable:
-                    courseData['certificateAvailable'] || false,
-                  duration: courseData['duration'] || 0,
-                  level: courseData['level'] || '',
-                  price: courseData['price'] || 0,
-                  type: courseData['type'] || '',
-                  isPublished: courseData['isPublished'] || false,
-                  enrolledUsers: courseData['enrolledUsers'] || [],
-                  createdAt: courseData['createdAt'],
-                  updatedAt: courseData['updatedAt'],
-                  chapters: courseData['chapters'] || [],
-                },
-              } as Enrollment;
-            } else {
-              console.warn(`❌ Cours ${enrollment.courseId} non trouvé`);
-              return this.mapToEnrollment(enrollment);
-            }
+            return {
+              ...this.mapToEnrollment(enrollment),
+              courseDetails: courseDetails,
+            } as Enrollment;
           } catch (error) {
             console.error(
               `❌ Erreur chargement cours ${enrollment.courseId}:`,
@@ -230,21 +175,18 @@ export class EnrollmentService {
   async activatePremiumAccess(): Promise<void> {
     const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
 
-    if (!localUser || !localUser.uid) {
+    if (!localUser?.uid) {
       throw new Error('Utilisateur non connecté');
     }
 
     // Marquer l'utilisateur comme Premium dans la base
-    const userRef = doc(this.firestore, 'utilisateur', localUser.uid);
-    await setDoc(
-      userRef,
-      {
-        isPremium: true,
-        premiumSince: new Date(),
-        premiumExpiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 jours
-      },
-      { merge: true }
-    );
+    const premiumData = {
+      isPremium: true,
+      premiumSince: new Date(),
+      premiumExpiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 jours
+    };
+
+    await this.api.put(`/users/${localUser.uid}`, premiumData).toPromise();
 
     console.log('✅ Utilisateur marqué comme Premium');
   }
