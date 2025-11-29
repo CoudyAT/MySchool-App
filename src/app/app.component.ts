@@ -8,13 +8,9 @@ import { InitializationService } from './Admin/services/initializationService';
   imports: [IonApp, IonRouterOutlet],
 })
 export class AppComponent {
-  private fixturesService = inject(InitializationService);
+  private readonly fixturesService = inject(InitializationService);
 
   constructor() {
-    // this.fixturesService.createCourseFixtures();
-   // this.fixturesService.seedExpertises();
-  //  this.fixturesService.seedInstructors();
-    //  this.fixturesService.loadFixturesInBackground();
-   // this.fixturesService.createLessonsFixtures();
+    // Les fixtures peuvent être activées ici si nécessaire
   }
 }

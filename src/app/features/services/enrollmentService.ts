@@ -1,7 +1,7 @@
 // services/enrollment.service.ts
 import { Injectable, inject } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
-import { Observable, of, map, switchMap, from } from 'rxjs';
+import { Observable, of, map, switchMap, from, firstValueFrom } from 'rxjs';
 import { Enrollment, PaymentData } from 'src/app/models/payment.model';
 import { ApiService } from 'src/app/core/services/api.service';
 
@@ -39,10 +39,12 @@ export class EnrollmentService {
     };
 
     try {
-      const response = await this.api.post<{ id: string; enrollment: Enrollment }>(
-        '/enrollments',
-        enrollmentData
-      ).toPromise() as { id: string; enrollment: Enrollment } | undefined;
+      const response = await firstValueFrom(
+        this.api.post<{ id: string; enrollment: Enrollment }>(
+          '/enrollments',
+          enrollmentData
+        )
+      );
 
       console.log('Inscription créée avec ID:', response?.id);
       return response?.id || '';
@@ -58,9 +60,9 @@ export class EnrollmentService {
     if (!localUser?.uid) return false;
 
     try {
-      const enrollments = await this.api.get<Enrollment[]>(
-        `/enrollments/student/${localUser.uid}`
-      ).toPromise();
+      const enrollments = await firstValueFrom(
+        this.api.get<Enrollment[]>(`/enrollments/student/${localUser.uid}`)
+      );
 
       return enrollments?.some(
         e => e.courseId === courseId && e.status === 'completed'
@@ -116,16 +118,18 @@ export class EnrollmentService {
 
     if (chapterId) {
       // Récupérer l'enrollment actuel pour ajouter le chapitre
-      const enrollment = await this.api.get<Enrollment>(
-        `/enrollments/${enrollmentId}`
-      ).toPromise();
+      const enrollment = await firstValueFrom(
+        this.api.get<Enrollment>(`/enrollments/${enrollmentId}`)
+      );
 
       if (enrollment && !enrollment.chaptersCompleted?.includes(chapterId)) {
         updates.chaptersCompleted = [...(enrollment.chaptersCompleted || []), chapterId];
       }
     }
 
-    await this.api.put(`/enrollments/${enrollmentId}`, updates).toPromise();
+    await firstValueFrom(
+      this.api.put(`/enrollments/${enrollmentId}`, updates)
+    );
   }
 
   getUserEnrollmentsWithCourseDetails(): Observable<Enrollment[]> {
@@ -150,9 +154,9 @@ export class EnrollmentService {
         // Récupérer les détails des cours pour chaque enrollment
         const enrollmentPromises = enrollments.map(async (enrollment) => {
           try {
-            const courseDetails = await this.api.get<any>(
-              `/courses/${enrollment.courseId}`
-            ).toPromise();
+            const courseDetails = await firstValueFrom(
+              this.api.get<any>(`/courses/${enrollment.courseId}`)
+            );
 
             return {
               ...this.mapToEnrollment(enrollment),
@@ -186,7 +190,9 @@ export class EnrollmentService {
       premiumExpiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 jours
     };
 
-    await this.api.put(`/users/${localUser.uid}`, premiumData).toPromise();
+    await firstValueFrom(
+      this.api.put(`/users/${localUser.uid}`, premiumData)
+    );
 
     console.log('✅ Utilisateur marqué comme Premium');
   }

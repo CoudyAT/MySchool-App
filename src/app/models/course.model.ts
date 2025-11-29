@@ -54,16 +54,6 @@ export interface Video {
   createdAt: Date;
 }
 
-// export interface Exercise {
-//   id: string;
-//   title: string;
-//   instructions: string;
-//   type: 'QUIZ' | 'ASSIGNMENT' | 'PROJECT';
-//   points: number;
-//   order: number;
-//   createdAt: Date;
-// }
-
 export interface Course {
   id: string;
   title: string;
