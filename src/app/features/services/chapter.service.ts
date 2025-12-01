@@ -59,6 +59,11 @@ export class ChapterService {
     return this.api.delete<void>(`/chapters/${id}`);
   }
 
+  // Récupérer tous les chapitres
+  getAllChapters(): Observable<Chapter[]> {
+    return this.api.get<Chapter[]>('/chapters');
+  }
+
   // Transformer les exercices en leçons pour l'affichage
   private transformExercisesToLessons(exercises: Exercise[]): Lesson[] {
     return exercises.map(

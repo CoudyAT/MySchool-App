@@ -1,0 +1,76 @@
+<ion-content class="payment-callback">
+  <div class="callback-container">
+    <!-- Loading State -->
+    <div *ngIf="paymentStatus === 'loading'" class="status-content loading">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <h2>{{ message }}</h2>
+    </div>
+
+    <!-- Success State -->
+    <div *ngIf="paymentStatus === 'success'" class="status-content success">
+      <ion-icon [name]="icon" color="success"></ion-icon>
+      <h2>Paiement réussi !</h2>
+      <p>{{ message }}</p>
+    </div>
+
+    <!-- Failed State -->
+    <div *ngIf="paymentStatus === 'failed'" class="status-content failed">
+      <ion-icon [name]="icon" color="danger"></ion-icon>
+      <h2>Paiement échoué</h2>
+      <p>{{ message }}</p>
+      <div class="actions">
+        <ion-button expand="block" (click)="retryPayment()">
+          Réessayer
+        </ion-button>
+        <ion-button expand="block" fill="outline" (click)="goToCourses()">
+          Retour aux cours
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- Pending State -->
+    <div *ngIf="paymentStatus === 'pending'" class="status-content pending">
+      <ion-icon [name]="icon" color="warning"></ion-icon>
+      <h2>Paiement en attente</h2>
+      <p>{{ message }}</p>
+      <div class="actions">
+        <ion-button expand="block" (click)="checkPaymentStatus()">
+          Vérifier le statut
+        </ion-button>
+        <ion-button expand="block" fill="outline" color="danger" (click)="cancelPayment()">
+          Annuler le paiement
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- Cancelled State -->
+    <div *ngIf="paymentStatus === 'cancelled'" class="status-content cancelled">
+      <ion-icon [name]="icon" color="medium"></ion-icon>
+      <h2>Paiement annulé</h2>
+      <p>{{ message }}</p>
+      <div class="actions">
+        <ion-button expand="block" (click)="retryPayment()">
+          Réessayer
+        </ion-button>
+        <ion-button expand="block" fill="outline" (click)="goToCourses()">
+          Retour aux cours
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- Expired State -->
+    <div *ngIf="paymentStatus === 'expired'" class="status-content expired">
+      <ion-icon [name]="icon" color="medium"></ion-icon>
+      <h2>Paiement expiré</h2>
+      <p>{{ message }}</p>
+      <div class="actions">
+        <ion-button expand="block" (click)="retryPayment()">
+          Réessayer
+        </ion-button>
+        <ion-button expand="block" fill="outline" (click)="goToCourses()">
+          Retour aux cours
+        </ion-button>
+      </div>
+    </div>
+  </div>
+</ion-content>

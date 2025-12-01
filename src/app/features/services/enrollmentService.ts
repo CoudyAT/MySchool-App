@@ -4,6 +4,7 @@ import { Auth } from '@angular/fire/auth';
 import { Observable, of, map, switchMap, from, firstValueFrom } from 'rxjs';
 import { Enrollment, PaymentData } from 'src/app/models/payment.model';
 import { ApiService } from 'src/app/core/services/api.service';
+import { PaymentService } from './paymentService';
 
 @Injectable({
   providedIn: 'root',
@@ -11,8 +12,16 @@ import { ApiService } from 'src/app/core/services/api.service';
 export class EnrollmentService {
   private readonly api = inject(ApiService);
   private readonly auth = inject(Auth);
+  private readonly paymentService = inject(PaymentService);
 
-  async createEnrollment(paymentData: PaymentData): Promise<string> {
+  /**
+   * Crée une inscription avec paiement optionnel
+   * Si le cours est payant et paymentMethod = 'orange-money', crée le paiement
+   */
+  async createEnrollment(paymentData: PaymentData): Promise<{
+    enrollmentId: string;
+    payment?: any;
+  }> {
     // UTILISER LE UID DE VOTRE BASE, PAS CELUI DE FIREBASE AUTH
     const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
 
@@ -47,7 +56,73 @@ export class EnrollmentService {
       );
 
       console.log('Inscription créée avec ID:', response?.id);
-      return response?.id || '';
+      const enrollmentId = response?.id || '';
+
+      // Si le cours est payant et méthode = orange-money, créer le paiement
+      if (
+        paymentData.amount > 0 &&
+        paymentData.method?.id === 'orange-money'
+      ) {
+        console.log('💳 Création du paiement Orange Money...');
+
+        // Récupérer les données client du localStorage ou du paymentData
+        let customerData: any = {};
+        const savedCustomerData = localStorage.getItem('paymentCustomerData');
+
+        if (savedCustomerData) {
+          try {
+            customerData = JSON.parse(savedCustomerData);
+          } catch (e) {
+            console.error('Erreur parsing customerData:', e);
+          }
+        }
+
+        // Fallback sur les données de la méthode de paiement
+        if (!customerData.phone && paymentData.method.customerPhone) {
+          customerData = {
+            name: paymentData.method.customerName,
+            email: paymentData.method.customerEmail,
+            phone: paymentData.method.customerPhone,
+          };
+        }
+
+        // Fallback final sur l'utilisateur connecté
+        if (!customerData.phone) {
+          customerData = {
+            name: localUser.firstName + ' ' + localUser.lastName || 'Client MySchool',
+            email: localUser.email || 'client@myschool.sn',
+            phone: localUser.phone || '+221771234567',
+          };
+        }
+
+        const payment = await firstValueFrom(
+          this.paymentService.createPayment({
+            userId: realUid,
+            enrollmentId: enrollmentId,
+            courseId: paymentData.courseId,
+            amount: Math.round(paymentData.amount * 100), // Convertir en centimes
+            currency: 'XOF',
+            paymentMethod: 'orange-money',
+            customerPhoneNumber: customerData.phone,
+            customerFirstName: customerData.name.split(' ')[0] || 'Prénom',
+            customerLastName: customerData.name.split(' ').slice(1).join(' ') || 'Nom',
+            description: `Paiement pour ${paymentData.courseTitle}`,
+          })
+        );
+
+        // Nettoyer les données client temporaires
+        localStorage.removeItem('paymentCustomerData');
+
+        if (payment.success && payment.data) {
+          console.log('✅ Paiement créé:', payment.data);
+          return {
+            enrollmentId: enrollmentId,
+            payment: payment.data,
+          };
+        }
+      }
+
+      return { enrollmentId: enrollmentId };
     } catch (error) {
       console.error('Erreur création inscription:', error);
       throw error;
@@ -61,7 +136,7 @@ export class EnrollmentService {
 
     try {
       const enrollments = await firstValueFrom(
-        this.api.get<Enrollment[]>(`/enrollments/student/${localUser.uid}`)
+        this.api.get<Enrollment[]>(`/enrollments/user/${localUser.uid}`)
       );
 
       return enrollments?.some(
@@ -85,7 +160,7 @@ export class EnrollmentService {
     const realUid = localUser.uid;
     console.log('🔍 Recherche des enrollments avec UID:', realUid);
 
-    return this.api.get<Enrollment[]>(`/enrollments/student/${realUid}`).pipe(
+    return this.api.get<Enrollment[]>(`/enrollments/user/${realUid}`).pipe(
       map((data: any[]) => {
         return data.map((doc) => this.mapToEnrollment(doc));
       })
@@ -143,7 +218,7 @@ export class EnrollmentService {
     const realUid = localUser.uid;
     console.log('🔍 Recherche des enrollments avec UID:', realUid);
 
-    return this.api.get<Enrollment[]>(`/enrollments/student/${realUid}`).pipe(
+    return this.api.get<Enrollment[]>(`/enrollments/user/${realUid}`).pipe(
       switchMap((enrollments: any[]) => {
         console.log('📦 Enrollments trouvés:', enrollments.length);
 
@@ -196,4 +271,74 @@ export class EnrollmentService {
 
     console.log('✅ Utilisateur marqué comme Premium');
   }
+
+  /**
+   * Méthodes supplémentaires selon OpenAPI spec
+   */
+
+  // Récupérer toutes les inscriptions (Admin)
+  getAllEnrollments(): Observable<Enrollment[]> {
+    return this.api.get<Enrollment[]>('/enrollments');
+  }
+
+  // Récupérer une inscription par ID
+  getEnrollmentById(enrollmentId: string): Observable<Enrollment> {
+    return this.api.get<Enrollment>(`/enrollments/${enrollmentId}`);
+  }
+
+  // Récupérer les inscriptions d'un cours
+  getCourseEnrollments(courseId: string): Observable<Enrollment[]> {
+    return this.api.get<Enrollment[]>(`/enrollments/course/${courseId}`);
+  }
+
+  // Récupérer les inscriptions par statut
+  getEnrollmentsByStatus(status: 'active' | 'completed' | 'cancelled'): Observable<Enrollment[]> {
+    return this.api.get<Enrollment[]>(`/enrollments/status/${status}`);
+  }
+
+  // Récupérer l'inscription d'un utilisateur à un cours spécifique
+  getUserCourseEnrollment(userId: string, courseId: string): Observable<Enrollment> {
+    return this.api.get<Enrollment>(`/enrollments/user/${userId}/course/${courseId}`);
+  }
+
+  // Mettre à jour une inscription complète
+  updateEnrollment(enrollmentId: string, data: Partial<Enrollment>): Observable<Enrollment> {
+    return this.api.put<Enrollment>(`/enrollments/${enrollmentId}`, data);
+  }
+
+  // Supprimer une inscription
+  deleteEnrollment(enrollmentId: string): Observable<void> {
+    return this.api.delete<void>(`/enrollments/${enrollmentId}`);
+  }
+
+  // Mettre à jour uniquement la progression (PATCH)
+  updateEnrollmentProgress(enrollmentId: string, progress: number): Observable<Enrollment> {
+    return this.api.patch<Enrollment>(`/enrollments/${enrollmentId}/progress`, { progress });
+  }
+
+  // Mettre à jour uniquement le statut (PATCH)
+  updateEnrollmentStatus(
+    enrollmentId: string,
+    status: 'active' | 'completed' | 'cancelled'
+  ): Observable<Enrollment> {
+    return this.api.patch<Enrollment>(`/enrollments/${enrollmentId}/status`, { status });
+  }
+
+  // Marquer un cours comme complété
+  async completeCourse(enrollmentId: string): Promise<void> {
+    await firstValueFrom(
+      this.updateEnrollmentStatus(enrollmentId, 'completed')
+    );
+    await firstValueFrom(
+      this.updateEnrollmentProgress(enrollmentId, 100)
+    );
+  }
+
+  // Annuler une inscription
+  async cancelEnrollment(enrollmentId: string): Promise<void> {
+    await firstValueFrom(
+      this.updateEnrollmentStatus(enrollmentId, 'cancelled')
+    );
+  }
 }
+

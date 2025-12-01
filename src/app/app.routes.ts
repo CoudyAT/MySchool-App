@@ -15,6 +15,7 @@ import { DetailCoursPage } from './Admin/pages/cours/pages/detail-cours/detail-c
 import { LoginComponent } from './features/auth/login/login.component';
 import { ProfilePage } from './features/auth/profile/profile.page';
 import { DetailPage } from './features/cours/pages/detail/detail.page';
+import { PaymentCallbackPage } from './features/payments/payment-callback/payment-callback.page';
 
 export const routes: Routes = [
   {
@@ -57,6 +58,10 @@ export const routes: Routes = [
   {
     path: 'payment-verify',
     component: PaymentVerifyPage,
+  },
+  {
+    path: 'payment-callback',
+    component: PaymentCallbackPage,
   },
   {
     path: 'course-video/:id',

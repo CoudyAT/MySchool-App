@@ -13,6 +13,41 @@
   <div class="page-container">
     <h1 class="page-title">Choisir une méthode<br>de paiement</h1>
 
+    <!-- Formulaire Orange Money (affiché si showPhoneInput est true) -->
+    <div class="phone-input-modal" *ngIf="showPhoneInput">
+      <div class="modal-backdrop" (click)="cancelPhoneInput()"></div>
+      <div class="modal-content">
+        <h2>Paiement Orange Money</h2>
+        <p class="modal-subtitle">Entrez vos informations pour continuer</p>
+
+        <ion-item>
+          <ion-label position="floating">Nom complet</ion-label>
+          <ion-input [(ngModel)]="customerName" type="text" placeholder="Ex: Mamadou Diop"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Email</ion-label>
+          <ion-input [(ngModel)]="customerEmail" type="email" placeholder="Ex: mamadou@example.com"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Numéro de téléphone</ion-label>
+          <ion-input [(ngModel)]="customerPhone" type="tel" placeholder="+221 77 123 45 67"></ion-input>
+        </ion-item>
+
+        <p class="phone-hint">Format accepté: +221 7X XXX XX XX (Senegal uniquement)</p>
+
+        <div class="modal-actions">
+          <ion-button expand="block" (click)="confirmOrangeMoneyPayment()">
+            Continuer
+          </ion-button>
+          <ion-button expand="block" fill="outline" (click)="cancelPhoneInput()">
+            Annuler
+          </ion-button>
+        </div>
+      </div>
+    </div>
+
     <div class="payment-methods">
       <!-- Wave -->
       <div class="wave-card" (click)="selectPaymentMethod(paymentMethods[0])">
