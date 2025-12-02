@@ -192,3 +192,30 @@ ion-content {
 ion-footer {
   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
 }
+
+.chapter-title {
+margin: 20px 0 10px;
+font-size: 20px;
+font-weight: bold;
+}
+
+
+.lesson-card {
+margin-bottom: 12px;
+border-radius: 14px;
+overflow: hidden;
+}
+
+
+.lesson-content {
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+
+
+.completed-badge {
+font-size: 12px;
+padding: 4px 8px;
+border-radius: 8px;
+}

@@ -6,6 +6,7 @@ import { Auth } from '@angular/fire/auth';
 import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { signOut } from 'firebase/auth';
 import { ToastController, AlertController } from '@ionic/angular';
+import { IonToggle } from '@ionic/angular/standalone';
 import {
   IonContent,
   IonHeader,
@@ -37,6 +38,7 @@ import {
   chevronForwardOutline,
   chevronBackOutline,
 } from 'ionicons/icons';
+import { DarkModeService } from 'src/app/services/dark-mode.service';
 
 @Component({
   selector: 'app-profile',
@@ -55,17 +57,20 @@ import {
     IonButtons,
     CommonModule,
     FormsModule,
+    IonToggle,
   ],
 })
 export class ProfilePage implements OnInit {
   currentUser: any = null;
+  isDarkMode = false;
 
   constructor(
     private router: Router,
     private auth: Auth,
     private firestore: Firestore,
     private toastCtrl: ToastController,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private darkModeService: DarkModeService
   ) {
     addIcons({
       personOutline,
@@ -86,6 +91,7 @@ export class ProfilePage implements OnInit {
 
   async ngOnInit() {
     await this.loadUserData();
+    this.isDarkMode = this.darkModeService.getDarkModeStatus();
   }
 
   async loadUserData() {
@@ -172,8 +178,17 @@ export class ProfilePage implements OnInit {
     console.log('Langue');
   }
 
-  toggleDarkMode() {
-    console.log('Mode sombre');
+  async toggleDarkMode() {
+    const newMode = this.darkModeService.toggleDarkMode();
+    this.isDarkMode = newMode;
+
+    const toast = await this.toastCtrl.create({
+      message: newMode ? '🌙 Mode sombre activé' : '☀️ Mode clair activé',
+      duration: 2000,
+      position: 'bottom',
+      color: newMode ? 'dark' : 'light',
+    });
+    await toast.present();
   }
 
   openTerms() {

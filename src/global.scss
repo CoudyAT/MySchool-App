@@ -35,3 +35,175 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+
+// Ajoutez ces styles dans votre fichier src/global.scss
+
+/* Mode Sombre - Variables */
+body.dark {
+  --ion-background-color: #121212;
+  --ion-background-color-rgb: 18, 18, 18;
+
+  --ion-text-color: #ffffff;
+  --ion-text-color-rgb: 255, 255, 255;
+
+  --ion-color-step-50: #1e1e1e;
+  --ion-color-step-100: #2a2a2a;
+  --ion-color-step-150: #363636;
+  --ion-color-step-200: #414141;
+  --ion-color-step-250: #4d4d4d;
+  --ion-color-step-300: #595959;
+  --ion-color-step-350: #656565;
+  --ion-color-step-400: #717171;
+  --ion-color-step-450: #7d7d7d;
+  --ion-color-step-500: #898989;
+  --ion-color-step-550: #949494;
+  --ion-color-step-600: #a0a0a0;
+  --ion-color-step-650: #acacac;
+  --ion-color-step-700: #b8b8b8;
+  --ion-color-step-750: #c4c4c4;
+  --ion-color-step-800: #d0d0d0;
+  --ion-color-step-850: #dbdbdb;
+  --ion-color-step-900: #e7e7e7;
+  --ion-color-step-950: #f3f3f3;
+
+  --ion-item-background: #1e1e1e;
+  --ion-card-background: #1e1e1e;
+  
+  --ion-toolbar-background: #1e1e1e;
+  --ion-tab-bar-background: #1e1e1e;
+}
+
+/* Styles spécifiques pour le mode sombre */
+body.dark {
+  ion-content {
+    --background: #121212;
+  }
+
+  ion-toolbar {
+    --background: #1e1e1e;
+    --color: #ffffff;
+  }
+
+  ion-item {
+    --background: #1e1e1e;
+    --color: #ffffff;
+  }
+
+  ion-list {
+    background: transparent;
+  }
+
+  .profile-container {
+    background: #121212;
+  }
+
+  .profile-header {
+    .user-name {
+      color: #ffffff;
+    }
+    .user-phone {
+      color: #b0b0b0;
+    }
+  }
+
+  .option-item {
+    --background: #1e1e1e;
+    --color: #ffffff;
+    
+    ion-label {
+      color: #ffffff;
+    }
+
+    .option-icon {
+      color: #00bfa5;
+    }
+
+    .chevron-icon {
+      color: #757575;
+    }
+
+    &:hover {
+      --background: #2a2a2a;
+    }
+  }
+
+  .language-value {
+    color: #00bfa5;
+  }
+
+  .logout-item {
+    --background: rgba(244, 67, 54, 0.1);
+    
+    .logout-label {
+      color: #f44336;
+    }
+
+    .logout-icon {
+      color: #f44336;
+    }
+  }
+
+  // Avatar placeholder en mode sombre
+  .avatar-placeholder {
+    background: #2a2a2a;
+    color: #ffffff;
+  }
+
+  .avatar-circle {
+    border-color: #00bfa5;
+  }
+
+  // Formulaire edit profile en mode sombre
+  .form-item {
+    --background: #1e1e1e;
+    
+    ion-input {
+      --color: #ffffff;
+    }
+  }
+
+  .form-label {
+    color: #ffffff;
+  }
+
+  .helper-text {
+    color: #b0b0b0;
+  }
+
+  // Toast en mode sombre
+  ion-toast {
+    --background: #2a2a2a;
+    --color: #ffffff;
+  }
+
+  // Alert en mode sombre
+  ion-alert {
+    --background: #1e1e1e;
+    --color: #ffffff;
+  }
+}
+
+/* Toggle Switch personnalisé pour le mode sombre */
+.dark-mode-toggle {
+  --handle-background: #00bfa5;
+  --handle-background-checked: #00bfa5;
+  --background: #4a4a4a;
+  --background-checked: #00bfa5;
+}
+
+body.dark .dark-mode-toggle {
+  --background: #2a2a2a;
+  --background-checked: #00bfa5;
+}
+
+/* Transition fluide pour le changement de mode */
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+ion-content,
+ion-toolbar,
+ion-item,
+.option-item {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}

@@ -40,109 +40,104 @@
       </p>
     </div>
 
-    <!-- Step 1: Welcome -->
   <div *ngIf="currentStep === 0" class="step-content active">
     <div class="welcome-card">
-      <!-- Formulaire -->
-      <form [formGroup]="welcomeForm" class="form-container-modern">
-        <!-- Input téléphone modernisé -->
-        <div class="input-group-modern">
-          <label class="input-label-modern">Numéro de téléphone</label>
-          <div class="input-wrapper" [class.disabled]="isCodeSent">
-            <div class="input-icon">
-              <ion-icon name="call-outline"></ion-icon>
-            </div>
-            <ion-input
-              type="tel"
-              formControlName="phone"
-              placeholder="+221 77 000 00 00"
-              class="custom-input-modern"
-              [disabled]="isCodeSent">
-            </ion-input>
+    <form [formGroup]="welcomeForm" class="form-container-modern">
+      <!-- Input téléphone modernisé -->
+      <div class="input-group-modern">
+        <label class="input-label-modern">Numéro de téléphone</label>
+        <div class="input-wrapper">
+          <div class="input-icon">
+            <ion-icon name="call-outline"></ion-icon>
           </div>
-          <div class="input-helper" *ngIf="!isCodeSent">
-            Format: +221 XX XXX XX XX
-          </div>
+          <ion-input
+            type="tel"
+            formControlName="phone"
+            placeholder="+221 77 000 00 00"
+            class="custom-input-modern">
+          </ion-input>
         </div>
-
-        <!-- Recaptcha -->
-        <div id="recaptcha-container" class="recaptcha-wrapper"></div>
-
-        <!-- Bouton d'envoi du code modernisé -->
-        <ion-button
-          expand="block"
-          class="modern-primary-button"
-          [class.success-state]="isCodeSent"
-          [disabled]="!welcomeForm.valid || isCodeSent"
-          (click)="sendVerificationCode()">
-          <ion-icon 
-            *ngIf="!isCodeSent" 
-            name="paper-plane-outline" 
-            slot="start">
-          </ion-icon>
-          <ion-icon 
-            *ngIf="isCodeSent" 
-            name="checkmark-circle" 
-            slot="start">
-          </ion-icon>
-          {{ isCodeSent ? 'Code envoyé' : 'Recevoir le code' }}
-        </ion-button>
-
-        <!-- Section code SMS (apparaît après l'envoi) -->
-        <div *ngIf="isCodeSent" class="code-verification-section">
-          <div class="separator">
-            <span class="separator-text">Code de vérification</span>
-          </div>
-
-          <!-- Input du code avec style modernisé -->
-          <div class="code-input-group">
-            <label class="code-label">
-              <ion-icon name="shield-checkmark-outline"></ion-icon>
-              Code SMS reçu
-            </label>
-            <div class="code-input-wrapper">
-              <ion-input
-                type="text"
-                #codeInput
-                (ionInput)="onVerificationCodeChange($event)"
-                placeholder="Entrez le code à 6 chiffres"
-                maxlength="6"
-                >
-                <ion-icon name="keypad-outline" slot="start"></ion-icon>
-              </ion-input>
-            </div>
-            <div class="code-helper">
-              <ion-icon name="information-circle-outline"></ion-icon>
-              Le code a été envoyé au {{ welcomeForm.get('phone')?.value }}
-            </div>
-          </div>
-
-          <!-- Bouton de vérification modernisé -->
-          <ion-button
-            expand="block"
-            class="verify-button-modern"
-            (click)="verifyCodeAndContinue()"
-            [disabled]="!verificationCode || verificationCode.length < 6">
-            <span>Vérifier et continuer</span>
-            <ion-icon name="arrow-forward" slot="end"></ion-icon>
-          </ion-button>
-
-          <!-- Lien de renvoi (optionnel, à implémenter si besoin) -->
-          <div class="resend-section">
-            <p class="resend-text">
-              Vous n'avez pas reçu le code ?
-            </p>
-            <button type="button" class="resend-link" (click)="sendVerificationCode()">
-              Renvoyer le code
-            </button>
-          </div>
+        <div class="input-helper">
+          Format: +221 XX XXX XX XX
         </div>
-      </form>
-    </div>
+      </div>
+
+      <!-- Bouton d'envoi du code modernisé -->
+      <ion-button
+        expand="block"
+        class="modern-primary-button"
+        [disabled]="!welcomeForm.valid || isAnimating"
+        (click)="sendVerificationCode()">
+        <ion-icon name="paper-plane-outline" slot="start"></ion-icon>
+        Recevoir le code
+      </ion-button>
+    </form>
   </div>
+</div>
+
+<!-- Step 2: OTP Verification -->
+<div *ngIf="currentStep === 1" class="step-content active">
+  <div class="verification-card">
+    <div class="verification-header">
+      <h2 class="verification-title">Vérification du code</h2>
+      <p class="verification-subtitle">
+        Nous avons envoyé un code à 6 chiffres au 
+        <strong>{{ welcomeForm.get('phone')?.value }}</strong>
+      </p>
+    </div>
+
+    <form class="form-container-modern">
+      <!-- Input du code avec style modernisé -->
+      <div class="code-input-group">
+        <label class="code-label">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+          Code de vérification
+        </label>
+        <div class="code-input-wrapper">
+          <ion-input
+            type="text"
+            #codeInput
+            [(ngModel)]="verificationCode"
+            name="verificationCode"
+            (ionInput)="onVerificationCodeChange($event)"
+            placeholder="Entrez le code à 6 chiffres"
+            maxlength="6"
+            class="custom-input-modern">
+            <ion-icon name="keypad-outline" slot="start"></ion-icon>
+          </ion-input>
+        </div>
+        <div class="code-helper">
+          <ion-icon name="information-circle-outline"></ion-icon>
+          Le code a été envoyé par WhatsApp
+        </div>
+      </div>
+
+      <!-- Bouton de vérification modernisé -->
+      <ion-button
+        expand="block"
+        class="verify-button-modern"
+        (click)="verifyCodeAndContinue()"
+        [disabled]="!verificationCode || verificationCode.length < 6 || isVerifying">
+        <ion-icon name="checkmark-circle" slot="start" *ngIf="!isVerifying"></ion-icon>
+        <ion-icon name="sync" class="spinning-icon" *ngIf="isVerifying"></ion-icon>
+        {{ isVerifying ? 'Vérification...' : 'Vérifier le code' }}
+      </ion-button>
+
+      <!-- Lien de renvoi -->
+      <div class="resend-section">
+        <p class="resend-text">
+          Vous n'avez pas reçu le code ?
+        </p>
+        <button type="button" class="resend-link" (click)="sendVerificationCode()" [disabled]="isVerifying">
+          Renvoyer le code
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
 
     <!-- Step 2: Personal Info -->
-    <div *ngIf="currentStep === 1" class="step-content active">
+    <div *ngIf="currentStep === 2" class="step-content active">
       <form [formGroup]="personalInfoForm" class="form-container">
         <div class="form-group">
           <ion-item class="custom-item">
@@ -252,7 +247,7 @@
     </div>
 
     <!-- Step 3: User Info -->
-    <div *ngIf="currentStep === 2" class="step-content active">
+    <div *ngIf="currentStep === 3" class="step-content active">
       <form [formGroup]="userInfoForm" class="form-container">
         <div class="form-group">
             <ion-item 
@@ -329,7 +324,7 @@
     </div>
 
     <!-- Step 4: Objectives -->
-  <div *ngIf="currentStep === 3" class="step-content active">
+  <div *ngIf="currentStep === 4" class="step-content active">
     <div class="objectives-container">
       <div class="objectives-grid">
         <button

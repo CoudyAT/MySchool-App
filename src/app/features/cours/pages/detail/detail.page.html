@@ -1,84 +1,47 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button (click)="goBack()">
-        <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-title>Détails Cours</ion-title>
-  </ion-toolbar>
-</ion-header>
+ <ion-header>
+   <ion-toolbar>
+     <ion-buttons slot="start">
+       <ion-button (click)="goBack()">
+         <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+       </ion-button>
+     </ion-buttons>
+     <ion-title>Détails Cours</ion-title>
+   </ion-toolbar>
+ </ion-header>
 
-<ion-content>
-  <div class="content-wrapper">
-    <!-- Loading state -->
-    <div *ngIf="isLoading" class="loading-container">
-      <ion-spinner name="crescent"></ion-spinner>
-    </div>
+ <ion-content>
+   <div class="content-wrapper">
 
-    <!-- Chapters content -->
-    <div *ngIf="!isLoading">
-      <div *ngFor="let chapter of chapters" class="chapter-section">
-        <h2 class="chapter-title">
-          Chapitre {{chapter.order}}
-        </h2>
+     <div *ngIf="isLoading" class="loading-container">
+       <ion-spinner name="crescent"></ion-spinner>
+     </div>
 
-        <!-- LEÇONS -->
-        <div *ngIf="chapter.lessons?.length === 0">
-          <p class="empty-message">Aucune leçon disponible pour ce chapitre.</p>
-        </div>
+     <div *ngIf="!isLoading">
+       <div *ngFor="let chapter of chapters; let chapterIndex = index" class="chapter-section">
 
-        <ion-card 
-          *ngFor="let lesson of chapter.lessons; let i = index" 
-          class="lesson-card"
-          (click)="openLesson(lesson)">
-          <ion-card-content class="lesson-content">
-            <div class="lesson-number">{{i + 1}}</div>
-            <div class="lesson-info">
-              <h3 class="lesson-title">{{lesson.title}}</h3>
-              <p class="lesson-meta">
-                <span class="lesson-type">Vidéo</span>
-                <span class="lesson-duration">{{lesson.duration}}</span>
-              </p>
-            </div>
-            <div class="lesson-action">
-              <div class="status-icon completed" >
-                <ion-icon name="checkmark"></ion-icon>
-              </div>
-              <ion-icon name="play-circle" class="play-icon"></ion-icon>
-            </div>
-          </ion-card-content>
-        </ion-card>
+         <h2 class="chapter-title">Chapitre {{ chapter.order }}</h2>
 
-        <!-- EXERCICES 
-          {{chapter.lessons?.length + i + 1}}
-          && chapter.lessons?.length > 0
-        -->
-        <ion-card 
-          *ngFor="let ex of chapter.exercises; let i = index" 
-          class="lesson-card test-card"
-          >
-          <ion-card-content class="lesson-content">
-            <div class="lesson-number">{{  i + 1 }}</div>
-            <div class="lesson-info">
-              <h3 class="lesson-title">{{ex.title}}</h3>
-              <p class="lesson-meta">
-                <span class="lesson-type">Exercices</span>
-                <span class="test-status" *ngIf="ex.score">{{ex.score}}/{{ex.totalQuestions}} PASSED</span>
-              </p>
-            </div>
-            <div class="lesson-action">
-              <ion-icon name="play-circle" class="play-icon"></ion-icon>
-            </div>
-          </ion-card-content>
-        </ion-card>
+         <ion-card *ngFor="let lesson of chapter.lessons; let i = index" class="lesson-card"
+           (click)="openLesson(lesson, chapter, chapterIndex)">
+           <ion-card-content class="lesson-content">
+             <div class="lesson-number">{{ i + 1 }}</div>
+             <div class="lesson-info">
+               <h3 class="lesson-title">{{ lesson.title }}</h3>
+               <p class="lesson-meta"><span class="lesson-type">Vidéo</span></p>
+             </div>
+             <ion-icon name="play-circle" class="play-icon"></ion-icon>
+           </ion-card-content>
+           <ion-badge *ngIf="isChapterCompleted(chapterIndex)" color="success" class="completed-badge">
+                Terminé
+          </ion-badge>
+         </ion-card>
+         
 
-        <div *ngIf="(chapter.exercises?.length ?? 0) === 0">
-          <p class="empty-message">Aucun exercice disponible pour ce chapitre.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</ion-content>
+       </div>
+     </div>
 
-<app-bottom-menu activePage="courses"></app-bottom-menu>
+   </div>
+ </ion-content>
+
+ <app-bottom-menu activePage="courses"></app-bottom-menu>
+

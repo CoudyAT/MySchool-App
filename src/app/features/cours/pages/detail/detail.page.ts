@@ -11,8 +11,8 @@ import {
   IonButton,
   IonCard,
   IonCardContent,
-  IonFooter,
   IonSpinner,
+  IonBadge,
 } from '@ionic/angular/standalone';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BottomMenuComponent } from 'src/app/shared/components/bottom-menu/bottom-menu.component';
@@ -37,8 +37,8 @@ import {
   styleUrls: ['./detail.page.scss'],
   standalone: true,
   imports: [
+    IonBadge,
     IonSpinner,
-    // IonFooter,
     IonCardContent,
     IonCard,
     IonButton,
@@ -57,6 +57,7 @@ export class DetailPage implements OnInit {
   courseId: string = '';
   chapters: Chapter[] = [];
   isLoading: boolean = true;
+  completedChapters: number[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -75,14 +76,17 @@ export class DetailPage implements OnInit {
   }
 
   ngOnInit() {
-    // Récupérer le courseId depuis les queryParams
     this.courseId = this.route.snapshot.queryParamMap.get('courseId') || '';
-    console.log('Course ID:', this.courseId);
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation?.extras?.state) {
+      this.completedChapters =
+        navigation.extras.state['completedChapters'] || [];
+    }
 
     if (this.courseId) {
       this.loadChaptersWithExercises();
     } else {
-      console.error('Aucun courseId trouvé dans les queryParams');
+      console.error('Aucun courseId');
       this.isLoading = false;
     }
   }
@@ -92,7 +96,6 @@ export class DetailPage implements OnInit {
       next: (chapters) => {
         this.chapters = chapters;
         this.isLoading = false;
-        console.log('Chapitres chargés:', this.chapters);
       },
       error: (error) => {
         console.error('Erreur:', error);
@@ -101,29 +104,24 @@ export class DetailPage implements OnInit {
     });
   }
 
-  goBack() {
-    this.location.back();
-  }
-
-  openLesson(lesson: Lesson) {
-    console.log('Opening lesson:', lesson);
-
-    // Navigation vers la page d'exercice
-    this.router.navigate(['/exercise', lesson.id], {
+  openLesson(lesson: any, chapter: any, chapterIndex: number) {
+    this.router.navigate(['/course-video', lesson.id], {
       state: {
-        lesson: lesson,
+        lesson,
+        chapter,
+        chapterIndex,
+        completedChapters: this.completedChapters,
         courseId: this.courseId,
       },
     });
   }
 
-  getLessonTypeText(type: string): string {
-    const types: { [key: string]: string } = {
-      video: 'Vidéo',
-      text: 'Texte',
-      exercise: 'Exercices',
-      quiz: 'Quiz',
-    };
-    return types[type] || type;
+  goBack() {
+    this.location.back();
+  }
+
+  // Vérifier si un chapitre est terminé
+  isChapterCompleted(index: number): boolean {
+    return this.completedChapters.includes(index);
   }
 }

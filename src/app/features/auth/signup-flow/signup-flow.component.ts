@@ -118,9 +118,10 @@ interface UserData {
 })
 export class SignupFlowComponent {
   currentStep = 0;
-  totalSteps = 4;
+  totalSteps = 5;
   countries = nations;
   isAnimating = false;
+  isVerifying = false;
   maxDate = new Date().toISOString(); // Aujourd'hui
   minDate = new Date(
     new Date().setFullYear(new Date().getFullYear() - 100)
@@ -341,13 +342,15 @@ export class SignupFlowComponent {
 
   validateCurrentStep(): boolean {
     switch (this.currentStep) {
-      case 0:
+      case 0: // Welcome - juste le formulaire phone
         return this.welcomeForm.valid;
-      case 1:
+      case 1: // OTP Verification
+        return !!this.verificationCode && this.verificationCode.length === 6;
+      case 2: // Personal Info
         return this.personalInfoForm.valid;
-      case 2:
+      case 3: // User Info
         return this.userInfoForm.valid;
-      case 3:
+      case 4: // Objectives
         return this.availableObjectives.some((obj) => obj.selected);
       default:
         return false;
@@ -374,7 +377,8 @@ export class SignupFlowComponent {
   }
 
   prefillNextStep() {
-    if (this.currentStep === 1) {
+    if (this.currentStep === 2) {
+      // Maintenant l'étape 2 est Personal Info
       const phone = this.userData.phone || this.welcomeForm.value.phone;
       if (phone) {
         this.personalInfoForm.patchValue({ phone });
@@ -405,6 +409,7 @@ export class SignupFlowComponent {
   getCurrentStepTitle(): string {
     const titles = [
       'Bienvenue dans MySchool',
+      'Vérification du code', // Nouveau titre
       'Créer votre compte gratuit',
       'Créer votre compte gratuit',
       'Quels sont vos objectifs ?',
@@ -415,6 +420,7 @@ export class SignupFlowComponent {
   getCurrentStepSubtitle(): string {
     const subtitles = [
       'Connectez-vous ou créez un compte',
+      'Entrez le code reçu par WhatsApp', // Nouveau sous-titre
       'Informations personnelles',
       "Informations de l'utilisateur",
       '',
@@ -521,14 +527,14 @@ export class SignupFlowComponent {
 
   // Étape 2 : Vérification du code
   async verifyCodeAndContinue() {
-    this.isAnimating = true;
+    this.isVerifying = true;
 
     const phone = this.welcomeForm.value.phone?.replace(/\D/g, '');
     const enteredCode = this.verificationCode.trim();
 
     if (!phone || !enteredCode) {
       await this.showToast('Veuillez entrer le code', 'danger');
-      this.isAnimating = false;
+      this.isVerifying = false;
       return;
     }
 
@@ -545,57 +551,46 @@ export class SignupFlowComponent {
         throw new Error('Code invalide ou expiré');
       }
 
-      // OTP VALIDE → SUPPRIME LE CODE UTILISÉ (SYNTAXE CORRECTE)
+      // OTP VALIDE → SUPPRIME LE CODE
       await deleteDoc(doc(this.firestore, 'temp_otps', phone));
 
       // VÉRIFIER SI L'UTILISATEUR EXISTE DÉJÀ
       const usersCollection = collection(this.firestore, 'utilisateur');
       const phoneQuery = query(usersCollection, where('phone', '==', phone));
-      console.log('Vérification utilisateur pour le téléphone:', phone);
-      console.log('log', phoneQuery);
-      
       const querySnapshot = await getDocs(phoneQuery);
-      console.log('console de ', querySnapshot);
-    
-        if (!querySnapshot.empty) {
-          // UTILISATEUR EXISTANT → RÉCUPÉRATION COMPLÈTE
-          const userDoc = querySnapshot.docs[0];
-          const userData = userDoc.data();
 
-          console.log('Utilisateur existant trouvé:', userData);
+      if (!querySnapshot.empty) {
+        // UTILISATEUR EXISTANT → CONNEXION DIRECTE
+        const userDoc = querySnapshot.docs[0];
+        const userData = userDoc.data();
+        const firestoreUid = userData['uid'];
 
-          // RÉCUPÉRER LE VRAI UID DE VOTRE BASE DE DONNÉES
-          const firestoreUid = userData['uid']; // Le UID qui existe dans Firestore
+        const userProfile = {
+          ...userData,
+          id: userDoc.id,
+          uid: firestoreUid,
+        };
 
-          // STOCKER TOUTES LES DONNÉES AVEC LE BON UID
-          const userProfile = {
-            ...userData,
-            id: userDoc.id,
-            uid: firestoreUid, // LE VRAI UID DE VOTRE BASE
-          };
+        localStorage.setItem('currentUser', JSON.stringify(userProfile));
+        localStorage.setItem('userPhone', phone);
 
-          localStorage.setItem('currentUser', JSON.stringify(userProfile));
-          localStorage.setItem('userPhone', phone);
-
-          // Connexion anonyme (peut avoir un UID différent, mais on s'en fiche)
-          let authUser = this.auth.currentUser;
-          if (!authUser) {
-            const userCredential = await signInAnonymously(this.auth);
-            authUser = userCredential.user;
-          }
-
-          console.log('UID Firebase Auth:', authUser.uid);
-          console.log('UID Firestore (le vrai):', firestoreUid);
-
-          await this.showToast(`Bienvenue ${userData['firstName'] || ''} !`, 'success');
-          this.router.navigate(['/courses'], { replaceUrl: true });
-          window.location.href = '/courses';
-          return;
+        let authUser = this.auth.currentUser;
+        if (!authUser) {
+          const userCredential = await signInAnonymously(this.auth);
+          authUser = userCredential.user;
         }
+
+        await this.showToast(
+          `Bienvenue ${userData['firstName'] || ''} !`,
+          'success'
+        );
+        this.router.navigate(['/courses'], { replaceUrl: true });
+        return;
+      }
 
       // NOUVEL UTILISATEUR → CONTINUER L'INSCRIPTION
       this.isOtpVerified = true;
-      this.currentStep = 1;
+      this.currentStep = 2; // Passe à l'étape des infos personnelles
       this.prefillNextStep();
 
       await this.showToast('Code vérifié !', 'success');
@@ -603,7 +598,7 @@ export class SignupFlowComponent {
       await this.showToast(error.message || 'Code invalide', 'danger');
       console.error(error);
     } finally {
-      this.isAnimating = false;
+      this.isVerifying = false;
     }
   }
 
@@ -706,7 +701,6 @@ export class SignupFlowComponent {
 
     return `${day}/${month}/${year}`;
   }
-
 }
 
 

@@ -1,3 +1,7 @@
+/* ============================================
+   MODE CLAIR (DÉFAUT) - SANS MEDIA QUERY
+   ============================================ */
+
 ion-header {
   ion-toolbar {
     --background: #FFFFFF;
@@ -173,6 +177,13 @@ ion-content {
   }
 }
 
+.dark-mode-toggle {
+  --background: #E0E0E0;
+  --background-checked: #00B894;
+  --handle-background: #FFFFFF;
+  --handle-background-checked: #FFFFFF;
+}
+
 /* Responsive */
 @media (max-width: 375px) {
   .profile-header {
@@ -207,4 +218,134 @@ ion-content {
       }
     }
   }
+}
+
+/* ============================================
+   MODE SOMBRE - VERSION COMPLÈTE
+   ============================================ */
+
+/* Forcer le mode sombre quand la classe est appliquée */
+body.dark .profile-container,
+.ion-palette-dark .profile-container {
+  /* Header */
+  ion-header ion-toolbar {
+    --background: #1e1e1e !important;
+  }
+  
+  ion-header ion-toolbar ion-buttons ion-button {
+    --color: #FFFFFF !important;
+  }
+
+  /* Content */
+  ion-content {
+    --background: #121212 !important;
+  }
+  
+  /* Profile Header */
+  .profile-header {
+    background: #1e1e1e !important;
+  }
+  
+  .profile-header .user-name {
+    color: #FFFFFF !important;
+  }
+  
+  .profile-header .user-phone {
+    color: #b0b0b0 !important;
+  }
+  
+  /* Avatar */
+  .profile-header .avatar-container .avatar-circle {
+    border-color: #00bfa5 !important;
+    background: #2a2a2a !important;
+  }
+  
+  .profile-header .avatar-container .avatar-circle .avatar-placeholder {
+    color: #e0e0e0 !important;
+  }
+  
+  .profile-header .avatar-container .camera-button {
+    background: #1e1e1e !important;
+    border-color: #00bfa5 !important;
+  }
+  
+  .profile-header .avatar-container .camera-button ion-icon {
+    color: #00bfa5 !important;
+  }
+  
+  .profile-header .avatar-container .camera-button:active {
+    background: #00bfa5 !important;
+  }
+  
+  .profile-header .avatar-container .camera-button:active ion-icon {
+    color: #FFFFFF !important;
+  }
+  
+  /* Liste des Options */
+  .options-list .option-item {
+    --background: #1e1e1e !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  .options-list .option-item .option-icon {
+    color: #b0b0b0 !important;
+  }
+  
+  .options-list .option-item ion-label {
+    color: #FFFFFF !important;
+  }
+  
+  .options-list .option-item .language-value {
+    color: #00bfa5 !important;
+  }
+  
+  .options-list .option-item .chevron-icon {
+    color: #555555 !important;
+  }
+  
+  .options-list .option-item:active {
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4) !important;
+  }
+  
+  /* Déconnexion en mode sombre */
+  .options-list .logout-item {
+    --background: rgba(244, 67, 54, 0.15) !important;
+  }
+  
+  .options-list .logout-item .logout-icon {
+    color: #ff5252 !important;
+  }
+  
+  .options-list .logout-item .logout-label {
+    color: #ff5252 !important;
+  }
+  
+  /* Toggle en mode sombre */
+  .dark-mode-toggle {
+    --background: #2a2a2a !important;
+    --background-checked: #00bfa5 !important;
+    --handle-background: #FFFFFF !important;
+    --handle-background-checked: #FFFFFF !important;
+  }
+}
+
+/* Transitions fluides pour le changement de thème */
+ion-header,
+ion-content,
+.profile-header,
+.option-item,
+.avatar-circle,
+.camera-button {
+  transition: background-color 0.3s ease, 
+              color 0.3s ease, 
+              border-color 0.3s ease,
+              box-shadow 0.3s ease;
+}
+
+ion-label,
+.user-name,
+.user-phone,
+.option-icon,
+.chevron-icon {
+  transition: color 0.3s ease;
 }
