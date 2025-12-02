@@ -118,7 +118,7 @@ interface UserData {
 })
 export class SignupFlowComponent {
   currentStep = 0;
-  totalSteps = 5;
+  totalSteps = 4;
   countries = nations;
   isAnimating = false;
   isVerifying = false;
@@ -275,10 +275,10 @@ export class SignupFlowComponent {
     });
 
     this.personalInfoForm = this.fb.group({
-      phone: [
-        '',
-        [Validators.required, Validators.pattern(/^\+?[\d\s\-\(\)]{8,}$/)],
-      ],
+      // phone: [
+      //   '',
+      //   [Validators.required, Validators.pattern(/^\+?[\d\s\-\(\)]{8,}$/)],
+      // ],
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
       birthDate: ['', Validators.required],
@@ -344,13 +344,13 @@ export class SignupFlowComponent {
     switch (this.currentStep) {
       case 0: // Welcome - juste le formulaire phone
         return this.welcomeForm.valid;
-      case 1: // OTP Verification
-        return !!this.verificationCode && this.verificationCode.length === 6;
-      case 2: // Personal Info
+      // case 1: // OTP Verification
+      //   return !!this.verificationCode && this.verificationCode.length === 6;
+      case 1: // Personal Info
         return this.personalInfoForm.valid;
-      case 3: // User Info
+      case 2: // User Info
         return this.userInfoForm.valid;
-      case 4: // Objectives
+      case 3: // Objectives
         return this.availableObjectives.some((obj) => obj.selected);
       default:
         return false;
@@ -409,7 +409,6 @@ export class SignupFlowComponent {
   getCurrentStepTitle(): string {
     const titles = [
       'Bienvenue dans MySchool',
-      'Vérification du code', // Nouveau titre
       'Créer votre compte gratuit',
       'Créer votre compte gratuit',
       'Quels sont vos objectifs ?',
@@ -420,7 +419,6 @@ export class SignupFlowComponent {
   getCurrentStepSubtitle(): string {
     const subtitles = [
       'Connectez-vous ou créez un compte',
-      'Entrez le code reçu par WhatsApp', // Nouveau sous-titre
       'Informations personnelles',
       "Informations de l'utilisateur",
       '',
@@ -605,11 +603,11 @@ export class SignupFlowComponent {
   // Étape 3 : Finalisation de l'inscription
   async completeSignup() {
     // BLOQUE SI OTP NON VÉRIFIÉ
-    if (!this.isOtpVerified) {
-      await this.showToast("Veuillez d'abord vérifier votre code", 'danger');
-      this.router.navigate(['/welcome'], { replaceUrl: true });
-      return;
-    }
+    // if (!this.isOtpVerified) {
+    //   await this.showToast("Veuillez d'abord vérifier votre code", 'danger');
+    //   this.router.navigate(['/welcome'], { replaceUrl: true });
+    //   return;
+    // }
 
     this.updateUserData();
 

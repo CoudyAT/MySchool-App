@@ -62,7 +62,7 @@
         </div>
       </div>
 
-      <!-- Bouton d'envoi du code modernisé -->
+      <!-- Bouton d'envoi du code modernisé 
       <ion-button
         expand="block"
         class="modern-primary-button"
@@ -70,76 +70,17 @@
         (click)="sendVerificationCode()">
         <ion-icon name="paper-plane-outline" slot="start"></ion-icon>
         Recevoir le code
-      </ion-button>
+      </ion-button> -->
     </form>
   </div>
 </div>
 
-<!-- Step 2: OTP Verification -->
-<div *ngIf="currentStep === 1" class="step-content active">
-  <div class="verification-card">
-    <div class="verification-header">
-      <h2 class="verification-title">Vérification du code</h2>
-      <p class="verification-subtitle">
-        Nous avons envoyé un code à 6 chiffres au 
-        <strong>{{ welcomeForm.get('phone')?.value }}</strong>
-      </p>
-    </div>
 
-    <form class="form-container-modern">
-      <!-- Input du code avec style modernisé -->
-      <div class="code-input-group">
-        <label class="code-label">
-          <ion-icon name="shield-checkmark-outline"></ion-icon>
-          Code de vérification
-        </label>
-        <div class="code-input-wrapper">
-          <ion-input
-            type="text"
-            #codeInput
-            [(ngModel)]="verificationCode"
-            name="verificationCode"
-            (ionInput)="onVerificationCodeChange($event)"
-            placeholder="Entrez le code à 6 chiffres"
-            maxlength="6"
-            class="custom-input-modern">
-            <ion-icon name="keypad-outline" slot="start"></ion-icon>
-          </ion-input>
-        </div>
-        <div class="code-helper">
-          <ion-icon name="information-circle-outline"></ion-icon>
-          Le code a été envoyé par WhatsApp
-        </div>
-      </div>
-
-      <!-- Bouton de vérification modernisé -->
-      <ion-button
-        expand="block"
-        class="verify-button-modern"
-        (click)="verifyCodeAndContinue()"
-        [disabled]="!verificationCode || verificationCode.length < 6 || isVerifying">
-        <ion-icon name="checkmark-circle" slot="start" *ngIf="!isVerifying"></ion-icon>
-        <ion-icon name="sync" class="spinning-icon" *ngIf="isVerifying"></ion-icon>
-        {{ isVerifying ? 'Vérification...' : 'Vérifier le code' }}
-      </ion-button>
-
-      <!-- Lien de renvoi -->
-      <div class="resend-section">
-        <p class="resend-text">
-          Vous n'avez pas reçu le code ?
-        </p>
-        <button type="button" class="resend-link" (click)="sendVerificationCode()" [disabled]="isVerifying">
-          Renvoyer le code
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
 
     <!-- Step 2: Personal Info -->
-    <div *ngIf="currentStep === 2" class="step-content active">
+    <div *ngIf="currentStep === 1" class="step-content active">
       <form [formGroup]="personalInfoForm" class="form-container">
-        <div class="form-group">
+       <!-- <div class="form-group">
           <ion-item class="custom-item">
             <ion-label position="stacked">Numero Telephone</ion-label>
             <ion-input
@@ -150,7 +91,7 @@
               <ion-icon name="phone" slot="start"></ion-icon>
             </ion-input>
           </ion-item>
-        </div>
+        </div>  -->
 
         <div class="form-group">
           <ion-item 
@@ -247,7 +188,7 @@
     </div>
 
     <!-- Step 3: User Info -->
-    <div *ngIf="currentStep === 3" class="step-content active">
+    <div *ngIf="currentStep === 2" class="step-content active">
       <form [formGroup]="userInfoForm" class="form-container">
         <div class="form-group">
             <ion-item 
@@ -292,7 +233,7 @@
           <ion-item 
             class="custom-item"
             [class.item-error]="isFieldInvalid(userInfoForm, 'profession')">
-            <ion-label position="stacked">Profession</ion-label>
+            <ion-label position="stacked">Profession ou Niveau</ion-label>
             <ion-select 
               formControlName="profession" 
               placeholder="Sélectionnez votre profession"
@@ -324,7 +265,7 @@
     </div>
 
     <!-- Step 4: Objectives -->
-  <div *ngIf="currentStep === 4" class="step-content active">
+  <div *ngIf="currentStep === 3" class="step-content active">
     <div class="objectives-container">
       <div class="objectives-grid">
         <button

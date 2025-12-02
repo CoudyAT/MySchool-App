@@ -51,6 +51,7 @@ import { EnrollmentService } from 'src/app/features/services/enrollmentService';
 import { PreminumModalComponent } from 'src/app/features/component/preminum-modal/preminum-modal.component';
 import { InstructorService } from 'src/app/features/services/instructorService';
 import { Instructor } from 'src/app/models/instructor.model';
+import { collection, Firestore, getDocs } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-courses',
@@ -99,13 +100,14 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
     private auth: Auth,
     private enrollmentService: EnrollmentService,
     private modalCtrl: ModalController,
-    private instructorService: InstructorService
+    private instructorService: InstructorService,
+    private firestore: Firestore
   ) {
     addIcons({
       personCircleOutline,
-      starOutline,
       addOutline,
       shieldCheckmark,
+      starOutline,
       trendingUpOutline,
       bookOutline,
       bulbOutline,
@@ -131,6 +133,31 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
       this.loadEnrolledCourses(); // Recharger les cours
     }
   }
+
+  // async loadInstructors() {
+  //   // Récupérer les données depuis Firestore
+  //   const instructorsCollection = collection(this.firestore, 'instructors');
+  //   const snapshot = await getDocs(instructorsCollection);
+
+  //   this.instructors = snapshot.docs.map((doc) => {
+  //     const data = doc.data() as Instructor;
+
+  //     // Mapper les images localement
+  //     const imageMapping: { [key: string]: string } = {
+  //       instructor1: 'assets/instructors/prof1.jpg',
+  //       instructor2: 'assets/instructors/prof2.jpg',
+  //       instructor3: 'assets/instructors/prof3.jpg',
+  //       // Ajouter d'autres mappings...
+  //     };
+
+  //     return {
+  //       id: doc.id, // Utiliser l'ID du document Firestore
+  //      // name: instructorData.name || 'Instructeur',
+  //     //  backgroundColor: instructorData.backgroundColor || '#3498db',
+  //       photoUrl: imageMapping[doc.id] || imageMapping['default']
+  //     };
+  //   });
+  // }
 
   ngAfterViewInit() {
     this.initializeSwiper();

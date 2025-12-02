@@ -2,15 +2,6 @@
   <ion-toolbar>
     <div class="header-content">
       <img src="assets/logo.svg" alt="MySchool Logo" class="logo" />
-     <!--  <ion-button
-          fill="solid"
-          color="warning"
-          (click)="openPremiumModal()"
-          class="premium-button">
-          <ion-icon name="star-outline" slot="start"></ion-icon>
-          Premium
-      </ion-button> 
-    --> 
       <ion-button
           fill="clear"
           (click)="goToProfile()"
@@ -18,13 +9,6 @@
           <ion-icon class="profile" name="person-circle-outline"></ion-icon>
         </ion-button>
     </div>
-    <ion-button
-          fill="solid"
-          (click)="openPremiumModal()"
-          class="preminum">
-          <ion-icon name="star-outline" slot="start"></ion-icon>
-          Abonner-vous pour avoir acces a tous les cours
-        </ion-button>
   </ion-toolbar>
 </ion-header>
 
@@ -33,9 +17,6 @@
 
     <!-- Hero Section - CARROUSEL SWIPER -->
     <div class="hero-section">
-
-        
-        
       <swiper-container
         class="hero-swiper"
         [config]="slideOpts"
@@ -46,7 +27,7 @@
         <swiper-slide>
           <div class="slide-container">
             <img
-              src="assets/slide1.svg"
+              src="assets/masterclass.png"
               alt="Formation 1"
               class="slide-image"
             />
@@ -58,7 +39,7 @@
         <swiper-slide>
           <div class="slide-container">
             <img
-              src="assets/logo.svg"
+              src="assets/renforcement.png"
               alt="Formation 2"
               class="slide-image"
             />
@@ -201,16 +182,16 @@
           (click)="goToInstructorProfile(instructor.id)"
         >
             <img
-              src="assets/slide1.svg"
-              alt="Instructeur"
-              class="instructor-image"
-            />
-          <div class="instructor-name">{{ instructor.name }}</div>
+             [src]="instructor.image"
+              [alt]="instructor.name"
+            class="instructor-image"
+    /> 
         </div>
       </div>
     </div>
 
-    <!-- Section Certifications -->
+    <!-- Section Certifications 
+        <div class="instructor-name">{{ instructor.name }}</div>  -->
     <div class="courses-section">
       <h1 class="section-title">Certifications</h1>
 
