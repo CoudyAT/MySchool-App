@@ -12,12 +12,14 @@ export class CourseService {
 
   // Récupérer tous les cours publiés
   getCourses(): Observable<Course[]> {
-    return this.api.get<Course[]>('/courses/published');
+    return this.api
+      .get<any>('/courses/published')
+      .pipe(map((res) => res?.data ?? []));
   }
 
   // Récupérer tous les cours (publiés et non publiés)
   getAllCourses(): Observable<Course[]> {
-    return this.api.get<Course[]>('/courses');
+    return this.api.get<any>('/courses').pipe(map((res) => res?.data ?? []));
   }
 
   // Récupérer un cours par ID
@@ -65,3 +67,97 @@ export class CourseService {
     return this.api.get<any[]>(`/courses/${courseId}/students`);
   }
 }
+
+// import { Injectable, inject } from '@angular/core';
+// import { Observable, map } from 'rxjs';
+// import { Course } from 'src/app/models/course.model';
+// import { ApiService } from 'src/app/core/services/api.service';
+
+// @Injectable({
+//   providedIn: 'root',
+// })
+// export class CourseService {
+//   private readonly api = inject(ApiService);
+
+//   // GET ALL COURSES (RAW → NORMALIZED)
+//   getAllCourses(): Observable<Course[]> {
+//     return this.api.get<any>('/courses').pipe(
+//       map((res) => {
+//         if (!res?.success || !Array.isArray(res.data)) return [];
+
+//         return res.data.map((raw: any) => this.normalizeCourse(raw));
+//       })
+//     );
+//   }
+
+//   // Normalisation complète
+//   private normalizeCourse(raw: any): Course {
+//     return {
+//       id: raw.id,
+//       title: this.fixEncoding(raw.title),
+//       description: this.fixEncoding(raw.description),
+//       category: this.fixEncoding(raw.category),
+//       type: raw.type,
+//       level: this.normalizeLevel(raw.level),
+//       duration: this.normalizeDuration(raw.duration),
+
+//       sessions: raw.sessions ?? 0,
+//       exercises: raw.exercises ?? 0,
+//       image: raw.image,
+//       isPublished: raw.isPublished,
+//       certificateAvailable: raw.certificateAvailable,
+
+//       price: raw.price ?? 0,
+//       rating: raw.rating ?? 0,
+
+//       chapters: raw.chapters ?? [],
+//       chaptersIds: raw.chaptersIds ?? [],
+
+//       createdAt: this.firebaseDate(raw.createdAt),
+//       updatedAt: this.firebaseDate(raw.updatedAt),
+
+//       enrolled: false,
+//       maxRating: 5,
+//       levels: [],
+//     };
+//   }
+
+//   // Répare JSON mal encodé (� → é, è, ê…)
+//   private fixEncoding(text: string): string {
+//     if (!text) return '';
+
+//     try {
+//       return decodeURIComponent(escape(text));
+//     } catch {
+//       return text;
+//     }
+//   }
+
+//   private normalizeLevel(
+//     level: string
+//   ): 'DEBUTANT' | 'INTERMEDIAIRE' | 'AVANCE' {
+//     const map: any = {
+//       beginner: 'DEBUTANT',
+//       Beginner: 'DEBUTANT',
+//       DEBUTANT: 'DEBUTANT',
+//       INTERMEDIAIRE: 'INTERMEDIAIRE',
+//       INTERMEDIATE: 'INTERMEDIAIRE',
+//       AVANCE: 'AVANCE',
+//       advanced: 'AVANCE',
+//     };
+
+//     return map[level] ?? 'DEBUTANT';
+//   }
+
+//   private normalizeDuration(value: any): number {
+//     if (typeof value === 'number') return value;
+//     if (typeof value === 'string')
+//       return parseInt(value.replace(/\D/g, ''), 10);
+//     return 0;
+//   }
+
+//   private firebaseDate(ts: any): Date {
+//     if (!ts?._seconds) return new Date();
+//     return new Date(ts._seconds * 1000);
+//   }
+// }

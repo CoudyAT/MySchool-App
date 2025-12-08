@@ -1,0 +1,175 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+        <span class="back-text">Retour</span>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Modifier le profil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="edit-profile-container">
+    
+    <!-- Section Avatar -->
+    <div class="avatar-section">
+      <div class="avatar-container">
+        <div class="avatar-circle">
+          <img 
+            *ngIf="profileForm.photoURL" 
+            [src]="profileForm.photoURL" 
+            alt="Profile picture"
+          />
+          <div *ngIf="!profileForm.photoURL" class="avatar-placeholder">
+            {{ profileForm.firstName?.charAt(0) || 'A' }}
+          </div>
+        </div>
+        <button class="camera-button" (click)="selectImage()">
+          <ion-icon name="camera-outline"></ion-icon>
+        </button>
+      </div>
+      <p class="change-photo-text">Modifier la photo</p>
+    </div>
+
+    <!-- Formulaire de modification -->
+    <form class="profile-form">
+      
+      <!-- Prénom -->
+      <div class="form-group">
+        <label class="form-label">Prénom</label>
+        <ion-item lines="none" class="form-item">
+          <ion-input
+            [(ngModel)]="profileForm.firstName"
+            name="firstName"
+            placeholder="Entrez votre prénom"
+            type="text"
+          ></ion-input>
+        </ion-item>
+      </div>
+
+      <!-- Nom -->
+      <div class="form-group">
+        <label class="form-label">Nom</label>
+        <ion-item lines="none" class="form-item">
+          <ion-input
+            [(ngModel)]="profileForm.lastName"
+            name="lastName"
+            placeholder="Entrez votre nom"
+            type="text"
+          >
+          </ion-input>
+        </ion-item>
+      </div>
+
+      <!-- Téléphone -->
+      <div class="form-group">
+        <label class="form-label">Téléphone</label>
+        <ion-item lines="none" class="form-item">
+          <ion-input
+            [(ngModel)]="profileForm.phone"
+            name="phone"
+            placeholder="Entrez votre numéro"
+            type="tel"
+          ></ion-input>
+        </ion-item>
+      </div>
+
+      <!-- Ancien mot de passe -->
+      <div class="form-group">
+        <label class="form-label">Ancien mot de passe</label>
+        <ion-item lines="none" class="form-item">
+          <ion-input
+            [(ngModel)]="profileForm.oldPassword"
+            name="oldPassword"
+            placeholder="Entrez votre ancien mot de passe"
+            type="password"
+          ></ion-input>
+        </ion-item>
+        <div class="password-info" *ngIf="showPasswordFields">
+          <ion-icon name="information-circle-outline"></ion-icon>
+          <span>Remplissez pour changer le mot de passe</span>
+        </div>
+      </div>
+
+      <!-- Nouveau mot de passe (visible seulement si ancien mot de passe rempli) -->
+      <div *ngIf="showNewPasswordFields" class="form-group">
+        <label class="form-label">Nouveau mot de passe</label>
+        <ion-item lines="none" class="form-item">
+          <ion-input
+            [(ngModel)]="profileForm.newPassword"
+            name="newPassword"
+            placeholder="Entrez le nouveau mot de passe"
+            type="password"
+            [class.error]="passwordTooShort"
+          ></ion-input>
+          <button 
+            type="button" 
+            class="show-password-btn"
+            (click)="togglePasswordVisibility('new')"
+            slot="end">
+            <ion-icon [name]="showNewPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+          </button>
+        </ion-item>
+        <div class="password-hint" *ngIf="profileForm.newPassword">
+          <ion-icon name="checkmark-circle-outline" *ngIf="!passwordTooShort"></ion-icon>
+          <ion-icon name="close-circle-outline" *ngIf="passwordTooShort"></ion-icon>
+          <span [class.valid]="!passwordTooShort" [class.invalid]="passwordTooShort">
+            {{ passwordTooShort ? 'Minimum 6 caractères' : 'Mot de passe valide' }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Confirmation mot de passe (visible seulement si nouveau mot de passe rempli) -->
+      <div *ngIf="showConfirmPasswordField" class="form-group">
+        <label class="form-label">Confirmer le nouveau mot de passe</label>
+        <ion-item lines="none" class="form-item">
+          <ion-input
+            [(ngModel)]="profileForm.confirmPassword"
+            name="confirmPassword"
+            placeholder="Répétez le nouveau mot de passe"
+            type="password"
+            [class.error]="passwordsMismatch()"
+          ></ion-input>
+          <button 
+            type="button" 
+            class="show-password-btn"
+            (click)="togglePasswordVisibility('confirm')"
+            slot="end">
+            <ion-icon [name]="showConfirmPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+          </button>
+        </ion-item>
+        <div class="password-hint" *ngIf="profileForm.confirmPassword">
+          <ion-icon name="checkmark-circle-outline" *ngIf="!passwordsMismatch()"></ion-icon>
+          <ion-icon name="close-circle-outline" *ngIf="passwordsMismatch()"></ion-icon>
+          <span [class.valid]="!passwordsMismatch()" [class.invalid]="passwordsMismatch()">
+            {{ passwordsMismatch() ? 'Les mots de passe ne correspondent pas' : 'Mots de passe identiques' }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Bouton de sauvegarde -->
+      <ion-button 
+        expand="block" 
+        class="save-button"
+        (click)="saveProfile()"
+        [disabled]="isSaving || !canSave()"
+      >
+        <ion-spinner *ngIf="isSaving" name="crescent"></ion-spinner>
+        <span *ngIf="!isSaving">Enregistrer les modifications</span>
+      </ion-button>
+
+    </form>
+
+    <!-- Input caché pour la sélection d'image -->
+    <input 
+      type="file" 
+      #fileInput 
+      accept="image/*" 
+      (change)="onFileSelected($event)"
+      style="display: none"
+    />
+
+  </div>
+</ion-content>

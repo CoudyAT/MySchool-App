@@ -94,6 +94,7 @@ export class CoursDetailPage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loadCourseDetails();
+
   }
 
   ngOnDestroy() {
@@ -229,9 +230,11 @@ export class CoursDetailPage implements OnInit, OnDestroy {
     if (this.course && this.currentEnrollment) {
       console.log('Continuer le cours:', this.course.title);
       console.log('Progression actuelle:', this.enrollmentProgress + '%');
+      console.log('Continuer le cours:', this.course.id);
+      const courseId = this.route.snapshot.paramMap.get('id');
 
       // Rediriger vers la page du cours/player
-      this.router.navigate(['/course-video', this.course.id], {
+      this.router.navigate(['/course-video', courseId], {
         state: {
           enrollment: this.currentEnrollment,
           course: this.course,

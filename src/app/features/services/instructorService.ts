@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { Instructor } from 'src/app/models/instructor.model';
 import { Course } from 'src/app/models/course.model';
 import { ApiService } from 'src/app/core/services/api.service';
@@ -12,12 +12,16 @@ export class InstructorService {
 
   // Récupérer tous les instructeurs
   getInstructors(): Observable<Instructor[]> {
-    return this.api.get<Instructor[]>('/instructors');
+    return this.api
+      .get<any>('/instructors')
+      .pipe(map((res) => res?.data ?? []));
   }
 
   // Récupérer un instructeur par son ID avec ses cours
   getInstructorById(instructorId: string): Observable<Instructor> {
-    return this.api.get<Instructor>(`/instructors/${instructorId}`);
+    return this.api
+      .get<any>(`/instructors/${instructorId}`)
+      .pipe(map((res) => res?.data ?? []));
   }
 
   // Récupérer les cours d'un instructeur

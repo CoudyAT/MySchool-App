@@ -4,23 +4,13 @@ import {
   CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
   ViewChild,
+  OnInit,
 } from '@angular/core';
-import {
-  Auth,
-  ConfirmationResult,
-  signInWithPhoneNumber,
-  RecaptchaVerifier,
-  signInAnonymously,
-} from '@angular/fire/auth';
+import { Auth, signInAnonymously } from '@angular/fire/auth';
 import {
   Firestore,
-  doc,
-  setDoc,
-  getDoc,
-  Timestamp,
   collection,
   addDoc,
-  deleteDoc,
   query,
   getDocs,
   where,
@@ -44,8 +34,7 @@ import {
   IonSelectOption,
   IonProgressBar,
   IonIcon,
-  IonCard,
-  IonCardContent,
+  IonSpinner,
   ToastController,
   AnimationController,
 } from '@ionic/angular/standalone';
@@ -55,32 +44,25 @@ import {
   checkmarkCircle,
   library,
   person,
-  mail,
   calendar,
   location,
   call,
   business,
   school,
   sync,
-  phonePortraitOutline,
-  callOutline,
-  paperPlaneOutline,
-  shieldCheckmarkOutline,
-  keypadOutline,
-  informationCircleOutline,
   arrowForward,
-  logIn,
   calendarOutline,
   flagOutline,
   alertCircleOutline,
   locationOutline,
   businessOutline,
   mapOutline,
+  lockClosedOutline,
+  callOutline,
 } from 'ionicons/icons';
 import { nations } from 'src/app/shared/utils/nations';
 
 interface UserData {
-  identifier: string;
   firstName: string;
   lastName: string;
   country: string;
@@ -92,6 +74,8 @@ interface UserData {
   objectives: string[];
   acceptTerms: boolean;
   acceptPrivacy: boolean;
+  password: string;
+  confirmPassword: string;
 }
 
 @Component({
@@ -113,31 +97,27 @@ interface UserData {
     IonSelectOption,
     IonProgressBar,
     IonIcon,
+    IonSpinner,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class SignupFlowComponent {
+export class SignupFlowComponent implements OnInit {
   currentStep = 0;
   totalSteps = 4;
   countries = nations;
   isAnimating = false;
-  maxDate = new Date().toISOString(); // Aujourd'hui
-  minDate = new Date(
-    new Date().setFullYear(new Date().getFullYear() - 100)
-  ).toISOString(); // Il y a 100 ans
+  maxDate: string;
+  minDate: string;
+
   @ViewChild('dateInput') dateInput!: ElementRef<HTMLInputElement>;
 
-  // Formulaires pour chaque étape
+  // Nouveaux états
+  isCheckingUser = false;
+  userExistsError = false;
+
   welcomeForm!: FormGroup;
   personalInfoForm!: FormGroup;
   userInfoForm!: FormGroup;
-  objectivesForm!: FormGroup;
-  recaptchaVerifier!: RecaptchaVerifier | null;
-  confirmationResult!: ConfirmationResult | null;
-  verificationCode = '';
-  isCodeSent = false;
-  private isOtpVerified = false;
-  private isCodeSending = false;
 
   professions = [
     'Étudiant',
@@ -197,7 +177,6 @@ export class SignupFlowComponent {
   ];
 
   userData: UserData = {
-    identifier: '',
     firstName: '',
     lastName: '',
     country: '',
@@ -209,6 +188,8 @@ export class SignupFlowComponent {
     objectives: [],
     acceptTerms: false,
     acceptPrivacy: false,
+    password: '',
+    confirmPassword: '',
   };
 
   constructor(
@@ -222,11 +203,7 @@ export class SignupFlowComponent {
     addIcons({
       chevronBack,
       callOutline,
-      paperPlaneOutline,
       checkmarkCircle,
-      shieldCheckmarkOutline,
-      keypadOutline,
-      informationCircleOutline,
       arrowForward,
       person,
       calendarOutline,
@@ -239,12 +216,12 @@ export class SignupFlowComponent {
       location,
       business,
       school,
-      phonePortraitOutline,
       calendar,
       call,
-      mail,
       library,
+      lockClosedOutline,
     });
+
     // Date maximale : 18 ans en arrière
     const today = new Date();
     const eighteenYearsAgo = new Date(
@@ -261,8 +238,15 @@ export class SignupFlowComponent {
       today.getDate()
     );
     this.minDate = hundredYearsAgo.toISOString().split('T')[0];
-    this.recaptchaVerifier = null;
+
     this.initForms();
+  }
+
+  ngOnInit() {
+    const storedUser = localStorage.getItem('currentUser');
+    if (storedUser) {
+      this.router.navigate(['/courses'], { replaceUrl: true });
+    }
   }
 
   initForms() {
@@ -271,16 +255,20 @@ export class SignupFlowComponent {
         '',
         [Validators.required, Validators.pattern(/^\+?[\d\s\-\(\)]{8,}$/)],
       ],
+      password: ['', [Validators.required, Validators.minLength(6)]],
     });
 
+    // Formulaire d'info personnelles avec confirmation mot de passe
     this.personalInfoForm = this.fb.group({
       phone: [
         '',
-        [Validators.required, Validators.pattern(/^\+?[\d\s\-\(\)]{8,}$/)],
+        // [Validators.required, Validators.pattern(/^\+?[\d\s\-\(\)]{8,}$/)],
       ],
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
       birthDate: ['', Validators.required],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', [Validators.required]],
     });
 
     this.userInfoForm = this.fb.group({
@@ -289,9 +277,137 @@ export class SignupFlowComponent {
       profession: ['', Validators.required],
       school: [''],
     });
-
-    this.objectivesForm = this.fb.group({});
   }
+
+  // =====================
+  // Étape 1: Vérifier si connexion ou inscription
+  // =====================
+
+  async checkLoginOrSignup() {
+    if (!this.welcomeForm.valid || this.isCheckingUser) {
+      return;
+    }
+
+    this.isCheckingUser = true;
+    this.userExistsError = false;
+    this.isAnimating = true;
+
+    try {
+      const phone = this.welcomeForm.value.phone;
+      const password = this.welcomeForm.value.password;
+
+      if (!phone) {
+        await this.showToast('Numéro de téléphone invalide', 'danger');
+        this.isCheckingUser = false;
+        this.isAnimating = false;
+        return;
+      }
+
+      // Formater le numéro pour la recherche
+      const cleanPhone = this.formatPhoneForSearch(phone);
+
+      // Chercher dans Firestore (toujours)
+      const usersCollection = collection(this.firestore, 'utilisateur');
+
+      // Chercher dans les deux champs
+      const phoneQuery = query(
+        usersCollection,
+        where('phone', '==', cleanPhone)
+      );
+      const loginQuery = query(
+        usersCollection,
+        where('login', '==', cleanPhone)
+      );
+
+      const [phoneSnapshot, loginSnapshot] = await Promise.all([
+        getDocs(phoneQuery),
+        getDocs(loginQuery),
+      ]);
+
+      // Vérifier dans quel champ on a trouvé l'utilisateur
+      let userDoc = null;
+
+      if (!phoneSnapshot.empty) {
+        userDoc = phoneSnapshot.docs[0];
+      } else if (!loginSnapshot.empty) {
+        userDoc = loginSnapshot.docs[0];
+      }
+
+      if (userDoc) {
+        // Utilisateur existe - vérifier le mot de passe depuis Firestore
+        const userData = userDoc.data();
+        const dbPassword = userData['password'];
+
+        console.log('🔑 Vérification mot de passe:');
+        console.log('Mot de passe saisi:', password);
+        console.log('Mot de passe en DB:', dbPassword);
+
+        if (dbPassword === password) {
+          // Connexion réussie
+          const userProfile = {
+            ...userData,
+            id: userDoc.id,
+          };
+
+          localStorage.setItem('currentUser', JSON.stringify(userProfile));
+          localStorage.setItem('userPhone', cleanPhone);
+
+          // Connexion anonyme Firebase
+          let authUser = this.auth.currentUser;
+          if (!authUser) {
+            const userCredential = await signInAnonymously(this.auth);
+            authUser = userCredential.user;
+          }
+
+          await this.showToast(
+            `Bienvenue ${userData['firstName'] || ''} !`,
+            'success'
+          );
+
+          // Reload complet de la page vers /courses
+          setTimeout(() => {
+            window.location.href = '/courses';
+          }, 1000);
+
+          return;
+        } else {
+          // Mot de passe incorrect
+          this.userExistsError = true;
+          await this.showToast('Mot de passe incorrect', 'danger');
+          this.isCheckingUser = false;
+          this.isAnimating = false;
+          return;
+        }
+      }
+
+      // Nouvel utilisateur - continuer avec l'inscription
+      this.userData.phone = cleanPhone;
+      this.userData.password = password;
+
+      // Pré-remplir le formulaire suivant
+      this.personalInfoForm.patchValue({
+        phone: cleanPhone,
+        password: password,
+      });
+
+      // Aller à l'étape suivante
+      this.currentStep = 1;
+      await this.showToast(
+        'Continuez avec vos informations personnelles',
+        'success'
+      );
+    } catch (error: any) {
+      await this.showToast(`Erreur: ${error.message}`, 'danger');
+      console.error('Erreur lors de la vérification:', error);
+    } finally {
+      this.isCheckingUser = false;
+      this.isAnimating = false;
+    }
+  }
+
+  // =====================
+  // Navigation entre étapes
+  // =====================
 
   async nextStep() {
     if (this.validateCurrentStep() && !this.isAnimating) {
@@ -339,12 +455,16 @@ export class SignupFlowComponent {
     }
   }
 
+  // =====================
+  // Validation
+  // =====================
+
   validateCurrentStep(): boolean {
     switch (this.currentStep) {
       case 0:
         return this.welcomeForm.valid;
       case 1:
-        return this.personalInfoForm.valid;
+        return this.personalInfoForm.valid && !this.passwordsMismatch();
       case 2:
         return this.userInfoForm.valid;
       case 3:
@@ -354,14 +474,34 @@ export class SignupFlowComponent {
     }
   }
 
+  // Vérifier si les mots de passe correspondent
+  passwordsMismatch(): boolean {
+    if (this.currentStep !== 1) return false;
+
+    const password = this.personalInfoForm.get('password')?.value;
+    const confirmPassword = this.personalInfoForm.get('confirmPassword')?.value;
+
+    return password !== confirmPassword && confirmPassword.length > 0;
+  }
+
+  // =====================
+  // Gestion des données utilisateur
+  // =====================
+
   updateUserData() {
     switch (this.currentStep) {
       case 0:
         this.userData.phone = this.welcomeForm.value.phone;
+        this.userData.password = this.welcomeForm.value.password;
         break;
       case 1:
-        Object.assign(this.userData, this.personalInfoForm.value);
-        break;
+       this.userData.firstName = this.personalInfoForm.value.firstName;
+       this.userData.lastName = this.personalInfoForm.value.lastName;
+       this.userData.birthDate = this.personalInfoForm.value.birthDate;
+
+     // Toujours prendre le bon password
+  this.userData.password = this.personalInfoForm.value.password;
+  break;
       case 2:
         Object.assign(this.userData, this.userInfoForm.value);
         break;
@@ -376,27 +516,25 @@ export class SignupFlowComponent {
   prefillNextStep() {
     if (this.currentStep === 1) {
       const phone = this.userData.phone || this.welcomeForm.value.phone;
+      const password =
+        this.userData.password || this.welcomeForm.value.password;
+
       if (phone) {
         this.personalInfoForm.patchValue({ phone });
       }
-      console.log('Pré-remplissage du téléphone:', phone);
+      if (password) {
+        this.personalInfoForm.patchValue({ password });
+      }
     }
   }
 
   prefillCurrentStep() {
-    if (this.currentStep === 0) {
-      this.welcomeForm.patchValue({ identifier: this.userData.identifier });
-    }
+    // Ne rien faire pour l'instant
   }
 
-  toggleObjective(objectiveId: string) {
-    const objective = this.availableObjectives.find(
-      (o) => o.id === objectiveId
-    );
-    if (objective) {
-      objective.selected = !objective.selected;
-    }
-  }
+  // =====================
+  // Méthodes d'affichage
+  // =====================
 
   getProgressPercentage(): number {
     return ((this.currentStep + 1) / this.totalSteps) * 100;
@@ -405,8 +543,8 @@ export class SignupFlowComponent {
   getCurrentStepTitle(): string {
     const titles = [
       'Bienvenue dans MySchool',
-      'Créer votre compte gratuit',
-      'Créer votre compte gratuit',
+      'Informations personnelles',
+      'Informations complémentaires',
       'Quels sont vos objectifs ?',
     ];
     return titles[this.currentStep];
@@ -415,8 +553,8 @@ export class SignupFlowComponent {
   getCurrentStepSubtitle(): string {
     const subtitles = [
       'Connectez-vous ou créez un compte',
-      'Informations personnelles',
-      "Informations de l'utilisateur",
+      'Complétez vos informations personnelles',
+      'Dites-nous en plus sur vous',
       '',
     ];
     return subtitles[this.currentStep];
@@ -432,13 +570,18 @@ export class SignupFlowComponent {
     return this.currentStep === this.totalSteps - 1 ? 'success' : 'primary';
   }
 
+  // =====================
   // Validation helpers
+  // =====================
+
   getFieldError(formGroup: FormGroup, fieldName: string): string {
     const field = formGroup.get(fieldName);
     if (field && field.touched && field.errors) {
       if (field.errors['required']) return `Ce champ est requis`;
-      if (field.errors['email']) return `Format d'email invalide`;
-      if (field.errors['minlength']) return `Trop court`;
+      if (field.errors['minlength']) {
+        if (fieldName === 'password') return 'Minimum 6 caractères';
+        return `Trop court`;
+      }
       if (field.errors['pattern']) return `Format invalide`;
     }
     return '';
@@ -449,237 +592,148 @@ export class SignupFlowComponent {
     return !!(field && field.touched && field.errors);
   }
 
+  // =====================
+  // Objectifs
+  // =====================
+
+  toggleObjective(objectiveId: string) {
+    const objective = this.availableObjectives.find(
+      (o) => o.id === objectiveId
+    );
+    if (objective) {
+      objective.selected = !objective.selected;
+    }
+  }
+
   getSelectedObjectivesCount(): number {
     return this.availableObjectives.filter((obj) => obj.selected).length;
   }
 
-  generatePasswordFromData(): string {
-    const namePart = this.userData.firstName?.slice(0, 3) || 'usr';
-    const rand = Math.floor(Math.random() * 10000);
-    return `${namePart}${rand}`;
-  }
-
   // =====================
-  // Toast helper
+  // Finalisation de l'inscription
   // =====================
-  private async showToast(
-    message: string,
-    color: 'success' | 'warning' | 'danger' | 'primary' = 'primary'
-  ) {
-    const t = await this.toastCtrl.create({
-      message,
-      duration: 2500,
-      position: 'top',
-      color,
-    });
-    await t.present();
-  }
 
-  // Étape 1 : Envoi du code WhatsApp
-  async sendVerificationCode() {
-    if (this.isCodeSending) return;
-
-    this.isCodeSending = true;
-    this.isAnimating = true;
-
-    const phone = this.welcomeForm.value.phone?.replace(/\D/g, '');
-    if (!phone || phone.length < 10) {
-      await this.showToast('Numéro invalide', 'danger');
-      this.isCodeSending = false;
-      this.isAnimating = false;
-      return;
-    }
-
-    try {
-      // Génère OTP
-      const otp = Math.floor(100000 + Math.random() * 900000).toString();
-
-      // Sauvegarde dans Firestore (temp_otps)
-      const otpRef = doc(this.firestore, 'temp_otps', phone);
-      await setDoc(otpRef, {
-        code: otp,
-        expiresAt: new Date(Date.now() + 5 * 60 * 1000), // 5 min
-      });
-
-      // Ouvre WhatsApp
-      const message = `Votre code MySchool : *${otp}*\nValable 5 minutes.`;
-      const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(
-        message
-      )}`;
-      window.open(whatsappUrl, '_blank');
-
-      this.isCodeSent = true;
-      await this.showToast('Ouvrez WhatsApp pour voir le code', 'success');
-    } catch (error: any) {
-      await this.showToast('Erreur envoi code', 'danger');
-      console.error(error);
-    } finally {
-      this.isCodeSending = false;
-      this.isAnimating = false;
-    }
-  }
-
-  // Étape 2 : Vérification du code
-  async verifyCodeAndContinue() {
-    this.isAnimating = true;
-
-    const phone = this.welcomeForm.value.phone?.replace(/\D/g, '');
-    const enteredCode = this.verificationCode.trim();
-
-    if (!phone || !enteredCode) {
-      await this.showToast('Veuillez entrer le code', 'danger');
-      this.isAnimating = false;
-      return;
-    }
-
-    try {
-      const otpDoc = await getDoc(doc(this.firestore, 'temp_otps', phone));
-      if (!otpDoc.exists()) {
-        throw new Error('Code expiré ou inexistant');
-      }
-
-      const data = otpDoc.data();
-      const now = new Date();
-
-      if (data['code'] !== enteredCode || data['expiresAt'].toDate() < now) {
-        throw new Error('Code invalide ou expiré');
-      }
-
-      // OTP VALIDE → SUPPRIME LE CODE UTILISÉ (SYNTAXE CORRECTE)
-      await deleteDoc(doc(this.firestore, 'temp_otps', phone));
-
-      // VÉRIFIER SI L'UTILISATEUR EXISTE DÉJÀ
-      const usersCollection = collection(this.firestore, 'utilisateur');
-      const phoneQuery = query(usersCollection, where('phone', '==', phone));
-      console.log('Vérification utilisateur pour le téléphone:', phone);
-      console.log('log', phoneQuery);
-      
-      const querySnapshot = await getDocs(phoneQuery);
-      console.log('console de ', querySnapshot);
-    
-        if (!querySnapshot.empty) {
-          // UTILISATEUR EXISTANT → RÉCUPÉRATION COMPLÈTE
-          const userDoc = querySnapshot.docs[0];
-          const userData = userDoc.data();
-
-          console.log('Utilisateur existant trouvé:', userData);
-
-          // RÉCUPÉRER LE VRAI UID DE VOTRE BASE DE DONNÉES
-          const firestoreUid = userData['uid']; // Le UID qui existe dans Firestore
-
-          // STOCKER TOUTES LES DONNÉES AVEC LE BON UID
-          const userProfile = {
-            ...userData,
-            id: userDoc.id,
-            uid: firestoreUid, // LE VRAI UID DE VOTRE BASE
-          };
-
-          localStorage.setItem('currentUser', JSON.stringify(userProfile));
-          localStorage.setItem('userPhone', phone);
-
-          // Connexion anonyme (peut avoir un UID différent, mais on s'en fiche)
-          let authUser = this.auth.currentUser;
-          if (!authUser) {
-            const userCredential = await signInAnonymously(this.auth);
-            authUser = userCredential.user;
-          }
-
-          console.log('UID Firebase Auth:', authUser.uid);
-          console.log('UID Firestore (le vrai):', firestoreUid);
-
-          await this.showToast(`Bienvenue ${userData['firstName'] || ''} !`, 'success');
-          this.router.navigate(['/courses'], { replaceUrl: true });
-          window.location.href = '/courses';
-          return;
-        }
-
-      // NOUVEL UTILISATEUR → CONTINUER L'INSCRIPTION
-      this.isOtpVerified = true;
-      this.currentStep = 1;
-      this.prefillNextStep();
-
-      await this.showToast('Code vérifié !', 'success');
-    } catch (error: any) {
-      await this.showToast(error.message || 'Code invalide', 'danger');
-      console.error(error);
-    } finally {
-      this.isAnimating = false;
-    }
-  }
-
-  // Étape 3 : Finalisation de l'inscription
   async completeSignup() {
-    // BLOQUE SI OTP NON VÉRIFIÉ
-    if (!this.isOtpVerified) {
-      await this.showToast("Veuillez d'abord vérifier votre code", 'danger');
-      this.router.navigate(['/welcome'], { replaceUrl: true });
-      return;
-    }
-
     this.updateUserData();
 
     try {
-      const phone = this.userData.phone?.replace(/\D/g, '');
-      if (!phone) {
-        await this.showToast('Numéro de téléphone invalide', 'danger');
+      const phone = this.userData.phone;
+      const password = this.personalInfoForm.value.password;
+      const confirmPassword = this.personalInfoForm.value.confirmPassword;
+
+
+      if (!phone || !password) {
+        await this.showToast('Données incomplètes', 'danger');
         return;
       }
 
-      // Référence à la collection
-      const usersCollection = collection(this.firestore, 'utilisateur');
+      // Vérifier que les mots de passe correspondent
+      if (password !== confirmPassword) {
+        await this.showToast(
+          'Les mots de passe ne correspondent pas',
+          'danger'
+        );
+        return;
+      }
 
-      // Vérifie si un utilisateur avec ce numéro existe déjà
+      // Vérifier si l'utilisateur existe déjà (double vérification)
+      const usersCollection = collection(this.firestore, 'utilisateur');
       const phoneQuery = query(usersCollection, where('phone', '==', phone));
       const querySnapshot = await getDocs(phoneQuery);
 
       if (!querySnapshot.empty) {
-        await this.showToast('Cet utilisateur existe déjà.', 'danger');
+        await this.showToast('Un compte existe déjà avec ce numéro', 'danger');
         return;
       }
 
-      // Crée un utilisateur anonyme si nécessaire
+      // Créer un utilisateur anonyme Firebase
       let authUser = this.auth.currentUser;
       if (!authUser) {
         const userCredential = await signInAnonymously(this.auth);
         authUser = userCredential.user;
-        console.log('Connecté anonymement:', authUser.uid);
       }
 
-      // Prépare les données utilisateur
+      // Préparer les données utilisateur
       const userDataToSave: any = {
         uid: authUser.uid,
         phone: phone,
+        password,
         firstName: this.userData.firstName || '',
         lastName: this.userData.lastName || '',
+        country: this.userData.country || '',
+        address: this.userData.address || '',
+        profession: this.userData.profession || '',
+        birthDate: this.userData.birthDate || '',
+        school: this.userData.school || '',
+        objectives: this.userData.objectives || [],
+        acceptTerms: this.userData.acceptTerms,
+        acceptPrivacy: this.userData.acceptPrivacy,
         level: 'beginner',
         login: phone,
-        password: this.generatePasswordFromData(),
         createdAt: new Date(),
         role: { libelle: 'student' },
         specializationId: null,
         status: 'active',
       };
 
-      // AJOUTE avec ID auto-généré
+      // Sauvegarder dans Firestore
       const userRef = await addDoc(usersCollection, userDataToSave);
       console.log('Utilisateur créé avec ID:', userRef.id);
 
-      // Succès
+      // Stocker en local
+      localStorage.setItem(
+        'currentUser',
+        JSON.stringify({
+          ...userDataToSave,
+          id: userRef.id,
+        })
+      );
+      localStorage.setItem('userPhone', phone);
+
       await this.showToast('Inscription réussie !', 'success');
-      this.router.navigate(['/courses'], { replaceUrl: true });
+      setTimeout(() => {
+        window.location.href = '/courses';
+      }, 1000);
     } catch (error: any) {
       console.error('Erreur inscription:', error);
       await this.showToast(`Erreur: ${error.message}`, 'danger');
     }
   }
 
-  onVerificationCodeChange(event: any) {
-    this.verificationCode = event.detail.value;
-    console.log('Code saisi:', this.verificationCode);
+  // =====================
+  // Méthodes utilitaires
+  // =====================
+
+  private formatPhoneForSearch(phone: string): string {
+    if (!phone) return '';
+
+    // Nettoyer le numéro (enlever tout sauf les chiffres)
+    let clean = phone.replace(/\D/g, '');
+
+    // Si le numéro commence par +221, enlever le préfixe
+    if (clean.startsWith('221') && clean.length === 12) {
+      return clean.substring(3); // Enlever "221"
+    }
+
+    // Si le numéro a 10 chiffres et commence par 0, enlever le 0
+    if (clean.length === 10 && clean.startsWith('0')) {
+      return clean.substring(1);
+    }
+
+    // Si le numéro a 9 chiffres (format Sénégal), le garder tel quel
+    if (clean.length === 9) {
+      return clean;
+    }
+
+    // Par défaut, retourner le numéro nettoyé
+    return clean;
   }
 
+  // =====================
+  // Gestion des dates
+  // =====================
+
   openDatePicker() {
-    // Ouvre le sélecteur de date natif
     if (this.dateInput && this.dateInput.nativeElement) {
       this.dateInput.nativeElement.showPicker();
     }
@@ -698,7 +752,6 @@ export class SignupFlowComponent {
       return '';
     }
 
-    // Convertir la date au format français (jj/mm/aaaa)
     const date = new Date(dateValue);
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -707,6 +760,20 @@ export class SignupFlowComponent {
     return `${day}/${month}/${year}`;
   }
 
+  // =====================
+  // Toast helper
+  // =====================
+
+  private async showToast(
+    message: string,
+    color: 'success' | 'warning' | 'danger' | 'primary' = 'primary'
+  ) {
+    const t = await this.toastCtrl.create({
+      message,
+      duration: 2500,
+      position: 'top',
+      color,
+    });
+    await t.present();
+  }
 }
-
-

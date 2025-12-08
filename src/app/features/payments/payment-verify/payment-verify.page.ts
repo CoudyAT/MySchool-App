@@ -220,7 +220,7 @@ export class PaymentVerifyPage implements OnInit {
 
   private async getAllCourses(): Promise<any[]> {
     return new Promise((resolve, reject) => {
-      this.courseService.getCourses().subscribe({
+      this.courseService.getAllCourses().subscribe({
         next: (courses) => {
           resolve(courses);
         },

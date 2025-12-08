@@ -1,23 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Subscription } from 'rxjs'; 
-import {
-  IonContent,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
-  IonButton,
-  IonCard,
-  IonCardContent,
-  IonIcon,
-  IonSearchbar,
-} from '@ionic/angular/standalone';
+import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { Course } from 'src/app/models/course.model';
 import { CourseService } from 'src/app/features/services/courseService';
-import { BottomMenuComponent } from "src/app/shared/components/bottom-menu/bottom-menu.component";
-
+import {
+  IonContent,
+  IonSearchbar,
+  IonCard,
+  IonCardContent,
+  IonIcon,
+  IonButton,
+} from '@ionic/angular/standalone';
+import { BottomMenuComponent } from 'src/app/shared/components/bottom-menu/bottom-menu.component';
 
 @Component({
   selector: 'app-mes-cours',
@@ -25,26 +20,22 @@ import { BottomMenuComponent } from "src/app/shared/components/bottom-menu/botto
   styleUrls: ['./mes-cours.page.scss'],
   standalone: true,
   imports: [
-    IonContent,
-    // IonHeader,
-    // IonTitle,
-    // IonToolbar,
     CommonModule,
-    FormsModule,
-    IonSearchbar,
     IonButton,
-    IonCard,
     IonIcon,
     IonCardContent,
-    BottomMenuComponent
-],
+    IonCard,
+    IonSearchbar,
+    IonContent,
+    BottomMenuComponent,
+  ],
 })
 export class MesCoursPage implements OnInit {
   courses: Course[] = [];
   filteredCourses: Course[] = [];
   categories: string[] = [];
+  private subscription = new Subscription();
 
-  private subscription: Subscription = new Subscription();
   isLoading = true;
 
   constructor(private router: Router, private courseService: CourseService) {}
@@ -57,59 +48,113 @@ export class MesCoursPage implements OnInit {
     this.subscription.unsubscribe();
   }
 
+  // loadCourses() {
+  //   this.isLoading = true;
+
+  //   const sub = this.courseService.getAllCourses().subscribe({
+  //     next: (courses) => {
+  //       // Clean and normalize the data
+  //       this.courses = this.normalizeCourses(courses);
+  //       console.log('Liste des cours nettoyés:', this.courses);
+
+  //       this.filteredCourses = [...this.courses];
+
+  //       // Filter out empty categories
+  //       this.categories = [
+  //         ...new Set(
+  //           this.courses
+  //             .map((c) => c.category)
+  //             .filter((category) => category && category.trim() !== '')
+  //         ),
+  //       ];
+
+  //       console.log('Catégories disponibles:', this.categories);
+  //       this.isLoading = false;
+  //     },
+  //     error: (err) => {
+  //       console.error('Erreur API:', err);
+  //       this.isLoading = false;
+  //     },
+  //   });
+
+  //   this.subscription.add(sub);
+  // }
+
   loadCourses() {
     this.isLoading = true;
 
-    const coursesSub = this.courseService.getCourses().subscribe({
-      next: (firestoreCourses) => {
-        // Transformer les données Firestore en format compatible
-        this.courses = firestoreCourses;
-        this.filteredCourses = [...this.courses];
+    const sub = this.courseService.getAllCourses().subscribe({
+      next: (courses) => {
+        this.courses = courses;
+        this.filteredCourses = [...courses];
 
-        // Extraire les catégories uniques
         this.categories = [
-          ...new Set(this.courses.map((course) => course.category)),
+          ...new Set(
+            courses.map((c) => c.category).filter((x) => x && x.trim() !== '')
+          ),
         ];
 
         this.isLoading = false;
-        console.log('📚 Cours chargés:', this.courses.length);
       },
-      error: (error) => {
-        console.error('❌ Erreur chargement cours:', error);
+      error: (err) => {
+        console.error('Erreur API:', err);
         this.isLoading = false;
       },
     });
 
-    this.subscription.add(coursesSub);
+    this.subscription.add(sub);
   }
 
+  private normalizeCourses(courses: any[]): any[] {
+    return courses.map((course) => {
+      // Fix encoding issues (if needed, depending on your actual data source)
+      const normalizedCourse = { ...course };
 
-  // Filtrer les cours par catégorie
-  getCoursesByCategory(category: string): Course[] {
-    return this.courses.filter((course) => course.category === category);
+      // Normalize level values to consistent format
+      if (normalizedCourse.level) {
+        const level = normalizedCourse.level.toUpperCase();
+        if (level.includes('DEBUTANT') || level.includes('BEGINNER')) {
+          normalizedCourse.level = 'DEBUTANT';
+        } else if (
+          level.includes('INTERMEDIAIRE') ||
+          level.includes('INTERMEDIATE')
+        ) {
+          normalizedCourse.level = 'INTERMEDIAIRE';
+        } else if (level.includes('AVANCE') || level.includes('ADVANCED')) {
+          normalizedCourse.level = 'AVANCE';
+        }
+      }
+
+      // Convert duration to a number if it's a string with "h"
+      if (
+        typeof normalizedCourse.duration === 'string' &&
+        normalizedCourse.duration.includes('h')
+      ) {
+        const hours = parseFloat(
+          normalizedCourse.duration.replace('h', '').trim()
+        );
+        normalizedCourse.duration = hours * 60; // Convert to minutes if needed
+      }
+
+      return normalizedCourse;
+    });
   }
 
   searchCourse(event?: any) {
-    const searchTerm = event?.detail?.value?.toLowerCase() || '';
-
-    if (!searchTerm) {
-      this.filteredCourses = [...this.courses];
-      return;
-    }
+    const term = event?.detail?.value?.toLowerCase() ?? '';
 
     this.filteredCourses = this.courses.filter(
-      (course) =>
-        course.title.toLowerCase().includes(searchTerm) ||
-        course.category.toLowerCase().includes(searchTerm)
+      (c) =>
+        c.title.toLowerCase().includes(term) ||
+        c.category.toLowerCase().includes(term)
     );
   }
 
-  openFilters() {
-    console.log('Ouvrir les filtres');
+  openCourse(course: Course) {
+    this.router.navigate(['/course-detail', course.id]);
   }
 
-  openCourse(course: Course) {
-    console.log('Ouvrir le cours:', course);
-    this.router.navigate(['/course-detail', course.id]);
+  openFilters() {
+    console.log('Ouvrir filtres');
   }
 }
