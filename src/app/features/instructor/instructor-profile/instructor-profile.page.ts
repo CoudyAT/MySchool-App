@@ -10,7 +10,6 @@ import {
   IonIcon,
   IonCard,
   IonCardContent,
-  IonBackButton,
   IonButtons,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -44,7 +43,6 @@ import { Course } from 'src/app/models/course.model';
     IonIcon,
     IonCard,
     IonCardContent,
-    IonBackButton,
     IonButtons,
     CommonModule,
     FormsModule,
@@ -88,7 +86,7 @@ export class InstructorProfilePage implements OnInit {
       next: (instructor) => {
         this.instructor = instructor;
         console.log('instructor', this.instructor);
-        
+
         this.isLoading = false;
       },
       error: (error) => {

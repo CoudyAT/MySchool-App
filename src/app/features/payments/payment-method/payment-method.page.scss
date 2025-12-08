@@ -2,13 +2,13 @@ ion-header {
   ion-toolbar {
     --background: #fff;
     --border-width: 0;
-    
+
     ion-title {
       font-size: 16px;
       font-weight: 500;
       color: #000;
     }
-    
+
     ion-button {
       --color: #000;
     }
@@ -48,7 +48,7 @@ ion-content {
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  
+
   &:active {
     transform: scale(0.98);
   }
@@ -98,7 +98,7 @@ ion-content {
   justify-content: center;
   position: relative;
   overflow: hidden;
-  
+
   &::before {
     content: '';
     position: absolute;
@@ -124,7 +124,7 @@ ion-content {
   background: linear-gradient(135deg, white 0%, white 100%);
   border-radius: 6px;
   position: relative;
-  
+
   &::before {
     content: '';
     position: absolute;
@@ -147,4 +147,104 @@ ion-content {
   font-size: 18px;
   font-weight: 600;
   color: #fff;
+}
+
+// Modal de saisie de téléphone
+.phone-input-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+
+  .modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-content {
+    position: relative;
+    background: white;
+    border-radius: 20px;
+    padding: 30px 20px;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.3s ease-out;
+
+    h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #FF6600;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .modal-subtitle {
+      font-size: 14px;
+      color: #666;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    ion-item {
+      --background: #f5f5f5;
+      --border-radius: 12px;
+      --padding-start: 16px;
+      --padding-end: 16px;
+      margin-bottom: 16px;
+      border-radius: 12px;
+
+      ion-label {
+        font-size: 14px;
+        font-weight: 500;
+        color: #666;
+      }
+
+      ion-input {
+        font-size: 16px;
+        color: #000;
+      }
+    }
+
+    .phone-hint {
+      font-size: 12px;
+      color: #999;
+      text-align: center;
+      margin: -8px 0 20px 0;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+
+      ion-button {
+        --border-radius: 12px;
+        height: 50px;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

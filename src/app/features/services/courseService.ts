@@ -37,6 +37,11 @@ export class CourseService {
     return this.api.get<Course[]>(`/courses/level/${level}`);
   }
 
+  // Récupérer les cours par type
+  getCoursesByType(type: string): Observable<Course[]> {
+    return this.api.get<Course[]>(`/courses/type/${type}`);
+  }
+
   // Récupérer toutes les catégories uniques
   getCategories(): Observable<string[]> {
     return this.getCourses().pipe(
@@ -62,9 +67,20 @@ export class CourseService {
     return this.api.delete<void>(`/courses/${id}`);
   }
 
-  // Récupérer les étudiants inscrits à un cours
-  getCourseStudents(courseId: string): Observable<any[]> {
-    return this.api.get<any[]>(`/courses/${courseId}/students`);
+  // Publier un cours
+  publishCourse(id: string): Observable<Course> {
+    return this.api.patch<Course>(`/courses/${id}/publish`, {});
+  }
+
+  // Dépublier un cours
+  unpublishCourse(id: string): Observable<Course> {
+    return this.api.patch<Course>(`/courses/${id}/unpublish`, {});
+  }
+
+  // Récupérer les inscriptions (enrollments) d'un cours
+  // Note: Utilise l'endpoint /enrollments/course/{courseId}
+  getCourseEnrollments(courseId: string): Observable<any[]> {
+    return this.api.get<any[]>(`/enrollments/course/${courseId}`);
   }
 }
 

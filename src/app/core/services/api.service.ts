@@ -40,4 +40,10 @@ export class ApiService {
       headers: this.getHeaders()
     });
   }
+
+  patch<T>(endpoint: string, data: any): Observable<T> {
+    return this.http.patch<T>(`${this.baseUrl}${endpoint}`, data, {
+      headers: this.getHeaders()
+    });
+  }
 }

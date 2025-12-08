@@ -23,7 +23,8 @@ import {
 import { addIcons } from 'ionicons';
 import { PaymentData } from 'src/app/models/payment.model';
 import { EnrollmentService } from '../../services/enrollmentService';
-import { CourseService } from 'src/app/features/services/courseService'; // Ajoutez cet import
+import { CourseService } from 'src/app/features/services/courseService';
+import { PaymentService } from '../../services/paymentService';
 
 interface PaymentMethod {
   id: string;
@@ -120,7 +121,8 @@ export class PaymentVerifyPage implements OnInit {
     private enrollmentService: EnrollmentService,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
-    private courseService: CourseService // Injectez CourseService
+    private courseService: CourseService,
+    private paymentService: PaymentService
   ) {
     addIcons({
       'chevron-back-outline': chevronBackOutline,
@@ -248,7 +250,15 @@ export class PaymentVerifyPage implements OnInit {
     };
 
     try {
-      await this.enrollmentService.createEnrollment(paymentData);
+      const result = await this.enrollmentService.createEnrollment(paymentData);
+
+      // Si un paiement a été créé, vérifier s'il y a une URL de redirection
+      if (result.payment?.data?.paymentUrl) {
+        console.log('🔗 URL de paiement Orange Money:', result.payment.data.paymentUrl);
+        // Ouvrir l'URL Orange Money dans un navigateur externe ou WebView
+        window.open(result.payment.data.paymentUrl, '_blank');
+      }
+
       console.log(`✅ Cours Premium "${course.title}" ajouté`);
     } catch (error) {
       console.error(`❌ Erreur ajout cours Premium "${course.title}":`, error);
@@ -349,11 +359,25 @@ export class PaymentVerifyPage implements OnInit {
           courseImage: this.courseImage,
         };
 
-        await this.enrollmentService.createEnrollment(paymentData);
+        const result = await this.enrollmentService.createEnrollment(paymentData);
+
+        // Si paiement Orange Money créé, rediriger vers l'URL de paiement
+        if (result.payment?.data?.paymentUrl) {
+          console.log('🔗 Redirection vers Orange Money:', result.payment.data.paymentUrl);
+
+          // Sauvegarder l'ID du paiement pour vérification ultérieure
+          localStorage.setItem('pendingPaymentId', result.payment.id);
+          localStorage.setItem('pendingEnrollmentId', result.enrollmentId);
+          localStorage.setItem('pendingCourseId', this.courseId);
+
+          // Ouvrir l'URL Orange Money dans le navigateur
+          window.location.href = result.payment.data.paymentUrl;
+          return;
+        }
 
         console.log('✅ Paiement cours individuel enregistré avec succès');
 
-        // Rediriger vers la page du cours
+        // Rediriger vers la page du cours si pas de paiement en ligne
         this.router.navigate(['/course-video', this.course.id], {
           state: {
             course: this.course,
