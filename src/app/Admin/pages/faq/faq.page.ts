@@ -75,15 +75,13 @@ export class FaqPage implements OnInit {
   }
 
   async loadFaqs() {
-    this.isLoading = true;
     try {
-      this.faqs = await lastValueFrom(this.faqService.getAllFaqs());
-      this.applyFilters();
+      const result = await lastValueFrom(this.faqService.getAllFaqs());
+      this.faqs = Array.isArray(result) ? result : [result];
+      this.filteredFaqs = [...this.faqs];
+      console.log('FAQs chargées:', this.faqs);
     } catch (error) {
       console.error('Erreur lors du chargement des FAQs:', error);
-      alert('Erreur lors du chargement des FAQs');
-    } finally {
-      this.isLoading = false;
     }
   }
 
@@ -164,18 +162,15 @@ export class FaqPage implements OnInit {
         );
       } else {
         await lastValueFrom(
-          this.faqService.createFaq(this.currentFaq as Omit<Faq, 'id'>)
+          this.faqService.createFaq(this.currentFaq as Faq)
         );
         console.log('FAQ créée avec succès');
-
       }
 
       this.closeModal();
 
-      setTimeout(async () => {
-        this.faqs = []; // Vider d'abord
-        this.filteredFaqs = [];
-      }, 500);
+      // Recharger la liste des FAQs après la sauvegarde
+      await this.loadFaqs();
 
     } catch (error) {
       console.error('Erreur lors de la sauvegarde:', error);

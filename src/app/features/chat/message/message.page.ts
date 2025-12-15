@@ -1,74 +1,244 @@
-import { AfterViewChecked, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewChecked, Component, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonItem, IonSpinner, IonAvatar, IonFooter, IonTextarea } from '@ionic/angular/standalone';
+import {
+  IonContent,
+  IonHeader,
+  IonTitle,
+  IonToolbar,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonItem,
+  IonSpinner,
+  IonAvatar,
+  IonFooter,
+  IonTextarea,
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { send, sparkles, personOutline, chevronBackOutline } from 'ionicons/icons';
-import { HttpClient } from '@angular/common/http';
+
 import { Message } from 'src/app/models/message.model';
+import { ConversationService } from '../../services/conversation.service';
+import { Auth } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-message',
   templateUrl: './message.page.html',
   styleUrls: ['./message.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, IonButtons, IonButton, IonIcon, IonItem, IonSpinner, IonAvatar, IonFooter, IonTextarea],
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonContent,
+    IonHeader,
+    IonTitle,
+    IonToolbar,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonItem,
+    IonSpinner,
+    IonAvatar,
+    IonFooter,
+    IonTextarea,
+  ],
 })
-export class MessagePage implements AfterViewChecked {
-
+export class MessagePage implements OnInit {
   @ViewChild(IonContent) private content!: IonContent;
 
   messages: Message[] = [
     {
       role: 'assistant',
-      content: 'Bonjour ! Je suis ton assistant IA. Comment puis-je t’aider aujourd’hui ?',
-      timestamp: new Date()
-    }
+      content: "Bonjour ! Je suis ton assistant IA. Comment puis-je t'\aider aujourd'hui ?",
+      timestamp: new Date(),
+    },
   ];
 
-  newMessage = '';
-  sending = false;
+  newMessage: string = '';
+  sending: boolean = false;
+  currentUser: any = null;
+  userId: string = '';
+  private auth = inject(Auth);
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private conversationService: ConversationService,
+  ) {
     addIcons({ chevronBackOutline, personOutline, send, sparkles });
   }
 
+  async ngOnInit() {
+    const user = this.auth.currentUser;
 
-  ngAfterViewChecked() {
-    this.scrollToBottom();
+    if (user) {
+      this.userId = user.uid;
+      console.log('User ID depuis Firebase:', this.userId);
+      await this.loadConversationHistory();
+    } else {
+      // Écouter les changements d'authentification
+      this.auth.onAuthStateChanged((authUser) => {
+        if (authUser) {
+          this.userId = authUser.uid;
+          // console.log('User ID depuis onAuthStateChanged:', this.userId);
+          this.loadConversationHistory();
+        } else {
+          this.handleNoUser();
+        }
+      });
+    }
+
   }
 
 
-  sendMessage() {
-    if (!this.newMessage.trim() || this.sending) return;
+  private async loadConversationHistory() {
+    if (!this.userId) return;
 
-    const userMsg: Message = {
+    this.conversationService.getConversations(this.userId).subscribe({
+      next: (response: any) => {
+        //console.log('Historique complet:', response);
+
+        if (response && response.success && response.data) {
+          const conversation = response.data;
+
+          if (conversation.messages && conversation.messages.length > 0) {
+            this.messages = conversation.messages.map((m: any) => ({
+              role: m.role,
+              content: m.content,
+              timestamp: m.timestamp?._seconds
+                ? new Date(m.timestamp._seconds * 1000)
+                : new Date(),
+            }));
+
+            //console.log('Messages chargés:', this.messages.length);
+          }
+        }
+        else if (Array.isArray(response) && response.length > 0) {
+          const conv = response[0];
+          this.messages = conv.messages.map((m: any) => ({
+            role: m.role,
+            content: m.content,
+            timestamp: m.timestamp ? new Date(m.timestamp) : new Date(),
+          }));
+        }
+      },
+      error: (err) => {
+        console.error('Erreur lors du chargement de l\'historique', err);
+      }
+    });
+  }
+
+  /**
+   * Gère le cas où aucun utilisateur n'est trouvé
+   */
+  private handleNoUser() {
+    this.messages.push({
+      role: 'assistant',
+      content: 'Veuillez vous connecter pour utiliser le chatbot.',
+      timestamp: new Date(),
+    });
+  }
+
+  /**
+   * Envoi du message au chatbot
+   */
+  async sendMessage() {
+    const question = this.newMessage.trim();
+
+    if (!question || this.sending) return;
+
+    if (!this.userId) {
+      console.error('Impossible d\'envoyer le message: userId non défini');
+      this.messages.push({
+        role: 'assistant',
+        content: 'Erreur: utilisateur non identifié. Veuillez vous reconnecter.',
+        timestamp: new Date(),
+      });
+      return;
+    }
+
+    // 1. Ajouter le message de l'utilisateur
+    this.messages.push({
       role: 'user',
-      content: this.newMessage.trim(),
-      timestamp: new Date()
-    };
+      content: question,
+      timestamp: new Date(),
+    });
 
-    this.messages.push(userMsg);
-    this.newMessage = '';
-
-    // Message "en cours" de l'IA
-    const loadingMsg: Message = {
+    const loadingMessage: Message = {
       role: 'assistant',
       content: '',
       timestamp: new Date(),
       loading: true
     };
-    this.messages.push(loadingMsg);
+    this.messages.push(loadingMessage);
 
+    this.newMessage = '';
     this.sending = true;
 
+    setTimeout(() => this.scrollToBottom(), 100);
 
+    this.conversationService.postQuestion(this.userId, question).subscribe({
+      next: (response) => {
+        // Supprimer le message loading
+        const loadingIndex = this.messages.findIndex(m => m.loading);
+        if (loadingIndex !== -1) {
+          this.messages.splice(loadingIndex, 1);
+        }
+
+        let botAnswer = 'Désolé, je n\'ai pas compris la réponse.';
+
+        if (response && response.success && response.data) {
+          botAnswer = response.data.answer;
+        } else if (Array.isArray(response) && response.length > 0) {
+
+          const conv = response[0];
+          this.messages = conv.messages.map((m: any) => ({
+            role: m.role,
+            content: m.content,
+            timestamp: m.timestamp ? new Date(m.timestamp) : new Date(),
+          }));
+          this.sending = false;
+          setTimeout(() => this.scrollToBottom(), 100);
+          return;
+        }
+
+        // Ajouter la réponse du bot
+        this.messages.push({
+          role: 'assistant',
+          content: botAnswer,
+          timestamp: new Date(),
+        });
+      },
+      error: (err) => {
+        console.error('Erreur chatbot', err);
+
+        // Supprimer le loading et ajouter un message d'erreur
+        const loadingIndex = this.messages.findIndex(m => m.loading);
+        if (loadingIndex !== -1) {
+          this.messages.splice(loadingIndex, 1);
+        }
+
+        this.messages.push({
+          role: 'assistant',
+          content: 'Désolé, une erreur est survenue. Réessaie plus tard.',
+          timestamp: new Date(),
+        });
+      },
+      complete: () => {
+        this.sending = false;
+        setTimeout(() => this.scrollToBottom(), 100);
+      },
+    });
   }
 
-  private scrollToBottom() {
-    setTimeout(() => this.content.scrollToBottom(300), 100);
-  }
 
+  private scrollToBottom(): void {
+    if (this.content) {
+      this.content.scrollToBottom(300);
+    }
+  }
+  /**
+   * Retour à la page précédente
+   */
   goBack() {
     window.history.back();
   }
