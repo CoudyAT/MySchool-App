@@ -17,6 +17,12 @@ import { ProfilePage } from './features/auth/profile/profile.page';
 import { DetailPage } from './features/cours/pages/detail/detail.page';
 import { PaymentCallbackPage } from './features/payments/payment-callback/payment-callback.page';
 import { EditProfilePage } from './features/auth/edit-profile/edit-profile.page';
+import { HelpCenterPage } from './features/profile/help-center/help-center.page';
+import { TermsPage } from './features/profile/terms/terms.page';
+import { NotificationsPage } from './features/profile/notifications/notifications.page';
+import { MessagePage } from './features/chat/message/message.page';
+import { FaqPage } from './Admin/pages/faq/faq.page';
+import { UsersPage } from './Admin/pages/users/users.page';
 
 export const routes: Routes = [
   {
@@ -43,6 +49,10 @@ export const routes: Routes = [
   {
     path: 'mes-cours',
     component: MesCoursPage,
+  },
+  {
+    path: 'message',
+    component: MessagePage,
   },
   {
     path: 'course-detail/:id',
@@ -76,7 +86,7 @@ export const routes: Routes = [
 
   {
     path: 'profile',
-    component: ProfilePage, // Remplacez par votre composant de profil
+    component: ProfilePage,
   },
 
   {
@@ -88,6 +98,18 @@ export const routes: Routes = [
     path: 'edit-profile',
     component: EditProfilePage,
   },
+  {
+    path: 'help-center',
+    component: HelpCenterPage,
+  },
+  {
+    path: 'terms',
+    component: TermsPage,
+  },
+  {
+    path: 'notifications',
+    component: NotificationsPage,
+  },
 
   {
     path: 'admin-login',
@@ -95,6 +117,9 @@ export const routes: Routes = [
     children: [
       { path: 'list-cours', component: ListCoursPage },
       { path: 'cours/:id', component: DetailCoursPage },
+      { path: 'faq', component: FaqPage },
+      { path: 'users', component: UsersPage },
+
     ],
   },
   {
@@ -111,4 +136,5 @@ export const routes: Routes = [
         './features/instructor/instructor-profile/instructor-profile.page'
       ).then((m) => m.InstructorProfilePage),
   },
+
 ];

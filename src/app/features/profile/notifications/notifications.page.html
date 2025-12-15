@@ -1,0 +1,36 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+        <span class="back-text"></span>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Notifications</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <div class="notifications-container">
+    <div *ngFor="let notif of notifications" class="notif-card" [class.read]="notif.read">
+
+      <div class="notif-icon">
+        <p class="notif-img">{{ notif.icon}}</p>
+      </div>
+
+      <div class="notif-content">
+        <h3>{{ notif.title }}</h3>
+        <p>{{ notif.message }}</p>
+        <span class="notif-date">{{ notif.date }}</span>
+      </div>
+
+      <ion-button fill="clear" (click)="markAsRead(notif)">
+        <ion-icon name="checkmark-done-outline"></ion-icon>
+      </ion-button>
+
+    </div>
+
+  </div>
+
+</ion-content>

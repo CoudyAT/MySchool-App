@@ -129,7 +129,7 @@ export class LoginComponent implements OnInit {
           window.localStorage.setItem('userPhone', phone);
           this.router.navigate(['/verify-code']);
         } else {
-          this.router.navigate(['/signup'], { queryParams: { phone } });
+          // this.router.navigate(['/signup'], { queryParams: { phone } });
         }
       });
     } catch (error: any) {

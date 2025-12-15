@@ -15,27 +15,19 @@
     <form [formGroup]="phoneForm" class="form-container">
       <div class="input-group">
         <label class="input-label">Identifiant</label>
-        <ion-input
-          type="tel"
-          formControlName="phone"
-          placeholder="Numéro de téléphone"
-          class="custom-input"
-        ></ion-input>
+        <ion-input type="tel" formControlName="phone" placeholder="Numéro de téléphone"
+          class="custom-input"></ion-input>
         <div class="input-underline"></div>
       </div>
-      
+
       <div class="error-message" *ngIf="isFieldInvalid('phone')">
         {{ getFieldError('phone') }}
       </div>
 
       <div id="recaptcha-container"></div>
 
-      <ion-button
-        expand="block"
-        class="continue-button"
-        (click)="submitPhone()"
-        [disabled]="!phoneForm.valid || loading"
-      >
+      <ion-button expand="block" class="continue-button" (click)="submitPhone()"
+        [disabled]="!phoneForm.valid || loading">
         {{ loading ? 'Vérification...' : 'Continuer' }}
       </ion-button>
     </form>

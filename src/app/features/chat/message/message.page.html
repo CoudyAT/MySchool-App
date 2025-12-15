@@ -1,0 +1,50 @@
+<ion-header class="ion-no-border" translucent>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="chevron-back-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>
+      Assistant IA
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #content class="chat-content" fullscreen>
+  <div class="messages-container">
+    <ng-container *ngFor="let msg of messages">
+      <div class="message-wrapper" [class.user]="msg.role === 'user'" [class.assistant]="msg.role === 'assistant'">
+
+        <ion-avatar class="msg-avatar" *ngIf="msg.role === 'assistant'">
+          <ion-icon name="sparkles"></ion-icon>
+        </ion-avatar>
+
+        <div class="bubble" [class.user-bubble]="msg.role === 'user'"
+          [class.assistant-bubble]="msg.role === 'assistant'">
+          <p class="message-text" [innerHTML]="msg.content || '&nbsp;'"></p>
+
+          <div class="message-meta">
+            <span class="timestamp">{{ msg.timestamp | date:'HH:mm' }}</span>
+            <ion-spinner name="dots" *ngIf="msg.loading"></ion-spinner>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar class="input-toolbar">
+    <ion-item lines="none" class="input-item">
+      <ion-textarea [(ngModel)]="newMessage" name="newMessage" placeholder="Écrivez un message..." rows="1"
+        auto-grow="true" maxlength="2000" class="message-input">
+      </ion-textarea>
+
+      <ion-button slot="end" fill="clear" class="send-button" [disabled]="sending || !newMessage.trim()"
+        (click)="sendMessage()">
+        <ion-icon name="send" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-toolbar>
+</ion-footer>

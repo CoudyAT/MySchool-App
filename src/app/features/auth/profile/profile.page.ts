@@ -56,7 +56,7 @@ import {
     IonButtons,
     CommonModule,
     FormsModule,
-    IonToggle,
+
   ],
 })
 export class ProfilePage implements OnInit {
@@ -69,7 +69,7 @@ export class ProfilePage implements OnInit {
     private firestore: Firestore,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
-   // private darkModeService: DarkModeService
+    // private darkModeService: DarkModeService
   ) {
     addIcons({
       personOutline,
@@ -90,7 +90,7 @@ export class ProfilePage implements OnInit {
 
   async ngOnInit() {
     await this.loadUserData();
-   // this.isDarkMode = this.darkModeService.getDarkModeStatus();
+    // this.isDarkMode = this.darkModeService.getDarkModeStatus();
   }
 
   async loadUserData() {
@@ -117,7 +117,7 @@ export class ProfilePage implements OnInit {
 
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        console.log('📄 Données Firestore chargées:', userData);
+        // console.log('📄 Données Firestore chargées:', userData);
 
         // Fusionner avec les données existantes
         if (userData?.['firstName'])
@@ -166,7 +166,7 @@ export class ProfilePage implements OnInit {
   }
 
   openNotifications() {
-    console.log('Notifications');
+    this.router.navigate(['/notifications']);
   }
 
   openSecurity() {
@@ -191,11 +191,11 @@ export class ProfilePage implements OnInit {
   // }
 
   openTerms() {
-    console.log("Conditions d'utilisation");
+    this.router.navigate(['/terms']);
   }
 
   openHelp() {
-    console.log("Centre d'aide");
+    this.router.navigate(['/help-center']);
   }
 
   inviteFriends() {
@@ -272,7 +272,7 @@ export class ProfilePage implements OnInit {
     await this.loadUserData();
   }
 
-    async logout() {
+  async logout() {
     const alert = await this.alertCtrl.create({
       header: 'Déconnexion',
       message: 'Êtes-vous sûr de vouloir vous déconnecter ?',

@@ -12,16 +12,12 @@
 
 <ion-content>
   <div class="edit-profile-container">
-    
+
     <!-- Section Avatar -->
     <div class="avatar-section">
       <div class="avatar-container">
         <div class="avatar-circle">
-          <img 
-            *ngIf="profileForm.photoURL" 
-            [src]="profileForm.photoURL" 
-            alt="Profile picture"
-          />
+          <img *ngIf="profileForm.photoURL" [src]="profileForm.photoURL" alt="Profile picture" />
           <div *ngIf="!profileForm.photoURL" class="avatar-placeholder">
             {{ profileForm.firstName?.charAt(0) || 'A' }}
           </div>
@@ -35,17 +31,13 @@
 
     <!-- Formulaire de modification -->
     <form class="profile-form">
-      
+
       <!-- Prénom -->
       <div class="form-group">
         <label class="form-label">Prénom</label>
         <ion-item lines="none" class="form-item">
-          <ion-input
-            [(ngModel)]="profileForm.firstName"
-            name="firstName"
-            placeholder="Entrez votre prénom"
-            type="text"
-          ></ion-input>
+          <ion-input [(ngModel)]="profileForm.firstName" name="firstName" placeholder="Entrez votre prénom"
+            type="text"></ion-input>
         </ion-item>
       </div>
 
@@ -53,12 +45,7 @@
       <div class="form-group">
         <label class="form-label">Nom</label>
         <ion-item lines="none" class="form-item">
-          <ion-input
-            [(ngModel)]="profileForm.lastName"
-            name="lastName"
-            placeholder="Entrez votre nom"
-            type="text"
-          >
+          <ion-input [(ngModel)]="profileForm.lastName" name="lastName" placeholder="Entrez votre nom" type="text">
           </ion-input>
         </ion-item>
       </div>
@@ -67,12 +54,8 @@
       <div class="form-group">
         <label class="form-label">Téléphone</label>
         <ion-item lines="none" class="form-item">
-          <ion-input
-            [(ngModel)]="profileForm.phone"
-            name="phone"
-            placeholder="Entrez votre numéro"
-            type="tel"
-          ></ion-input>
+          <ion-input [(ngModel)]="profileForm.phone" name="phone" placeholder="Entrez votre numéro"
+            type="tel"></ion-input>
         </ion-item>
       </div>
 
@@ -80,12 +63,8 @@
       <div class="form-group">
         <label class="form-label">Ancien mot de passe</label>
         <ion-item lines="none" class="form-item">
-          <ion-input
-            [(ngModel)]="profileForm.oldPassword"
-            name="oldPassword"
-            placeholder="Entrez votre ancien mot de passe"
-            type="password"
-          ></ion-input>
+          <ion-input [(ngModel)]="profileForm.oldPassword" name="oldPassword"
+            placeholder="Entrez votre ancien mot de passe" type="password"></ion-input>
         </ion-item>
         <div class="password-info" *ngIf="showPasswordFields">
           <ion-icon name="information-circle-outline"></ion-icon>
@@ -97,18 +76,9 @@
       <div *ngIf="showNewPasswordFields" class="form-group">
         <label class="form-label">Nouveau mot de passe</label>
         <ion-item lines="none" class="form-item">
-          <ion-input
-            [(ngModel)]="profileForm.newPassword"
-            name="newPassword"
-            placeholder="Entrez le nouveau mot de passe"
-            type="password"
-            [class.error]="passwordTooShort"
-          ></ion-input>
-          <button 
-            type="button" 
-            class="show-password-btn"
-            (click)="togglePasswordVisibility('new')"
-            slot="end">
+          <ion-input [(ngModel)]="profileForm.newPassword" name="newPassword"
+            placeholder="Entrez le nouveau mot de passe" type="password" [class.error]="passwordTooShort"></ion-input>
+          <button type="button" class="show-password-btn" (click)="togglePasswordVisibility('new')" slot="end">
             <ion-icon [name]="showNewPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
           </button>
         </ion-item>
@@ -125,18 +95,10 @@
       <div *ngIf="showConfirmPasswordField" class="form-group">
         <label class="form-label">Confirmer le nouveau mot de passe</label>
         <ion-item lines="none" class="form-item">
-          <ion-input
-            [(ngModel)]="profileForm.confirmPassword"
-            name="confirmPassword"
-            placeholder="Répétez le nouveau mot de passe"
-            type="password"
-            [class.error]="passwordsMismatch()"
-          ></ion-input>
-          <button 
-            type="button" 
-            class="show-password-btn"
-            (click)="togglePasswordVisibility('confirm')"
-            slot="end">
+          <ion-input [(ngModel)]="profileForm.confirmPassword" name="confirmPassword"
+            placeholder="Répétez le nouveau mot de passe" type="password"
+            [class.error]="passwordsMismatch()"></ion-input>
+          <button type="button" class="show-password-btn" (click)="togglePasswordVisibility('confirm')" slot="end">
             <ion-icon [name]="showConfirmPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
           </button>
         </ion-item>
@@ -150,12 +112,7 @@
       </div>
 
       <!-- Bouton de sauvegarde -->
-      <ion-button 
-        expand="block" 
-        class="save-button"
-        (click)="saveProfile()"
-        [disabled]="isSaving || !canSave()"
-      >
+      <ion-button expand="block" class="save-button" (click)="saveProfile()" [disabled]="isSaving || !canSave()">
         <ion-spinner *ngIf="isSaving" name="crescent"></ion-spinner>
         <span *ngIf="!isSaving">Enregistrer les modifications</span>
       </ion-button>
@@ -163,13 +120,7 @@
     </form>
 
     <!-- Input caché pour la sélection d'image -->
-    <input 
-      type="file" 
-      #fileInput 
-      accept="image/*" 
-      (change)="onFileSelected($event)"
-      style="display: none"
-    />
+    <input type="file" #fileInput accept="image/*" (change)="onFileSelected($event)" style="display: none" />
 
   </div>
 </ion-content>

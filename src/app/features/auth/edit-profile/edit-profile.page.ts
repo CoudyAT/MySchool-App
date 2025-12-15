@@ -54,7 +54,6 @@ import { updateDoc } from 'firebase/firestore';
   styleUrls: ['./edit-profile.page.scss'],
   standalone: true,
   imports: [
-    IonLabel,
     IonContent,
     IonHeader,
     IonToolbar,

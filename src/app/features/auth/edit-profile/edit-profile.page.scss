@@ -2,22 +2,22 @@ ion-header {
   ion-toolbar {
     --background: #FFFFFF;
     --min-height: 60px;
-    
+
     ion-buttons {
       ion-button {
         --color: #000000;
         font-size: 16px;
-        
+
         .back-text {
           margin-left: 4px;
           font-weight: 500;
         }
 
         ion-title {
-            font-weight: 600;
-            font-size: 18px;
+          font-weight: 600;
+          font-size: 18px;
         }
-        
+
         ion-icon {
           font-size: 24px;
         }
@@ -61,7 +61,7 @@ ion-content {
   display: flex;
   align-items: center;
   justify-content: center;
-  
+
   img {
     width: 100%;
     height: 100%;
@@ -90,12 +90,12 @@ ion-content {
   justify-content: center;
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  
+
   ion-icon {
     color: #fff;
     font-size: 20px;
   }
-  
+
   &:active {
     transform: scale(0.95);
   }
@@ -134,14 +134,14 @@ ion-content {
   --padding-start: 16px;
   --padding-end: 16px;
   --inner-padding-end: 0;
-  
+
   ion-input {
     --padding-top: 12px;
     --padding-bottom: 12px;
     font-size: 15px;
     color: #000000;
   }
-  
+
   &.ion-disabled {
     opacity: 0.6;
   }
@@ -165,11 +165,11 @@ ion-content {
   margin-top: 12px;
   text-transform: none;
   color: #FFFFFF;
-  
+
   &:active {
     --background: #009688;
   }
-  
+
   ion-spinner {
     margin-right: 8px;
   }
@@ -180,20 +180,20 @@ ion-content {
   .edit-profile-container {
     padding: 16px;
   }
-  
+
   .avatar-circle {
     width: 100px;
     height: 100px;
   }
-  
+
   .avatar-placeholder {
     font-size: 40px;
   }
-  
+
   .camera-button {
     width: 36px;
     height: 36px;
-    
+
     ion-icon {
       font-size: 18px;
     }

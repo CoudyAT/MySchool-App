@@ -1,0 +1,117 @@
+<ion-header translucent>
+  <ion-toolbar color="primary">
+    <ion-title>Gestion FAQ</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openAddFaqModal()">
+        <ion-icon name="add"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <!-- Barre de recherche + filtre -->
+  <ion-toolbar>
+    <ion-searchbar placeholder="Rechercher une question..." [(ngModel)]="searchQuery" (ionInput)="onSearch()"
+      debounce="300">
+    </ion-searchbar>
+  </ion-toolbar>
+
+  <ion-toolbar class="filter-bar">
+    <ion-select interface="popover" [(ngModel)]="selectedCategory" (ionChange)="onFilterCategory()">
+      <ion-select-option value="all">Toutes les catégories</ion-select-option>
+      <ion-select-option *ngFor="let cat of categories" [value]="cat.value">
+        {{ cat.label }}
+      </ion-select-option>
+    </ion-select>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-list lines="full">
+    <ion-item-sliding *ngFor="let faq of filteredFaqs">
+      <ion-item>
+        <ion-label>
+          <h3>{{ faq.question }}</h3>
+          <p class="answer-preview" [innerHTML]="faq.answer | slice:0:100"></p>
+          <div class="meta">
+            <ion-chip [color]="getCategoryColor(faq.category)">
+              {{ getCategoryLabel(faq.category) }}
+            </ion-chip>
+            <ion-badge [color]="faq.isActive ? 'success' : 'medium'">
+              {{ faq.isActive ? 'Active' : 'Désactivée' }}
+            </ion-badge>
+          </div>
+        </ion-label>
+      </ion-item>
+
+      <ion-item-options side="end">
+        <ion-item-option color="primary" (click)="openEditFaqModal(faq)">
+          <ion-icon name="create-outline"></ion-icon> Modifier
+        </ion-item-option>
+        <ion-item-option color="danger" (click)="deleteFaq(faq.id)">
+          <ion-icon name="trash-outline"></ion-icon> Supprimer
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+
+    <div class="empty-state" *ngIf="filteredFaqs.length === 0">
+      <p>Aucune FAQ trouvée</p>
+    </div>
+  </ion-list>
+</ion-content>
+
+<!-- MODAL AJOUT / ÉDITION -->
+<ion-modal [isOpen]="isModalOpen" (didDismiss)="closeModal()">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>{{ isEditMode ? 'Modifier' : 'Nouvelle' }} question</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="closeModal()">
+            <ion-icon name="close-outline"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding">
+      <ion-list>
+        <ion-item>
+          <ion-label position="floating">Question</ion-label>
+          <ion-input [(ngModel)]="currentFaq.question"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Réponse</ion-label>
+          <ion-textarea [(ngModel)]="currentFaq.answer" rows="6" placeholder="Écrivez la réponse complète...">
+          </ion-textarea>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Catégorie</ion-label>
+          <ion-select [(ngModel)]="currentFaq.category">
+            <ion-select-option *ngFor="let cat of categories" [value]="cat.value">
+              {{ cat.label }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Statut</ion-label>
+          <ion-select [(ngModel)]="currentFaq.isActive">
+            <ion-select-option [value]="true">Active</ion-select-option>
+            <ion-select-option [value]="false">Désactivée</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-list>
+
+      <ion-button expand="block" (click)="saveFaq()" [disabled]="!currentFaq.question || !currentFaq.answer">
+        <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+        {{ isEditMode ? 'Mettre à jour' : 'Ajouter' }}
+      </ion-button>
+    </ion-content>
+  </ng-template>
+</ion-modal>
