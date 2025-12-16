@@ -80,4 +80,5 @@ export interface Course {
   maxRating?: number;
   enrolled?: boolean;
   data?: any;
+  instructorId?: string;
 }

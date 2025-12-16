@@ -1,15 +1,9 @@
-<form [formGroup]="courseForm" class="course-form">
+<form [formGroup]="courseForm" class="course-form" (ngSubmit)="submitForm()">
   <div class="form-grid">
     <!-- Titre du cours -->
     <div class="form-group">
       <label for="title" class="form-label">Titre du cours *</label>
-      <input
-        id="title"
-        type="text"
-        formControlName="title"
-        class="form-input"
-        placeholder="Ex: Introduction à Angular"
-      >
+      <input id="title" type="text" formControlName="title" class="form-input" placeholder="Ex: Introduction à Angular">
       <div *ngIf="courseForm.get('title')?.invalid && courseForm.get('title')?.touched" class="error-message">
         Le titre est requis
       </div>
@@ -20,101 +14,67 @@
       <label for="category" class="form-label">Catégorie *</label>
       <select id="category" formControlName="category" class="form-input">
         <option value="">Sélectionnez une catégorie</option>
-        <option value="développement">Développement</option>
-        <option value="design">Design</option>
-        <option value="marketing">Marketing</option>
-        <option value="business">Business</option>
-        <option value="photographie">Photographie</option>
+        <option *ngFor="let cat of categories" [value]="cat">
+          {{ cat }}
+        </option>
       </select>
-      <div *ngIf="courseForm.get('category')?.invalid && courseForm.get('category')?.touched" class="error-message">
-        La catégorie est requise
-      </div>
     </div>
 
+
     <!-- Instructeur -->
-    <div class="form-group">
-      <label for="instructor" class="form-label">Instructeur *</label>
-      <input
-        id="instructor"
-        type="text"
-        formControlName="instructor"
-        class="form-input"
-        placeholder="Nom de l'instructeur"
-      >
-      <div *ngIf="courseForm.get('instructor')?.invalid && courseForm.get('instructor')?.touched" class="error-message">
-        L'instructeur est requis
-      </div>
-    </div>
+    <!-- <div class="form-group">
+      <label for="instructor" class="form-label">Instructeur </label>
+      <select id="instructor" formControlName="instructorId" class="form-input">
+        <option value="">Sélectionnez un instructeur</option>
+        <option *ngFor="let inst of instructors" [value]="inst.id">
+          {{ inst.name }}
+        </option>
+      </select>
+    </div> -->
 
     <!-- Prix -->
     <div class="form-group">
       <label for="price" class="form-label">Prix (FCFA)</label>
-      <input
-        id="price"
-        type="number"
-        formControlName="price"
-        class="form-input"
-        placeholder="0"
-      >
+      <input id="price" type="number" formControlName="price" class="form-input" placeholder="0">
     </div>
 
     <!-- Description -->
     <div class="form-group full-width">
       <label for="description" class="form-label">Description</label>
-      <textarea
-        id="description"
-        formControlName="description"
-        class="form-textarea"
-        placeholder="Description du cours..."
-        rows="4"
-      ></textarea>
+      <textarea id="description" formControlName="description" class="form-textarea"
+        placeholder="Description du cours..." rows="4"></textarea>
     </div>
 
     <!-- Image URL -->
     <div class="form-group full-width">
       <label for="image" class="form-label">URL de l'image</label>
-      <input
-        id="image"
-        type="url"
-        formControlName="image"
-        class="form-input"
-        placeholder="https://example.com/image.jpg"
-      >
+      <input type="file" accept="image/*" (change)="onFileSelected($event)" class="form-input" formControlName="image">
     </div>
+    <img *ngIf="imagePreview" [src]="imagePreview" class="preview-image">
+
 
     <!-- Sessions -->
     <div class="form-group">
       <label for="sessions" class="form-label">Nombre de sessions</label>
-      <input
-        id="sessions"
-        type="number"
-        formControlName="sessions"
-        class="form-input"
-        placeholder="0"
-        min="0"
-      >
+      <input id="sessions" type="number" formControlName="sessions" class="form-input" placeholder="0" min="0">
     </div>
 
     <!-- Exercices -->
     <div class="form-group">
       <label for="exercises" class="form-label">Nombre d'exercices</label>
-      <input
-        id="exercises"
-        type="number"
-        formControlName="exercises"
-        class="form-input"
-        placeholder="0"
-        min="0"
-      >
+      <input id="exercises" type="number" formControlName="exercises" class="form-input" placeholder="0" min="0">
     </div>
 
     <!-- Certificat disponible -->
     <div class="form-group full-width">
       <label class="checkbox-label">
-        <input type="checkbox" formControlName="certificateAvailable">
+        <input type="checkbox" formControlName="certificateAvailable" class="checkbox-input" />
         <span class="checkmark"></span>
         Certificat disponible
       </label>
     </div>
   </div>
+
+  <button type="submit" hidden></button>
+
 </form>

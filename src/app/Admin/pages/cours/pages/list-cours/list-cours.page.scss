@@ -13,6 +13,39 @@
   margin: 0 auto;
 }
 
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #e5e7eb;
+  border-top: 5px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loader-text {
+  margin-top: 12px;
+  color: #374151;
+  font-weight: 500;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 /* ==================== Header ==================== */
 .header {
   margin-bottom: 32px;
@@ -107,9 +140,12 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.5;
   }
@@ -690,7 +726,7 @@
     align-items: stretch;
     gap: 16px;
   }
-  
+
   .add-button {
     align-self: flex-start;
   }
@@ -698,8 +734,8 @@
 
 /* Styles pour le modal */
 
-.buton{
-    background-color:#4CAF50 ;
+.buton {
+  background-color: #4CAF50;
 }
 
 

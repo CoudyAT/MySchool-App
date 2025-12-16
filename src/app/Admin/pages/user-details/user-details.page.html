@@ -1,0 +1,114 @@
+<div class="page">
+  <div class="header">
+    <button class="back-btn" routerLink="/admin-login/users">← Retour</button>
+    <h1>{{ user.firstName }} {{ user.lastName }}</h1>
+
+    <ion-button size="small" *ngIf="!isEditMode" (click)="enableEdit()">
+      Modifier
+    </ion-button>
+
+    <ion-button color="success" size="small" *ngIf="isEditMode" (click)="saveChanges()">
+      Enregistrer
+    </ion-button>
+
+    <ion-button color="medium" size="small" *ngIf="isEditMode" (click)="cancelEdit()">
+      Annuler
+    </ion-button>
+  </div>
+
+  <div class="card">
+    <!-- Informations générales -->
+    <section>
+      <h2>Informations générales</h2>
+      <div class="grid">
+        <div class="info-block">
+          <p class="label">Téléphone</p>
+          <p class="value">{{ user.phone }}</p>
+        </div>
+        <div class="info-block">
+          <p class="label">Niveau</p>
+          <p class="value" *ngIf="!isEditMode">{{ user.level }}</p>
+          <ion-select *ngIf="isEditMode" [(ngModel)]="user.level">
+            <ion-select-option value="Débutant">Débutant</ion-select-option>
+            <ion-select-option value="Intermédiaire">Intermédiaire</ion-select-option>
+            <ion-select-option value="Avancé">Avancé</ion-select-option>
+          </ion-select>
+        </div>
+        <div class="info-block">
+          <p class="label">Role</p>
+          <p class="value">{{ user.role?.libelle }}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Détails -->
+    <section>
+      <h2>Détails sur l'utilisateur</h2>
+      <div class="grid">
+        <div class="info-block">
+          <p class="label">Création du compte</p>
+          <p class="value">{{ user.createdAt }}</p>
+        </div>
+        <div class="info-block">
+          <p class="label">Formule</p>
+          <p class="value" *ngIf="!isEditMode">{{ user.isPremium ? 'Premium' : 'Standard' }}</p>
+          <ion-select *ngIf="isEditMode" [(ngModel)]="user.isPremium">
+            <ion-select-option [value]="true">Premium</ion-select-option>
+            <ion-select-option [value]="false">Standard</ion-select-option>
+          </ion-select>
+        </div>
+        <div class="info-block">
+          <p class="label">Statut</p>
+          <p class="value">
+            {{ user.status ? 'Actif' : 'Inactif' }}
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Formateur -->
+    <!-- <section>
+      <h2>Formateur</h2>
+      <div class="grid">
+        <div class="info-block">
+          <p class="label">Nom du formateur</p> -->
+    <!-- <p class="value">{{ course.instructor }}</p> -->
+    <!-- </div>
+        <div class="info-block">
+          <p class="label">Note</p>
+          <p class="value">⭐ {{ course.rating }} / {{ course.maxRating }}</p>
+        </div>
+      </div>
+    </section> -->
+
+    <!-- Description -->
+    <!-- <section>
+      <h2>Description</h2>
+      <p class="description">{{ course.description }}</p>
+    </section> -->
+
+    <!-- Progression 
+    <section>
+      <h2>Progression</h2>
+      <div class="progress">
+        <div
+          class="level"
+          *ngFor="let lvl of course.levels"
+          [class.completed]="lvl.completed"
+        >
+          {{ lvl.icon }}
+        </div>
+      </div>
+    </section> -->
+
+    <!-- Image
+    <section>
+      <h2>Illustration du cours</h2>
+      <img
+        [src]="course.image"
+        [alt]="course.title"
+        class="course-image"
+      />
+    </section> -->
+  </div>
+</div>

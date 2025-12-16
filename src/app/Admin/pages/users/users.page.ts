@@ -1,17 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonIcon } from '@ionic/angular/standalone';
 import { UserService } from 'src/app/features/auth/services/user.service';
 import { User } from 'src/app/models/user.model';
 import { Router } from '@angular/router';
+
+import { addIcons } from 'ionicons';
+import { send, sparkles, trash, pencilOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-users',
   templateUrl: './users.page.html',
   styleUrls: ['./users.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule]
+  imports: [IonIcon, CommonModule, FormsModule]
 })
 export class UsersPage implements OnInit {
   allUsers: User[] = [];
@@ -24,14 +27,20 @@ export class UsersPage implements OnInit {
   itemsPerPage: number = 6;
   totalPages: number = 0;
   searchText: string = '';
+  isLoading: boolean = false;
 
-  constructor(private userService: UserService, private router: Router) { }
+  constructor(private userService: UserService, private router: Router) {
+    addIcons({ pencilOutline, trash, send, sparkles });
+
+  }
 
   ngOnInit() {
     this.loadUsers();
   }
 
   loadUsers() {
+    this.isLoading = true;
+
     this.userService.getAllUsers().subscribe({
       next: (response) => {
         this.allUsers = response.data;
@@ -44,9 +53,13 @@ export class UsersPage implements OnInit {
         this.filteredUsers.forEach(u => {
           // console.log(`Utilisateur: ${u.firstName} ${u.lastName}`);
         });
+        this.isLoading = false;
+
       },
       error: (err) => {
         console.error('Erreur lors du chargement des utilisateurs', err);
+        this.isLoading = false;
+
       }
     });
   }
@@ -106,7 +119,6 @@ export class UsersPage implements OnInit {
       this.filteredUsers = this.allUsers.filter(u =>
         (u.firstName?.toLowerCase().includes(lowerSearch) || false) ||
         (u.lastName?.toLowerCase().includes(lowerSearch) || false)
-        // Ajoutez d'autres champs si nécessaires, ex: u.email
       );
     }
     this.currentPage = 1;
@@ -122,24 +134,33 @@ export class UsersPage implements OnInit {
   }
 
   goToDetail(user: User) {
-    // Naviguez vers une page de détail (adaptez le chemin et les params si nécessaire)
-    this.router.navigate(['/user-detail', user.id]);
+    if (!user?.uid) {
+      // console.error('ID utilisateur manquant', user);
+      return;
+    }
+
+    this.router.navigate(['/admin-login/user-details', user.uid]);
   }
 
   editUser(user: User) {
-    this.router.navigate(['/edit-user', user.id]);
+    this.router.navigate(['/admin-login/user-details', user.uid]);
   }
 
   deleteUser(user: User) {
-    // if (confirm(`Voulez-vous vraiment supprimer ${user.firstName} ${user.lastName} ?`)) {
-    //   this.userService.deleteUser(user.id).subscribe({
-    //     next: () => {
-    //       this.loadUsers(); // Recharge la liste après suppression
-    //     },
-    //     error: (err) => {
-    //       console.error('Erreur lors de la suppression', err);
-    //     }
-    //   });
-    // }
+    if (!user?.uid) {
+      console.error('ID utilisateur manquant', user);
+      return;
+    }
+    if (confirm(`Êtes-vous sûr de vouloir supprimer l'utilisateur ${user.firstName} ${user.lastName} ?`)) {
+      this.userService.deleteUser(user.uid).subscribe({
+        next: () => {
+          this.allUsers = this.allUsers.filter(u => u.uid !== user.uid);
+          this.onSearchChange();
+        },
+        error: (err) => {
+          console.error('Erreur lors de la suppression de l\'utilisateur', err);
+        }
+      });
+    }
   }
 }

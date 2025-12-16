@@ -23,6 +23,9 @@ import { NotificationsPage } from './features/profile/notifications/notification
 import { MessagePage } from './features/chat/message/message.page';
 import { FaqPage } from './Admin/pages/faq/faq.page';
 import { UsersPage } from './Admin/pages/users/users.page';
+import { DashboardPage } from './Admin/pages/dashboard/dashboard.page';
+import { UserDetailsPage } from './Admin/pages/user-details/user-details.page';
+import { InstructorsPage } from './Admin/pages/instructors/instructors.page';
 
 export const routes: Routes = [
   {
@@ -119,6 +122,14 @@ export const routes: Routes = [
       { path: 'cours/:id', component: DetailCoursPage },
       { path: 'faq', component: FaqPage },
       { path: 'users', component: UsersPage },
+      { path: '', component: DashboardPage },
+      {
+        path: 'user-details/:id', component: UserDetailsPage
+      },
+      {
+        path: 'instructors', component: InstructorsPage
+      },
+
 
     ],
   },
@@ -135,6 +146,10 @@ export const routes: Routes = [
       import(
         './features/instructor/instructor-profile/instructor-profile.page'
       ).then((m) => m.InstructorProfilePage),
+  },
+  {
+    path: 'user-edit',
+    loadComponent: () => import('./Admin/pages/user-edit/user-edit.page').then(m => m.UserEditPage)
   },
 
 ];
