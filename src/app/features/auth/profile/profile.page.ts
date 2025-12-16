@@ -37,7 +37,12 @@ import {
   cameraOutline,
   chevronForwardOutline,
   chevronBackOutline,
+  closeOutline,
+  giftOutline,
+  copyOutline,
+  shareSocialOutline,
 } from 'ionicons/icons';
+import { ReferralService } from '../services/referral.service';
 
 @Component({
   selector: 'app-profile',
@@ -62,6 +67,9 @@ import {
 export class ProfilePage implements OnInit {
   currentUser: any = null;
   isDarkMode = false;
+  referralLink: string | null = null;
+  shareText: string = '';
+  isReferralVisible = false;
 
   constructor(
     private router: Router,
@@ -69,28 +77,32 @@ export class ProfilePage implements OnInit {
     private firestore: Firestore,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
-   // private darkModeService: DarkModeService
+    private referralService: ReferralService // private darkModeService: DarkModeService
   ) {
     addIcons({
+      chevronBackOutline,
+      cameraOutline,
       personOutline,
+      chevronForwardOutline,
       cardOutline,
       notificationsOutline,
       shieldCheckmarkOutline,
       languageOutline,
-      eyeOutline,
       documentTextOutline,
       helpCircleOutline,
       peopleOutline,
       logOutOutline,
-      cameraOutline,
-      chevronForwardOutline,
-      chevronBackOutline,
+      closeOutline,
+      giftOutline,
+      copyOutline,
+      shareSocialOutline,
+      eyeOutline,
     });
   }
 
   async ngOnInit() {
     await this.loadUserData();
-   // this.isDarkMode = this.darkModeService.getDarkModeStatus();
+    // this.isDarkMode = this.darkModeService.getDarkModeStatus();
   }
 
   async loadUserData() {
@@ -170,7 +182,7 @@ export class ProfilePage implements OnInit {
   }
 
   openSecurity() {
-    console.log('Sécurité');
+    this.router.navigate(['/security']);
   }
 
   openLanguage() {
@@ -196,10 +208,6 @@ export class ProfilePage implements OnInit {
 
   openHelp() {
     console.log("Centre d'aide");
-  }
-
-  inviteFriends() {
-    console.log('Parrainer des amis');
   }
 
   // async logout() {
@@ -272,7 +280,7 @@ export class ProfilePage implements OnInit {
     await this.loadUserData();
   }
 
-    async logout() {
+  async logout() {
     const alert = await this.alertCtrl.create({
       header: 'Déconnexion',
       message: 'Êtes-vous sûr de vouloir vous déconnecter ?',
@@ -327,7 +335,160 @@ export class ProfilePage implements OnInit {
 
     await alert.present();
   }
+
+  // async inviteFriends() {
+  //   try {
+  //     const loadingToast = await this.toastCtrl.create({
+  //       message: 'Génération du lien de parrainage...',
+  //       duration: 1500,
+  //     });
+  //     await loadingToast.present();
+
+  //     // 🔹 Appel API
+  //     const response = await this.referralService.generateReferralLink();
+
+  //     if (!response?.success || !response?.data) {
+  //       throw new Error('Réponse API invalide');
+  //     }
+
+  //     const { shareText, deepLink, webLink } = response.data;
+
+  //     // 🔹 Choisir le lien à utiliser
+  //     const finalLink = this.isMobileDevice() ? deepLink : webLink;
+
+  //     // 🔹 Message final (lien bien visible)
+  //     const finalMessage = `${shareText}\n\n🔗 ${finalLink}`;
+
+  //     // 1️⃣ Web Share API
+  //     if (typeof navigator !== 'undefined' && (navigator as any).share) {
+  //       await (navigator as any).share({
+  //         title: '🎓 Invitation MySchool',
+  //         text: finalMessage,
+  //       });
+
+  //       // 2️⃣ Clipboard API
+  //     } else if (
+  //       typeof navigator !== 'undefined' &&
+  //       (navigator as any).clipboard?.writeText
+  //     ) {
+  //       await (navigator as any).clipboard.writeText(finalMessage);
+
+  //       const toast = await this.toastCtrl.create({
+  //         message: 'Lien de parrainage copié 📋',
+  //         duration: 2000,
+  //         color: 'success',
+  //       });
+  //       await toast.present();
+
+  //       // 3️⃣ Fallback ultime
+  //     } else {
+  //       const textarea = document.createElement('textarea');
+  //       textarea.value = finalMessage;
+  //       document.body.appendChild(textarea);
+  //       textarea.select();
+  //       document.execCommand('copy');
+  //       document.body.removeChild(textarea);
+
+  //       const toast = await this.toastCtrl.create({
+  //         message: 'Lien de parrainage copié 📋',
+  //         duration: 2000,
+  //         color: 'success',
+  //       });
+  //       await toast.present();
+  //     }
+  //   } catch (error) {
+  //     console.error('Erreur parrainage:', error);
+
+  //     const toast = await this.toastCtrl.create({
+  //       message: 'Impossible de générer le lien ❌',
+  //       duration: 2000,
+  //       color: 'danger',
+  //     });
+  //     await toast.present();
+  //   }
+  // }
+
+  async inviteFriends() {
+    try {
+      const loadingToast = await this.toastCtrl.create({
+        message: 'Génération du lien de parrainage...',
+        duration: 1500,
+      });
+      await loadingToast.present();
+
+      const response = await this.referralService.generateReferralLink();
+
+      if (!response?.success || !response?.data) {
+        throw new Error('Réponse API invalide');
+      }
+
+      const { shareText, webLink } = response.data;
+
+      this.referralLink = webLink;
+      this.shareText = shareText;
+      this.isReferralVisible = true;
+    } catch (error) {
+      const toast = await this.toastCtrl.create({
+        message: 'Impossible de générer le lien ❌',
+        duration: 2000,
+        color: 'danger',
+      });
+      await toast.present();
+    }
+  }
+
+  async copyReferralLink() {
+    if (!this.referralLink) return;
+
+    await navigator.clipboard.writeText(this.referralLink);
+
+    const toast = await this.toastCtrl.create({
+      message: 'Lien copié 📋',
+      duration: 1500,
+      color: 'success',
+    });
+    await toast.present();
+  }
+
+  async shareReferralLink() {
+    if (!this.shareText || !this.referralLink) return;
+
+    const message = `${this.shareText}\n\n🔗 ${this.referralLink}`;
+
+    if ((navigator as any).share) {
+      await (navigator as any).share({
+        title: '🎓 Invitation MySchool',
+        text: message,
+      });
+    } else {
+      await navigator.clipboard.writeText(message);
+
+      const toast = await this.toastCtrl.create({
+        message: 'Message copié 📋',
+        duration: 1500,
+        color: 'success',
+      });
+      await toast.present();
+    }
+  }
+
+  // Méthode pour fermer le bloc parrainage
+  closeReferralBox() {
+    // Option 1: Masquer directement
+  //  this.isReferralVisible = false;
+
+   // Option 2: Animation avant de masquer
+    const referralBox = document.querySelector('.referral-box');
+    if (referralBox) {
+      referralBox.classList.add('closing');
+      setTimeout(() => {
+        this.isReferralVisible = false;
+      }, 300);
+    }
+  }
+
+  // Option: Méthode pour afficher à nouveau
+  showReferralBox() {
+    this.isReferralVisible = true;
+  }
 }
-
-
-

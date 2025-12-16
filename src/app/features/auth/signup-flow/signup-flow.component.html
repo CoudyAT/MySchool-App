@@ -1,5 +1,3 @@
-<!-- Dans votre template, remplacez le conteneur reCAPTCHA par : 
-<div [id]="'recaptcha-container-' + recaptchaId"></div> -->
 <ion-content [fullscreen]="true" class="signup-container">
   <!-- Header avec logo et progress -->
   <div class="header-section">
@@ -36,11 +34,22 @@
   <!-- Contenu principal -->
   <div class="main-content">
     <div class="titles-section">
-      <h1 class="main-title">{{ getCurrentStepTitle() }}</h1>
-      <p class="subtitle" *ngIf="getCurrentStepSubtitle()">
-        {{ getCurrentStepSubtitle() }}
-      </p>
-    </div>
+  <h1 class="main-title">{{ getCurrentStepTitle() }}</h1>
+
+  <p class="subtitle" *ngIf="currentStep === 0">
+    Connectez-vous ou
+    <span
+      class="create-account-link"
+      (click)="goToSignupStep()">
+      créez un compte
+    </span>
+  </p>
+
+  <p class="subtitle" *ngIf="currentStep !== 0">
+    {{ getCurrentStepSubtitle() }}
+  </p>
+</div>
+
 
 <!-- Step 1: Téléphone et mot de passe (Connexion/Inscription) -->
 <div *ngIf="currentStep === 0" class="step-content active">

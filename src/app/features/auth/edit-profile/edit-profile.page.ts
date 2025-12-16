@@ -81,15 +81,9 @@ export class EditProfilePage implements OnInit {
     email: '',
     phone: '',
     photoURL: '',
-    oldPassword: '',
-    newPassword: '',
-    confirmPassword: '',
-    currentPasswordInDB: '', // Pour stocker le mot de passe actuel
   };
 
   // États pour la visibilité
-  showNewPassword = false;
-  showConfirmPassword = false;
   isSaving = false;
   selectedFile: File | null = null;
 
@@ -124,75 +118,8 @@ export class EditProfilePage implements OnInit {
     await this.loadUserData();
   }
 
-  // Getters pour l'affichage conditionnel
-  get showPasswordFields(): boolean {
-    return (
-      !!this.profileForm.oldPassword ||
-      !!this.profileForm.newPassword ||
-      !!this.profileForm.confirmPassword
-    );
-  }
-
-  get showNewPasswordFields(): boolean {
-    return !!this.profileForm.oldPassword;
-  }
-
-  get showConfirmPasswordField(): boolean {
-    return (
-      !!this.profileForm.newPassword && this.profileForm.newPassword.length >= 6
-    );
-  }
-
-  get passwordTooShort(): boolean {
-    return (
-      this.profileForm.newPassword.length > 0 &&
-      this.profileForm.newPassword.length < 6
-    );
-  }
-
-  passwordsMismatch(): boolean {
-    return (
-      this.profileForm.newPassword !== this.profileForm.confirmPassword &&
-      this.profileForm.confirmPassword.length > 0
-    );
-  }
-
-  togglePasswordVisibility(type: 'new' | 'confirm') {
-    if (type === 'new') {
-      this.showNewPassword = !this.showNewPassword;
-    } else {
-      this.showConfirmPassword = !this.showConfirmPassword;
-    }
-  }
-
   canSave(): boolean {
-    // Validation de base
-    if (!this.profileForm.firstName || !this.profileForm.lastName) {
-      return false;
-    }
-
-    // Si on essaie de changer le mot de passe
-    if (
-      this.profileForm.oldPassword ||
-      this.profileForm.newPassword ||
-      this.profileForm.confirmPassword
-    ) {
-      // Tous les champs doivent être remplis
-      if (
-        !this.profileForm.oldPassword ||
-        !this.profileForm.newPassword ||
-        !this.profileForm.confirmPassword
-      ) {
-        return false;
-      }
-
-      // Validation des mots de passe
-      if (this.passwordTooShort || this.passwordsMismatch()) {
-        return false;
-      }
-    }
-
-    return true;
+    return !!this.profileForm.firstName && !!this.profileForm.lastName;
   }
 
   private async saveUserDocument(userId: string, data: any): Promise<void> {
@@ -260,10 +187,6 @@ export class EditProfilePage implements OnInit {
           email: localUser.email || '',
           phone: localUser.phone || '',
           photoURL: localUser.photoURL || '',
-          oldPassword: '',
-          newPassword: '',
-          confirmPassword: '',
-          currentPasswordInDB: localUser.password || '', // Stocker le mot de passe actuel
         };
 
         // Ensuite charger depuis Firestore
@@ -292,8 +215,8 @@ export class EditProfilePage implements OnInit {
         if (userData?.['email']) this.profileForm.email = userData['email'];
 
         // Récupérer le mot de passe actuel
-        if (userData?.['password'])
-          this.profileForm.currentPasswordInDB = userData['password'];
+        // if (userData?.['password'])
+        //   this.profileForm.currentPasswordInDB = userData['password'];
 
         // Gérer l'image
         if (userData?.['profileImageBase64']) {
@@ -309,7 +232,7 @@ export class EditProfilePage implements OnInit {
           lastName: this.profileForm.lastName,
           email: this.profileForm.email,
           phone: this.profileForm.phone,
-          password: this.profileForm.currentPasswordInDB,
+        //  password: this.profileForm.currentPasswordInDB,
           photoURL: this.profileForm.photoURL,
           createdAt: new Date(),
         });
@@ -368,70 +291,6 @@ export class EditProfilePage implements OnInit {
       if (!userId) {
         throw new Error('Utilisateur non connecté');
       }
-
-      console.log('🔧 ===== DÉBUT SAUVEGARDE PROFIL =====');
-      console.log('👤 User ID:', userId);
-      console.log(
-        '🔑 Ancien mot de passe saisi:',
-        this.profileForm.oldPassword
-      );
-      console.log(
-        '🆕 Nouveau mot de passe saisi:',
-        this.profileForm.newPassword
-      );
-      console.log(
-        '✅ Confirmation mot de passe:',
-        this.profileForm.confirmPassword
-      );
-      console.log(
-        '💾 Mot de passe actuel en DB:',
-        this.profileForm.currentPasswordInDB
-      );
-
-      // Vérifier si changement de mot de passe demandé
-      let passwordChanged = false;
-      let newPassword = this.profileForm.currentPasswordInDB;
-
-      if (this.profileForm.oldPassword && this.profileForm.newPassword) {
-        console.log('🔍 Vérification changement mot de passe...');
-
-        // Vérifier l'ancien mot de passe
-        if (
-          this.profileForm.oldPassword !== this.profileForm.currentPasswordInDB
-        ) {
-          console.error('❌ Ancien mot de passe incorrect');
-          console.error('Attendu:', this.profileForm.currentPasswordInDB);
-          console.error('Reçu:', this.profileForm.oldPassword);
-          throw new Error('Ancien mot de passe incorrect');
-        }
-
-        // Vérifier que le nouveau est différent de l'ancien
-        if (
-          this.profileForm.newPassword === this.profileForm.currentPasswordInDB
-        ) {
-          throw new Error(
-            "Le nouveau mot de passe doit être différent de l'ancien"
-          );
-        }
-
-        // Vérifier la confirmation
-        if (this.profileForm.newPassword !== this.profileForm.confirmPassword) {
-          throw new Error('Les mots de passe ne correspondent pas');
-        }
-
-        // Vérifier la longueur
-        if (this.profileForm.newPassword.length < 6) {
-          throw new Error('Le mot de passe doit avoir au moins 6 caractères');
-        }
-
-        passwordChanged = true;
-        newPassword = this.profileForm.newPassword;
-        console.log('✅ Mot de passe à changer vers:', newPassword);
-      }
-
-      console.log('🔧 passwordChanged:', passwordChanged);
-      console.log('🔧 newPassword:', newPassword);
-
       let photoURL = this.profileForm.photoURL;
 
       // Sauvegarder l'image si nouvelle sélection
@@ -444,12 +303,12 @@ export class EditProfilePage implements OnInit {
       await this.saveProfileData(
         userId,
         photoURL,
-        newPassword,
-        passwordChanged
+      //  newPassword,
+       // passwordChanged
       );
 
       // Mise à jour dans localStorage
-      this.updateLocalStorage(photoURL, newPassword);
+      this.updateLocalStorage(photoURL);
 
       // Rafraîchir les données locales
       await this.refreshUserData(userId);
@@ -496,10 +355,6 @@ export class EditProfilePage implements OnInit {
         localStorage.setItem('currentUser', JSON.stringify(updatedUser));
         console.log('🔄 Données rafraîchies depuis Firestore');
 
-        // Mettre à jour le mot de passe actuel dans le formulaire
-        if (userData?.['password']) {
-          this.profileForm.currentPasswordInDB = userData['password'];
-        }
       }
     } catch (error) {
       console.error('Erreur rafraîchissement données:', error);
@@ -509,14 +364,12 @@ export class EditProfilePage implements OnInit {
   private async saveProfileData(
     userId: string,
     photoURL: string,
-    newPassword: string,
-    passwordChanged: boolean
+  //  newPassword: string,
+  //  passwordChanged: boolean
   ): Promise<void> {
     console.log('📊 ===== DÉBUT saveProfileData =====');
     console.log('👤 User ID:', userId);
     console.log('🖼️ Photo URL:', photoURL ? 'OUI' : 'NON');
-    console.log('🔑 Nouveau mot de passe:', newPassword);
-    console.log('🔄 passwordChanged:', passwordChanged);
 
     // D'abord, récupérer les données actuelles pour garder les autres champs
     const userRef = doc(this.firestore, 'utilisateur', userId);
@@ -533,20 +386,6 @@ export class EditProfilePage implements OnInit {
       email: this.profileForm.email || '',
       updatedAt: new Date(),
     };
-
-    // TOUJOURS envoyer le mot de passe (ancien ou nouveau)
-    if (passwordChanged) {
-      console.log('🔄 Changement de mot de passe détecté');
-      console.log('🔑 Ancien mot de passe:', currentData['password']);
-      console.log('🔑 Nouveau mot de passe à sauvegarder:', newPassword);
-      updateData.password = newPassword;
-    } else {
-      console.log('🔄 Pas de changement de mot de passe');
-      // Garder le mot de passe existant
-      updateData.password =
-        currentData['password'] || this.profileForm.currentPasswordInDB;
-      console.log('🔑 Mot de passe gardé:', updateData.password);
-    }
 
     // Gérer l'image
     if (photoURL !== this.profileForm.photoURL) {
@@ -577,7 +416,7 @@ export class EditProfilePage implements OnInit {
     await this.saveUserDocument(userId, updateData);
   }
 
-  private updateLocalStorage(photoURL: string, newPassword: string): void {
+  private updateLocalStorage(photoURL: string): void {
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
     const updatedUser = {
       ...currentUser,
@@ -585,15 +424,10 @@ export class EditProfilePage implements OnInit {
       lastName: this.profileForm.lastName,
       phone: this.profileForm.phone,
       email: this.profileForm.email,
-      password: newPassword, // Utilise le nouveau mot de passe
       photoURL: photoURL,
     };
 
     localStorage.setItem('currentUser', JSON.stringify(updatedUser));
-    console.log(
-      '💾 localStorage mis à jour avec nouveau mot de passe:',
-      newPassword ? 'OUI' : 'NON'
-    );
   }
 
   private async showToast(

@@ -125,3 +125,35 @@
     </ion-list>
   </div>
 </ion-content>
+
+
+<!-- Bloc Parrainage -->
+<div class="referral-box" *ngIf="isReferralVisible">
+  <!-- Bouton de fermeture -->
+  <button class="close-btn" (click)="closeReferralBox()" aria-label="Fermer">
+    <ion-icon name="close-outline"></ion-icon>
+  </button>
+  
+  <p class="referral-title">
+    <ion-icon name="gift-outline" class="title-icon"></ion-icon>
+    Partage ton lien de parrainage
+  </p>
+
+  <div class="referral-input">
+    <input
+      type="text"
+      [value]="referralLink"
+      readonly
+      placeholder="Votre lien de parrainage"
+    />
+    <button class="copy-btn" (click)="copyReferralLink()">
+      <ion-icon name="copy-outline"></ion-icon>
+      Copier
+    </button>
+  </div>
+
+  <ion-button expand="block" class="lien" (click)="shareReferralLink()">
+    <ion-icon name="share-social-outline"></ion-icon>
+    Envoyer le lien
+  </ion-button>
+</div>

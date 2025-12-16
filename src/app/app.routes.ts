@@ -17,6 +17,7 @@ import { ProfilePage } from './features/auth/profile/profile.page';
 import { DetailPage } from './features/cours/pages/detail/detail.page';
 import { PaymentCallbackPage } from './features/payments/payment-callback/payment-callback.page';
 import { EditProfilePage } from './features/auth/edit-profile/edit-profile.page';
+import { SecurityPage } from './features/auth/security/security.page';
 
 export const routes: Routes = [
   {
@@ -87,6 +88,11 @@ export const routes: Routes = [
   {
     path: 'edit-profile',
     component: EditProfilePage,
+  },
+
+  {
+    path: 'security',
+    component: SecurityPage,
   },
 
   {

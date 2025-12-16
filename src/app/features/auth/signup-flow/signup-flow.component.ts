@@ -495,13 +495,13 @@ export class SignupFlowComponent implements OnInit {
         this.userData.password = this.welcomeForm.value.password;
         break;
       case 1:
-       this.userData.firstName = this.personalInfoForm.value.firstName;
-       this.userData.lastName = this.personalInfoForm.value.lastName;
-       this.userData.birthDate = this.personalInfoForm.value.birthDate;
+        this.userData.firstName = this.personalInfoForm.value.firstName;
+        this.userData.lastName = this.personalInfoForm.value.lastName;
+        this.userData.birthDate = this.personalInfoForm.value.birthDate;
 
-     // Toujours prendre le bon password
-  this.userData.password = this.personalInfoForm.value.password;
-  break;
+        // Toujours prendre le bon password
+        this.userData.password = this.personalInfoForm.value.password;
+        break;
       case 2:
         Object.assign(this.userData, this.userInfoForm.value);
         break;
@@ -558,6 +558,10 @@ export class SignupFlowComponent implements OnInit {
       '',
     ];
     return subtitles[this.currentStep];
+  }
+
+  goToSignupStep() {
+    this.currentStep = 1;
   }
 
   getButtonText(): string {
@@ -620,7 +624,6 @@ export class SignupFlowComponent implements OnInit {
       const phone = this.userData.phone;
       const password = this.personalInfoForm.value.password;
       const confirmPassword = this.personalInfoForm.value.confirmPassword;
-
 
       if (!phone || !password) {
         await this.showToast('Données incomplètes', 'danger');
