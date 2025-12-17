@@ -8,13 +8,13 @@ import { ApiService } from 'src/app/core/services/api.service';
 export class UploadService {
     private readonly api = inject(ApiService);
 
-    constructor(private storage: Storage) { }
+    constructor(private storage: Storage) { } // AngularFire Storage
 
-    async uploadCourseImage(file: File): Promise<string> {
-        const filePath = `courses/${Date.now()}_${file.name}`;
-        const storageRef = ref(this.storage, filePath);
+    async uploadImage(file: File, folder: string): Promise<string> {
+        const filePath = `${folder}/${Date.now()}_${file.name}`;
+        const fileRef = ref(this.storage, filePath);
 
-        await uploadBytes(storageRef, file);
-        return await getDownloadURL(storageRef);
+        await uploadBytes(fileRef, file);
+        return getDownloadURL(fileRef);
     }
 }

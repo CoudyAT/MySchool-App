@@ -24,16 +24,72 @@ export class UsersPage implements OnInit {
   activeUsers: number = 0;
   inactiveUsers: number = 0;
   currentPage: number = 1;
-  itemsPerPage: number = 6;
+  itemsPerPage: number = 20;
   totalPages: number = 0;
   searchText: string = '';
   isLoading: boolean = false;
+  selectedRole: string = '';
 
+  isCreateModalOpen = false;
+  newUser: any = {
+    firstName: '',
+    lastName: '',
+    password: '',
+    phone: '',
+    role: 'student',
+    isPremium: false,
+    login: ''
+  };
   constructor(private userService: UserService, private router: Router) {
     addIcons({ pencilOutline, trash, send, sparkles });
 
   }
+  onPhoneChange() {
+    this.newUser.login = this.newUser.phone;
+  }
 
+  openCreateModal() {
+    this.isCreateModalOpen = true;
+  }
+
+  // Fermer le modal
+  closeCreateModal() {
+    this.isCreateModalOpen = false;
+    this.resetForm();
+  }
+
+  // Réinitialiser le formulaire
+  resetForm() {
+    this.newUser = {
+      firstName: '',
+      lastName: '',
+      phone: '',
+      password: '',
+      role: 'student',
+      isPremium: false
+    };
+  }
+
+  // Créer l'utilisateur
+  createUser() {
+    if (!this.newUser.firstName || !this.newUser.lastName) {
+      return;
+    }
+
+    // Appelle ton service API ici
+    this.userService.createUser(this.newUser).subscribe({
+      next: (createdUser) => {
+        this.allUsers.push(createdUser);
+        this.applyFilters();
+        this.closeCreateModal();
+        // toast de succès
+      },
+      error: (err) => {
+        console.error('Erreur création', err);
+        //afficher erreur
+      }
+    });
+  }
   ngOnInit() {
     this.loadUsers();
   }
@@ -111,6 +167,31 @@ export class UsersPage implements OnInit {
     return pages;
   }
 
+  onRoleChange() {
+    this.applyFilters();
+  }
+
+  private applyFilters() {
+    let filtered = this.allUsers;
+
+    // Filtre par recherche
+    if (this.searchText) {
+      const term = this.searchText.toLowerCase();
+      filtered = filtered.filter(user =>
+        `${user.firstName} ${user.lastName}`.toLowerCase().includes(term) ||
+        user.phone?.includes(term) ||
+        user.email?.toLowerCase().includes(term)
+      );
+    }
+
+    // Filtre par rôle
+    if (this.selectedRole) {
+      filtered = filtered.filter(user => user.role?.libelle === this.selectedRole);
+    }
+
+    this.filteredUsers = filtered;
+    this.updatePagination();
+  }
   onSearchChange() {
     if (!this.searchText) {
       this.filteredUsers = [...this.allUsers];
@@ -118,7 +199,10 @@ export class UsersPage implements OnInit {
       const lowerSearch = this.searchText.toLowerCase();
       this.filteredUsers = this.allUsers.filter(u =>
         (u.firstName?.toLowerCase().includes(lowerSearch) || false) ||
-        (u.lastName?.toLowerCase().includes(lowerSearch) || false)
+        (u.lastName?.toLowerCase().includes(lowerSearch) || false) ||
+        (u.email?.toLowerCase().includes(lowerSearch) || false) ||
+        (u.role?.libelle.toLowerCase().includes(lowerSearch) || false) ||
+        (u.phone?.toLowerCase().includes(lowerSearch) || false)
       );
     }
     this.currentPage = 1;

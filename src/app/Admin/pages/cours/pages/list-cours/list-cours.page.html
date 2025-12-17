@@ -141,7 +141,10 @@
           (click)="goToDetail(course)">
           <!-- Image -->
           <div class="image-container">
-            <img [src]="course.image" [alt]="course.title" class="course-image">
+            <img *ngIf="course.image" [src]="course.image" alt="course cover" />
+            <div *ngIf="!course.image" class="avatar-placeholder">
+              {{ 'A' }}
+            </div>
             <div *ngIf="course.certificateAvailable" class="certificate-badge">
               <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -255,15 +258,7 @@
         <app-add-cours (formSubmit)="onCourseFormSubmit($event)"></app-add-cours>
       </div>
 
-      <!-- Footer avec boutons -->
-      <div class="modal-footer">
-        <button type="button" class="btn-secondary" (click)="closeAddCourseModal()">
-          Annuler
-        </button>
-        <button type="button" class="enroll-button" (click)="addCoursComponent.submitForm()">
-          Créer le cours
-        </button>
-      </div>
+
     </div>
   </div>
 </div>

@@ -3,96 +3,185 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CourseService } from 'src/app/features/services/courseService';
 import { InstructorService } from 'src/app/features/services/instructorService';
-import { UploadService } from 'src/app/features/services/upload.service';
 import { Course } from 'src/app/models/course.model';
 import { Instructor } from 'src/app/models/instructor.model';
+
+// Firestore
+import { Firestore, collection, addDoc, Timestamp } from '@angular/fire/firestore';
+import { IonIcon, IonSpinner } from "@ionic/angular/standalone";
+import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
+import { updateDoc } from 'firebase/firestore';
 
 @Component({
   selector: 'app-add-cours',
   templateUrl: './add-cours.component.html',
   styleUrls: ['./add-cours.component.scss'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [IonSpinner, IonIcon, CommonModule, ReactiveFormsModule],
 })
 export class AddCoursComponent implements OnInit {
-  @Output() formSubmit = new EventEmitter<any>();
+  @Output() formSubmit = new EventEmitter<void>();
+  @Output() cancel = new EventEmitter<void>();
 
   courseForm: FormGroup;
   instructors: Instructor[] = [];
   categories: string[] = [];
+
   selectedFile: File | null = null;
   imagePreview: string | null = null;
-  isUploading = false;
+  imageBase64: string | null = null;
+  isSaving = false;
 
-  constructor(private fb: FormBuilder, private instructorService: InstructorService,
-    private courseService: CourseService, private uploadService: UploadService) {
+  selectedPdf: File | null = null;
+
+  constructor(
+    private fb: FormBuilder,
+    private instructorService: InstructorService,
+    private courseService: CourseService,
+    private firestore: Firestore
+  ) {
     this.courseForm = this.fb.group({
       title: ['', Validators.required],
       category: ['', Validators.required],
       instructorId: [''],
       description: [''],
       price: [0],
-      image: [''],
       sessions: [0],
       exercises: [0],
       certificateAvailable: [false],
+      duration: [0],
+      level: ['DEBUTANT', Validators.required],
+      type: ['En ligne', Validators.required],
+      isPublished: [false],
+      support: [null],
     });
   }
+
 
   ngOnInit(): void {
     this.loadInstructors();
     this.loadCategories();
   }
 
+  // ==================== GESTION IMAGE ====================
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
 
-    this.selectedFile = input.files[0];
+    const file = input.files[0];
 
-    // preview
+    // Validation
+    if (!file.type.startsWith('image/')) {
+      alert('Veuillez sélectionner une image valide');
+      return;
+    }
+    if (file.size > 16 * 1024 * 1024) {
+      alert("L'image ne doit pas dépasser 5 Mo");
+      return;
+    }
+
+    this.selectedFile = file;
+
     const reader = new FileReader();
-    reader.onload = () => (this.imagePreview = reader.result as string);
-    reader.readAsDataURL(this.selectedFile);
+    reader.onload = (e: any) => {
+      const base64 = e.target.result;
+      this.imagePreview = base64;
+      this.imageBase64 = base64;
+    };
+    reader.readAsDataURL(file);
   }
 
+  onPdfSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+
+    const file = input.files[0];
+
+    if (file.type !== 'application/pdf') {
+      alert('Veuillez sélectionner un fichier PDF');
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Le PDF ne doit pas dépasser 10 Mo');
+      return;
+    }
+
+    this.selectedPdf = file;
+  }
+
+  async uploadPdf(courseId: string): Promise<string | null> {
+    if (!this.selectedPdf) return null;
+
+    const storage = getStorage();
+    const filePath = `courses/${courseId}/support.pdf`;
+    const storageRef = ref(storage, filePath);
+
+    await uploadBytes(storageRef, this.selectedPdf);
+    return await getDownloadURL(storageRef);
+  }
+
+  // ==================== CHARGEMENT DONNÉES ====================
   private loadInstructors() {
     this.instructorService.getInstructors().subscribe({
       next: (data) => (this.instructors = data),
-      error: (err) => console.error('Erreur instructeurs', err)
+      error: (err) => console.error('Erreur instructeurs', err),
     });
   }
-
 
   private loadCategories() {
     this.courseService.getAllCourses().subscribe({
       next: (courses: Course[]) => {
-        this.categories = [
-          ...new Set(courses.map(course => course.category))
-        ];
+        this.categories = [...new Set(courses.map(c => c.category))];
       },
-      error: (err) => console.error('Erreur catégories', err)
+      error: (err) => console.error('Erreur catégories', err),
     });
   }
 
+  // ==================== SOUMISSION ====================
   async submitForm() {
     if (this.courseForm.invalid) {
       this.markAllAsTouched();
       return;
     }
 
-    const courseData = {
-      ...this.courseForm.value,
-    };
+    this.isSaving = true;
 
-    this.formSubmit.emit(courseData);
+    try {
+      // Création du cours 
+      const docRef = await addDoc(collection(this.firestore, 'courses'), {
+        ...this.courseForm.value,
+        image: this.imageBase64 || null,
+        support: null,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+      });
+
+      // Upload du PDF
+      const pdfUrl = await this.uploadPdf(docRef.id);
+
+      // Mise à jour avec l’URL
+      if (pdfUrl) {
+        await updateDoc(docRef, {
+          support: pdfUrl,
+          updatedAt: Timestamp.now(),
+        });
+      }
+
+      alert('Cours créé avec succès !');
+      this.formSubmit.emit();
+
+    } catch (error: any) {
+      console.error(error);
+      alert(error.message);
+    } finally {
+      this.isSaving = false;
+    }
   }
 
   private markAllAsTouched() {
-    Object.keys(this.courseForm.controls).forEach((key) => {
+    Object.keys(this.courseForm.controls).forEach(key => {
       this.courseForm.get(key)?.markAsTouched();
     });
   }
 }
-
-

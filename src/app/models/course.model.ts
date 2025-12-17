@@ -81,4 +81,5 @@ export interface Course {
   enrolled?: boolean;
   data?: any;
   instructorId?: string;
+  support?: string;
 }

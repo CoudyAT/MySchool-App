@@ -22,7 +22,7 @@ export class ListCoursPage implements OnInit {
   searchText: string = '';
   selectedCategory: string = 'all';
   currentPage: number = 1;
-  itemsPerPage: number = 6;
+  itemsPerPage: number = 9;
   showAddCourseModal = false;
   allCourses: Course[] = [];
   filteredCourses: Course[] = [];
@@ -51,33 +51,12 @@ export class ListCoursPage implements OnInit {
   }
 
   onCourseFormSubmit(courseData: any) {
-    console.log('Nouveau cours à créer:', courseData);
-    this.createCourse(courseData);
-
-    this.showSuccessToast();
+    console.log('Données reçues du formulaire add-cours:', courseData);
     this.closeAddCourseModal();
-    this.loadCourses();
   }
 
   submitForm() {
   }
-
-  showSuccessToast() {
-    alert('Cours créé avec succès');
-  }
-
-  createCourse(courseData: any) {
-    this.courseService.createCourse(courseData).subscribe({
-      next: (response) => {
-        console.log('Cours créé avec succès:', response);
-      },
-      error: (err) => {
-        console.error('Erreur lors de la création du cours', err);
-      },
-    });
-  }
-
-
 
   loadCourses() {
     this.isLoading = true;
@@ -86,6 +65,7 @@ export class ListCoursPage implements OnInit {
       next: (response) => {
         this.allCourses = response;
         console.log('Courses loaded:', this.allCourses);
+
         this.totalCourses = this.allCourses.length;
         this.activeCourses = this.allCourses.filter(c => c.isPublished).length;
         this.finishedCourses = this.allCourses.filter(c => c.enrolled).length;

@@ -5,8 +5,8 @@
       <div class="spinner"></div>
       <p class="loader-text">Chargement des utilisateurs...</p>
     </div>
-    <div *ngIf="!isLoading">
 
+    <div *ngIf="!isLoading">
       <!-- Header avec bouton d'ajout -->
       <div class="header-section">
         <div class="header">
@@ -14,7 +14,12 @@
             <h1 class="title">Liste des utilisateurs</h1>
             <p class="subtitle">Découvrez et gérez vos utilisateurs</p>
           </div>
-
+          <button class="add-button" (click)="openCreateModal()">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Créer un utilisateur
+          </button>
         </div>
       </div>
 
@@ -40,7 +45,7 @@
           </div>
         </div>
 
-        <!-- En cours -->
+        <!-- Actifs -->
         <div class="stat-card stat-card-progress">
           <div class="stat-card-content">
             <div class="stat-card-left">
@@ -54,13 +59,13 @@
             <div class="stat-icon bg-amber">
               <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857 -1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
             </div>
           </div>
         </div>
 
-        <!-- Terminés -->
+        <!-- Inactifs -->
         <div class="stat-card stat-card-fall">
           <div class="stat-card-content">
             <div class="stat-card-left">
@@ -81,8 +86,8 @@
         </div>
       </div>
 
-      <!-- Filtres et recherche -->
       <div class="filters-section">
+        <!-- Recherche -->
         <div class="search-wrapper">
           <div class="search-container">
             <svg class="search-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -91,17 +96,27 @@
             </svg>
             <input type="text" placeholder="Rechercher un utilisateur..." class="search-input" [(ngModel)]="searchText"
               (input)="onSearchChange()">
-            <button *ngIf="searchText" (click)="clearSearch()" class="clear-button">
-              ✕
-            </button>
+            <button *ngIf="searchText" (click)="clearSearch()" class="clear-button">✕</button>
           </div>
+        </div>
+
+        <!-- Nouveau : Filtre par rôle -->
+        <div class="filter-container">
+          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+          </svg>
+          <select class="select" [(ngModel)]="selectedRole" (change)="onRoleChange()">
+            <option value="">Tous les rôles</option>
+            <option value="student">Étudiant</option>
+            <option value="admin">Administrateur</option>
+          </select>
         </div>
       </div>
 
       <!-- Liste des utilisateurs -->
       <div *ngIf="filteredUsers.length > 0; else emptyState" class="users-list">
-
-        <!-- Header de la liste -->
+        <!-- Header -->
         <div class="users-list-header">
           <span>Utilisateur</span>
           <span>Téléphone</span>
@@ -111,9 +126,8 @@
           <span>Actions</span>
         </div>
 
+        <!-- Lignes -->
         <div *ngFor="let user of paginatedUsers" class="user-row" (click)="goToDetail(user)">
-
-          <!-- Utilisateur -->
           <div class="user-info">
             <div class="user-avatar">
               <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -124,42 +138,41 @@
             <p class="user-name">{{ user.firstName }} {{ user.lastName }}</p>
           </div>
 
-          <!-- Téléphone -->
-          <div class="user-cell">
-            {{ user.phone || '-' }}
-          </div>
+          <div class="user-cell">{{ user.phone || '-' }}</div>
 
-          <!-- Rôle -->
-          <div class="user-cell">
-            {{ user.role?.libelle }}
-          </div>
+          <div class="user-cell">{{ user.role?.libelle || '-' }}</div>
 
-          <!-- Premium -->
           <div class="user-cell">
             <span class="badge" [class.badge-premium]="user.isPremium" [class.badge-standard]="!user.isPremium">
               {{ user.isPremium ? 'Premium' : 'Standard' }}
             </span>
           </div>
 
-          <!-- Statut -->
           <div class="user-cell">
             <span class="status" [class.active]="user.status === 'active'" [class.inactive]="user.status !== 'active'">
-              {{ user.status }}
+              {{ user.status | titlecase }}
             </span>
           </div>
 
-          <!-- Actions -->
           <div class="user-actions">
-            <button class="action-button edit" (click)="editUser(user); $event.stopPropagation()">
-              <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
+            <button class="action-button" title="Modifier" (click)="editUser(user); $event.stopPropagation()">
+              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              </svg>
             </button>
-            <button class="action-button delete" (click)="deleteUser(user); $event.stopPropagation()">
-              <ion-icon name="trash" slot="icon-only"></ion-icon>
+
+            <button class="action-button delete" title="Supprimer" (click)="deleteUser(user); $event.stopPropagation()">
+              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
             </button>
           </div>
         </div>
-
       </div>
+
+      <!-- État vide -->
       <ng-template #emptyState>
         <div class="empty-state">
           <div class="empty-icon">
@@ -169,7 +182,8 @@
             </svg>
           </div>
           <h2 class="empty-title">Aucun utilisateur trouvé</h2>
-          <p class="empty-text">Essayez d'ajuster votre recherche ou ajoutez un nouvel utilisateur.</p>
+          <p class="empty-text">Essayez d'ajuster votre recherche, votre filtre de rôle ou ajoutez un nouvel
+            utilisateur.</p>
         </div>
       </ng-template>
 
@@ -200,5 +214,78 @@
         </button>
       </div>
     </div>
+  </div>
+</div>
+
+
+<!-- MODAL DE CRÉATION -->
+<div *ngIf="isCreateModalOpen" class="modal-overlay" (click)="closeCreateModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">Créer un nouvel utilisateur</h2>
+      <button class="modal-close" (click)="closeCreateModal()">
+        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <form (ngSubmit)="createUser()" #createForm="ngForm" class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="firstName">Prénom</label>
+          <input type="text" id="firstName" name="firstName" [(ngModel)]="newUser.firstName" required
+            #firstName="ngModel" class="form-input" placeholder="Abdoulaye">
+          <div *ngIf="firstName.invalid && firstName.touched" class="error-text">
+            Le prénom est obligatoire
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="lastName">Nom</label>
+          <input type="text" id="lastName" name="lastName" [(ngModel)]="newUser.lastName" required #lastName="ngModel"
+            class="form-input" placeholder="NDIAYE">
+          <div *ngIf="lastName.invalid && lastName.touched" class="error-text">
+            Le nom est obligatoire
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Mot de passe</label>
+          <input type="password" id="password" name="password" [(ngModel)]="newUser.password" class="form-input"
+            placeholder="********">
+
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Téléphone</label>
+          <input type="text" id="phone" name="phone" [(ngModel)]="newUser.phone" class="form-input"
+            (input)="onPhoneChange()" placeholder="+221 77 123 45 67">
+        </div>
+
+        <div class="form-group">
+          <label for="role">Rôle</label>
+          <select id="role" name="role" [(ngModel)]="newUser.role" required class="form-input">
+            <option value="student">Étudiant</option>
+            <option value="admin">Administrateur</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="isPremium">Abonnement</label>
+          <select id="isPremium" name="isPremium" [(ngModel)]="newUser.isPremium" class="form-input">
+            <option [ngValue]="false">Standard</option>
+            <option [ngValue]="true">Premium</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" (click)="closeCreateModal()">Annuler</button>
+        <button type="submit" class="btn-primary" [disabled]="createForm.invalid">
+          Créer l'utilisateur
+        </button>
+      </div>
+    </form>
   </div>
 </div>

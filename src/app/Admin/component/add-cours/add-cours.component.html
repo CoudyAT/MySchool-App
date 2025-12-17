@@ -2,8 +2,9 @@
   <div class="form-grid">
     <!-- Titre du cours -->
     <div class="form-group">
-      <label for="title" class="form-label">Titre du cours *</label>
-      <input id="title" type="text" formControlName="title" class="form-input" placeholder="Ex: Introduction à Angular">
+      <label for="title" class="form-label">Titre du cours <span class="required">*</span></label>
+      <input id="title" type="text" formControlName="title" class="form-input"
+        placeholder="Ex: Introduction à Angular" />
       <div *ngIf="courseForm.get('title')?.invalid && courseForm.get('title')?.touched" class="error-message">
         Le titre est requis
       </div>
@@ -11,70 +12,109 @@
 
     <!-- Catégorie -->
     <div class="form-group">
-      <label for="category" class="form-label">Catégorie *</label>
+      <label for="category" class="form-label">Catégorie <span class="required">*</span></label>
       <select id="category" formControlName="category" class="form-input">
         <option value="">Sélectionnez une catégorie</option>
-        <option *ngFor="let cat of categories" [value]="cat">
-          {{ cat }}
-        </option>
+        <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
       </select>
+      <div *ngIf="courseForm.get('category')?.invalid && courseForm.get('category')?.touched" class="error-message">
+        La catégorie est requise
+      </div>
     </div>
-
-
-    <!-- Instructeur -->
-    <!-- <div class="form-group">
-      <label for="instructor" class="form-label">Instructeur </label>
-      <select id="instructor" formControlName="instructorId" class="form-input">
-        <option value="">Sélectionnez un instructeur</option>
-        <option *ngFor="let inst of instructors" [value]="inst.id">
-          {{ inst.name }}
-        </option>
-      </select>
-    </div> -->
 
     <!-- Prix -->
     <div class="form-group">
       <label for="price" class="form-label">Prix (FCFA)</label>
-      <input id="price" type="number" formControlName="price" class="form-input" placeholder="0">
+      <input id="price" type="number" formControlName="price" class="form-input" placeholder="0" min="0" />
     </div>
 
     <!-- Description -->
     <div class="form-group full-width">
       <label for="description" class="form-label">Description</label>
       <textarea id="description" formControlName="description" class="form-textarea"
-        placeholder="Description du cours..." rows="4"></textarea>
+        placeholder="Décrivez le contenu et les objectifs du cours..." rows="5"></textarea>
     </div>
 
-    <!-- Image URL -->
+    <!-- Upload de l'image de couverture -->
     <div class="form-group full-width">
-      <label for="image" class="form-label">URL de l'image</label>
-      <input type="file" accept="image/*" (change)="onFileSelected($event)" class="form-input" formControlName="image">
-    </div>
-    <img *ngIf="imagePreview" [src]="imagePreview" class="preview-image">
+      <label class="form-label">Image de couverture</label>
 
+      <div class="image-upload-container" (click)="fileInput.click()">
+        <img *ngIf="imagePreview" [src]="imagePreview" alt="Prévisualisation de l'image de couverture"
+          class="image-preview" />
+        <div *ngIf="!imagePreview" class="upload-placeholder">
+          <ion-icon name="image-outline" size="large"></ion-icon>
+          <p class="upload-text">Cliquez pour ajouter une image de couverture</p>
+          <span class="upload-hint">Recommandé : 1200x600px (JPG, PNG)</span>
+        </div>
+      </div>
+
+      <input #fileInput type="file" accept="image/*" (change)="onFileSelected($event)" hidden />
+    </div>
 
     <!-- Sessions -->
     <div class="form-group">
       <label for="sessions" class="form-label">Nombre de sessions</label>
-      <input id="sessions" type="number" formControlName="sessions" class="form-input" placeholder="0" min="0">
+      <input id="sessions" type="number" formControlName="sessions" class="form-input" placeholder="Ex: 12" min="0" />
     </div>
 
     <!-- Exercices -->
     <div class="form-group">
       <label for="exercises" class="form-label">Nombre d'exercices</label>
-      <input id="exercises" type="number" formControlName="exercises" class="form-input" placeholder="0" min="0">
+      <input id="exercises" type="number" formControlName="exercises" class="form-input" placeholder="Ex: 25" min="0" />
+    </div>
+
+    <!-- Niveau -->
+    <div class="form-group">
+      <label for="level" class="form-label">Niveau</label>
+      <select id="level" formControlName="level" class="form-input">
+        <option value="">Sélectionnez un niveau</option>
+        <option value="Débutant">Débutant</option>
+        <option value="Intermédiaire">Intermédiaire</option>
+        <option value="Avancé">Avancé</option>
+      </select>
+    </div>
+
+    <!-- Type de cours -->
+    <div class="form-group">
+      <label for="type" class="form-label">Type du cours</label>
+      <select id="type" formControlName="type" class="form-input">
+        <option value="">Sélectionnez un type</option>
+        <option value="En ligne">En ligne</option>
+        <option value="Présentiel">Présentiel</option>
+        <option value="Hybride">Hybride</option>
+      </select>
+    </div>
+
+    <!-- Durée -->
+    <div class="form-group">
+      <label for="duration" class="form-label">Durée (heures)</label>
+      <input id="duration" type="number" formControlName="duration" class="form-input" placeholder="Ex: 40" min="0" />
+    </div>
+
+    <!-- Support de cours -->
+    <div class="form-group">
+      <label for="support" class="form-label">Support de cours (PDF)</label>
+      <input id="support" type="file" accept=".pdf" (change)="onPdfSelected($event)" class="form-input file-input" />
+      <small class="file-hint">Fichier PDF uniquement</small>
     </div>
 
     <!-- Certificat disponible -->
     <div class="form-group full-width">
-      <label class="checkbox-label">
+      <label class="checkbox-container">
         <input type="checkbox" formControlName="certificateAvailable" class="checkbox-input" />
         <span class="checkmark"></span>
-        Certificat disponible
+        Certificat disponible à la fin du cours
       </label>
     </div>
   </div>
 
-  <button type="submit" hidden></button>
-
+  <div class="form-actions">
+    <button type="button" (click)="cancel.emit()" class="btn-secondary">
+      Annuler
+    </button>
+    <button type="submit" [disabled]="courseForm.invalid" class="btn-primary">
+      Créer le cours
+    </button>
+  </div>
 </form>
