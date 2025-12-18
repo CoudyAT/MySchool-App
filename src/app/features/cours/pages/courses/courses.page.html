@@ -2,15 +2,6 @@
   <ion-toolbar>
     <div class="header-content">
       <img src="assets/logo.svg" alt="MySchool Logo" class="logo" />
-     <!--  <ion-button
-          fill="solid"
-          color="warning"
-          (click)="openPremiumModal()"
-          class="premium-button">
-          <ion-icon name="star-outline" slot="start"></ion-icon>
-          Premium
-      </ion-button> 
-    --> 
       <ion-button
           fill="clear"
           (click)="goToProfile()"
@@ -33,9 +24,6 @@
 
     <!-- Hero Section - CARROUSEL SWIPER -->
     <div class="hero-section">
-
-        
-        
       <swiper-container
         class="hero-swiper"
         [config]="slideOpts"
@@ -222,6 +210,52 @@
           (Organisation Internationale du Travail)      
       </p>     
     </div>
+
+    <!-- Section Tous les cours -->
+    <div class="courses-section">
+       <h1 class="section-title">Liste des cours</h1>
+      <div *ngIf="isCoursesLoading" class="loading-courses">
+        <ion-spinner></ion-spinner>
+        <p>Chargement des cours...</p>
+      </div>
+
+      <!-- Liste des cours -->
+      <div *ngIf="!isCoursesLoading" class="enrolled-courses-grid">
+        <ion-card
+          *ngFor="let course of allCourses"
+          class="course-card"
+          (click)="openCour(course)"
+        >
+          <div class="card-image">
+            <img
+              [src]="course.image || 'assets/algo.svg'"
+              alt="{{ course.title }}"
+            />
+
+            <div class="play-icon">
+              <ion-icon name="play"></ion-icon>
+            </div>
+          </div>
+
+          <ion-card-content>
+            <h3 class="course-title">{{ course.title }}</h3>
+
+            <div class="course-meta">
+              <span>{{ course.sessions || 0 }} Sessions</span>
+              <span class="separator">•</span>
+              <span style="color: #FF9500;">
+                {{ course.exercises || 0 }} Exercices
+              </span>
+            </div>
+
+            <div class="course-level">
+              Niveau : {{ course.level || 'Débutant' }}
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
+
   </div>
 </ion-content>
 

@@ -142,9 +142,10 @@ export class PaymentVerifyPage implements OnInit {
         '🔍 PaymentVerify - Type:',
         this.isPremiumSubscription ? 'PREMIUM' : 'COURS INDIVIDUEL'
       );
-      console.log('navigation extras state:', navigation.extras.state);
+     // console.log('navigation extras state:', navigation.extras.state);
 
       this.course = navigation.extras.state['course'] || {};
+      console.log('courseId dans payment-verify constructor', this.course.data.id);
       this.courseId = navigation.extras.state['courseId'];
       this.courseTitle = navigation.extras.state['courseTitle'];
       this.courseImage = navigation.extras.state['courseImage'];
@@ -338,11 +339,11 @@ export class PaymentVerifyPage implements OnInit {
         });
       } else {
         // 📖 LOGIQUE NORMALE POUR UN COURS INDIVIDUEL
-        console.log('courseId dans payment-verify', this.courseId);
+        console.log('courseId dans payment-verify', this.course.data.id);
 
         // Vérifier si l'utilisateur a déjà acheté ce cours
         const isAlreadyEnrolled = await this.isUserEnrolledInCourse(
-          this.courseId
+          this.course.data.id
         );
         if (isAlreadyEnrolled) {
           console.log('❌ Utilisateur déjà inscrit à ce cours');
@@ -354,7 +355,7 @@ export class PaymentVerifyPage implements OnInit {
           plan: this.selectedPlan,
           method: selectedMethod,
           amount: this.summary.total,
-          courseId: this.courseId,
+          courseId: this.course.data.id,
           courseTitle: this.courseTitle,
           courseImage: this.courseImage,
         };
@@ -368,7 +369,7 @@ export class PaymentVerifyPage implements OnInit {
           // Sauvegarder l'ID du paiement pour vérification ultérieure
           localStorage.setItem('pendingPaymentId', result.payment.id);
           localStorage.setItem('pendingEnrollmentId', result.enrollmentId);
-          localStorage.setItem('pendingCourseId', this.courseId);
+          localStorage.setItem('pendingCourseId', this.course.data.id);
 
           // Ouvrir l'URL Orange Money dans le navigateur
           window.location.href = result.payment.data.paymentUrl;
@@ -381,7 +382,7 @@ export class PaymentVerifyPage implements OnInit {
         this.router.navigate(['/course-video', this.course.id], {
           state: {
             course: this.course,
-            courseId: this.courseId,
+            courseId: this.course.data.id,
             enrollmentSuccess: true,
           },
           replaceUrl: true,

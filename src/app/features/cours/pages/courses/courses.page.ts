@@ -24,6 +24,8 @@ import {
   IonSpinner,
 } from '@ionic/angular/standalone';
 import { BottomMenuComponent } from 'src/app/shared/components/bottom-menu/bottom-menu.component';
+import { Course } from 'src/app/models/course.model';
+import { CourseService } from 'src/app/features/services/courseService';
 
 import { addIcons } from 'ionicons';
 import {
@@ -78,6 +80,8 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
   instructors: Instructor[] = [];
   isLoading = true;
   private enrollmentSubscription: Subscription = new Subscription();
+  allCourses: Course[] = [];
+  isCoursesLoading = true;
 
   slideOpts = {
     slidesPerView: 1,
@@ -99,7 +103,8 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
     private auth: Auth,
     private enrollmentService: EnrollmentService,
     private modalCtrl: ModalController,
-    private instructorService: InstructorService
+    private instructorService: InstructorService,
+    private courseService: CourseService
   ) {
     addIcons({
       personCircleOutline,
@@ -122,6 +127,7 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.loadEnrolledCourses();
+    this.loadAllCoursesPreview();
     this.instructorService.getInstructors().subscribe((data) => {
       this.instructors = data;
     });
@@ -220,6 +226,10 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  openCour(course: Course) {
+    this.router.navigate(['/course-detail', course.id]);
+  }
+
   // Obtenir le texte de progression
   getProgressText(progress: number): string {
     return `${progress}% complété`;
@@ -305,12 +315,26 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
     });
     await toast.present();
   }
-
   goToProfile() {
     this.router.navigate(['/profile']);
   }
-
   goToInstructorProfile(id: string) {
     this.router.navigate(['/instructor-profile', id]);
+  }
+
+  loadAllCoursesPreview() {
+    this.isCoursesLoading = true;
+
+    this.courseService.getAllCourses().subscribe({
+      next: (courses) => {
+        // On limite l’affichage (ex: 6 cours)
+        this.allCourses = courses.slice(0, 6);
+        this.isCoursesLoading = false;
+      },
+      error: (err) => {
+        console.error('Erreur chargement cours:', err);
+        this.isCoursesLoading = false;
+      },
+    });
   }
 }

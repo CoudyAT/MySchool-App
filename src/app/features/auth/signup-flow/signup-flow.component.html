@@ -78,7 +78,7 @@
         </div>
       </div>
 
-      <!-- Input mot de passe -->
+      <!-- Input mot de passe 
       <div class="input-group-modern">
         <label class="input-label-modern">Mot de passe</label>
         <div class="input-wrapper">
@@ -98,7 +98,31 @@
         <div class="error-text" *ngIf="isFieldInvalid(welcomeForm, 'password')">
           {{ getFieldError(welcomeForm, 'password') }}
         </div>
-      </div>
+      </div> -->
+
+      <!-- Input mot de passe (connexion uniquement) -->
+        <div
+          class="input-group-modern"
+          *ngIf="showPasswordField">
+          
+          <label class="input-label-modern">Mot de passe</label>
+          <div class="input-wrapper">
+            <div class="input-icon">
+              <ion-icon name="lock-closed-outline"></ion-icon>
+            </div>
+            <ion-input
+              type="password"
+              formControlName="password"
+              placeholder="Votre mot de passe"
+              class="custom-input-modern">
+            </ion-input>
+          </div>
+
+          <div class="error-text" *ngIf="isFieldInvalid(welcomeForm, 'password')">
+            {{ getFieldError(welcomeForm, 'password') }}
+          </div>
+        </div>
+
 
       <!-- Bouton de connexion/inscription -->
       <ion-button

@@ -11,6 +11,9 @@ import {
   IonCardContent,
   IonIcon,
   IonButton,
+  IonSegment,
+  IonLabel,
+  IonSegmentButton,
 } from '@ionic/angular/standalone';
 import { BottomMenuComponent } from 'src/app/shared/components/bottom-menu/bottom-menu.component';
 
@@ -20,6 +23,9 @@ import { BottomMenuComponent } from 'src/app/shared/components/bottom-menu/botto
   styleUrls: ['./mes-cours.page.scss'],
   standalone: true,
   imports: [
+    IonSegmentButton,
+    IonLabel,
+    IonSegment,
     CommonModule,
     IonButton,
     IonIcon,
@@ -37,6 +43,7 @@ export class MesCoursPage implements OnInit {
   private subscription = new Subscription();
 
   isLoading = true;
+  selectedSegment: 'cours' | 'cours-en-ligne' = 'cours';
 
   constructor(private router: Router, private courseService: CourseService) {}
 
@@ -48,45 +55,13 @@ export class MesCoursPage implements OnInit {
     this.subscription.unsubscribe();
   }
 
-  // loadCourses() {
-  //   this.isLoading = true;
-
-  //   const sub = this.courseService.getAllCourses().subscribe({
-  //     next: (courses) => {
-  //       // Clean and normalize the data
-  //       this.courses = this.normalizeCourses(courses);
-  //       console.log('Liste des cours nettoyés:', this.courses);
-
-  //       this.filteredCourses = [...this.courses];
-
-  //       // Filter out empty categories
-  //       this.categories = [
-  //         ...new Set(
-  //           this.courses
-  //             .map((c) => c.category)
-  //             .filter((category) => category && category.trim() !== '')
-  //         ),
-  //       ];
-
-  //       console.log('Catégories disponibles:', this.categories);
-  //       this.isLoading = false;
-  //     },
-  //     error: (err) => {
-  //       console.error('Erreur API:', err);
-  //       this.isLoading = false;
-  //     },
-  //   });
-
-  //   this.subscription.add(sub);
-  // }
-
   loadCourses() {
     this.isLoading = true;
 
     const sub = this.courseService.getAllCourses().subscribe({
       next: (courses) => {
         this.courses = courses;
-        this.filteredCourses = [...courses];
+        this.filterCoursesBySegment();
 
         this.categories = [
           ...new Set(
@@ -105,45 +80,31 @@ export class MesCoursPage implements OnInit {
     this.subscription.add(sub);
   }
 
-  private normalizeCourses(courses: any[]): any[] {
-    return courses.map((course) => {
-      // Fix encoding issues (if needed, depending on your actual data source)
-      const normalizedCourse = { ...course };
+  onSegmentChange(event: any) {
+    this.selectedSegment = event.detail.value;
+    this.filterCoursesBySegment();
+  }
 
-      // Normalize level values to consistent format
-      if (normalizedCourse.level) {
-        const level = normalizedCourse.level.toUpperCase();
-        if (level.includes('DEBUTANT') || level.includes('BEGINNER')) {
-          normalizedCourse.level = 'DEBUTANT';
-        } else if (
-          level.includes('INTERMEDIAIRE') ||
-          level.includes('INTERMEDIATE')
-        ) {
-          normalizedCourse.level = 'INTERMEDIAIRE';
-        } else if (level.includes('AVANCE') || level.includes('ADVANCED')) {
-          normalizedCourse.level = 'AVANCE';
-        }
-      }
-
-      // Convert duration to a number if it's a string with "h"
-      if (
-        typeof normalizedCourse.duration === 'string' &&
-        normalizedCourse.duration.includes('h')
-      ) {
-        const hours = parseFloat(
-          normalizedCourse.duration.replace('h', '').trim()
-        );
-        normalizedCourse.duration = hours * 60; // Convert to minutes if needed
-      }
-
-      return normalizedCourse;
-    });
+  filterCoursesBySegment() {
+    if (this.selectedSegment === 'cours') {
+      // Filtrer pour afficher uniquement les cours normaux (isOnline = false ou undefined)
+      this.filteredCourses = this.courses.filter((c) => !c.isOnline);
+    } else {
+      // Filtrer pour afficher uniquement les cours en ligne (isOnline = true)
+      this.filteredCourses = this.courses.filter((c) => c.isOnline);
+    }
   }
 
   searchCourse(event?: any) {
     const term = event?.detail?.value?.toLowerCase() ?? '';
 
-    this.filteredCourses = this.courses.filter(
+    // Appliquer le filtre de recherche sur les cours déjà filtrés par segment
+    const baseCourses =
+      this.selectedSegment === 'cours'
+        ? this.courses.filter((c) => !c.isOnline)
+        : this.courses.filter((c) => c.isOnline);
+
+    this.filteredCourses = baseCourses.filter(
       (c) =>
         c.title.toLowerCase().includes(term) ||
         c.category.toLowerCase().includes(term)
@@ -156,5 +117,21 @@ export class MesCoursPage implements OnInit {
 
   openFilters() {
     console.log('Ouvrir filtres');
+  }
+
+  // Méthode utilitaire pour regrouper les cours par catégorie
+  getCoursesByCategory(category: string): Course[] {
+    return this.filteredCourses.filter((c) => c.category === category);
+  }
+
+  // Obtenir les catégories des cours filtrés
+  getFilteredCategories(): string[] {
+    return [
+      ...new Set(
+        this.filteredCourses
+          .map((c) => c.category)
+          .filter((x) => x && x.trim() !== '')
+      ),
+    ];
   }
 }
