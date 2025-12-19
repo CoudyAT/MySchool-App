@@ -32,7 +32,7 @@ import { lastValueFrom } from 'rxjs';
   ]
 })
 export class FaqPage implements OnInit {
-  faqs: Faq[] = [];
+  faq: Faq[] = [];
   filteredFaqs: Faq[] = [];
   searchQuery = '';
   selectedCategory = 'all';
@@ -74,15 +74,24 @@ export class FaqPage implements OnInit {
     this.loadFaqs();
   }
 
-  async loadFaqs() {
-    try {
-      const result = await lastValueFrom(this.faqService.getAllFaqs());
-      this.faqs = Array.isArray(result) ? result : [result];
-      this.filteredFaqs = [...this.faqs];
-      console.log('FAQs chargées:', this.faqs);
-    } catch (error) {
-      console.error('Erreur lors du chargement des FAQs:', error);
-    }
+  loadFaqs() {
+
+    this.faqService.getAllFaqs().subscribe({
+      next: (response: any) => {
+        this.faq = response;
+        console.log('faq loaded:', this.faq);
+
+
+        this.applyFilters();
+        this.isLoading = false;
+
+      },
+      error: (err) => {
+        console.error('Erreur lors du chargement des cours', err);
+        this.isLoading = false;
+
+      },
+    });
   }
 
 
@@ -103,23 +112,23 @@ export class FaqPage implements OnInit {
   }
 
   private applyFilters() {
-    let filtered = [...this.faqs]; // Créer une copie du tableau
+    // let filtered = [...this.faq]; // Créer une copie du tableau
 
-    // Filtre par catégorie
-    if (this.selectedCategory && this.selectedCategory !== 'all') {
-      filtered = filtered.filter(f => f.category === this.selectedCategory);
-    }
+    // // Filtre par catégorie
+    // if (this.selectedCategory && this.selectedCategory !== 'all') {
+    //   filtered = filtered.filter(f => f.category === this.selectedCategory);
+    // }
 
-    // Filtre par recherche
-    if (this.searchQuery && this.searchQuery.trim() !== '') {
-      const query = this.searchQuery.toLowerCase().trim();
-      filtered = filtered.filter(f =>
-        (f.question && f.question.toLowerCase().includes(query)) ||
-        (f.answer && f.answer.toLowerCase().includes(query))
-      );
-    }
+    // // Filtre par recherche
+    // if (this.searchQuery && this.searchQuery.trim() !== '') {
+    //   const query = this.searchQuery.toLowerCase().trim();
+    //   filtered = filtered.filter(f =>
+    //     (f.question && f.question.toLowerCase().includes(query)) ||
+    //     (f.answer && f.answer.toLowerCase().includes(query))
+    //   );
+    // }
 
-    this.filteredFaqs = filtered;
+    // this.filteredFaqs = filtered;
   }
 
   openAddFaqModal() {

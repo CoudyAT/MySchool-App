@@ -15,4 +15,5 @@ export interface Instructor {
   coursesIds: string[];
   courses?: Course[];
   expertise: string[];
+  active: boolean;
 }

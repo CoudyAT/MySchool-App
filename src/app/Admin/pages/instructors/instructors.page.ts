@@ -10,7 +10,7 @@ import { IonIcon } from "@ionic/angular/standalone";
   templateUrl: './instructors.page.html',
   styleUrls: ['./instructors.page.scss'],
   standalone: true,
-  imports: [IonIcon, CommonModule, FormsModule]
+  imports: [CommonModule, FormsModule]
 })
 export class InstructorsPage implements OnInit {
   allInstructors: Instructor[] = [];
@@ -183,6 +183,7 @@ export class InstructorsPage implements OnInit {
       next: (createdInstructor) => {
         this.allInstructors.push(createdInstructor);
         this.applyFilters(); // rafraîchir la liste
+        this.loadInstructors();
         this.closeCreateModal();
         // toast.success('Instructeur créé avec succès');
       },
@@ -208,20 +209,27 @@ export class InstructorsPage implements OnInit {
     this.updatePagination();
   }
 
-  deleteInstructor(instructorId: string) {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer cet instructeur ?')) {
+  deactivateInstructor(instructorId: string) {
+    if (!confirm('Êtes-vous sûr de vouloir désactiver cet instructeur ?')) {
       return;
     }
-    this.instructorService.deleteInstructor(instructorId).subscribe({
-      next: () => {
-        this.allInstructors = this.allInstructors.filter(inst => inst.id !== instructorId);
-        this.applyFilters();
-        // toast.success('Instructeur supprimé avec succès');
-      }
-      ,
+    this.instructorService.getInstructorById(instructorId).subscribe({
+      next: (instructor) => {
+        const updatedInstructor = { ...instructor, active: false };
+        this.instructorService.updateInstructor(instructorId, updatedInstructor).subscribe({
+          next: () => {
+            this.allInstructors = this.allInstructors.map(inst =>
+              inst.id === instructorId ? updatedInstructor : inst
+            );
+            this.applyFilters();
+          },
+          error: (err) => {
+            console.error('Erreur lors de la désactivation de l\'instructeur', err);
+          }
+        });
+      },
       error: (err) => {
-        console.error('Erreur suppression instructeur', err);
-        // toast.error('Erreur lors de la suppression');
+        console.error('Erreur lors de la récupération de l\'instructeur', err);
       }
     });
   }

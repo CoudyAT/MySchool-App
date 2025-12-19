@@ -150,6 +150,10 @@ export const routes: Routes = [
   {
     path: 'user-edit',
     loadComponent: () => import('./Admin/pages/user-edit/user-edit.page').then(m => m.UserEditPage)
+  },  {
+    path: 'instructor-details',
+    loadComponent: () => import('./Admin/pages/instructor-details/instructor-details.page').then( m => m.InstructorDetailsPage)
   },
+
 
 ];

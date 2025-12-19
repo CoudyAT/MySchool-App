@@ -25,16 +25,16 @@ export class FaqService {
 
 
 
-  getAllFaqs(): Observable<Faq> {
+  getAllFaqs(): Observable<Faq[]> {
     return this.api
-      .get<Faq>('/faqs');
+      .get<Faq[]>('/faqs');
   }
 
   /**
    * Récupère les FAQs par catégorie (utilise le filtre de getAllFaqs)
    * GET /faqs?category=xxx
    */
-  getFaqsByCategory(category: string): Observable<Faq> {
+  getFaqsByCategory(category: string): Observable<Faq[]> {
     return this.getAllFaqs();
   }
 
@@ -100,7 +100,7 @@ export class FaqService {
   /**
    * Récupère uniquement les FAQs actives (helper)
    */
-  getActiveFaqs(category?: string): Observable<Faq> {
+  getActiveFaqs(category?: string): Observable<Faq[]> {
     return this.getAllFaqs();
   }
 }
