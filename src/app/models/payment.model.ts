@@ -79,3 +79,10 @@ export interface PaymentData {
   customerFirstName?: string;
   customerLastName?: string;
 }
+
+export interface EnrollmentApiResponse {
+  success: boolean;
+  data: any[];
+  count: number;
+}
+

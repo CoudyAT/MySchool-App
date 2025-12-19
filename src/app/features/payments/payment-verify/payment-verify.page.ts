@@ -377,9 +377,10 @@ export class PaymentVerifyPage implements OnInit {
         }
 
         console.log('✅ Paiement cours individuel enregistré avec succès');
+        console.log('Redirection vers le cours...', this.course);
 
         // Rediriger vers la page du cours si pas de paiement en ligne
-        this.router.navigate(['/course-video', this.course.id], {
+        this.router.navigate(['/course-video', this.course.data.id], {
           state: {
             course: this.course,
             courseId: this.course.data.id,

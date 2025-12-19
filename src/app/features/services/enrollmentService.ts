@@ -2,7 +2,11 @@
 import { Injectable, inject } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
 import { Observable, of, map, switchMap, from, firstValueFrom, catchError, forkJoin } from 'rxjs';
-import { Enrollment, PaymentData } from 'src/app/models/payment.model';
+import {
+  Enrollment,
+  PaymentData,
+  EnrollmentApiResponse,
+} from 'src/app/models/payment.model';
 import { ApiService } from 'src/app/core/services/api.service';
 import { PaymentService } from './paymentService';
 
@@ -32,7 +36,7 @@ export class EnrollmentService {
     const realUid = localUser.uid; // Le UID qui existe dans votre base
 
     console.log('Création inscription avec le vrai UID:', realUid);
-    console.log('UID Firebase Auth (ignoré):', this.auth.currentUser?.uid);
+    console.log('UID Firebase Auth (ignoré):', this.auth);
 
     const enrollmentData = {
       userId: realUid,
@@ -59,10 +63,7 @@ export class EnrollmentService {
       const enrollmentId = response?.id || '';
 
       // Si le cours est payant et méthode = orange-money, créer le paiement
-      if (
-        paymentData.amount > 0 &&
-        paymentData.method?.id === 'orange-money'
-      ) {
+      if (paymentData.amount > 0 && paymentData.method?.id === 'orange-money') {
         console.log('💳 Création du paiement Orange Money...');
 
         // Récupérer les données client du localStorage ou du paymentData
@@ -89,7 +90,9 @@ export class EnrollmentService {
         // Fallback final sur l'utilisateur connecté
         if (!customerData.phone) {
           customerData = {
-            name: localUser.firstName + ' ' + localUser.lastName || 'Client MySchool',
+            name:
+              localUser.firstName + ' ' + localUser.lastName ||
+              'Client MySchool',
             email: localUser.email || 'client@myschool.sn',
             phone: localUser.phone || '+221771234567',
           };
@@ -105,7 +108,8 @@ export class EnrollmentService {
             paymentMethod: 'orange-money',
             customerPhoneNumber: customerData.phone,
             customerFirstName: customerData.name.split(' ')[0] || 'Prénom',
-            customerLastName: customerData.name.split(' ').slice(1).join(' ') || 'Nom',
+            customerLastName:
+              customerData.name.split(' ').slice(1).join(' ') || 'Nom',
             description: `Paiement pour ${paymentData.courseTitle}`,
           })
         );
@@ -161,9 +165,14 @@ export class EnrollmentService {
 
     const realUid = localUser.uid;
 
-    return this.api.get<Enrollment[]>(`/enrollments/student/${realUid}`).pipe(
-      map((data: any[]) => {
-        return data.map((doc) => this.mapToEnrollment(doc));
+    return this.api.get<any>(`/enrollments/user/${realUid}`).pipe(
+      map((response) => {
+        console.log('Réponse API enrollments:', response);
+
+        // ✅ On récupère le vrai tableau
+        const enrollments = response?.data ?? [];
+
+        return enrollments.map((doc: any) => this.mapToEnrollment(doc));
       })
     );
   }
@@ -253,6 +262,40 @@ export class EnrollmentService {
   //   );
   // }
 
+  // getUserEnrollmentsWithCourseDetails(): Observable<Enrollment[]> {
+  //   const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+
+  //   if (!localUser?.uid) {
+  //     console.warn('❌ Aucun utilisateur trouvé dans localStorage');
+  //     return of([]);
+  //   }
+
+  //   const realUid = localUser.uid;
+
+  //   return this.api.get<Enrollment[]>(`/enrollments/user/${realUid}`).pipe(
+  //     switchMap((enrollments: any[]) => {
+  //       if (enrollments.length === 0) {
+  //         return of([]);
+  //       }
+
+  //       // Appels parallèles RxJS (plus propre que async/await dans map)
+  //       const requests$ = enrollments.map((enr) =>
+  //         this.api.get<any>(`/courses/${enr.courseId}`).pipe(
+  //           map((courseRes) => ({
+  //             ...this.mapToEnrollment(enr),
+  //             courseDetails: courseRes?.data ?? null, // 🟢 extraction du data
+  //           })),
+  //           catchError(
+  //             () => of(this.mapToEnrollment(enr)) // en cas d'erreur, on renvoie juste l’enrollment
+  //           )
+  //         )
+  //       );
+
+  //       return forkJoin(requests$);
+  //     })
+  //   );
+  // }
+
   getUserEnrollmentsWithCourseDetails(): Observable<Enrollment[]> {
     const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
 
@@ -263,29 +306,71 @@ export class EnrollmentService {
 
     const realUid = localUser.uid;
 
-    return this.api.get<Enrollment[]>(`/enrollments/student/${realUid}`).pipe(
-      switchMap((enrollments: any[]) => {
-        if (enrollments.length === 0) {
-          return of([]);
-        }
+    return this.api
+      .get<EnrollmentApiResponse>(`/enrollments/user/${realUid}`)
+      .pipe(
+        switchMap((response) => {
+          const enrollments = response.data; // ✅ EXTRACTION CORRECTE
 
-        // Appels parallèles RxJS (plus propre que async/await dans map)
-        const requests$ = enrollments.map((enr) =>
-          this.api.get<any>(`/courses/${enr.courseId}`).pipe(
-            map((courseRes) => ({
-              ...this.mapToEnrollment(enr),
-              courseDetails: courseRes?.data ?? null, // 🟢 extraction du data
-            })),
-            catchError(
-              () => of(this.mapToEnrollment(enr)) // en cas d'erreur, on renvoie juste l’enrollment
+          if (!Array.isArray(enrollments) || enrollments.length === 0) {
+            return of([]);
+          }
+
+          const requests$ = enrollments.map((enr) =>
+            this.api.get<any>(`/courses/${enr.courseId}`).pipe(
+              map((courseRes) => ({
+                ...this.mapToEnrollment(enr),
+                courseDetails: courseRes?.data, // ⚠️ PAS null
+              })),
+              catchError(() =>
+                of({
+                  ...this.mapToEnrollment(enr),
+                  courseDetails: undefined, // ✅ OK pour TypeScript
+                })
+              )
             )
-          )
-        );
+          );
 
-        return forkJoin(requests$);
-      })
-    );
+          return forkJoin(requests$);
+        })
+      );
   }
+  // getUserEnrollmentsWithCourseDetails(): Observable<Enrollment[]> {
+  //   const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+
+  //   if (!localUser?.uid) {
+  //     console.warn('❌ Aucun utilisateur trouvé dans localStorage');
+  //     return of([]);
+  //   }
+
+  //   const realUid = localUser.uid;
+
+  //   return this.api.get<any>(`/enrollments/user/${realUid}`).pipe(
+  //     map((response) => response.data ?? []), // ✅ EXTRACTION DU TABLEAU
+  //     switchMap((enrollments: any[]) => {
+  //       if (!Array.isArray(enrollments) || enrollments.length === 0) {
+  //         return of([]);
+  //       }
+
+  //       const requests$ = enrollments.map((enr) =>
+  //         this.api.get<any>(`/courses/${enr.courseId}`).pipe(
+  //           map((courseRes) => ({
+  //             ...this.mapToEnrollment(enr),
+  //             courseDetails: courseRes?.data ?? null, // ✅ extraction du data
+  //           })),
+  //           catchError(() =>
+  //             of({
+  //               ...this.mapToEnrollment(enr),
+  //               courseDetails: null,
+  //             })
+  //           )
+  //         )
+  //       );
+
+  //       return forkJoin(requests$);
+  //     })
+  //   );
+  // }
 
   async activatePremiumAccess(): Promise<void> {
     const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
@@ -326,17 +411,27 @@ export class EnrollmentService {
   }
 
   // Récupérer les inscriptions par statut
-  getEnrollmentsByStatus(status: 'active' | 'completed' | 'cancelled'): Observable<Enrollment[]> {
+  getEnrollmentsByStatus(
+    status: 'active' | 'completed' | 'cancelled'
+  ): Observable<Enrollment[]> {
     return this.api.get<Enrollment[]>(`/enrollments/status/${status}`);
   }
 
   // Récupérer l'inscription d'un utilisateur à un cours spécifique
-  getUserCourseEnrollment(userId: string, courseId: string): Observable<Enrollment> {
-    return this.api.get<Enrollment>(`/enrollments/user/${userId}/course/${courseId}`);
+  getUserCourseEnrollment(
+    userId: string,
+    courseId: string
+  ): Observable<Enrollment> {
+    return this.api.get<Enrollment>(
+      `/enrollments/user/${userId}/course/${courseId}`
+    );
   }
 
   // Mettre à jour une inscription complète
-  updateEnrollment(enrollmentId: string, data: Partial<Enrollment>): Observable<Enrollment> {
+  updateEnrollment(
+    enrollmentId: string,
+    data: Partial<Enrollment>
+  ): Observable<Enrollment> {
     return this.api.put<Enrollment>(`/enrollments/${enrollmentId}`, data);
   }
 
@@ -346,8 +441,13 @@ export class EnrollmentService {
   }
 
   // Mettre à jour uniquement la progression (PATCH)
-  updateEnrollmentProgress(enrollmentId: string, progress: number): Observable<Enrollment> {
-    return this.api.patch<Enrollment>(`/enrollments/${enrollmentId}/progress`, { progress });
+  updateEnrollmentProgress(
+    enrollmentId: string,
+    progress: number
+  ): Observable<Enrollment> {
+    return this.api.patch<Enrollment>(`/enrollments/${enrollmentId}/progress`, {
+      progress,
+    });
   }
 
   // Mettre à jour uniquement le statut (PATCH)
@@ -355,7 +455,9 @@ export class EnrollmentService {
     enrollmentId: string,
     status: 'active' | 'completed' | 'cancelled'
   ): Observable<Enrollment> {
-    return this.api.patch<Enrollment>(`/enrollments/${enrollmentId}/status`, { status });
+    return this.api.patch<Enrollment>(`/enrollments/${enrollmentId}/status`, {
+      status,
+    });
   }
 
   // Marquer un cours comme complété
@@ -363,9 +465,7 @@ export class EnrollmentService {
     await firstValueFrom(
       this.updateEnrollmentStatus(enrollmentId, 'completed')
     );
-    await firstValueFrom(
-      this.updateEnrollmentProgress(enrollmentId, 100)
-    );
+    await firstValueFrom(this.updateEnrollmentProgress(enrollmentId, 100));
   }
 
   // Annuler une inscription

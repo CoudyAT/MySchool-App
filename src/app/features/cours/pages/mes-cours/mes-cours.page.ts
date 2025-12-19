@@ -87,11 +87,11 @@ export class MesCoursPage implements OnInit {
 
   filterCoursesBySegment() {
     if (this.selectedSegment === 'cours') {
-      // Filtrer pour afficher uniquement les cours normaux (isOnline = false ou undefined)
-      this.filteredCourses = this.courses.filter((c) => !c.isOnline);
+      // Filtrer pour afficher les cours qui ne sont PAS "En ligne"
+      this.filteredCourses = this.courses.filter((c) => c.type !== 'En ligne');
     } else {
-      // Filtrer pour afficher uniquement les cours en ligne (isOnline = true)
-      this.filteredCourses = this.courses.filter((c) => c.isOnline);
+      // Filtrer pour afficher uniquement les cours "En ligne"
+      this.filteredCourses = this.courses.filter((c) => c.type === 'En ligne');
     }
   }
 
@@ -112,6 +112,7 @@ export class MesCoursPage implements OnInit {
   }
 
   openCourse(course: Course) {
+    console.log('Ouvrir le cours:', course.id);
     this.router.navigate(['/course-detail', course.id]);
   }
 

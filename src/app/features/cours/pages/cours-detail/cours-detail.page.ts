@@ -245,6 +245,7 @@ export class CoursDetailPage implements OnInit, OnDestroy {
   }
 
   goToDetailsCours() {
+    console.log('Aller aux détails du cours' , this.course?.id);
     this.router.navigate(['/detail'], {
       queryParams: { courseId: this.course?.id },
     });

@@ -96,7 +96,7 @@ export class CourseVideoPage implements OnInit {
 
   goBack() {
     //this.location.back(); 
-    this.router.navigate(['/course-detail', this.course.id]);
+    this.router.navigate(['/mes-cours']);
   }
 
   startCourse() {

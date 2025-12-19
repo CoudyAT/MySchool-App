@@ -81,4 +81,18 @@ export interface Course {
   enrolled?: boolean;
   data?: any;
   isOnline?: boolean;
+  onlineExtras?: OnlineCourseExtras;
 }
+
+export interface OnlineCourseExtras {
+  livePlatform?: 'Zoom' | 'Meet' | 'Teams';
+  startDate?: Date;
+  endDate?: Date;
+  schedule?: string; // ex: "Lundi & Mercredi 18h-20h"
+  instructor?: string;
+  meetingLink?: string;
+}
+
+
+export type CourseKind = 'CLASSIC' | 'ONLINE';
+
