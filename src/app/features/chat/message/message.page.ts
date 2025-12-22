@@ -68,20 +68,29 @@ export class MessagePage implements OnInit {
   }
 
   async ngOnInit() {
-    const user = this.auth.currentUser;
+    const storedUser = localStorage.getItem('currentUser');
 
-    if (user) {
-      this.userId = user.uid;
-      console.log('User ID depuis Firebase:', this.userId);
-      await this.loadConversationHistory();
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+      this.currentUser = user;
+      this.userId = user.id;  //
+      console.log('User ID depuis localStorage:', this.userId);
+      this.loadConversationHistory();
+      return;
+    }
+
+    // Si pas dans localStorage, fallback sur Firebase Auth
+    const authUser = this.auth.currentUser;
+    if (authUser) {
+      this.userId = authUser.uid;
+      this.loadConversationHistory();
     } else {
-      // Écouter les changements d'authentification
-      this.auth.onAuthStateChanged((authUser) => {
-        if (authUser) {
-          this.userId = authUser.uid;
-          // console.log('User ID depuis onAuthStateChanged:', this.userId);
+      this.auth.onAuthStateChanged((user) => {
+        if (user) {
+          this.userId = user.uid;
           this.loadConversationHistory();
-        } else {
+        }
+        else {
           this.handleNoUser();
         }
       });

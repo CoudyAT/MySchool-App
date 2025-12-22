@@ -19,7 +19,7 @@
   <div class="content-wrapper">
     <!-- Image de couverture avec overlay -->
     <div class="cover-image-container">
-      <img src="assets/algo.svg" alt="MySchool Logo" class="cover-image">
+      <img src="{{course?.image}}" alt="MySchool Logo" class="cover-image">
       <div class="image-overlay"></div>
     </div>
 
@@ -36,7 +36,8 @@
 
       <!-- Info sessions et exercices -->
       <div class="course-meta">
-        <span class="sessions" *ngIf="isUserEnrolled" (click)="goToDetailsCours()">{{course?.chaptersIds?.length}} Chapitres</span>
+        <span class="sessions" *ngIf="isUserEnrolled" (click)="goToDetailsCours()">{{course?.chaptersIds?.length}}
+          Chapitres</span>
         <span class="separator">·</span>
         <span class="exercises">{{course?.exercises}} Exercices</span>
       </div>
@@ -59,7 +60,8 @@
           <div class="level-icon-wrapper" [class.completed]="level.completed">
             <ion-icon [name]="level.icon" class="level-icon"></ion-icon>
           </div>
-          <div *ngIf="i < (course?.levels?.length || 0) - 1" class="level-connector" [class.completed]="level.completed"></div>
+          <div *ngIf="i < (course?.levels?.length || 0) - 1" class="level-connector"
+            [class.completed]="level.completed"></div>
         </div>
       </div>
 
@@ -68,7 +70,49 @@
         <h2 class="section-title">Description cours</h2>
         <p class="description-text">{{course?.description}}</p>
       </div>
-      
+
+      <!-- Liste des chapitres -->
+      <div class="chapters-section" *ngIf="chapters.length > 0">
+        <h2 class="section-title">
+          Chapitres du cours
+          <span class="chapters-count">({{chapters.length}} chapitres)</span>
+        </h2>
+
+        <div class="chapters-list">
+          <ion-card *ngFor="let chapter of chapters; let i = index" class="chapter-card">
+
+            <ion-card-content class="chapter-card-content">
+              <div class="chapter-left">
+                <div class="chapter-number">
+                  {{ i + 1 }}
+                </div>
+                <div class="chapter-info">
+                  <h3 class="chapter-title">{{ chapter.title }}</h3>
+                  <p class="chapter-duration" *ngIf="chapter.duration">
+                    <ion-icon name="time-outline"></ion-icon>
+                    {{ chapter.duration }} min
+                  </p>
+                </div>
+              </div>
+
+              <div class="chapter-right">
+                <!-- Indicateur verrouillé / déverrouillé (si tu gères cela plus tard) -->
+                <ion-icon name="lock-open-outline" class="unlock-icon" *ngIf="isUserEnrolled">
+                </ion-icon>
+                <ion-icon name="lock-closed-outline" class="lock-icon" *ngIf="!isUserEnrolled">
+                </ion-icon>
+
+                <ion-icon name="chevron-forward-outline" class="arrow-icon"></ion-icon>
+              </div>
+            </ion-card-content>
+          </ion-card>
+        </div>
+      </div>
+
+
+      <div class="empty-chapters" *ngIf="chapters.length === 0">
+        <p>Aucun chapitre disponible pour ce cours.</p>
+      </div>
       <!-- Section Documents -->
       <div class="documents-section">
         <h2 class="section-title">Documents</h2>

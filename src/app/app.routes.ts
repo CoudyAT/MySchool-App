@@ -26,6 +26,8 @@ import { UsersPage } from './Admin/pages/users/users.page';
 import { DashboardPage } from './Admin/pages/dashboard/dashboard.page';
 import { UserDetailsPage } from './Admin/pages/user-details/user-details.page';
 import { InstructorsPage } from './Admin/pages/instructors/instructors.page';
+import { EditCoursPage } from './Admin/pages/cours/pages/edit-cours/edit-cours.page';
+import { UserEditPage } from './Admin/pages/user-edit/user-edit.page';
 
 export const routes: Routes = [
   {
@@ -127,10 +129,14 @@ export const routes: Routes = [
         path: 'user-details/:id', component: UserDetailsPage
       },
       {
+        path: 'user-edit/:id', component: UserEditPage
+      },
+      {
         path: 'instructors', component: InstructorsPage
       },
-
-
+      {
+        path: 'edit-cours/:id', component: EditCoursPage
+      },
     ],
   },
   {
@@ -148,12 +154,8 @@ export const routes: Routes = [
       ).then((m) => m.InstructorProfilePage),
   },
   {
-    path: 'user-edit',
-    loadComponent: () => import('./Admin/pages/user-edit/user-edit.page').then(m => m.UserEditPage)
-  },  {
     path: 'instructor-details',
-    loadComponent: () => import('./Admin/pages/instructor-details/instructor-details.page').then( m => m.InstructorDetailsPage)
+    loadComponent: () => import('./Admin/pages/instructor-details/instructor-details.page').then(m => m.InstructorDetailsPage)
   },
-
 
 ];

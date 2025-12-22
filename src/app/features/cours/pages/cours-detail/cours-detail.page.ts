@@ -30,12 +30,13 @@ import {
   trophyOutline,
   downloadOutline,
   ellipsisVertical,
-  eyeOutline,
+  eyeOutline, lockOpenOutline, lockClosedOutline, chevronForwardOutline
 } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { CourseService } from 'src/app/features/services/courseService';
-import { Course } from 'src/app/models/course.model';
+import { Chapter, Course } from 'src/app/models/course.model';
 import { EnrollmentService } from 'src/app/features/services/enrollmentService'; // Ajouter cet import
+import { ChapterService } from 'src/app/features/services/chapter.service';
 
 @Component({
   selector: 'app-cours-detail',
@@ -63,7 +64,9 @@ export class CoursDetailPage implements OnInit, OnDestroy {
   isUserEnrolled = false;
   enrollmentProgress = 0;
   currentEnrollment: any = null;
+  chapter!: Chapter;
 
+  chapters: Chapter[] = [];
   private courseSubscription: Subscription = new Subscription();
   private enrollmentSubscription: Subscription = new Subscription();
 
@@ -72,23 +75,14 @@ export class CoursDetailPage implements OnInit, OnDestroy {
     private router: Router,
     private location: Location,
     private courseService: CourseService,
-    private enrollmentService: EnrollmentService // Ajouter le service
+    private enrollmentService: EnrollmentService,
+    private chapterService: ChapterService
+
   ) {
     addIcons({
-      chevronBackOutline,
-      eyeOutline,
-      star,
-      starHalf,
-      downloadOutline,
-      ellipsisVertical,
-      languageOutline,
-      starOutline: starOutline,
-      checkmarkCircle: checkmarkCircle,
-      flagOutline: flagOutline,
-      timeOutline: timeOutline,
-      helpCircleOutline: helpCircleOutline,
-      trophyOutline: trophyOutline,
-      arrowBackOutline: arrowBackOutline,
+      chevronBackOutline, star, starHalf, timeOutline, lockOpenOutline, lockClosedOutline,
+      chevronForwardOutline, downloadOutline, eyeOutline, ellipsisVertical, languageOutline,
+      starOutline, checkmarkCircle, flagOutline, helpCircleOutline, trophyOutline, arrowBackOutline,
     });
   }
 
@@ -111,16 +105,13 @@ export class CoursDetailPage implements OnInit, OnDestroy {
       this.courseSubscription = this.courseService
         .getCourse(courseId)
         .subscribe({
-          next: (courseData) => {
+          next: (courseData: any) => {
             if (courseData) {
-              this.course = {
-                ...courseData,
-                levels: courseData.levels || this.getDefaultLevels(),
-                rating: courseData.rating || 0,
-                maxRating: courseData.maxRating || 5,
-                image: courseData.image || 'assets/images/default-course.jpg',
-              };
+              this.course = courseData.data;
               console.log('Course loaded:', this.course);
+
+              // Charger les chapitres après avoir le cours
+              this.loadChapters(courseId);
 
               // Vérifier si l'utilisateur est déjà inscrit à ce cours
               this.checkUserEnrollment(courseId);
@@ -247,6 +238,26 @@ export class CoursDetailPage implements OnInit, OnDestroy {
   goToDetailsCours() {
     this.router.navigate(['/detail'], {
       queryParams: { courseId: this.course?.id },
+    });
+  }
+
+  loadChapters(courseId: string) {
+
+    this.chapterService.getChaptersByCourse(courseId).subscribe({
+      next: (response: any) => {
+        if (response && response.data) {
+          this.chapters = response.data;
+          console.log('Chapitres chargés :', this.chapters);
+
+          this.chapters.sort((a, b) => (a.order || 0) - (b.order || 0));
+        } else {
+          this.chapters = [];
+        }
+      },
+      error: (err) => {
+        console.error('Erreur chargement chapitres:', err);
+        this.chapters = [];
+      }
     });
   }
 }

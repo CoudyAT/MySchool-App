@@ -3,17 +3,11 @@
     <button class="back-btn" routerLink="/admin-login/users">← Retour</button>
     <h1>{{ user.firstName }} {{ user.lastName }}</h1>
 
-    <ion-button size="small" *ngIf="!isEditMode" (click)="enableEdit()">
-      Modifier
-    </ion-button>
-
-    <ion-button color="success" size="small" *ngIf="isEditMode" (click)="saveChanges()">
-      Enregistrer
-    </ion-button>
-
-    <ion-button color="medium" size="small" *ngIf="isEditMode" (click)="cancelEdit()">
-      Annuler
-    </ion-button>
+    <div class="actions">
+      <button class="btn-primary" (click)="edit(user)">
+        Modifier
+      </button>
+    </div>
   </div>
 
   <div class="card">

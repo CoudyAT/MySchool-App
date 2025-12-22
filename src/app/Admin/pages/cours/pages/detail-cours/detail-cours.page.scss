@@ -44,7 +44,8 @@ h1 {
 }
 
 .btn-primary,
-.btn-outline {
+.btn-outline,
+.btn-secondary {
   padding: 0.7rem 1.2rem;
   border-radius: 8px;
   font-weight: 600;
@@ -72,6 +73,17 @@ h1 {
 .btn-outline:hover {
   background: #f2fef2;
   border-color: #b1fca5;
+}
+
+.btn-secondary {
+  background: white;
+  color: #4c65af;
+  border: 1px solid #caeffe;
+}
+
+.btn-secondary:hover {
+  background: #f2fef2;
+  border-color: #a5d3fc;
 }
 
 .card {

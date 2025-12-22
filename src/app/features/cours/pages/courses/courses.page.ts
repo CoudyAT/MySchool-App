@@ -42,6 +42,8 @@ import {
   bookOutline,
   bulbOutline,
   calculatorOutline,
+  lockOpenOutline,
+  optionsOutline
 } from 'ionicons/icons';
 import { Router } from '@angular/router';
 
@@ -101,23 +103,7 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
     private modalCtrl: ModalController,
     private instructorService: InstructorService
   ) {
-    addIcons({
-      personCircleOutline,
-      starOutline,
-      addOutline,
-      shieldCheckmark,
-      trendingUpOutline,
-      bookOutline,
-      bulbOutline,
-      calculatorOutline,
-      logOutOutline,
-      ribbonOutline,
-      checkmarkCircle,
-      cardOutline,
-      shieldCheckmarkOutline,
-      arrowForwardOutline,
-      playCircleOutline,
-    });
+    addIcons({ personCircleOutline, starOutline, addOutline, optionsOutline, lockOpenOutline, shieldCheckmark, trendingUpOutline, bookOutline, bulbOutline, calculatorOutline, logOutOutline, ribbonOutline, checkmarkCircle, cardOutline, shieldCheckmarkOutline, arrowForwardOutline, playCircleOutline, });
   }
 
   ngOnInit() {

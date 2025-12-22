@@ -76,7 +76,6 @@ export class UsersPage implements OnInit {
       return;
     }
 
-    // Appelle ton service API ici
     this.userService.createUser(this.newUser).subscribe({
       next: (createdUser) => {
         this.allUsers.push(createdUser);
@@ -227,7 +226,7 @@ export class UsersPage implements OnInit {
   }
 
   editUser(user: User) {
-    this.router.navigate(['/admin-login/user-details', user.uid]);
+    this.router.navigate(['/admin-login/user-edit', user.uid]);
   }
 
   deleteUser(user: User) {

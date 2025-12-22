@@ -5,7 +5,7 @@ import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/stan
 import { IonicModule } from "@ionic/angular";
 import { Chapter, Course } from 'src/app/models/course.model';
 import { CourseService } from 'src/app/features/services/courseService';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastController, AlertController } from '@ionic/angular';
 import { ChapterService } from 'src/app/features/services/chapter.service';
 import { LessonService } from 'src/app/features/services/lesson.service';
@@ -29,7 +29,8 @@ export class DetailCoursPage implements OnInit {
     private toastCtrl: ToastController,
     private chapterService: ChapterService,
     private lessonService: LessonService,
-    private exerciseService: ExerciseService) { }
+    private exerciseService: ExerciseService,
+    private router: Router) { }
   course!: Course;
   courseId: string = '';
   isAddChapterModalOpen = false;
@@ -292,4 +293,8 @@ export class DetailCoursPage implements OnInit {
     await toast.present();
   }
 
+  editCourse(course: Course) {
+    this.router.navigate(['/admin-login/edit-cours', course.id]);
+
+  }
 }

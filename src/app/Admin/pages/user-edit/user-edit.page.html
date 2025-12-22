@@ -1,13 +1,85 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>user-edit</ion-title>
-  </ion-toolbar>
-</ion-header>
+<div class="page">
+  <div class="header">
+    <button class="back-btn" routerLink="/admin-login/users">← Retour</button>
+    <h1>{{ user.firstName }} {{ user.lastName }}</h1>
+  </div>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">user-edit</ion-title>
-    </ion-toolbar>
-  </ion-header>
-</ion-content>
+  <form (ngSubmit)="saveUser()" #editForm="ngForm">
+
+    <div class="card">
+      <!-- Informations générales -->
+      <section>
+        <h2>Informations générales</h2>
+        <div class="grid">
+
+          <div class="info-block">
+            <p class="label">Prénom</p>
+            <ion-input type="text" [(ngModel)]="user.firstName" name="firstName" required>
+            </ion-input>
+          </div>
+
+          <div class="info-block">
+            <p class="label">Nom</p>
+            <ion-input type="text" [(ngModel)]="user.lastName" name="lastName">
+            </ion-input>
+          </div>
+
+          <div class="info-block">
+            <p class="label">Email</p>
+            <ion-input type="email" [(ngModel)]="user.email" name="email">
+            </ion-input>
+          </div>
+
+          <div class="info-block">
+            <p class="label">Téléphone</p>
+            <ion-input type="tel" [(ngModel)]="user.phone" name="phone">
+            </ion-input>
+          </div>
+
+          <div class="info-block">
+            <p class="label">Niveau</p>
+            <ion-select [(ngModel)]="user.level" name="level">
+              <ion-select-option value="Débutant">Débutant</ion-select-option>
+              <ion-select-option value="Intermédiaire">Intermédiaire</ion-select-option>
+              <ion-select-option value="Avancé">Avancé</ion-select-option>
+            </ion-select>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Détails administratifs -->
+      <section>
+        <h2>Détails administratifs</h2>
+        <div class="grid">
+
+          <div class="info-block">
+            <p class="label">Formule</p>
+            <ion-select [(ngModel)]="user.isPremium" name="isPremium">
+              <ion-select-option [value]="true">Premium</ion-select-option>
+              <ion-select-option [value]="false">Standard</ion-select-option>
+            </ion-select>
+          </div>
+
+          <div class="info-block">
+            <p class="label">Statut du compte</p>
+            <ion-toggle [(ngModel)]="user.status" name="status">
+            </ion-toggle>
+          </div>
+
+        </div>
+      </section>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="btn-secondary" routerLink="/admin-login/users">
+        Annuler
+      </button>
+      <button type="submit" class="btn-primary">
+        Enregistrer
+      </button>
+    </div>
+
+  </form>
+
+</div>

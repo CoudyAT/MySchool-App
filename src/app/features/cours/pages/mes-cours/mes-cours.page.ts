@@ -10,16 +10,22 @@ import {
   IonCard,
   IonCardContent,
   IonIcon,
-  IonButton,
+  IonButton, IonSpinner
 } from '@ionic/angular/standalone';
 import { BottomMenuComponent } from 'src/app/shared/components/bottom-menu/bottom-menu.component';
+import { addIcons } from 'ionicons';
+import {
+  checkmarkCircle,
+  lockOpenOutline,
+  optionsOutline
+} from 'ionicons/icons';
 
 @Component({
   selector: 'app-mes-cours',
   templateUrl: './mes-cours.page.html',
   styleUrls: ['./mes-cours.page.scss'],
   standalone: true,
-  imports: [
+  imports: [IonSpinner,
     CommonModule,
     IonButton,
     IonIcon,
@@ -38,7 +44,9 @@ export class MesCoursPage implements OnInit {
 
   isLoading = true;
 
-  constructor(private router: Router, private courseService: CourseService) {}
+  constructor(private router: Router, private courseService: CourseService) {
+    addIcons({ optionsOutline, lockOpenOutline, checkmarkCircle });
+  }
 
   ngOnInit() {
     this.loadCourses();
@@ -84,27 +92,38 @@ export class MesCoursPage implements OnInit {
     this.isLoading = true;
 
     const sub = this.courseService.getAllCourses().subscribe({
-      next: (courses) => {
-        this.courses = courses;
-        this.filteredCourses = [...courses];
+      next: (courses: Course[]) => {
+        const publishedCourses = courses.filter(course => course.isPublished === true);
+
+        this.courses = publishedCourses;
+        this.filteredCourses = [...publishedCourses];
 
         this.categories = [
           ...new Set(
-            courses.map((c) => c.category).filter((x) => x && x.trim() !== '')
-          ),
+            publishedCourses
+              .map(c => c.category)
+              .filter(cat => cat && cat.trim() !== '')
+          )
         ];
+
+        console.log('Cours publiés chargés :', publishedCourses.length);
+        console.log('Catégories chargées :', this.categories);
 
         this.isLoading = false;
       },
       error: (err) => {
-        console.error('Erreur API:', err);
+        console.error('Erreur chargement cours:', err);
         this.isLoading = false;
       },
     });
 
     this.subscription.add(sub);
   }
-
+  getCoursesByCategory(category: string): Course[] {
+    return this.filteredCourses.filter(course =>
+      course.category?.trim() === category.trim()
+    );
+  }
   private normalizeCourses(courses: any[]): any[] {
     return courses.map((course) => {
       // Fix encoding issues (if needed, depending on your actual data source)
@@ -140,14 +159,30 @@ export class MesCoursPage implements OnInit {
     });
   }
 
-  searchCourse(event?: any) {
-    const term = event?.detail?.value?.toLowerCase() ?? '';
+  searchCourse(event: any) {
+    const term = event.target.value?.toLowerCase().trim() ?? '';
 
-    this.filteredCourses = this.courses.filter(
-      (c) =>
-        c.title.toLowerCase().includes(term) ||
-        c.category.toLowerCase().includes(term)
-    );
+    if (term === '') {
+      this.filteredCourses = [...this.courses];
+    } else {
+      this.filteredCourses = this.courses.filter(course =>
+        course.title?.toLowerCase().includes(term) ||
+        course.category?.toLowerCase().includes(term)
+      );
+    }
+
+    // Recalcule les catégories visibles basées sur les cours filtrés
+    this.updateCategoriesFromFiltered();
+  }
+
+  private updateCategoriesFromFiltered() {
+    this.categories = [
+      ...new Set(
+        this.filteredCourses
+          .map(c => c.category)
+          .filter(cat => cat && cat.trim() !== '')
+      )
+    ];
   }
 
   openCourse(course: Course) {

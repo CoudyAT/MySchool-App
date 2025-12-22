@@ -1,40 +1,21 @@
 <form [formGroup]="courseForm" class="course-form" (ngSubmit)="submitForm()">
   <div class="form-grid">
-    <!-- Titre du cours -->
-    <div class="form-group">
-      <label for="title" class="form-label">Titre du cours <span class="required">*</span></label>
-      <input id="title" type="text" formControlName="title" class="form-input"
-        placeholder="Ex: Introduction à Angular" />
-      <div *ngIf="courseForm.get('title')?.invalid && courseForm.get('title')?.touched" class="error-message">
-        Le titre est requis
-      </div>
-    </div>
 
-    <!-- Catégorie -->
+    <!-- Type de cours -->
     <div class="form-group">
-      <label for="category" class="form-label">Catégorie <span class="required">*</span></label>
-      <select id="category" formControlName="category" class="form-input">
-        <option value="">Sélectionnez une catégorie</option>
-        <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+      <label for="type" class="form-label">Type du cours</label>
+      <select id="type" formControlName="type" class="form-input">
+        <option value="">Sélectionnez un type</option>
+        <option value="En ligne">En ligne</option>
+        <option value="Présentiel">Présentiel</option>
+        <option value="Hybride">Hybride</option>
       </select>
-      <div *ngIf="courseForm.get('category')?.invalid && courseForm.get('category')?.touched" class="error-message">
-        La catégorie est requise
-      </div>
     </div>
-
     <!-- Prix -->
     <div class="form-group">
       <label for="price" class="form-label">Prix (FCFA)</label>
       <input id="price" type="number" formControlName="price" class="form-input" placeholder="0" min="0" />
     </div>
-
-    <!-- Description -->
-    <div class="form-group full-width">
-      <label for="description" class="form-label">Description</label>
-      <textarea id="description" formControlName="description" class="form-textarea"
-        placeholder="Décrivez le contenu et les objectifs du cours..." rows="5"></textarea>
-    </div>
-
     <!-- Upload de l'image de couverture -->
     <div class="form-group full-width">
       <label class="form-label">Image de couverture</label>
@@ -50,6 +31,51 @@
       </div>
 
       <input #fileInput type="file" accept="image/*" (change)="onFileSelected($event)" hidden />
+    </div>
+    <!-- Titre du cours -->
+    <div class="form-group">
+      <label for="title" class="form-label">Titre du cours <span class="required">*</span></label>
+      <input id="title" type="text" formControlName="title" class="form-input"
+        placeholder="Ex: Introduction à Angular" />
+      <div *ngIf="courseForm.get('title')?.invalid && courseForm.get('title')?.touched" class="error-message">
+        Le titre est requis
+      </div>
+    </div>
+
+    <!-- Catégorie -->
+    <div class="form-group">
+      <label class="form-label">Catégorie <span class="required">*</span></label>
+
+      <!-- Sélection ou ajout de catégorie -->
+      <div class="category-selector">
+        <select formControlName="selectedCategoryOption" class="form-input">
+          <option value="">Sélectionnez une catégorie</option>
+          <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+          <option value="__add_new__">+ Ajouter une nouvelle catégorie...</option>
+        </select>
+
+        <div *ngIf="showNewCategoryInput" class="new-category-input ml-2">
+          <input type="text" formControlName="newCategoryName" placeholder="Nom de la nouvelle catégorie"
+            class="form-input" (blur)="addNewCategoryIfValid()" (keyup.enter)="addNewCategoryIfValid()" />
+          <button type="button" class="btn-small btn-secondary ml-2" (click)="cancelNewCategory()">
+            Annuler
+          </button>
+        </div>
+      </div>
+
+      <!-- Message d'erreur pour la catégorie principale -->
+      <div *ngIf="courseForm.get('category')?.invalid && courseForm.get('category')?.touched" class="error-message">
+        La catégorie est requise
+      </div>
+    </div>
+
+
+
+    <!-- Description -->
+    <div class="form-group full-width">
+      <label for="description" class="form-label">Description</label>
+      <textarea id="description" formControlName="description" class="form-textarea"
+        placeholder="Décrivez le contenu et les objectifs du cours..." rows="5"></textarea>
     </div>
 
     <!-- Sessions -->
@@ -75,16 +101,6 @@
       </select>
     </div>
 
-    <!-- Type de cours -->
-    <div class="form-group">
-      <label for="type" class="form-label">Type du cours</label>
-      <select id="type" formControlName="type" class="form-input">
-        <option value="">Sélectionnez un type</option>
-        <option value="En ligne">En ligne</option>
-        <option value="Présentiel">Présentiel</option>
-        <option value="Hybride">Hybride</option>
-      </select>
-    </div>
 
     <!-- Durée -->
     <div class="form-group">

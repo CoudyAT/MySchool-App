@@ -10,106 +10,62 @@
 
     <!-- Barre de recherche et filtres -->
     <div class="search-filter-container">
-      <ion-searchbar 
-        placeholder="Rechercher un cours"
-        (ionFocus)="searchCourse()"
-        class="custom-searchbar">
+      <ion-searchbar placeholder="Rechercher un cours" (ionInput)="searchCourse($event)" class="custom-searchbar">
       </ion-searchbar>
-      <ion-button 
-        fill="clear" 
-        class="filter-button"
-        (click)="openFilters()">
+      <ion-button fill="clear" class="filter-button" (click)="openFilters()">
         <ion-icon slot="start" name="options-outline"></ion-icon>
         Filtres
       </ion-button>
     </div>
 
-    <!-- Liste des cours par catégorie -->
-    <div class="courses-container">
-      <!-- Maths au collège -->
-      <h2 class="category-title">Maths au collège</h2>
-      <div class="courses-row">
-        <ion-card 
-          *ngFor="let course of courses.slice(0, 2)" 
-          class="course-card"
-          (click)="openCourse(course)">
-          <div class="card-image">
-            <img src="assets/algo.svg" alt="MySchool Logo" >
-            <div class="card-badge">
-              <ion-icon name="lock-open-outline"></ion-icon>
-            </div>
-          </div>
-          <ion-card-content>
-           <div *ngIf="course.certificateAvailable" class="status-badge">
-                  <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
-                  <span>Certificat disponible</span>
-            </div>
-            <h3 class="course-title">{{course.title}}</h3>
-            <div class="course-info">
-              <span class="sessions">{{course.sessions}} Sessions</span>
-              <span class="separator">•</span>
-              <span class="exercises">{{course.exercises}} Exercices</span>
-            </div>
-          </ion-card-content>
-        </ion-card>
-      </div>
+    <!-- Chargement -->
+    <div class="loading-container" *ngIf="isLoading">
+      <ion-spinner name="circles"></ion-spinner>
+      <p>Chargement des cours...</p>
+    </div>
 
-      <!-- PC au collège -->
-      <h2 class="category-title">PC au collège</h2>
-      <div class="courses-row">
-        <ion-card 
-          *ngFor="let course of courses.slice(2, 4)" 
-          class="course-card"
-          (click)="openCourse(course)">
-          <div class="card-image">
-           <img src="assets/algo.svg" alt="MySchool Logo" >
-            <div class="card-badge">
-              <ion-icon name="lock-open-outline"></ion-icon>
-            </div>
-          </div>
-          <ion-card-content>
-            <div *ngIf="course.certificateAvailable" class="status-badge">
-                  <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
-                  <span>Certificat disponible</span>
+    <!-- Liste dynamique des cours par catégorie -->
+    <div class="courses-container" *ngIf="!isLoading">
+      <ng-container *ngFor="let category of categories">
+        <h2 class="category-title">{{ category }}</h2>
+        <div class="courses-row">
+          <ion-card *ngFor="let course of getCoursesByCategory(category)" class="course-card"
+            (click)="openCourse(course)">
+
+            <div class="card-image">
+              <img [src]="course.image || 'assets/algo.svg'" alt="{{course.title}}">
+              <div class="card-badge">
+                <ion-icon name="lock-open-outline"></ion-icon>
               </div>
-            <h3 class="course-title">{{course.title}}</h3>
-            <div class="course-info">
-              <span class="sessions">{{course.sessions}} Sessions</span>
-              <span class="separator">•</span>
-              <span class="exercises">{{course.exercises}} Exercices</span>
             </div>
-          </ion-card-content>
-        </ion-card>
-      </div>
 
-      <!-- Sciences de la Vie et de la Terre -->
-      <h2 class="category-title">Sciences de la Vie et de la Terre</h2>
-      <div class="courses-row">
-        <ion-card 
-          *ngFor="let course of courses.slice(4, 6)" 
-          class="course-card"
-          (click)="openCourse(course)">
-          <div class="card-image">
-            <img src="assets/algo.svg" alt="MySchool Logo" >
-            <div class="card-badge">
-              <ion-icon name="lock-open-outline"></ion-icon>
-            </div>
+            <ion-card-content>
+              <div *ngIf="course.certificateAvailable" class="status-badge">
+                <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
+                <span>Certificat disponible</span>
+              </div>
+              <h3 class="course-title">{{ course.title }}</h3>
+              <div class="course-info">
+                <span class="sessions">{{ course.sessions || 0 }} Sessions</span>
+                <span class="separator">•</span>
+                <span class="exercises">{{ course.exercises || 0 }} Exercices</span>
+              </div>
+            </ion-card-content>
+          </ion-card>
+
+          <!-- Message si aucun cours dans la catégorie (optionnel) -->
+          <div *ngIf="getCoursesByCategory(category).length === 0" class="empty-category">
+            Aucun cours disponible pour le moment.
           </div>
-          <ion-card-content>
-            <div *ngIf="course.certificateAvailable" class="status-badge">
-                  <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
-                  <span>Certificat disponible</span>
-            </div>
-            <h3 class="course-title">{{course.title}}</h3>
-            <div class="course-info">
-              <span class="sessions">{{course.sessions}} Sessions</span>
-              <span class="separator">•</span>
-              <span class="exercises">{{course.exercises}} Exercices</span>
-            </div>
-          </ion-card-content>
-        </ion-card>
+        </div>
+      </ng-container>
+
+      <!-- Si aucune catégorie ou aucun cours -->
+      <div *ngIf="categories.length === 0" class="empty-state">
+        <p>Aucun cours disponible pour le moment.</p>
       </div>
     </div>
   </div>
 </ion-content>
+
 <app-bottom-menu activePage="courses"></app-bottom-menu>

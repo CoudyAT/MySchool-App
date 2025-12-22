@@ -19,6 +19,41 @@
     }
   }
 
+  .category-selector {
+    position: relative;
+  }
+
+  .new-category-input {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .btn-small {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    height: 38px; // Aligner avec input
+  }
+
+  .ml-2 {
+    margin-left: 8px;
+  }
+
+
+  .btn-small {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+
+  .ml-2 {
+    margin-left: 8px;
+  }
+
+  .mt-2 {
+    margin-top: 8px;
+  }
+
   .form-label {
     display: block;
     margin-bottom: 8px;

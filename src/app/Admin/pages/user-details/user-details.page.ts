@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService } from 'src/app/features/auth/services/user.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IonicModule } from "@ionic/angular";
 
 import { User } from 'src/app/models/user.model';
@@ -21,7 +21,7 @@ export class UserDetailsPage implements OnInit {
   isEditMode = false;
 
 
-  constructor(private userService: UserService, private route: ActivatedRoute) { }
+  constructor(private userService: UserService, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
     this.isLoading = true;
@@ -63,4 +63,8 @@ export class UserDetailsPage implements OnInit {
     });
   }
 
+  edit(user: User) {
+    this.router.navigate(['/admin-login/user-edit', user.uid]);
+
+  }
 }
