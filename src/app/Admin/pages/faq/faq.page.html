@@ -1,117 +1,219 @@
-<ion-header translucent>
-  <ion-toolbar color="primary">
-    <ion-title>Gestion FAQ</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="openAddFaqModal()">
-        <ion-icon name="add"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
+<div class="p-6 bg-gray-100 min-h-screen">
+  <div class="content">
 
-  <!-- Barre de recherche + filtre -->
-  <ion-toolbar>
-    <ion-searchbar placeholder="Rechercher une question..." [(ngModel)]="searchQuery" (ionInput)="onSearch()"
-      debounce="300">
-    </ion-searchbar>
-  </ion-toolbar>
-
-  <ion-toolbar class="filter-bar">
-    <ion-select interface="popover" [(ngModel)]="selectedCategory" (ionChange)="onFilterCategory()">
-      <ion-select-option value="all">Toutes les catégories</ion-select-option>
-      <ion-select-option *ngFor="let cat of categories" [value]="cat.value">
-        {{ cat.label }}
-      </ion-select-option>
-    </ion-select>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content>
-  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
-    <ion-refresher-content></ion-refresher-content>
-  </ion-refresher>
-
-  <ion-list lines="full">
-    <ion-item-sliding *ngFor="let faq of filteredFaqs">
-      <ion-item>
-        <ion-label>
-          <h3>{{ faq.question }}</h3>
-          <p class="answer-preview" [innerHTML]="faq.answer | slice:0:100"></p>
-          <div class="meta">
-            <ion-chip [color]="getCategoryColor(faq.category)">
-              {{ getCategoryLabel(faq.category) }}
-            </ion-chip>
-            <ion-badge [color]="faq.isActive ? 'success' : 'medium'">
-              {{ faq.isActive ? 'Active' : 'Désactivée' }}
-            </ion-badge>
-          </div>
-        </ion-label>
-      </ion-item>
-
-      <ion-item-options side="end">
-        <ion-item-option color="primary" (click)="openEditFaqModal(faq)">
-          <ion-icon name="create-outline"></ion-icon> Modifier
-        </ion-item-option>
-        <ion-item-option color="danger" (click)="deleteFaq(faq.id)">
-          <ion-icon name="trash-outline"></ion-icon> Supprimer
-        </ion-item-option>
-      </ion-item-options>
-    </ion-item-sliding>
-
-    <div class="empty-state" *ngIf="filteredFaqs.length === 0">
-      <p>Aucune FAQ trouvée</p>
+    <!-- Loader -->
+    <div *ngIf="isLoading" class="loader-container">
+      <div class="spinner"></div>
+      <p class="loader-text">Chargement des FAQs...</p>
     </div>
-  </ion-list>
-</ion-content>
 
-<!-- MODAL AJOUT / ÉDITION -->
-<ion-modal [isOpen]="isModalOpen" (didDismiss)="closeModal()">
-  <ng-template>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>{{ isEditMode ? 'Modifier' : 'Nouvelle' }} question</ion-title>
-        <ion-buttons slot="end">
-          <ion-button (click)="closeModal()">
-            <ion-icon name="close-outline"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
+    <div *ngIf="!isLoading">
 
-    <ion-content class="ion-padding">
-      <ion-list>
-        <ion-item>
-          <ion-label position="floating">Question</ion-label>
-          <ion-input [(ngModel)]="currentFaq.question"></ion-input>
-        </ion-item>
+      <!-- Header -->
+      <div class="header-section">
+        <div class="header">
+          <div>
+            <h1 class="title">Gestion des FAQs</h1>
+            <p class="subtitle">Gérez les questions fréquentes de vos utilisateurs</p>
+          </div>
+          <button class="add-button" (click)="openAddFaqModal()">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Ajouter une FAQ
+          </button>
+        </div>
+      </div>
 
-        <ion-item>
-          <ion-label position="floating">Réponse</ion-label>
-          <ion-textarea [(ngModel)]="currentFaq.answer" rows="6" placeholder="Écrivez la réponse complète...">
-          </ion-textarea>
-        </ion-item>
+      <!-- Stats Cards -->
+      <div class="stats-grid">
+        <div class="stat-card stat-card-total">
+          <div class="stat-card-content">
+            <div class="stat-card-left">
+              <div class="stat-badge">
+                <div class="status-dot dot-blue"></div>
+                <p class="stat-label">TOTAL</p>
+              </div>
+              <p class="stat-number"></p>
+              <p class="stat-description text-blue">Questions</p>
+            </div>
+            <div class="stat-icon bg-blue">
+              <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              </svg>
+            </div>
+          </div>
+        </div>
 
-        <ion-item>
-          <ion-label>Catégorie</ion-label>
-          <ion-select [(ngModel)]="currentFaq.category">
-            <ion-select-option *ngFor="let cat of categories" [value]="cat.value">
-              {{ cat.label }}
-            </ion-select-option>
-          </ion-select>
-        </ion-item>
+        <div class="stat-card stat-card-progress">
+          <div class="stat-card-content">
+            <div class="stat-card-left">
+              <div class="stat-badge">
+                <div class="status-dot dot-amber animate-pulse"></div>
+                <p class="stat-label">ACTIVES</p>
+              </div>
+              <p class="stat-number"></p>
+              <p class="stat-description text-amber">Visibles aux utilisateurs</p>
+            </div>
+            <div class="stat-icon bg-amber">
+              <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+          </div>
+        </div>
 
-        <ion-item>
-          <ion-label>Statut</ion-label>
-          <ion-select [(ngModel)]="currentFaq.isActive">
-            <ion-select-option [value]="true">Active</ion-select-option>
-            <ion-select-option [value]="false">Désactivée</ion-select-option>
-          </ion-select>
-        </ion-item>
-      </ion-list>
+        <div class="stat-card stat-card-completed">
+          <div class="stat-card-content">
+            <div class="stat-card-left">
+              <div class="stat-badge">
+                <div class="status-dot dot-green"></div>
+                <p class="stat-label">DÉSACTIVÉES</p>
+              </div>
+              <p class="stat-number"></p>
+              <p class="stat-description text-green">Masquées</p>
+            </div>
+            <div class="stat-icon bg-green">
+              <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <ion-button expand="block" (click)="saveFaq()" [disabled]="!currentFaq.question || !currentFaq.answer">
-        <ion-icon name="checkmark-outline" slot="start"></ion-icon>
-        {{ isEditMode ? 'Mettre à jour' : 'Ajouter' }}
-      </ion-button>
-    </ion-content>
-  </ng-template>
-</ion-modal>
+      <!-- Filtres et recherche -->
+      <div class="filters-section">
+        <div class="search-wrapper">
+          <div class="search-container">
+            <svg class="search-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input type="text" placeholder="Rechercher une question..." class="search-input" [(ngModel)]="searchQuery"
+              (input)="onSearch()">
+            <button *ngIf="searchQuery" class="clear-button">✕</button>
+          </div>
+        </div>
+
+        <div class="filter-container">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+          </svg>
+          <select class="select" [(ngModel)]="selectedCategory" (change)="onFilterCategory()">
+            <option value="all">Toutes les catégories</option>
+            <option *ngFor="let cat of categories" [value]="cat.value">{{ cat.label }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- État vide -->
+      <div *ngIf="filteredFaqs.length === 0" class="empty-state">
+        <div class="empty-icon">
+          <svg width="40" height="40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+          </svg>
+        </div>
+        <h3 class="empty-title">Aucune FAQ trouvée</h3>
+        <p class="empty-text">Aucun résultat ne correspond à vos critères</p>
+        <button class="add-button add-button-empty" (click)="openAddFaqModal()">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Ajouter la première FAQ
+        </button>
+      </div>
+
+      <!-- Liste des FAQs sous forme de cartes -->
+      <div *ngIf="filteredFaqs.length > 0" class="courses-grid">
+        <div *ngFor="let faq of filteredFaqs" class="course-card faq-card">
+          <div class="course-content">
+            <div class="category-badge" [style.color]="getCategoryColor(faq.category)">
+              {{ getCategoryLabel(faq.category) }}
+            </div>
+
+            <h3 class="course-title">{{ faq.question }}</h3>
+            <p class="course-description" [innerHTML]="faq.answer"></p>
+
+            <div class="course-footer">
+              <ion-badge [color]="faq.isActive ? 'success' : 'medium'">
+                {{ faq.isActive ? 'Active' : 'Désactivée' }}
+              </ion-badge>
+
+              <div class="actions">
+                <button class="action-btn edit-btn" (click)="openEditFaqModal(faq)">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </button>
+                <button class="action-btn delete-btn" (click)="deleteFaq(faq.id)">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Ajout / Édition FAQ -->
+  <div *ngIf="isModalOpen" class="modal-overlay" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2 class="modal-title">{{ isEditMode ? 'Modifier' : 'Ajouter' }} une FAQ</h2>
+        <button class="modal-close" (click)="closeModal()">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label>Question</label>
+            <input type="text" class="form-input" [(ngModel)]="currentFaq.question" name="question" required />
+          </div>
+
+          <div class="form-group">
+            <label>Réponse</label>
+            <textarea class="form-textarea" rows="8" [(ngModel)]="currentFaq.answer" name="answer" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Catégorie</label>
+            <select class="form-select" [(ngModel)]="currentFaq.category" name="category">
+              <option *ngFor="let cat of categories" [value]="cat.value">{{ cat.label }}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Statut</label>
+            <select class="form-select" [(ngModel)]="currentFaq.isActive" name="isActive">
+              <option [value]="true">Active</option>
+              <option [value]="false">Désactivée</option>
+            </select>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn-secondary" (click)="closeModal()">Annuler</button>
+            <button type="button" class="btn-primary" (click)="saveFaq()"
+              [disabled]="!currentFaq.question || !currentFaq.answer">
+              {{ isEditMode ? 'Mettre à jour' : 'Ajouter' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

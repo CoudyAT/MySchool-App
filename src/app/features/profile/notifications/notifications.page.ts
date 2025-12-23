@@ -36,33 +36,9 @@ import { checkmarkDoneOutline, chevronBackOutline } from 'ionicons/icons';
 export class NotificationsPage implements OnInit {
   currentUser: any = null;
   userId: string = '';
-  notification!: Notification;
+  notifications: Notification[] = [];
   private auth = inject(Auth);
 
-
-  notifications = [
-    {
-      title: 'Profil mis à jour',
-      message: 'Vos informations personnelles ont été modifiées avec succès.',
-      icon: '👌',
-      date: 'Aujourd\'hui',
-      read: false,
-    },
-    {
-      title: 'Nouvelle mise à jour',
-      message: 'Une nouvelle version de l’application est disponible.',
-      icon: '🙂',
-      date: 'Hier',
-      read: false,
-    },
-    {
-      title: 'Message important',
-      message: 'Veuillez vérifier vos paramètres de sécurité.',
-      icon: '🎯',
-      date: 'Il y a 3 jours',
-      read: true,
-    }
-  ];
 
   constructor(private router: Router, private notificationService: NotificationService) {
     addIcons({ chevronBackOutline, checkmarkDoneOutline });
@@ -122,12 +98,13 @@ export class NotificationsPage implements OnInit {
 
     this.notificationService.getNotificationByUser(this.userId).subscribe({
       next: (response: any) => {
-        this.notification = response.data;
-        console.log(this.notification)
+        this.notifications = response.data;
+        console.log(this.notifications);
       },
       error: (err) => {
         console.error('Erreur chargement notifications:', err);
       }
     });
   }
+
 }

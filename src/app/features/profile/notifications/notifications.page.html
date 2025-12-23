@@ -13,16 +13,19 @@
 <ion-content>
 
   <div class="notifications-container">
-    <div *ngFor="let notif of notifications" class="notif-card" [class.read]="notif.read">
+    <div *ngFor="let notif of notifications" class="notif-card">
 
       <div class="notif-icon">
-        <p class="notif-img">{{ notif.icon}}</p>
+        <!-- <p class="notif-img">{{ notif.icon}}</p> -->
       </div>
 
       <div class="notif-content">
         <h3>{{ notif.title }}</h3>
-        <p>{{ notif.message }}</p>
-        <span class="notif-date">{{ notif.date }}</span>
+        <p>{{ notif.body }}</p>
+        <span class="notif-date">
+          {{ notif.sentAt?._seconds * 1000 | date:'dd/MM/yyyy HH:mm' }}
+
+        </span>
       </div>
 
       <ion-button fill="clear" (click)="markAsRead(notif)">

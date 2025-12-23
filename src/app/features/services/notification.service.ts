@@ -37,8 +37,8 @@ export class NotificationService {
 
   // Récupérer les tokens d'un utilisateur (debug)
 
-  getTokenByUser(userId: string): Observable<Notification> {
-    return this.api.get<Notification>(`/push-notification/tokens/${userId}`);
+  getTokenByUser(userId: string): Observable<Notification[]> {
+    return this.api.get<Notification[]>(`/push-notification/tokens/${userId}`);
   }
 }
 

@@ -1,13 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {
-  IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonIcon,
-  IonList, IonItem, IonLabel, IonBadge, IonButtons, IonSearchbar,
-  IonModal, IonItemSliding, IonItemOptions, IonItemOption, IonSelect,
-  IonSelectOption, IonTextarea, IonInput, IonChip, IonSpinner,
-  IonRefresher, IonRefresherContent
-} from '@ionic/angular/standalone';
+import { IonBadge } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   add, trashOutline, createOutline, closeOutline, checkmarkOutline,
@@ -24,11 +18,7 @@ import { lastValueFrom } from 'rxjs';
   standalone: true,
   imports: [
     CommonModule, FormsModule,
-    IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonIcon,
-    IonList, IonItem, IonLabel, IonBadge, IonButtons, IonSearchbar,
-    IonModal, IonItemSliding, IonItemOptions, IonItemOption,
-    IonSelect, IonSelectOption, IonTextarea, IonInput, IonChip,
-    IonRefresher, IonRefresherContent
+    IonBadge,
   ]
 })
 export class FaqPage implements OnInit {
@@ -75,22 +65,18 @@ export class FaqPage implements OnInit {
   }
 
   loadFaqs() {
+    this.isLoading = true;
 
     this.faqService.getAllFaqs().subscribe({
       next: (response: any) => {
-        this.faq = response;
-        console.log('faq loaded:', this.faq);
-
-
+        this.faq = response.data || [];
         this.applyFilters();
         this.isLoading = false;
-
       },
       error: (err) => {
-        console.error('Erreur lors du chargement des cours', err);
+        console.error('Erreur lors du chargement des FAQs', err);
         this.isLoading = false;
-
-      },
+      }
     });
   }
 
@@ -112,24 +98,25 @@ export class FaqPage implements OnInit {
   }
 
   private applyFilters() {
-    // let filtered = [...this.faq]; // Créer une copie du tableau
+    let filtered = [...this.faq];
 
-    // // Filtre par catégorie
-    // if (this.selectedCategory && this.selectedCategory !== 'all') {
-    //   filtered = filtered.filter(f => f.category === this.selectedCategory);
-    // }
+    // Filtre par catégorie
+    if (this.selectedCategory && this.selectedCategory !== 'all') {
+      filtered = filtered.filter(f => f.category === this.selectedCategory);
+    }
 
-    // // Filtre par recherche
-    // if (this.searchQuery && this.searchQuery.trim() !== '') {
-    //   const query = this.searchQuery.toLowerCase().trim();
-    //   filtered = filtered.filter(f =>
-    //     (f.question && f.question.toLowerCase().includes(query)) ||
-    //     (f.answer && f.answer.toLowerCase().includes(query))
-    //   );
-    // }
+    // Filtre par recherche
+    if (this.searchQuery && this.searchQuery.trim() !== '') {
+      const query = this.searchQuery.toLowerCase().trim();
+      filtered = filtered.filter(f =>
+        f.question?.toLowerCase().includes(query) ||
+        f.answer?.toLowerCase().includes(query)
+      );
+    }
 
-    // this.filteredFaqs = filtered;
+    this.filteredFaqs = filtered;
   }
+
 
   openAddFaqModal() {
     this.isEditMode = false;
@@ -187,10 +174,11 @@ export class FaqPage implements OnInit {
     }
   }
 
-  async deleteFaq(id: number) {
+  async deleteFaq(id: string) {
     if (confirm('Êtes-vous sûr de vouloir supprimer cette question ?')) {
       try {
-        await lastValueFrom(this.faqService.deleteFaq(id));
+        this.faqService.deleteFaq(id).subscribe;
+      
       } catch (error) {
         console.error('Erreur lors de la suppression:', error);
         alert('Erreur lors de la suppression de la FAQ');
@@ -198,6 +186,8 @@ export class FaqPage implements OnInit {
     }
   }
 
+  
+    
   getCategoryColor(cat: string): string {
     const colors: Record<string, string> = {
       general: 'primary',

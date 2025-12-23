@@ -23,11 +23,8 @@ export interface FaqListResponse {
 export class FaqService {
   private readonly api = inject(ApiService);
 
-
-
   getAllFaqs(): Observable<Faq[]> {
-    return this.api
-      .get<Faq[]>('/faqs');
+    return this.api.get<Faq[]>('/faqs');
   }
 
   /**
@@ -35,14 +32,14 @@ export class FaqService {
    * GET /faqs?category=xxx
    */
   getFaqsByCategory(category: string): Observable<Faq[]> {
-    return this.getAllFaqs();
+    return this.api.get<Faq[]>(`/faqs/category/${category}`);
   }
 
   /**
    * Récupère une FAQ spécifique par ID
    * GET /faqs/{id}
    */
-  getFaqById(id: number): Observable<Faq> {
+  getFaqById(id: string): Observable<Faq> {
     return this.api.get<Faq>(`/faqs/${id}`);
   }
 
@@ -67,7 +64,7 @@ export class FaqService {
    * Met à jour une FAQ existante (admin)
    * PUT /faqs/{id}
    */
-  updateFaq(id: number, faq: Partial<Faq>): Observable<Faq> {
+  updateFaq(id: string, faq: Partial<Faq>): Observable<Faq> {
     return this.api.put<Faq>(`/faqs/${id}`, faq);
   }
 
@@ -75,32 +72,20 @@ export class FaqService {
    * Supprime une FAQ (admin)
    * DELETE /faqs/{id}
    */
-  deleteFaq(id: number): Observable<void> {
+  deleteFaq(id: string): Observable<void> {
     return this.api.delete<void>(`/faqs/${id}`);
   }
 
   /**
    * Marque une FAQ comme utile/pas utile
    * POST /faqs/{id}/helpful
-   * Note: Vérifier si cet endpoint existe dans votre backend
    */
   markAsHelpful(id: number, helpful: boolean): Observable<any> {
     return this.api.post(`/faqs/${id}/helpful`, { helpful });
   }
 
-  /**
-   * Récupère les statistiques des FAQs
-   * GET /faqs/stats
-   * Note: Vérifier si cet endpoint existe dans votre backend
-   */
-  getStats(): Observable<any> {
-    return this.api.get('/faqs/stats');
-  }
-
-  /**
-   * Récupère uniquement les FAQs actives (helper)
-   */
-  getActiveFaqs(category?: string): Observable<Faq[]> {
-    return this.getAllFaqs();
+  // Récupérer les statistiques des faqs
+  getStats(): Observable<Faq> {
+    return this.api.get<Faq>(`/faqs/stats`);
   }
 }

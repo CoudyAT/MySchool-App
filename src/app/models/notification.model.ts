@@ -20,7 +20,5 @@ export interface Data {
 export interface Token {
     userId: string;
     token: string;
-    plateform: string;
-    deviceId: string;
-    deviceName: string;
+    platform: string;
 }
