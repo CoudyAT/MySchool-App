@@ -207,7 +207,7 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goToBiblio() {
-    this.router.navigate(['/biblio']);
+    this.router.navigate(['/pdf-list']);
   }
 
   goToTutos() {

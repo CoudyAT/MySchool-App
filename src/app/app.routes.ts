@@ -18,6 +18,7 @@ import { DetailPage } from './features/cours/pages/detail/detail.page';
 import { PaymentCallbackPage } from './features/payments/payment-callback/payment-callback.page';
 import { EditProfilePage } from './features/auth/edit-profile/edit-profile.page';
 import { SecurityPage } from './features/auth/security/security.page';
+import { PdfListPage } from './features/pdf/pdf-list/pdf-list.page';
 
 export const routes: Routes = [
   {
@@ -96,6 +97,11 @@ export const routes: Routes = [
   },
 
   {
+    path: 'pdf-list',
+    component: PdfListPage
+  },
+
+  {
     path: 'admin-login',
     component: BaseLayoutAdminComponent,
     children: [
@@ -117,4 +123,5 @@ export const routes: Routes = [
         './features/instructor/instructor-profile/instructor-profile.page'
       ).then((m) => m.InstructorProfilePage),
   },
+
 ];
