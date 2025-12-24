@@ -28,6 +28,7 @@ import { UserDetailsPage } from './Admin/pages/user-details/user-details.page';
 import { InstructorsPage } from './Admin/pages/instructors/instructors.page';
 import { EditCoursPage } from './Admin/pages/cours/pages/edit-cours/edit-cours.page';
 import { UserEditPage } from './Admin/pages/user-edit/user-edit.page';
+import { EnrollmentsPage } from './Admin/pages/enrollments/enrollments.page';
 
 export const routes: Routes = [
   {
@@ -137,6 +138,10 @@ export const routes: Routes = [
       {
         path: 'edit-cours/:id', component: EditCoursPage
       },
+      {
+        path: 'enrollments', component: EnrollmentsPage
+      },
+
     ],
   },
   {

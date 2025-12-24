@@ -22,7 +22,7 @@ export class BaseLayoutAdminComponent {
       dashboard: '/admin-login/',
       users: '/admin-login/users',
       'list-cours': '/admin-login/list-cours',
-      projects: '/admin-login/projects',
+      projects: '/admin-login/enrollments',
       faq: '/admin-login/faq',
       intructors: '/admin-login/instructors',
       chat: '/admin-login/chat',
