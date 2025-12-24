@@ -95,9 +95,9 @@ export class PreminumModalComponent implements OnInit {
     this.router.navigate(['/payment-method'], {
       state: {
         plan: {
-          type: 'PREMIUM',
+          type: 'MONTHLY',
           name: 'Abonnement Premium',
-          price: 4999,
+          price: 5000,
           description: 'Accès illimité à tous les cours',
           features: [
             'Tous les cours disponibles',

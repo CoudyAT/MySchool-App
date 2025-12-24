@@ -78,6 +78,9 @@ export interface PaymentData {
   customerPhoneNumber?: string;
   customerFirstName?: string;
   customerLastName?: string;
+  userId?: string;
+  promoCode?: string;
+  discountAmount?: number;
 }
 
 export interface EnrollmentApiResponse {

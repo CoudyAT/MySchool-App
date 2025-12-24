@@ -1001,3 +1001,20 @@ body{
   margin-top: 4px;
   margin-left: 16px;
 }
+
+.forgot-password-link {
+  text-align: right;
+  margin-top: 8px;
+
+  a {
+    font-size: 14px;
+    color: var(--ion-color-primary);
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+}

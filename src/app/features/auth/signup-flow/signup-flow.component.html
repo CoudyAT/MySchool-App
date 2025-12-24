@@ -122,6 +122,13 @@
             {{ getFieldError(welcomeForm, 'password') }}
           </div>
         </div>
+        <div
+          class="forgot-password-link"
+          *ngIf="showPasswordField">
+          <a (click)="goToForgotPassword()">
+            Mot de passe oublié ?
+          </a>
+        </div>
 
 
       <!-- Bouton de connexion/inscription -->
@@ -407,7 +414,7 @@
   </div>
 
   <!-- Bouton de navigation -->
-  <div class="button-section">
+  <div class="button-section" *ngIf="currentStep !== 0">
     <ion-button
       expand="block"
       size="large"
@@ -423,5 +430,5 @@
       <span *ngIf="!isAnimating">{{ getButtonText() }}</span>
       <span *ngIf="isAnimating">Chargement...</span>
     </ion-button>
-  </div>
+  </div> 
 </ion-content>

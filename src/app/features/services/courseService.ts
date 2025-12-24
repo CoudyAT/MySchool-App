@@ -24,7 +24,9 @@ export class CourseService {
 
   // Récupérer un cours par ID
   getCourse(id: string): Observable<Course> {
-    return this.api.get<Course>(`/courses/${id}`);
+    return this.api
+      .get<Course>(`/courses/${id}`)
+      .pipe(map((res) => res?.data ?? []));
   }
 
   // Récupérer les cours par catégorie

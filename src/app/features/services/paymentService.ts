@@ -33,7 +33,7 @@ export class PaymentService {
     customerLastName: string;
     description?: string;
   }): Observable<ApiResponse<Payment>> {
-    return this.api.post<ApiResponse<Payment>>('/payments', {
+    return this.api.post<ApiResponse<Payment>>('/wave/create-payment', {
       ...payment,
       currency: payment.currency || 'XOF',
     });
@@ -63,22 +63,32 @@ export class PaymentService {
   /**
    * Récupère les paiements d'une inscription
    */
-  getEnrollmentPayments(enrollmentId: string): Observable<ApiResponse<Payment[]>> {
-    return this.api.get<ApiResponse<Payment[]>>(`/payments/enrollment/${enrollmentId}`);
+  getEnrollmentPayments(
+    enrollmentId: string
+  ): Observable<ApiResponse<Payment[]>> {
+    return this.api.get<ApiResponse<Payment[]>>(
+      `/payments/enrollment/${enrollmentId}`
+    );
   }
 
   /**
    * Filtre les paiements par statut
    */
-  getPaymentsByStatus(status: PaymentStatus): Observable<ApiResponse<Payment[]>> {
+  getPaymentsByStatus(
+    status: PaymentStatus
+  ): Observable<ApiResponse<Payment[]>> {
     return this.api.get<ApiResponse<Payment[]>>(`/payments/status/${status}`);
   }
 
   /**
    * Recherche un paiement par référence de commande
    */
-  getPaymentByOrderReference(orderReference: string): Observable<ApiResponse<Payment>> {
-    return this.api.get<ApiResponse<Payment>>(`/payments/order/${orderReference}`);
+  getPaymentByOrderReference(
+    orderReference: string
+  ): Observable<ApiResponse<Payment>> {
+    return this.api.get<ApiResponse<Payment>>(
+      `/payments/order/${orderReference}`
+    );
   }
 
   /**
@@ -92,7 +102,10 @@ export class PaymentService {
    * Annule un paiement
    */
   cancelPayment(paymentId: string): Observable<ApiResponse<Payment>> {
-    return this.api.post<ApiResponse<Payment>>(`/payments/${paymentId}/cancel`, {});
+    return this.api.post<ApiResponse<Payment>>(
+      `/payments/${paymentId}/cancel`,
+      {}
+    );
   }
 
   /**
@@ -157,5 +170,12 @@ export class PaymentService {
     }
 
     return cleanPhone;
+  }
+
+  createSubscriptionPayment(plan: string, userId: string) {
+    return this.api.post<any>('/subscriptions/create-payment', {
+      plan,
+      userId,
+    });
   }
 }

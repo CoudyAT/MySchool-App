@@ -250,6 +250,14 @@ export class SignupFlowComponent implements OnInit {
     }
   }
 
+  goToForgotPassword() {
+    this.router.navigate(['/forgot-password'], {
+      queryParams: {
+        phone: this.welcomeForm.value.phone,
+      },
+    });
+  }
+
   initForms() {
     this.welcomeForm = this.fb.group({
       phone: [

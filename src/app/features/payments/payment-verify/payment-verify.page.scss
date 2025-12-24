@@ -78,6 +78,156 @@ ion-content {
   }
 }
 
+// Styles spécifiques pour la section promo
+.promo-section {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.promo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.add-promo-btn,
+.remove-promo-btn {
+  background: none;
+  border: none;
+  color: #007AFF;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: opacity 0.2s;
+  
+  &:hover {
+    opacity: 0.8;
+  }
+  
+  &:active {
+    opacity: 0.6;
+  }
+}
+
+.remove-promo-btn {
+  color: #ff3b30;
+}
+
+.promo-input-container {
+  width: 100%;
+  animation: slideDown 0.3s ease-out;
+  margin-top: 8px;
+}
+
+.promo-input-wrapper {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.promo-input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 15px;
+  background: #fafafa;
+  transition: all 0.2s;
+  color:#000;
+  
+  &:focus {
+    outline: none;
+    border-color: #007AFF;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+  }
+  
+  &::placeholder {
+    color: #999;
+  }
+}
+
+.apply-promo-btn {
+  background-color: #007AFF;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 80px;
+  
+  &:hover:not(:disabled) {
+    background-color: #0056cc;
+  }
+  
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #b3d7ff;
+  }
+}
+
+.promo-hint {
+  color: #999;
+  font-size: 12px;
+  display: block;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+.applied-promo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, rgba(52, 199, 89, 0.1), rgba(52, 199, 89, 0.05));
+  border-radius: 10px;
+  border-left: 4px solid #34c759;
+}
+
+.promo-code {
+  font-weight: 600;
+  color: #34c759;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  &:before {
+    content: "✓";
+    font-weight: bold;
+  }
+}
+
+.negative {
+  color: #34c759;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .total-row {
   margin-top: 8px;
   padding-top: 16px;
@@ -310,6 +460,7 @@ ion-radio-group {
   padding: 16px;
   border-radius: 12px;
   margin: 16px 0;
+  color: #000;
   
   .course-info-title {
     margin: 0 0 12px 0;
@@ -379,4 +530,43 @@ ion-radio-group {
   --background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
   --background-hover: linear-gradient(135deg, #ffed4e 0%, #ffd700 100%);
   color: #000;
+}
+
+// Responsive
+@media (max-width: 480px) {
+  .page-container {
+    padding: 0 12px 80px 12px;
+  }
+  
+  .page-title {
+    font-size: 22px;
+    margin: 20px 0 24px 0;
+  }
+  
+  .summary-card,
+  .payment-options-card {
+    padding: 20px;
+  }
+  
+  .promo-input-wrapper {
+    flex-direction: column;
+  }
+  
+  .apply-promo-btn {
+    width: 100%;
+    min-width: auto;
+    padding: 12px;
+  }
+  
+  .option-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .option-right {
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
 }
