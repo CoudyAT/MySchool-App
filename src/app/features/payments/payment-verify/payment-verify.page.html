@@ -28,7 +28,7 @@
 
       <div class="summary-content">
         <div class="summary-row">
-          <span class="label">{{ summary.formula }}</span>
+          <span class="label">Formule {{ formulaLabel }}</span>
           <span class="value">{{ summary.price }} FCFA</span>
         </div>
 
@@ -73,9 +73,6 @@
             
           </div>
 
-          <!-- Afficher la réduction appliquée <small class="promo-hint">
-              Codes valides : SANK10, IMMA10
-            </small> -->
           <div *ngIf="appliedPromoCode" class="applied-promo">
             <span class="promo-code">{{ appliedPromoCode }} (-{{ discountPercentage }}%)</span>
             <span class="value negative">-{{ summary.promoCode }} FCFA</span>
@@ -108,10 +105,9 @@
 
       <ion-radio-group
         [value]="selectedPaymentOption"
-        
       >
         <div *ngFor="let method of displayedPaymentMethods" class="payment-option">
-          <div class="option-header">
+          <div class="option-header" >
             <span class="option-type">{{ method.type }}</span>
           </div>
 

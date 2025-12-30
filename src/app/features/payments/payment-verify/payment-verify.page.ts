@@ -27,6 +27,7 @@ import { addIcons } from 'ionicons';
 import { PaymentData } from 'src/app/models/payment.model';
 import { EnrollmentService } from '../../services/enrollmentService';
 import { PaymentService } from '../../services/paymentService';
+import { firstValueFrom } from 'rxjs';
 
 interface PaymentMethod {
   id: string;
@@ -183,13 +184,8 @@ export class PaymentVerifyPage implements OnInit {
     const selected = this.allPaymentMethods.find(
       (m) => m.id === this.selectedPaymentOption
     );
-    const card = this.allPaymentMethods.find((m) => m.id === 'card');
 
-    this.displayedPaymentMethods = selected
-      ? selected.id === 'card'
-        ? [card!]
-        : [selected, card!]
-      : this.allPaymentMethods;
+    this.displayedPaymentMethods = selected ? [selected] : [];
   }
 
   calculateTotal() {
@@ -288,31 +284,43 @@ export class PaymentVerifyPage implements OnInit {
 
     try {
       /** ===== ABONNEMENT PREMIUM ===== */
+
       if (this.isPremiumSubscription) {
         console.log('Démarrage paiement abonnement Premium', this.selectedPlan);
+
         if (!this.userId || !this.selectedPlan?.type) {
           throw new Error('Infos abonnement manquantes');
         }
 
-        const response = await this.paymentService
-          .createSubscriptionPayment(this.selectedPlan.type, this.userId)
-          .toPromise();
+        try {
+          const response = await firstValueFrom(
+            this.paymentService.createSubscriptionPayment(
+              this.selectedPlan.type,
+              this.userId
+            )
+          );
 
-        if (response?.data?.paymentUrl) {
-          window.location.href = response.data.paymentUrl;
-          return;
+          console.log('Réponse paiement:', response);
+
+          // ✅ REDIRECTION VERS WAVE
+          if (response?.success && response?.data?.paymentUrl) {
+            window.location.href = response.data.paymentUrl;
+            return;
+          }
+
+          // ❌ Si jamais l’URL n’est pas là
+          throw new Error('URL de paiement introuvable');
+        } catch (error) {
+          console.error(error);
+
+          await this.toastCtrl
+            .create({
+              message: 'Erreur lors de la création du paiement ❌',
+              duration: 3000,
+              color: 'danger',
+            })
+            .then((t) => t.present());
         }
-
-        await this.toastCtrl
-          .create({
-            message: 'Abonnement Premium activé avec succès 🎉',
-            duration: 3000,
-            color: 'success',
-          })
-          .then((t) => t.present());
-
-        this.router.navigate(['/profile'], { replaceUrl: true });
-        return;
       }
 
       /** ===== COURS INDIVIDUEL ===== */
@@ -369,5 +377,22 @@ export class PaymentVerifyPage implements OnInit {
       color: 'warning',
     });
     await toast.present();
+  }
+
+  planLabels: Record<string, string> = {
+    MONTHLY: 'Annuelle',
+    YEARLY: 'Annuelle',
+    WEEKLY: 'Hebdomadaire',
+  };
+
+  get formulaLabel(): string {
+    const raw = this.summary?.formula;
+
+    if (!raw) return '';
+
+    // Extrait MONTHLY depuis "Formule MONTHLY"
+    const plan = raw.split(' ').pop()?.toUpperCase();
+
+    return this.planLabels[plan!] || raw;
   }
 }

@@ -48,29 +48,33 @@
       </div>
     </div>
 
-    <div class="payment-methods">
-      <!-- Wave -->
-      <div class="wave-card" (click)="selectPaymentMethod(paymentMethods[0])">
-          <img src="assets/wave.svg" alt="MySchool Logo" class="penguin-svg">
-      </div>
+<div class="payment-methods">
+  <!-- ✅ Wave (ACTIF) -->
+  <div class="wave-card" (click)="selectPaymentMethod(paymentMethods[0])">
+    <img src="assets/wave.svg" alt="Wave" class="penguin-svg">
+  </div>
 
-      <!-- Orange Money -->
-      <div (click)="selectPaymentMethod(paymentMethods[1])">
-        <img src="assets/orange-money.svg" alt="MySchool Logo" class="penguin-svg">
-      </div>
+  <!-- ❌ Orange Money (INDISPONIBLE) -->
+  <div class="payment-disabled">
+    <img src="assets/orange-money.svg" alt="Orange Money" class="penguin-svg">
+    <span class="disabled-label">Indisponible</span>
+  </div>
 
-      <!-- Yas Mixx -->
-      <div (click)="selectPaymentMethod(paymentMethods[2])">
-        <img src="assets/yas.svg" alt="MySchool Logo" class="penguin-svg">
-      </div>
+  <!-- ❌ Yas Mixx (INDISPONIBLE) -->
+  <div class="payment-disabled">
+    <img src="assets/yas.svg" alt="Yas Mixx" class="penguin-svg">
+    <span class="disabled-label">Indisponible</span>
+  </div>
 
-      <!-- Carte bancaire -->
-      <div class="payment-card card-payment" (click)="selectPaymentMethod(paymentMethods[3])">
-        <div class="card-content">
-          <div class="card-chip"></div>
-          <span class="card-text">Carte bancaire</span>
-        </div>
-      </div>
+  <!-- ❌ Carte bancaire (INDISPONIBLE) -->
+  <div class="payment-card card-payment payment-disabled">
+    <div class="card-content">
+      <div class="card-chip"></div>
+      <span class="card-text">Carte bancaire</span>
     </div>
+    <span class="disabled-label">Indisponible</span>
+  </div>
+</div>
+
   </div>
 </ion-content>

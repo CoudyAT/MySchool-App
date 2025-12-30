@@ -77,7 +77,13 @@ export class SubscriptionPlansPage implements OnInit {
     this.subscriptionService.getPlans().subscribe({
       next: (res) => {
         if (res.success) {
-          this.plans = res.data;
+          this.plans = res.data
+            .filter((plan: any) => plan.price === 5000)
+            .map((plan: any) => ({
+              ...plan,
+              plan: 'Annuelle', // 🔥 remplace MONTHLY
+              duration: 'an', // optionnel
+            }));
         }
         this.loading = false;
       },

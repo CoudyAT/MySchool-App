@@ -48,16 +48,26 @@ export class OnboardingPage implements OnInit {
 
   constructor(private router: Router) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+      const onboardingCompleted = localStorage.getItem('onboardingCompleted');
+
+      if (onboardingCompleted === 'true') {
+        // 👉 utilisateur déjà passé par l'onboarding
+        this.router.navigate(['/login'], { replaceUrl: true });
+      }
+  }
 
   // appeler la méthode slideNext() du webcomponent
   nextSlide() {
-    const el = this.swiperEl?.nativeElement as any;
-    if (el && el.swiper) {
-      el.swiper.slideNext();
-    } else {
-      // si pas encore initialisé, forcer navigation finale
+    // 👉 si on est sur la dernière slide
+    if (this.currentSlide === this.onboardingData.length - 1) {
       this.finishOnboarding();
+      return;
+    }
+
+    const el = this.swiperEl?.nativeElement as any;
+    if (el?.swiper) {
+      el.swiper.slideNext();
     }
   }
 
@@ -74,7 +84,7 @@ export class OnboardingPage implements OnInit {
 
   finishOnboarding() {
     localStorage.setItem('onboardingCompleted', 'true');
-    this.router.navigate(['/signup'], { replaceUrl: true });
+    this.router.navigate(['/login'], { replaceUrl: true });
   }
 
   skipOnboarding() {

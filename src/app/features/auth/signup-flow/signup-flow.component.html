@@ -52,108 +52,63 @@
 
 
 <!-- Step 1: Téléphone et mot de passe (Connexion/Inscription) -->
-<div *ngIf="currentStep === 0" class="step-content active">
-  <div class="welcome-card">
-    <!-- Formulaire -->
-    <form [formGroup]="welcomeForm" class="form-container-modern">
-      <!-- Input téléphone -->
-      <div class="input-group-modern">
-        <label class="input-label-modern">Numéro de téléphone</label>
-        <div class="input-wrapper">
-          <div class="input-icon">
-            <ion-icon name="call-outline"></ion-icon>
-          </div>
-          <ion-input
-            type="tel"
-            formControlName="phone"
-            placeholder="+221 77 000 00 00"
-            class="custom-input-modern">
-          </ion-input>
+<!-- STEP 1 : Téléphone -->
+<div *ngIf="currentStep === 0 && !otpSent" class="step-content active">
+  <form [formGroup]="welcomeForm" class="form-container-modern">
+
+    <div class="input-group-modern">
+      <label class="input-label-modern">Numéro de téléphone</label>
+      <div class="input-wrapper">
+        <div class="input-icon">
+          <ion-icon name="call-outline"></ion-icon>
         </div>
-        <div class="input-helper">
-          Format: +221 XX XXX XX XX
-        </div>
-        <div class="error-text" *ngIf="isFieldInvalid(welcomeForm, 'phone')">
-          {{ getFieldError(welcomeForm, 'phone') }}
-        </div>
+        <ion-input
+          type="tel"
+          formControlName="phone"
+          placeholder="+221 77 000 00 00">
+        </ion-input>
       </div>
+    </div>
 
-      <!-- Input mot de passe 
-      <div class="input-group-modern">
-        <label class="input-label-modern">Mot de passe</label>
-        <div class="input-wrapper">
-          <div class="input-icon">
-            <ion-icon name="lock-closed-outline"></ion-icon>
-          </div>
-          <ion-input
-            type="password"
-            formControlName="password"
-            placeholder="Votre mot de passe"
-            class="custom-input-modern">
-          </ion-input>
-        </div>
-        <div class="input-helper">
-          Minimum 6 caractères
-        </div>
-        <div class="error-text" *ngIf="isFieldInvalid(welcomeForm, 'password')">
-          {{ getFieldError(welcomeForm, 'password') }}
-        </div>
-      </div> -->
-
-      <!-- Input mot de passe (connexion uniquement) -->
-        <div
-          class="input-group-modern"
-          *ngIf="showPasswordField">
-          
-          <label class="input-label-modern">Mot de passe</label>
-          <div class="input-wrapper">
-            <div class="input-icon">
-              <ion-icon name="lock-closed-outline"></ion-icon>
-            </div>
-            <ion-input
-              type="password"
-              formControlName="password"
-              placeholder="Votre mot de passe"
-              class="custom-input-modern">
-            </ion-input>
-          </div>
-
-          <div class="error-text" *ngIf="isFieldInvalid(welcomeForm, 'password')">
-            {{ getFieldError(welcomeForm, 'password') }}
-          </div>
-        </div>
-        <div
-          class="forgot-password-link"
-          *ngIf="showPasswordField">
-          <a (click)="goToForgotPassword()">
-            Mot de passe oublié ?
-          </a>
-        </div>
-
-
-      <!-- Bouton de connexion/inscription -->
-      <ion-button
-        expand="block"
-        class="modern-primary-button"
-        [disabled]="!welcomeForm.valid"
-        (click)="checkLoginOrSignup()">
-        <ion-icon name="arrow-forward" slot="end"></ion-icon>
-        Continuer
-      </ion-button>
-
-      <!-- Message d'état -->
-      <div *ngIf="isCheckingUser" class="loading-message">
-        <ion-spinner name="crescent"></ion-spinner>
-        <span>Vérification en cours...</span>
-      </div>
-
-      <div *ngIf="userExistsError" class="error-message">
-        <ion-icon name="alert-circle-outline"></ion-icon>
-        <span>Mot de passe incorrect. Veuillez réessayer.</span>
-      </div>
-    </form>
-  </div>
+    <ion-button
+      expand="block"
+      class="modern-primary-button"
+      [disabled]="!welcomeForm.valid"
+      (click)="sendOtp()">
+      Continuer
+    </ion-button>
+  </form>
 </div>
+
+<!-- STEP OTP -->
+<div *ngIf="currentStep === 0 && otpSent" class="step-content active">
+  <form [formGroup]="otpForm" class="form-container-modern">
+
+    <div class="input-group-modern">
+      <label class="input-label-modern">Code reçu par SMS</label>
+      <div class="input-wrapper">
+        <ion-input
+          type="text"
+          maxlength="6"
+          formControlName="otp"
+          placeholder="123456">
+        </ion-input>
+      </div>
+    </div>
+
+    <ion-button
+      expand="block"
+      class="modern-primary-button"
+      (click)="verifyOtp()">
+      Vérifier
+    </ion-button>
+
+  </form>
+</div>
+
+<!-- Recaptcha -->
+<div id="recaptcha-container"></div>
+
 
     <!-- Step 2: Personal Info -->
     <div *ngIf="currentStep === 1" class="step-content active">
