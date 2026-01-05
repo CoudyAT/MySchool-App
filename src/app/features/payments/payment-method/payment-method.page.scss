@@ -238,6 +238,24 @@ ion-content {
   }
 }
 
+.payment-disabled {
+  opacity: 0.4;
+  pointer-events: none; /* ❌ empêche le clic */
+  position: relative;
+}
+
+.disabled-label {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  background: #ff3b30;
+  color: #fff;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+
 @keyframes slideUp {
   from {
     opacity: 0;

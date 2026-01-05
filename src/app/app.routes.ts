@@ -19,6 +19,7 @@ import { PaymentCallbackPage } from './features/payments/payment-callback/paymen
 import { EditProfilePage } from './features/auth/edit-profile/edit-profile.page';
 import { SecurityPage } from './features/auth/security/security.page';
 import { PdfListPage } from './features/pdf/pdf-list/pdf-list.page';
+import { ForgotPasswordPage } from './features/auth/forgot-password/forgot-password.page';
 
 export const routes: Routes = [
   {
@@ -98,7 +99,12 @@ export const routes: Routes = [
 
   {
     path: 'pdf-list',
-    component: PdfListPage
+    component: PdfListPage,
+  },
+
+  {
+    path: 'forgot-password',
+    component: ForgotPasswordPage,
   },
 
   {
@@ -123,5 +129,4 @@ export const routes: Routes = [
         './features/instructor/instructor-profile/instructor-profile.page'
       ).then((m) => m.InstructorProfilePage),
   },
-
 ];

@@ -19,6 +19,8 @@ import {
   IonButtons,
 } from '@ionic/angular/standalone';
 
+import { SubscriptionService } from '../../services/subscription.service';
+
 @Component({
   selector: 'app-subscription-plans',
   templateUrl: './subscription-plans.page.html',
@@ -36,69 +38,61 @@ import {
   ],
 })
 export class SubscriptionPlansPage implements OnInit {
-  plans = [
-    {
-      type: 'Individuelle',
-      icon: 'person-outline',
-      price: 1800,
-      discount: '-10 %',
-      period: '/ ANNÉE',
-      features: [
-        'Cours complets',
-        'Suivi instructeurs',
-        'Certificat de réussite',
-        'Ressources disponibles',
-        'Sessions en ligne',
-      ],
-    },
-    {
-      type: 'Entreprise',
-      icon: 'business-outline',
-      price: 99000,
-      discount: '-10 %',
-      period: ', ANNÉE',
-      features: [
-        'Cours complets',
-        'Suivi instructeurs',
-        'Suivi instructeurs',
-        'Ressources disponibles',
-        'Sessions en ligne',
-      ],
-    },
-  ];
+  plans: any[] = [];
+  loading = false;
 
-  // ⭐ AJOUTEZ CES PROPRIÉTÉS
-  courseId: string = '';
-  courseTitle: string = '';
-  courseImage: string = '';
+  courseId = '';
+  courseTitle = '';
+  courseImage = '';
   course: any = {};
 
-  constructor(private router: Router, private location: Location) {
-    // Enregistrer les icônes
+  constructor(
+    private router: Router,
+    private location: Location,
+    private subscriptionService: SubscriptionService
+  ) {
     addIcons({
-      'chevron-back-outline': chevronBackOutline,
-      'person-outline': personOutline,
-      'business-outline': businessOutline,
-      'checkmark-circle': checkmarkCircle,
+      chevronBackOutline,
+      personOutline,
+      checkmarkCircle,
+      businessOutline: businessOutline,
     });
 
-    // ⭐ RÉCUPÉREZ LES DONNÉES DU COURS DEPUIS LA NAVIGATION
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras?.state) {
       this.course = navigation.extras.state['course'] || {};
       this.courseId = navigation.extras.state['courseId'];
       this.courseTitle = navigation.extras.state['courseTitle'];
       this.courseImage = navigation.extras.state['courseImage'];
-
-      console.log('📋 SubscriptionPlansPage - Données extraites:', {
-        courseId: this.courseId,
-        courseTitle: this.courseTitle,
-        courseImage: this.courseImage,
-      });
     }
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.loadPlans();
+  }
+
+  loadPlans() {
+    this.loading = true;
+
+    this.subscriptionService.getPlans().subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.plans = res.data
+            .filter((plan: any) => plan.price === 5000)
+            .map((plan: any) => ({
+              ...plan,
+              plan: 'Annuelle', // 🔥 remplace MONTHLY
+              duration: 'an', // optionnel
+            }));
+        }
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Erreur chargement plans', err);
+        this.loading = false;
+      },
+    });
+  }
 
   goBack() {
     this.location.back();

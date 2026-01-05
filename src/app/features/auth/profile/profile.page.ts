@@ -314,7 +314,7 @@ export class ProfilePage implements OnInit {
 
               // 5. Forcer la navigation avec replaceUrl: true
               this.router
-                .navigate(['/signup'], { replaceUrl: true })
+                .navigate(['/login'], { replaceUrl: true })
                 .then(() => {
                   // 6. Forcer un rechargement complet si nécessaire
                   // window.location.reload(); // Optionnel si problèmes persistants

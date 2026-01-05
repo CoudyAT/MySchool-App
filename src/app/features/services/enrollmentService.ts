@@ -63,7 +63,7 @@ export class EnrollmentService {
       const enrollmentId = response?.id || '';
 
       // Si le cours est payant et méthode = orange-money, créer le paiement
-      if (paymentData.amount > 0 && paymentData.method?.id === 'orange-money') {
+      if (paymentData.amount > 0 && paymentData.method?.id === 'wave') {
         console.log('💳 Création du paiement Orange Money...');
 
         // Récupérer les données client du localStorage ou du paymentData
@@ -105,7 +105,7 @@ export class EnrollmentService {
             courseId: paymentData.courseId,
             amount: Math.round(paymentData.amount * 100), // Convertir en centimes
             currency: 'XOF',
-            paymentMethod: 'orange-money',
+            paymentMethod: 'wave',
             customerPhoneNumber: customerData.phone,
             customerFirstName: customerData.name.split(' ')[0] || 'Prénom',
             customerLastName:
