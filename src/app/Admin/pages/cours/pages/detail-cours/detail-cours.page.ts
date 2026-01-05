@@ -16,11 +16,7 @@ import { ExerciseService } from 'src/app/features/services/exercise.service';
   templateUrl: './detail-cours.page.html',
   styleUrls: ['./detail-cours.page.scss'],
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule
-  ],
+  imports: [CommonModule, FormsModule, IonicModule],
 })
 export class DetailCoursPage implements OnInit {
   constructor(
@@ -30,7 +26,8 @@ export class DetailCoursPage implements OnInit {
     private chapterService: ChapterService,
     private lessonService: LessonService,
     private exerciseService: ExerciseService,
-    private router: Router) { }
+    private router: Router
+  ) {}
   course!: Course;
   courseId: string = '';
   isAddChapterModalOpen = false;
@@ -55,7 +52,7 @@ export class DetailCoursPage implements OnInit {
     duration: '',
     order: 1,
     contentUrl: '',
-    type: 'video'
+    type: 'video',
   };
 
   newExercise: any = {
@@ -63,14 +60,12 @@ export class DetailCoursPage implements OnInit {
     instructions: '',
     duration: '',
     difficulty: 'moyen',
-    questions: []
+    questions: [],
   };
   isLoading: boolean = false;
 
-
   selectedLessonId: string = '';
   selectedExerciseId: string = '';
-
 
   ngOnInit(): void {
     this.courseId = this.route.snapshot.paramMap.get('id')!;
@@ -82,19 +77,18 @@ export class DetailCoursPage implements OnInit {
 
     this.courseService.getCourse(this.courseId).subscribe({
       next: (response: Course) => {
-        this.course = response.data;
-        console.log('Détails du cours chargés:', this.course);
+        this.course = response;
+        console.log('Détails du cours chargés:', this.courseId);
         this.loadChapters();
-      }
+      },
     });
-
   }
 
   loadChapters() {
     this.chapterService.getChaptersByCourse(this.courseId).subscribe({
       next: (chapters: any) => {
         this.course.chapters = chapters.data;
-      }
+      },
     });
   }
 
@@ -104,21 +98,33 @@ export class DetailCoursPage implements OnInit {
       return;
     }
     const updatedStatus = !this.course.isPublished;
-    this.courseService.updateCourse(this.course.id, { isPublished: updatedStatus }).subscribe({
-      next: async (response) => {
-        this.course.isPublished = updatedStatus;
-        console.log(`Le cours a été ${updatedStatus ? 'publié' : 'dépublié'} avec succès.`);
-        await this.toastCtrl.create({
-          message: `Le cours a été ${updatedStatus ? 'publié' : 'dépublié'} avec succès.`,
-          duration: 2000,
-          color: 'success'
-        }).then(toast => toast.present());
-
-      },
-      error: (error) => {
-        console.error('Erreur lors de la mise à jour du statut de publication:', error);
-      }
-    });
+    this.courseService
+      .updateCourse(this.course.id, { isPublished: updatedStatus })
+      .subscribe({
+        next: async (response) => {
+          this.course.isPublished = updatedStatus;
+          console.log(
+            `Le cours a été ${
+              updatedStatus ? 'publié' : 'dépublié'
+            } avec succès.`
+          );
+          await this.toastCtrl
+            .create({
+              message: `Le cours a été ${
+                updatedStatus ? 'publié' : 'dépublié'
+              } avec succès.`,
+              duration: 2000,
+              color: 'success',
+            })
+            .then((toast) => toast.present());
+        },
+        error: (error) => {
+          console.error(
+            'Erreur lors de la mise à jour du statut de publication:',
+            error
+          );
+        },
+      });
   }
 
   openAddChapterModal() {
@@ -128,7 +134,7 @@ export class DetailCoursPage implements OnInit {
       description: '',
       duration: '',
       lessonsIds: [],
-      exercisesIds: []
+      exercisesIds: [],
     };
     this.selectedLessonId = '';
     this.selectedExerciseId = '';
@@ -149,7 +155,7 @@ export class DetailCoursPage implements OnInit {
       duration: '',
       order: 1, // tu peux charger le prochain ordre si tu veux
       contentUrl: '',
-      type: 'video'
+      type: 'video',
     };
     this.isAddLessonModalOpen = true;
   }
@@ -161,7 +167,7 @@ export class DetailCoursPage implements OnInit {
       instructions: '',
       duration: '',
       difficulty: 'moyen',
-      questions: ''
+      questions: '',
     };
     this.isAddExerciseModalOpen = true;
   }
@@ -183,19 +189,24 @@ export class DetailCoursPage implements OnInit {
       duration: this.newLesson.duration || '',
       order: this.newLesson.order || 1,
       contentUrl: this.newLesson.contentUrl || '',
-      type: this.newLesson.type || 'video'
+      type: this.newLesson.type || 'video',
     };
 
-    this.lessonService.createLesson(lessonData, this.currentChapterId, this.courseId)
+    this.lessonService
+      .createLesson(lessonData, this.currentChapterId, this.courseId)
       .subscribe({
         next: () => {
-          this.chapterService.updateChapter(this.currentChapterId, { lessonsIds: lessonData }).subscribe({
-            next: () => {
-            },
-            error: (err) => {
-              console.error('Erreur mise à jour chapitre après ajout leçon', err);
-            }
-          });
+          this.chapterService
+            .updateChapter(this.currentChapterId, { lessonsIds: lessonData })
+            .subscribe({
+              next: () => {},
+              error: (err) => {
+                console.error(
+                  'Erreur mise à jour chapitre après ajout leçon',
+                  err
+                );
+              },
+            });
           this.presentToast('Leçon ajoutée avec succès !', 'success');
           this.closeAddLessonModal();
           this.loadChapters();
@@ -207,7 +218,7 @@ export class DetailCoursPage implements OnInit {
         },
         complete: () => {
           this.isSubmitting = false;
-        }
+        },
       });
   }
 
@@ -220,31 +231,41 @@ export class DetailCoursPage implements OnInit {
       instructions: this.newExercise.instructions || '',
       duration: this.newExercise.duration || '',
       difficulty: this.newExercise.difficulty || 'moyen',
-      questions: this.newExercise.questions || []
+      questions: this.newExercise.questions || [],
     };
 
-    this.exerciseService.createExercise(exerciseData, this.currentChapterId, this.courseId)
+    this.exerciseService
+      .createExercise(exerciseData, this.currentChapterId, this.courseId)
       .subscribe({
         next: () => {
           this.presentToast('Exercice ajouté avec succès !', 'success');
-          this.chapterService.updateChapter(this.currentChapterId, { exercisesIds: exerciseData }).subscribe({
-            next: () => {
-            },
-            error: (err) => {
-              console.error('Erreur mise à jour chapitre après ajout exercice', err);
-            }
-          });
+          this.chapterService
+            .updateChapter(this.currentChapterId, {
+              exercisesIds: exerciseData,
+            })
+            .subscribe({
+              next: () => {},
+              error: (err) => {
+                console.error(
+                  'Erreur mise à jour chapitre après ajout exercice',
+                  err
+                );
+              },
+            });
           this.closeAddExerciseModal();
           this.loadChapters();
         },
         error: (err) => {
-          console.error('Erreur lors de la création de l\'exercice', err);
-          this.presentToast('Erreur lors de la création de l\'exercice', 'danger');
+          console.error("Erreur lors de la création de l'exercice", err);
+          this.presentToast(
+            "Erreur lors de la création de l'exercice",
+            'danger'
+          );
           this.isSubmitting = false;
         },
         complete: () => {
           this.isSubmitting = false;
-        }
+        },
       });
   }
 
@@ -253,20 +274,24 @@ export class DetailCoursPage implements OnInit {
 
     this.isSubmitting = true;
 
-    this.chapterService.createChapter(this.newChapter, this.courseId).subscribe({
-      next: (createdChapter) => {
-        // Ajouter au cours ou recharge
-        this.course.chapters.push(createdChapter);
-        this.courseService.updateCourse(this.course.id, { chapters: this.course.chapters }).subscribe();
-        this.loadChapters();
-        this.closeAddChapterModal();
-        this.isSubmitting = false;
-      },
-      error: (err) => {
-        console.error('Erreur création chapitre', err);
-        this.isSubmitting = false;
-      }
-    });
+    this.chapterService
+      .createChapter(this.newChapter, this.courseId)
+      .subscribe({
+        next: (createdChapter) => {
+          // Ajouter au cours ou recharge
+          this.course.chapters.push(createdChapter);
+          this.courseService
+            .updateCourse(this.course.id, { chapters: this.course.chapters })
+            .subscribe();
+          this.loadChapters();
+          this.closeAddChapterModal();
+          this.isSubmitting = false;
+        },
+        error: (err) => {
+          console.error('Erreur création chapitre', err);
+          this.isSubmitting = false;
+        },
+      });
   }
 
   deleteChapter(chapterId: string) {
@@ -275,12 +300,16 @@ export class DetailCoursPage implements OnInit {
     }
     this.chapterService.deleteChapter(chapterId).subscribe({
       next: () => {
-        this.course.chapters = this.course.chapters.filter(ch => ch.id !== chapterId);
-        this.courseService.updateCourse(this.course.id, { chapters: this.course.chapters }).subscribe();
+        this.course.chapters = this.course.chapters.filter(
+          (ch) => ch.id !== chapterId
+        );
+        this.courseService
+          .updateCourse(this.course.id, { chapters: this.course.chapters })
+          .subscribe();
       },
       error: (err) => {
         console.error('Erreur suppression chapitre', err);
-      }
+      },
     });
   }
 
@@ -288,13 +317,16 @@ export class DetailCoursPage implements OnInit {
     const toast = await this.toastCtrl.create({
       message,
       duration: 3000,
-      color
+      color,
     });
     await toast.present();
   }
 
+  goBack() {
+    this.router.navigate(['/admin-login/list-cours']);
+  }
+
   editCourse(course: Course) {
     this.router.navigate(['/admin-login/edit-cours', course.id]);
-
   }
 }

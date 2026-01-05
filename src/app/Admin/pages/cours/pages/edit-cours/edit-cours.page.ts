@@ -1,24 +1,34 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import {
+  IonContent,
+  IonHeader,
+  IonTitle,
+  IonToolbar,
+} from '@ionic/angular/standalone';
 import { Course } from 'src/app/models/course.model';
 import { CourseService } from 'src/app/features/services/courseService';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
-import { IonicModule } from "@ionic/angular";
+import { IonicModule } from '@ionic/angular';
 
 @Component({
   selector: 'app-edit-cours',
   templateUrl: './edit-cours.page.html',
   styleUrls: ['./edit-cours.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule]
+  imports: [CommonModule, FormsModule, IonicModule],
 })
 export class EditCoursPage implements OnInit {
   course!: Course;
   courseId: string = '';
-  constructor(private courseService: CourseService, private route: ActivatedRoute, private toastCtrl: ToastController) { }
+  constructor(
+    private courseService: CourseService,
+    private route: ActivatedRoute,
+    private toastCtrl: ToastController,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.courseId = this.route.snapshot.paramMap.get('id')!;
@@ -29,11 +39,14 @@ export class EditCoursPage implements OnInit {
 
     this.courseService.getCourse(this.courseId).subscribe({
       next: (response: Course) => {
-        this.course = response.data;
+        this.course = response;
         console.log('Détails du cours chargés:', this.course);
-      }
+      },
     });
+  }
 
+  goBack() {
+    this.router.navigate(['/admin-login/list-cours']);
   }
 
   saveCourse() {
@@ -45,14 +58,13 @@ export class EditCoursPage implements OnInit {
     this.courseService.updateCourse(this.courseId, this.course).subscribe({
       next: (response: any) => {
         console.log('Cours mis à jour avec succès', response);
-        this.showToast("Cours mis à jour avec succès", 'success')
+        this.showToast('Cours mis à jour avec succès', 'success');
         // Optionnel : message toast ou redirection
       },
       error: (err: any) => {
         console.error('Erreur lors de la mise à jour', err);
-      }
+      },
     });
-
   }
 
   private async showToast(
