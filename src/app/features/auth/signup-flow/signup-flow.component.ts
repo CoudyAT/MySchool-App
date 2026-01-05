@@ -293,7 +293,7 @@ export class SignupFlowComponent implements OnInit {
     this.personalInfoForm = this.fb.group({
       phone: [
         '',
-        // [Validators.required, Validators.pattern(/^\+?[\d\s\-\(\)]{8,}$/)],
+         [Validators.required, Validators.pattern(/^\+?[\d\s\-\(\)]{8,}$/)],
       ],
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
@@ -313,7 +313,6 @@ export class SignupFlowComponent implements OnInit {
   // =====================
   // Étape 1: Vérifier si connexion ou inscription
   // =====================
-
 
   async checkLoginOrSignup() {
     if (!this.welcomeForm.get('phone')?.valid || this.isCheckingUser) {
@@ -674,6 +673,14 @@ export class SignupFlowComponent implements OnInit {
     }
   }
 
+  onDateBlur() {
+    // Marquer le champ comme "touché" pour déclencher la validation
+    this.personalInfoForm.get('birthDate')?.markAsTouched();
+
+    // Optionnel: déclencher la validation
+    this.personalInfoForm.get('birthDate')?.updateValueAndValidity();
+  }
+
   // =====================
   // Finalisation de l'inscription
   // =====================
@@ -682,7 +689,7 @@ export class SignupFlowComponent implements OnInit {
     this.updateUserData();
 
     try {
-      const phone = this.userData.phone;
+      const phone = this.personalInfoForm.value.phone;
       const password = this.personalInfoForm.value.password;
       const confirmPassword = this.personalInfoForm.value.confirmPassword;
 

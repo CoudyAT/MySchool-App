@@ -119,11 +119,13 @@
             <ion-input
               type="tel"
               formControlName="phone"
-              readonly="true"
-              class="custom-input readonly">
+              class="custom-input ">
               <ion-icon name="phone" slot="start"></ion-icon>
             </ion-input>
           </ion-item>
+          <div class="error-text" *ngIf="isFieldInvalid(personalInfoForm, 'lastName')">
+            {{ getFieldError(personalInfoForm, 'phone') }}
+          </div>
         </div>
 
         <div class="form-group">
@@ -176,15 +178,16 @@
             </ion-input>
           </ion-item>
           
-          <!-- Input caché pour le sélecteur -->
+          <!-- Input date natif pour mobile -->
           <input
             #dateInput
             type="date"
             formControlName="birthDate"
             [max]="maxDate"
             [min]="minDate"
-            style="position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0;"
+            class="native-date-input"
             (change)="onDateChange($event)"
+            (blur)="onDateBlur()"
           />
           
           <div class="error-text" *ngIf="isFieldInvalid(personalInfoForm, 'birthDate')">

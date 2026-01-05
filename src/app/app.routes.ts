@@ -20,7 +20,6 @@ import { EditProfilePage } from './features/auth/edit-profile/edit-profile.page'
 import { SecurityPage } from './features/auth/security/security.page';
 import { PdfListPage } from './features/pdf/pdf-list/pdf-list.page';
 import { ForgotPasswordPage } from './features/auth/forgot-password/forgot-password.page';
-import { AuthGuard } from './shared/components/auth.guard';
 
 export const routes: Routes = [
   {
@@ -41,72 +40,93 @@ export const routes: Routes = [
     component: SignupFlowComponent,
   },
   {
-    path: 'login',
-    component: LoginComponent,
-  },
-  {
     path: 'courses',
     component: CoursesPage,
-    canActivate: [AuthGuard],
   },
   {
     path: 'mes-cours',
     component: MesCoursPage,
-    canActivate: [AuthGuard],
   },
   {
     path: 'course-detail/:id',
     component: CoursDetailPage,
-    canActivate: [AuthGuard],
   },
   {
     path: 'subscription-plans',
     component: SubscriptionPlansPage,
-    canActivate: [AuthGuard],
   },
   {
     path: 'payment-method',
     component: PaymentMethodPage,
-    canActivate: [AuthGuard],
   },
   {
     path: 'payment-verify',
     component: PaymentVerifyPage,
-    canActivate: [AuthGuard],
   },
   {
     path: 'payment-callback',
     component: PaymentCallbackPage,
-    canActivate: [AuthGuard],
   },
   {
     path: 'course-video/:id',
     component: CourseVideoPage,
-    canActivate: [AuthGuard],
   },
+
+  {
+    path: 'login',
+    component: LoginComponent,
+  },
+
   {
     path: 'profile',
-    component: ProfilePage,
-    canActivate: [AuthGuard],
+    component: ProfilePage, // Remplacez par votre composant de profil
   },
+
+  {
+    path: 'detail',
+    component: DetailPage,
+  },
+
   {
     path: 'edit-profile',
     component: EditProfilePage,
-    canActivate: [AuthGuard],
   },
+
   {
     path: 'security',
     component: SecurityPage,
-    canActivate: [AuthGuard],
   },
+
   {
     path: 'pdf-list',
     component: PdfListPage,
-    canActivate: [AuthGuard],
   },
+
   {
     path: 'forgot-password',
     component: ForgotPasswordPage,
-    canActivate: [AuthGuard],
+  },
+
+  {
+    path: 'admin-login',
+    component: BaseLayoutAdminComponent,
+    children: [
+      { path: 'list-cours', component: ListCoursPage },
+      { path: 'cours/:id', component: DetailCoursPage },
+    ],
+  },
+  {
+    path: 'detail-cours',
+    loadComponent: () =>
+      import('./Admin/pages/cours/pages/detail-cours/detail-cours.page').then(
+        (m) => m.DetailCoursPage
+      ),
+  },
+  {
+    path: 'instructor-profile/:id',
+    loadComponent: () =>
+      import(
+        './features/instructor/instructor-profile/instructor-profile.page'
+      ).then((m) => m.InstructorProfilePage),
   },
 ];

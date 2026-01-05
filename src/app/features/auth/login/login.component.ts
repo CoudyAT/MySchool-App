@@ -375,6 +375,9 @@ export class LoginComponent implements OnInit {
     this.verifying = true;
     this.otpError = '';
 
+    // Afficher un loader
+    await this.showToast('Vérification du code...', 'primary');
+
     try {
       // Récupérer le code OTP complet
       const otpCode = this.getOtpCode();
@@ -403,30 +406,22 @@ export class LoginComponent implements OnInit {
         this.otpError = 'Code incorrect. Veuillez réessayer.';
       } else if (error.code === 'auth/code-expired') {
         this.otpError = 'Code expiré. Veuillez en demander un nouveau.';
+      } else if (error.code === 'auth/credential-already-in-use') {
+        this.otpError = 'Ce numéro est déjà associé à un autre compte.';
       } else {
         this.otpError = 'Erreur de vérification';
       }
 
       await this.showToast(this.otpError, 'danger');
+
+      // Réinitialiser les champs OTP en cas d'erreur
+      this.resetOtpFields();
     } finally {
       this.verifying = false;
     }
   }
 
-  // Vérifier si l'utilisateur existe
-  async checkUserExists(phone: string): Promise<boolean> {
-    try {
-      const usersCollection = collection(this.firestore, 'utilisateur');
-      const phoneQuery = query(usersCollection, where('phone', '==', phone));
-      const snapshot = await getDocs(phoneQuery);
-      return !snapshot.empty;
-    } catch (error) {
-      console.error('Erreur vérification utilisateur:', error);
-      return false;
-    }
-  }
-
-  // Gérer utilisateur existant
+  // Méthode handleExistingUser corrigée
   async handleExistingUser(phone: string) {
     try {
       const usersCollection = collection(this.firestore, 'utilisateur');
@@ -459,30 +454,174 @@ export class LoginComponent implements OnInit {
           'success'
         );
 
-        // Redirection vers la page d'accueil
+        // IMPORTANT: Redirection vers /courses
+        console.log('Redirection vers /courses...');
+
+        // Utiliser router.navigate avec replaceUrl
         setTimeout(() => {
-          window.location.href = '/courses';
+          this.router
+            .navigate(['/courses'], {
+              replaceUrl: true,
+            })
+            .then(() => {
+              console.log('Navigation réussie vers /courses');
+            })
+            .catch((err) => {
+              console.error('Erreur navigation:', err);
+              // Fallback: redirection via window.location
+              window.location.href = '/courses';
+            });
         }, 1000);
+      } else {
+        await this.showToast('Utilisateur non trouvé', 'danger');
       }
     } catch (error) {
       console.error('Erreur connexion utilisateur:', error);
+      await this.showToast('Erreur lors de la connexion', 'danger');
       throw error;
     }
   }
 
-  // Gérer nouvel utilisateur
+  // Méthode handleNewUser corrigée
   async handleNewUser(phone: string) {
-    await this.showToast('Numéro vérifié avec succès', 'success');
+    try {
+      await this.showToast('Numéro vérifié avec succès', 'success');
 
-    // Rediriger vers le flux d'inscription
-    this.router.navigate(['/signup-flow'], {
-      queryParams: { phone },
-      state: {
-        verified: true,
-        phoneNumber: phone,
-      },
-    });
+      // Stocker temporairement le numéro pour l'inscription
+      localStorage.setItem('pendingPhone', phone);
+      localStorage.setItem('verifiedPhone', phone);
+
+      // Rediriger vers le flux d'inscription
+      console.log('Redirection vers signup-flow avec phone:', phone);
+
+      // Ajouter un petit délai pour s'assurer que le toast s'affiche
+      setTimeout(() => {
+        this.router
+          .navigate(['/signup'], {
+            queryParams: { phone },
+            state: {
+              verified: true,
+              phoneNumber: phone,
+            },
+            replaceUrl: true,
+          })
+          .then(() => {
+            console.log('Navigation vers signup-flow réussie');
+          })
+          .catch((err) => {
+            console.error('Erreur navigation signup:', err);
+            // Fallback
+            window.location.href = `/signup?phone=${phone}`;
+          });
+      }, 800);
+    } catch (error) {
+      console.error('Erreur redirection inscription:', error);
+      await this.showToast('Erreur lors de la redirection', 'danger');
+    }
   }
+
+  // Méthode checkUserExists améliorée
+  async checkUserExists(phone: string): Promise<boolean> {
+    try {
+      console.log('Vérification utilisateur pour le numéro:', phone);
+
+      const usersCollection = collection(this.firestore, 'utilisateur');
+      const phoneQuery = query(usersCollection, where('phone', '==', phone));
+      const snapshot = await getDocs(phoneQuery);
+
+      const exists = !snapshot.empty;
+      console.log('Utilisateur existe?', exists);
+
+      return exists;
+    } catch (error) {
+      console.error('Erreur vérification utilisateur:', error);
+      return false;
+    }
+  }
+
+  // Méthode utilitaire pour réinitialiser les champs OTP
+  resetOtpFields() {
+    this.otpForm.reset();
+    // Focus sur le premier champ OTP
+    setTimeout(() => {
+      const firstOtpInput = document.querySelector(
+        '.otp-input'
+      ) as HTMLInputElement;
+      if (firstOtpInput) {
+        firstOtpInput.focus();
+      }
+    }, 100);
+  }
+  // Vérifier si l'utilisateur existe
+  // async checkUserExists(phone: string): Promise<boolean> {
+  //   try {
+  //     const usersCollection = collection(this.firestore, 'utilisateur');
+  //     const phoneQuery = query(usersCollection, where('phone', '==', phone));
+  //     const snapshot = await getDocs(phoneQuery);
+  //     return !snapshot.empty;
+  //   } catch (error) {
+  //     console.error('Erreur vérification utilisateur:', error);
+  //     return false;
+  //   }
+  // }
+
+  // // Gérer utilisateur existant
+  // async handleExistingUser(phone: string) {
+  //   try {
+  //     const usersCollection = collection(this.firestore, 'utilisateur');
+  //     const phoneQuery = query(usersCollection, where('phone', '==', phone));
+  //     const snapshot = await getDocs(phoneQuery);
+
+  //     if (!snapshot.empty) {
+  //       const userDoc = snapshot.docs[0];
+  //       const userData = userDoc.data();
+
+  //       // Stocker les données utilisateur
+  //       localStorage.setItem(
+  //         'currentUser',
+  //         JSON.stringify({
+  //           ...userData,
+  //           id: userDoc.id,
+  //         })
+  //       );
+  //       localStorage.setItem('userPhone', phone);
+
+  //       // Connexion Firebase anonyme
+  //       if (!this.auth.currentUser) {
+  //         await signInAnonymously(this.auth);
+  //       }
+
+  //       // Toast de bienvenue
+  //       const firstName = userData['firstName'] || '';
+  //       await this.showToast(
+  //         firstName ? `Bienvenue ${firstName} !` : 'Connexion réussie !',
+  //         'success'
+  //       );
+
+  //       // Redirection vers la page d'accueil
+  //       setTimeout(() => {
+  //         window.location.href = '/courses';
+  //       }, 1000);
+  //     }
+  //   } catch (error) {
+  //     console.error('Erreur connexion utilisateur:', error);
+  //     throw error;
+  //   }
+  // }
+
+  // // Gérer nouvel utilisateur
+  // async handleNewUser(phone: string) {
+  //   await this.showToast('Numéro vérifié avec succès', 'success');
+
+  //   // Rediriger vers le flux d'inscription
+  //   this.router.navigate(['/signup-flow'], {
+  //     queryParams: { phone },
+  //     state: {
+  //       verified: true,
+  //       phoneNumber: phone,
+  //     },
+  //   });
+  // }
 
   // Renvoyer OTP
   async resendOtp() {
@@ -667,7 +806,7 @@ export class LoginComponent implements OnInit {
 
   // Redirection vers l'inscription
   goToSignup() {
-    this.router.navigate(['/signup-flow']);
+    this.router.navigate(['/signup']);
   }
 
   // Helper pour les toasts
