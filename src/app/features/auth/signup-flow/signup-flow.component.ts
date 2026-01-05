@@ -847,4 +847,8 @@ export class SignupFlowComponent implements OnInit {
     });
     await t.present();
   }
+
+  loginPage() {
+    this.router.navigate(['/login'], { replaceUrl: true });
+  }
 }

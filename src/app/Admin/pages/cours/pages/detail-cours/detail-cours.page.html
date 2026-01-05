@@ -1,17 +1,36 @@
 <div class="page">
+
   <div class="header">
-    <button class="back-btn" routerLink="/courses">← Retour</button>
+    <button class="back-btn" routerLink="/courses">
+      ← Retour aux cours
+    </button>
+    <!-- Loader -->
+
     <h1>{{ course.title }}</h1>
+    <div class="actions">
+      <button class="btn-outline" (click)="togglePublish()">
+        {{ course.isPublished ? 'Dépublier' : 'Publier' }} le cours
+      </button>
+      <button class="btn-primary" (click)="openAddChapterModal()">
+        + Ajouter un chapitre
+      </button>
+      <button class="btn-secondary" (click)="editCourse(course)">
+        Modifier le cours
+      </button>
+    </div>
   </div>
 
   <div class="card">
     <!-- Informations générales -->
     <section>
       <h2>Informations générales</h2>
-      <div class="grid">
+      <div class="grid general-grid">
+        <div class="info-block image-block">
+          <img [src]="course.image" [alt]="course.title" class="course-thumbnail" />
+        </div>
         <div class="info-block">
           <p class="label">Titre du cours</p>
-          <p class="value">{{ course.title }}</p>
+          <p class="value large">{{ course.title }}</p>
         </div>
         <div class="info-block">
           <p class="label">Catégorie</p>
@@ -19,7 +38,7 @@
         </div>
         <div class="info-block">
           <p class="label">Langue</p>
-          <p class="value">{{ course.language }}</p>
+          <p class="value">{{ course.certificateAvailable || 'Non spécifiée' }}</p>
         </div>
       </div>
     </section>
@@ -29,7 +48,7 @@
       <h2>Détails du cours</h2>
       <div class="grid">
         <div class="info-block">
-          <p class="label">Sessions</p>
+          <p class="label">Nombre de sessions</p>
           <p class="value">{{ course.sessions }}</p>
         </div>
         <div class="info-block">
@@ -38,7 +57,7 @@
         </div>
         <div class="info-block">
           <p class="label">Certificat</p>
-          <p class="value">
+          <p class="value" [class.available]="course.certificateAvailable">
             {{ course.certificateAvailable ? 'Disponible' : 'Non disponible' }}
           </p>
         </div>
@@ -51,10 +70,10 @@
       <div class="grid">
         <div class="info-block">
           <p class="label">Nom du formateur</p>
-          <p class="value">{{ course.instructor }}</p>
+          <p class="value">{{ course.instructorId || 'Non spécifié' }}</p>
         </div>
         <div class="info-block">
-          <p class="label">Note</p>
+          <p class="label">Note moyenne</p>
           <p class="value">⭐ {{ course.rating }} / {{ course.maxRating }}</p>
         </div>
       </div>
@@ -63,31 +82,262 @@
     <!-- Description -->
     <section>
       <h2>Description</h2>
-      <p class="description">{{ course.description }}</p>
+      <div class="description">
+        <p>{{ course.description || 'Aucune description fournie.' }}</p>
+      </div>
     </section>
 
-    <!-- Progression 
-    <section>
-      <h2>Progression</h2>
-      <div class="progress">
-        <div
-          class="level"
-          *ngFor="let lvl of course.levels"
-          [class.completed]="lvl.completed"
-        >
-          {{ lvl.icon }}
+    <!-- Chapitres du cours -->
+    <section *ngIf="course.chapters && course.chapters.length > 0">
+      <h2>Chapitres du cours</h2>
+
+      <div class="chapters-list">
+        <div *ngFor="let ch of course.chapters; let i = index" class="chapter-item">
+          <!-- Numéro et titre -->
+          <div class="chapter-header">
+            <div class="chapter-order">
+              {{ ch.order || i + 1 }}
+            </div>
+            <div class="chapter-info">
+              <h3 class="chapter-title">{{ ch.title }}</h3>
+              <p class="chapter-meta" *ngIf="ch.duration || ch.description">
+                <span *ngIf="ch.duration">⏱ {{ ch.duration }}</span>
+                <span *ngIf="ch.description && ch.duration"> • </span>
+                <span *ngIf="ch.description" class="chapter-desc-preview">
+                  {{ ch.description | slice:0:100 }}{{ ch.description.length > 100 ? '...' : '' }}
+                </span>
+              </p>
+            </div>
+          </div>
+
+          <!-- Stats rapides -->
+          <div class="chapter-stats">
+            <button (click)="openAddLessonModal(ch.id)">
+              <span class="stat">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                {{ ch.lessonsIds?.length }}
+              </span>
+            </button>
+            <button (click)="openAddExerciseModal(ch.id)">
+              <span class="stat">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                {{ ch.exercisesIds?.length }}
+              </span>
+            </button>
+          </div>
+
+          <!-- Actions -->
+          <div class="chapter-actions">
+            <button class="action-button" title="Modifier">
+              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              </svg>
+            </button>
+            <button class="action-button delete" title="Supprimer" (click)="deleteChapter(ch.id)">
+              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
-    </section> -->
+    </section>
 
-    <!-- Image
-    <section>
-      <h2>Illustration du cours</h2>
-      <img
-        [src]="course.image"
-        [alt]="course.title"
-        class="course-image"
-      />
-    </section> -->
+    <!-- État vide si pas de chapitres -->
+    <section *ngIf="!course.chapters || course.chapters.length === 0">
+      <div class="empty-state chapters-empty">
+        <div class="empty-icon">
+          <svg width="40" height="40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+        </div>
+        <h3>Aucun chapitre pour le moment</h3>
+        <p>Commencez par ajouter votre premier chapitre pour structurer le cours.</p>
+        <button class="btn-primary small" (click)="openAddChapterModal()">
+          + Ajouter un chapitre
+        </button>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<!-- MODAL AJOUTER UN CHAPITRE -->
+<div *ngIf="isAddChapterModalOpen" class="modal-overlay" (click)="closeAddChapterModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">Ajouter un nouveau chapitre</h2>
+      <button class="modal-close" (click)="closeAddChapterModal()">
+        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <form (ngSubmit)="createChapter()" #chapterForm="ngForm" class="modal-body">
+      <div class="form-grid">
+        <!-- Titre du chapitre -->
+        <div class="form-group">
+          <label for="chapterTitle">Titre du chapitre</label>
+          <input type="text" id="chapterTitle" name="title" [(ngModel)]="newChapter.title" required #title="ngModel"
+            class="form-input" placeholder="Ex: Introduction à Angular">
+          <div *ngIf="title.invalid && title.touched" class="error-text">
+            Le titre est obligatoire
+          </div>
+        </div>
+
+        <!-- Ordre -->
+        <div class="form-group">
+          <label for="chapterOrder">Position dans le cours</label>
+          <input type="number" id="chapterOrder" name="order" [(ngModel)]="newChapter.order" required min="1"
+            #order="ngModel" class="form-input" placeholder="1">
+          <div *ngIf="order.invalid && order.touched" class="error-text">
+            L'ordre est obligatoire et doit être ≥ 1
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group full-width">
+          <label for="chapterDesc">Description</label>
+          <textarea id="chapterDesc" name="description" [(ngModel)]="newChapter.description" rows="4" class="form-input"
+            placeholder="Décrivez brièvement le contenu de ce chapitre..."></textarea>
+        </div>
+
+        <!-- Durée estimée -->
+        <div class="form-group">
+          <label for="chapterDuration">Durée estimée</label>
+          <input type="text" id="chapterDuration" name="duration" [(ngModel)]="newChapter.duration" class="form-input"
+            placeholder="Ex: 2h30">
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" (click)="closeAddChapterModal()">
+          Annuler
+        </button>
+        <button type="submit" class="btn-primary" [disabled]="chapterForm.invalid || isSubmitting">
+          {{ isSubmitting ? 'Création en cours...' : 'Créer le chapitre' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL AJOUTER UNE LEÇON -->
+<div *ngIf="isAddLessonModalOpen" class="modal-overlay" (click)="closeAddLessonModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">Ajouter une leçon au chapitre</h2>
+      <button class="modal-close" (click)="closeAddLessonModal()">✕</button>
+    </div>
+
+    <form (ngSubmit)="createLesson()" #lessonForm="ngForm" class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Titre <span class="required">*</span></label>
+          <input type="text" [(ngModel)]="newLesson.title" name="title" required class="form-input" />
+        </div>
+
+        <div class="form-group">
+          <label>Durée</label>
+          <input type="text" [(ngModel)]="newLesson.duration" name="duration" class="form-input"
+            placeholder="ex: 45min" />
+        </div>
+
+        <div class="form-group">
+          <label>Position</label>
+          <input type="number" [(ngModel)]="newLesson.order" name="order" required min="1" class="form-input" />
+        </div>
+
+        <div class="form-group full-width">
+          <label>Description</label>
+          <textarea [(ngModel)]="newLesson.description" name="description" rows="3" class="form-input"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Type</label>
+          <select [(ngModel)]="newLesson.type" name="type" class="form-input">
+            <option value="text">Texte</option>
+            <option value="video">Vidéo</option>
+            <option value="article">Article</option>
+            <option value="quiz">Quiz</option>
+          </select>
+        </div>
+
+        <div class="form-group full-width">
+          <label>URL du contenu</label>
+          <input type="text" [(ngModel)]="newLesson.contentUrl" name="contentUrl" class="form-input"
+            placeholder="https://..." />
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" (click)="closeAddLessonModal()">Annuler</button>
+        <button type="submit" class="btn-primary" [disabled]="lessonForm.invalid || isSubmitting">
+          {{ isSubmitting ? 'Création...' : 'Créer la leçon' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL AJOUTER UN EXERCICE -->
+<div *ngIf="isAddExerciseModalOpen" class="modal-overlay" (click)="closeAddExerciseModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">Ajouter un exercice au chapitre</h2>
+      <button class="modal-close" (click)="closeAddExerciseModal()">✕</button>
+    </div>
+
+    <form (ngSubmit)="createExercise()" #exerciseForm="ngForm" class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Titre <span class="required">*</span></label>
+          <input type="text" [(ngModel)]="newExercise.title" name="title" required class="form-input" />
+        </div>
+
+        <div class="form-group">
+          <label>Durée estimée</label>
+          <input type="text" [(ngModel)]="newExercise.duration" name="duration" class="form-input" />
+        </div>
+
+        <div class="form-group full-width">
+          <label>Instructions</label>
+          <textarea [(ngModel)]="newExercise.instructions" name="instructions" rows="4" class="form-input"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Difficulté</label>
+          <select [(ngModel)]="newExercise.difficulty" name="difficulty" class="form-input">
+            <option value="facile">Facile</option>
+            <option value="moyen">Moyen</option>
+            <option value="difficile">Difficile</option>
+            <option value="avance">Avancé</option>
+          </select>
+        </div>
+
+        <div class="form-group full-width">
+          <label>Questions (JSON ou texte)</label>
+          <textarea [(ngModel)]="newExercise.questions" name="questions" rows="6" class="form-input"
+            placeholder='Ex: [{"question": "...", "answers": [...], "correct": 0}]'></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" (click)="closeAddExerciseModal()">Annuler</button>
+        <button type="submit" class="btn-primary" [disabled]="exerciseForm.invalid || isSubmitting">
+          {{ isSubmitting ? 'Création...' : 'Créer l\'exercice' }}
+        </button>
+      </div>
+    </form>
   </div>
 </div>

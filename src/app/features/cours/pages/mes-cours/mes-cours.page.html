@@ -28,10 +28,7 @@
         (ionInput)="searchCourse($event)"
         class="custom-searchbar">
       </ion-searchbar>
-      <ion-button 
-        fill="clear" 
-        class="filter-button"
-        (click)="openFilters()">
+      <ion-button fill="clear" class="filter-button" (click)="openFilters()">
         <ion-icon slot="start" name="options-outline"></ion-icon>
         Filtres
       </ion-button>
@@ -82,4 +79,5 @@
     </div>
   </div>
 </ion-content>
+
 <app-bottom-menu activePage="courses"></app-bottom-menu>

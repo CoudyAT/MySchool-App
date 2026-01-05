@@ -10,19 +10,25 @@ import {
   IonCard,
   IonCardContent,
   IonIcon,
-  IonButton,
+  IonButton, IonSpinner,
   IonSegment,
   IonLabel,
   IonSegmentButton,
 } from '@ionic/angular/standalone';
 import { BottomMenuComponent } from 'src/app/shared/components/bottom-menu/bottom-menu.component';
+import { addIcons } from 'ionicons';
+import {
+  checkmarkCircle,
+  lockOpenOutline,
+  optionsOutline
+} from 'ionicons/icons';
 
 @Component({
   selector: 'app-mes-cours',
   templateUrl: './mes-cours.page.html',
   styleUrls: ['./mes-cours.page.scss'],
   standalone: true,
-  imports: [
+  imports: [IonSpinner,
     IonSegmentButton,
     IonLabel,
     IonSegment,
@@ -45,7 +51,9 @@ export class MesCoursPage implements OnInit {
   isLoading = true;
   selectedSegment: 'cours' | 'cours-en-ligne' = 'cours';
 
-  constructor(private router: Router, private courseService: CourseService) {}
+  constructor(private router: Router, private courseService: CourseService) {
+    addIcons({ optionsOutline, lockOpenOutline, checkmarkCircle });
+  }
 
   ngOnInit() {
     this.loadCourses();
@@ -63,16 +71,22 @@ export class MesCoursPage implements OnInit {
         this.courses = courses;
         this.filterCoursesBySegment();
 
-        this.categories = [
-          ...new Set(
-            courses.map((c) => c.category).filter((x) => x && x.trim() !== '')
-          ),
-        ];
+        // Extract unique non-empty category strings from the loaded courses
+        this.categories = Array.from(
+          new Set<string>(
+            this.courses
+              .map((c) => c.category)
+              .filter((cat): cat is string => typeof cat === 'string' && cat.trim() !== '')
+          )
+        );
+
+        console.log('Cours chargés :', this.courses.length);
+        console.log('Catégories chargées :', this.categories);
 
         this.isLoading = false;
       },
       error: (err) => {
-        console.error('Erreur API:', err);
+        console.error('Erreur chargement cours:', err);
         this.isLoading = false;
       },
     });
@@ -95,8 +109,8 @@ export class MesCoursPage implements OnInit {
     }
   }
 
-  searchCourse(event?: any) {
-    const term = event?.detail?.value?.toLowerCase() ?? '';
+  searchCourse(event: any) {
+    const term = event.target.value?.toLowerCase().trim() ?? '';
 
     // Appliquer le filtre de recherche sur les cours déjà filtrés par segment
     const baseCourses =

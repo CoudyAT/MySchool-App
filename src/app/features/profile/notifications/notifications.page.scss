@@ -1,0 +1,146 @@
+ion-header {
+    ion-toolbar {
+        --background: var(--myschool-card);
+        --border-width: 0;
+        --min-height: 64px;
+        --padding-top: 12px;
+        --padding-bottom: 12px;
+
+        ion-buttons {
+            ion-button {
+                --color: var(--myschool-text);
+                --border-radius: 12px;
+                --padding-start: 10px;
+                --padding-end: 14px;
+                font-size: 16px;
+                font-weight: 500;
+                height: 42px;
+
+                ion-icon {
+                    font-size: 26px;
+                }
+
+
+            }
+        }
+
+        ion-title {
+            font-weight: 600;
+            font-size: 19px;
+            color: var(--myschool-text);
+        }
+    }
+}
+
+ion-content {
+    --background: #fff;
+}
+
+.notifications-container {
+    padding: 5px;
+    max-width: 720px;
+    margin: 0 auto;
+    padding-top: 18px;
+
+}
+
+.notif-card {
+    border-radius: 18px;
+    padding: 18px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    border-bottom: 1px solid #00B894;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 5px;
+        background: var(--myschool-primary);
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    &:not(.read)::before {
+        opacity: 1;
+    }
+
+    &.read {
+        opacity: 0.75;
+        background: #f9fdfc;
+
+        .notif-icon ion-icon {
+            color: #999;
+        }
+    }
+
+    &:active {
+        transform: translateY(2px);
+        box-shadow: 0 4px 12px rgba(0, 191, 165, 0.15);
+    }
+
+    .notif-icon {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+
+        .notif-img {
+            font-size: 28px;
+        }
+
+    }
+
+    // Contenu texte
+    .notif-content {
+        flex: 1;
+        min-width: 0;
+
+
+        h3 {
+            margin: 0 0 6px 0;
+            font-size: 16.5px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        p {
+            margin: 0 0 8px 0;
+            font-size: 14.5px;
+            line-height: 1.5;
+        }
+
+        .notif-date {
+            font-size: 13px;
+            font-weight: 500;
+        }
+    }
+
+
+}
+
+.empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--myschool-text-light);
+
+    ion-icon {
+        font-size: 70px;
+        color: #ccc;
+        margin-bottom: 20px;
+    }
+
+    p {
+        font-size: 17px;
+        font-weight: 500;
+    }
+}

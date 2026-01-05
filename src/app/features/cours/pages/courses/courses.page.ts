@@ -44,6 +44,8 @@ import {
   bookOutline,
   bulbOutline,
   calculatorOutline,
+  lockOpenOutline,
+  optionsOutline
 } from 'ionicons/icons';
 import { Router } from '@angular/router';
 
@@ -53,6 +55,8 @@ import { EnrollmentService } from 'src/app/features/services/enrollmentService';
 import { PreminumModalComponent } from 'src/app/features/component/preminum-modal/preminum-modal.component';
 import { InstructorService } from 'src/app/features/services/instructorService';
 import { Instructor } from 'src/app/models/instructor.model';
+import { UserService } from 'src/app/features/auth/services/user.service';
+import { FcmService } from 'src/app/features/services/fcm.service';
 
 @Component({
   selector: 'app-courses',
@@ -104,25 +108,10 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
     private enrollmentService: EnrollmentService,
     private modalCtrl: ModalController,
     private instructorService: InstructorService,
+    private fcmService: FcmService,
     private courseService: CourseService
   ) {
-    addIcons({
-      personCircleOutline,
-      starOutline,
-      addOutline,
-      shieldCheckmark,
-      trendingUpOutline,
-      bookOutline,
-      bulbOutline,
-      calculatorOutline,
-      logOutOutline,
-      ribbonOutline,
-      checkmarkCircle,
-      cardOutline,
-      shieldCheckmarkOutline,
-      arrowForwardOutline,
-      playCircleOutline,
-    });
+    addIcons({ personCircleOutline, starOutline, addOutline, optionsOutline, lockOpenOutline, shieldCheckmark, trendingUpOutline, bookOutline, bulbOutline, calculatorOutline, logOutOutline, ribbonOutline, checkmarkCircle, cardOutline, shieldCheckmarkOutline, arrowForwardOutline, playCircleOutline, });
   }
 
   ngOnInit() {
@@ -136,6 +125,13 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
       this.showPremiumSuccessToast();
       this.loadEnrolledCourses(); // Recharger les cours
     }
+
+    const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+
+    const userId = localUser.uid;
+    this.fcmService.initFCM(userId);
+    this.fcmService.listenMessages();
+
   }
 
   ngAfterViewInit() {

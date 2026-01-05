@@ -9,13 +9,10 @@
           <ion-icon class="profile" name="person-circle-outline"></ion-icon>
         </ion-button>
     </div>
-    <ion-button
-          fill="solid"
-          (click)="openPremiumModal()"
-          class="preminum">
-          <ion-icon name="star-outline" slot="start"></ion-icon>
-          Abonner-vous pour avoir acces a tous les cours
-        </ion-button>
+    <ion-button fill="solid" (click)="openPremiumModal()" class="preminum">
+      <ion-icon name="star-outline" slot="start"></ion-icon>
+      Abonner-vous pour avoir acces a tous les cours
+    </ion-button>
   </ion-toolbar>
 </ion-header>
 
@@ -33,11 +30,7 @@
         <!-- Slide 1 -->
         <swiper-slide>
           <div class="slide-container">
-            <img
-              src="assets/slide1.svg"
-              alt="Formation 1"
-              class="slide-image"
-            />
+            <img src="assets/slide1.svg" alt="Formation 1" class="slide-image" />
             <div class="slide-overlay"></div>
           </div>
         </swiper-slide>
@@ -45,11 +38,7 @@
         <!-- Slide 2 -->
         <swiper-slide>
           <div class="slide-container">
-            <img
-              src="assets/logo.svg"
-              alt="Formation 2"
-              class="slide-image"
-            />
+            <img src="assets/logo.svg" alt="Formation 2" class="slide-image" />
             <div class="slide-overlay"></div>
           </div>
         </swiper-slide>
@@ -57,11 +46,7 @@
         <!-- Slide 3 -->
         <swiper-slide>
           <div class="slide-container">
-            <img
-              src="assets/slide1.svg"
-              alt="Formation 3"
-              class="slide-image"
-            />
+            <img src="assets/slide1.svg" alt="Formation 3" class="slide-image" />
             <div class="slide-overlay"></div>
           </div>
         </swiper-slide>
@@ -108,7 +93,7 @@
       </div>
     </div>
 
-  <!-- Section Mes cours achetés -->
+    <!-- Section Mes cours achetés -->
     <div class="courses-section">
       <div class="section-header-row">
         <h1 class="section-title">Mes cours</h1>
@@ -137,32 +122,29 @@
         </div>
 
         <!-- Bouton Suivant -->
-        <ion-button expand="block" class="suivant-button" (click)="goToCoursesPage()"> 
+        <ion-button expand="block" class="suivant-button" (click)="goToCoursesPage()">
           Découvrir les cours
         </ion-button>
       </div>
 
       <!-- Cours achetés - Grid 2 colonnes -->
       <div *ngIf="!isLoading && enrolledCourses.length > 0" class="enrolled-courses-grid">
-        <ion-card 
-          *ngFor="let course of enrolledCourses" 
-          class="course-card"
-          (click)="openCourse(course)">
-          
+        <ion-card *ngFor="let course of enrolledCourses" class="course-card" (click)="openCourse(course)">
+
           <div class="card-image">
-           <img src="assets/algo.svg" alt="MySchool Logo" >
+            <img src="assets/algo.svg" alt="MySchool Logo">
             <!-- Badge Certificat disponible -->
             <div class="certificate-badge">
               <ion-icon name="shield-checkmark"></ion-icon>
               <span>Certificat disponible</span>
             </div>
-            
+
             <!-- Icône play -->
             <div class="play-icon">
               <ion-icon name="play"></ion-icon>
             </div>
           </div>
-          
+
           <ion-card-content>
             <h3 class="course-title">{{ course.courseTitle }}</h3>
             <div class="course-meta">
@@ -171,7 +153,7 @@
               <span style="color: #FF9500;">{{ course.courseDetails?.exercises }} Exercices</span>
             </div>
             <div class="enrollment-date" *ngIf="course.enrolledAt">
-                Inscrit le {{ getFormattedDate(course.enrolledAt) }}
+              Inscrit le {{ getFormattedDate(course.enrolledAt) }}
             </div>
           </ion-card-content>
         </ion-card>
@@ -182,17 +164,9 @@
       <h2 class="section-title">Instructeurs</h2>
 
       <div class="instructors-grid">
-        <div
-          class="instructor-card"
-          *ngFor="let instructor of instructors"
-          [style.background-color]="instructor.backgroundColor"
-          (click)="goToInstructorProfile(instructor.id)"
-        >
-            <img
-              src="assets/slide1.svg"
-              alt="Instructeur"
-              class="instructor-image"
-            />
+        <div class="instructor-card" *ngFor="let instructor of instructors"
+          [style.background-color]="instructor.backgroundColor" (click)="goToInstructorProfile(instructor.id)">
+          <img src="assets/slide1.svg" alt="Instructeur" class="instructor-image" />
           <div class="instructor-name">{{ instructor.name }}</div>
         </div>
       </div>
@@ -203,12 +177,12 @@
       <h1 class="section-title">Certifications</h1>
 
       <div class="add-button-container">
-          <img src="assets/tabler.svg" alt="Exos" class="quick-icon">
+        <img src="assets/tabler.svg" alt="Exos" class="quick-icon">
       </div>
       <p class="section-description">
-          Bénéficiez des certifications de l’OIT 
-          (Organisation Internationale du Travail)      
-      </p>     
+        Bénéficiez des certifications de l’OIT
+        (Organisation Internationale du Travail)
+      </p>
     </div>
 
     <!-- Section Tous les cours -->

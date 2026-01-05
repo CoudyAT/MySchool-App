@@ -33,7 +33,7 @@ export class BottomMenuComponent {
       const routes: { [key: string]: string } = {
         home: '/courses', // Accueil → CoursesPage
         courses: '/mes-cours', // Cours → MesCoursPage
-        messages: '/messages', // Messages → Page messages
+        message: '/message', // Messages → Page messages
         achievements: '/achievements', // Réussites → Page réussites
       };
 

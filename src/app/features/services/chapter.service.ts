@@ -45,8 +45,8 @@ export class ChapterService {
   }
 
   // Créer un nouveau chapitre
-  createChapter(chapter: Chapter): Observable<Chapter> {
-    return this.api.post<Chapter>('/chapters', chapter);
+  createChapter(chapter: Chapter, courseId: string): Observable<Chapter> {
+    return this.api.post<Chapter>('/chapters', { ...chapter, courseId });
   }
 
   // Mettre à jour un chapitre
@@ -68,20 +68,20 @@ export class ChapterService {
   private transformExercisesToLessons(exercises: Exercise[]): Lesson[] {
     return exercises.map(
       (exercise, index) =>
-        ({
-          id: exercise.id,
-          title: exercise.title,
-          type: 'exercise',
-          duration: exercise.duration,
-          isCompleted: false,
-          order: index + 1,
-          passed: false,
-          score: 'À compléter',
-          instructions: exercise.instructions,
-          templateCode: exercise.templateCode,
-          testCases: exercise.testCases,
-          questions: exercise.questions,
-        } as Lesson)
+      ({
+        id: exercise.id,
+        title: exercise.title,
+        type: 'exercise',
+        duration: exercise.duration,
+        isCompleted: false,
+        order: index + 1,
+        passed: false,
+        score: 'À compléter',
+        instructions: exercise.instructions,
+        templateCode: exercise.templateCode,
+        testCases: exercise.testCases,
+        questions: exercise.questions,
+      } as Lesson)
     );
   }
 }

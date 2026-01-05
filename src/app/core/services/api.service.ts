@@ -9,7 +9,7 @@ import { environment } from '../../../environments/environment';
 export class ApiService {
   private readonly baseUrl = environment.apiUrl;
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) { }
 
   private getHeaders(): HttpHeaders {
     return new HttpHeaders({

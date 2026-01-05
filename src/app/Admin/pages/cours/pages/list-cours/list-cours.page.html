@@ -1,253 +1,246 @@
 <!-- courses-list.component.html -->
 <div class="p-6 bg-gray-100 min-h-screen">
   <div class="content">
-    <!-- Header avec bouton d'ajout -->
-    <div class="header-section">
-      <div class="header">
-        <div>
-          <h1 class="title">Catalogue des Cours</h1>
-          <p class="subtitle">Découvrez et gérez vos formations</p>
-        </div>
-        <button class="add-button" (click)="openAddCourseModal()">
-          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-          </svg>
-          Ajouter un cours
-        </button>
-      </div>
+    <!-- Loader -->
+    <div *ngIf="isLoading" class="loader-container">
+      <div class="spinner"></div>
+      <p class="loader-text">Chargement des cours...</p>
     </div>
 
-    <!-- Stats Cards -->
-    <div class="stats-grid">
-      <!-- Total -->
-      <div class="stat-card stat-card-total">
-        <div class="stat-card-content">
-          <div class="stat-card-left">
-            <div class="stat-badge">
-              <div class="status-dot dot-blue"></div>
-              <p class="stat-label">TOTAL</p>
-            </div>
-            <p class="stat-number">{{ stats.total }}</p>
-            <p class="stat-description text-blue">Cours disponibles</p>
-          </div>
-          <div class="stat-icon bg-blue">
-            <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-            </svg>
-          </div>
-        </div>
-      </div>
+    <div *ngIf="!isLoading">
 
-      <!-- En cours -->
-      <div class="stat-card stat-card-progress">
-        <div class="stat-card-content">
-          <div class="stat-card-left">
-            <div class="stat-badge">
-              <div class="status-dot dot-amber animate-pulse"></div>
-              <p class="stat-label">EN COURS</p>
-            </div>
-            <p class="stat-number">{{ stats.inProgress }}</p>
-            <p class="stat-description text-amber">Formation en cours</p>
+      <!-- Header avec bouton d'ajout -->
+      <div class="header-section">
+        <div class="header">
+          <div>
+            <h1 class="title">Catalogue des Cours</h1>
+            <p class="subtitle">Découvrez et gérez vos formations</p>
           </div>
-          <div class="stat-icon bg-amber">
-            <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+          <button class="add-button" (click)="openAddCourseModal()">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
-          </div>
-        </div>
-      </div>
-
-      <!-- Terminés -->
-      <div class="stat-card stat-card-completed">
-        <div class="stat-card-content">
-          <div class="stat-card-left">
-            <div class="stat-badge">
-              <div class="status-dot dot-green"></div>
-              <p class="stat-label">TERMINÉS</p>
-            </div>
-            <p class="stat-number">{{ stats.completed }}</p>
-            <p class="stat-description text-green">Cours complétés</p>
-          </div>
-          <div class="stat-icon bg-green">
-            <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-            </svg>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Filtres et recherche -->
-    <div class="filters-section">
-      <div class="search-wrapper">
-        <div class="search-container">
-          <svg class="search-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <input 
-            type="text" 
-            placeholder="Rechercher un cours, instructeur..."
-            class="search-input"
-            [(ngModel)]="searchText"
-            (input)="onSearchChange()">
-          <button 
-            *ngIf="searchText" 
-            (click)="clearSearch()" 
-            class="clear-button">
-            ✕
+            Ajouter un cours
           </button>
         </div>
       </div>
 
-      <div class="filter-container">
-        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-            d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-        </svg>
-        <select class="select" [value]="selectedCategory" (change)="onCategoryChange($event)">
-          <option *ngFor="let cat of categories" [value]="cat">
-            {{ cat === 'all' ? 'Toutes les catégories' : cat }}
-          </option>
-        </select>
-      </div>
-    </div>
-
-    <!-- Message vide -->
-    <div *ngIf="filteredCourses.length === 0" class="empty-state">
-      <div class="empty-icon">
-        <svg width="40" height="40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
-      </div>
-      <h3 class="empty-title">Aucun cours trouvé</h3>
-      <p class="empty-text">Aucun cours ne correspond à vos critères de recherche</p>
-      <button class="add-button add-button-empty" (click)="openAddCourseModal()">
-        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-        </svg>
-        Ajouter le premier cours
-      </button>
-    </div>
-
-    <!-- Liste des cours -->
-    <div *ngIf="filteredCourses.length > 0" class="courses-grid">
-      <div *ngFor="let course of paginatedCourses; trackBy: trackByCourseId" class="course-card" (click)="goToDetail(course)">
-        <!-- Image -->
-        <div class="image-container">
-          <img [src]="course.image" [alt]="course.title" class="course-image">
-          <div *ngIf="course.certificateAvailable" class="certificate-badge">
-            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-            </svg>
-            <span>Certificat</span>
+      <!-- Stats Cards -->
+      <div class="stats-grid">
+        <!-- Total -->
+        <div class="stat-card stat-card-total">
+          <div class="stat-card-content">
+            <div class="stat-card-left">
+              <div class="stat-badge">
+                <div class="status-dot dot-blue"></div>
+                <p class="stat-label">TOTAL</p>
+              </div>
+              <p class="stat-number">{{ totalCourses }}</p>
+              <p class="stat-description text-blue">Cours disponibles</p>
+            </div>
+            <div class="stat-icon bg-blue">
+              <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
+            </div>
           </div>
         </div>
 
-        <!-- Contenu -->
-        <div class="course-content">
-          <div class="category-badge">{{ course.category }}</div>
-          
-          <h3 class="course-title">{{ course.title }}</h3>
-          <p class="course-description">{{ course.description }}</p>
-
-          <!-- Instructeur -->
-          <div class="instructor-section">
-            <div class="instructor-avatar">
-              {{ getInstructorInitial(course.instructor) }}
+        <!-- En cours -->
+        <div class="stat-card stat-card-progress">
+          <div class="stat-card-content">
+            <div class="stat-card-left">
+              <div class="stat-badge">
+                <div class="status-dot dot-amber animate-pulse"></div>
+                <p class="stat-label">EN COURS</p>
+              </div>
+              <p class="stat-number">{{ activeCourses }}</p>
+              <p class="stat-description text-amber">Formation en cours</p>
             </div>
-            <span class="instructor-name">{{ course.instructor }}</span>
-          </div>
-
-          <!-- Stats -->
-          <div class="course-stats">
-            <div class="stat-item">
-              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            <div class="stat-icon bg-amber">
+              <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
-              <span>{{ course.sessions }} sessions</span>
-            </div>
-            <div class="stat-item">
-              <span>📝</span>
-              <span>{{ course.exercises }} exercices</span>
             </div>
           </div>
+        </div>
 
-          <!-- Niveaux -->
-          <div class="levels-container">
-            <div 
-              *ngFor="let level of course.levels" 
-              class="level-icon"
-              [class.level-completed]="level.completed"
-              [class.level-incomplete]="!level.completed">
-              {{ level.icon }}
+        <!-- Terminés -->
+        <div class="stat-card stat-card-completed">
+          <div class="stat-card-content">
+            <div class="stat-card-left">
+              <div class="stat-badge">
+                <div class="status-dot dot-green"></div>
+                <p class="stat-label">TERMINÉS</p>
+              </div>
+              <p class="stat-number">{{ finishedCourses }}</p>
+              <p class="stat-description text-green">Cours complétés</p>
             </div>
-          </div>
-
-          <!-- Footer -->
-          <div class="course-footer">
-            <div class="rating-container">
-              <svg width="16" height="16" fill="#fbbf24" stroke="#fbbf24" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                  d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+            <div class="stat-icon bg-green">
+              <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
               </svg>
-              <span class="rating">{{ course.rating }}</span>
-              <span class="max-rating">/ {{ course.maxRating }}</span>
             </div>
-            <button class="enroll-button">
-              Accéder au cours
+          </div>
+        </div>
+      </div>
+
+      <!-- Filtres et recherche -->
+      <div class="filters-section">
+        <div class="search-wrapper">
+          <div class="search-container">
+            <svg class="search-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input type="text" placeholder="Rechercher un cours, instructeur..." class="search-input"
+              [(ngModel)]="searchText" (input)="onSearchChange()">
+            <button *ngIf="searchText" (click)="clearSearch()" class="clear-button">
+              ✕
             </button>
           </div>
         </div>
+
+        <div class="filter-container">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+          </svg>
+          <select class="select" [value]="selectedCategory" (change)="onCategoryChange($event)">
+            <option *ngFor="let cat of paginatedCourses" [value]="cat">
+              <!--  {{ cat === 'all' ? 'Toutes les catégories' : cat }} -->
+            </option>
+          </select>
+        </div>
       </div>
-    </div>
 
-    <!-- Pagination -->
-    <div *ngIf="filteredCourses.length > 0 && totalPages > 1" class="pagination">
-      <button 
-        (click)="previousPage()" 
-        [disabled]="currentPage === 1"
-        class="page-button"
-        [class.page-button-disabled]="currentPage === 1">
-        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-        </svg>
-        Précédent
-      </button>
-
-      <div class="page-numbers">
-        <button 
-          *ngFor="let page of getPageNumbers()"
-          (click)="page > 0 ? goToPage(page) : null"
-          [disabled]="page === -1"
-          class="page-number"
-          [class.page-number-active]="currentPage === page"
-          [class.page-number-ellipsis]="page === -1">
-          {{ page === -1 ? '...' : page }}
+      <!-- Message vide -->
+      <div *ngIf="filteredCourses.length === 0" class="empty-state">
+        <div class="empty-icon">
+          <svg width="40" height="40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+        <h3 class="empty-title">Aucun cours trouvé</h3>
+        <p class="empty-text">Aucun cours ne correspond à vos critères de recherche</p>
+        <button class="add-button add-button-empty" (click)="openAddCourseModal()">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Ajouter le premier cours
         </button>
       </div>
 
-      <button 
-        (click)="nextPage()" 
-        [disabled]="currentPage === totalPages"
-        class="page-button"
-        [class.page-button-disabled]="currentPage === totalPages">
-        Suivant
-        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-        </svg>
-      </button>
+      <!-- Liste des cours -->
+      <div *ngIf="filteredCourses.length > 0" class="courses-grid">
+        <div *ngFor="let course of paginatedCourses; trackBy: trackByCourseId" class="course-card"
+          (click)="goToDetail(course)">
+          <!-- Image -->
+          <div class="image-container">
+            <img *ngIf="course.image" [src]="course.image" alt="course cover" />
+            <div *ngIf="!course.image" class="avatar-placeholder">
+              {{ 'A' }}
+            </div>
+            <div *ngIf="course.certificateAvailable" class="certificate-badge">
+              <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+              </svg>
+              <span>Certificat</span>
+            </div>
+          </div>
+
+          <!-- Contenu -->
+          <div class="course-content">
+            <div class="category-badge">{{ course.category }}</div>
+
+            <h3 class="course-title">{{ course.title }}</h3>
+            <p class="course-description">{{ course.description }}</p>
+
+            <!-- Instructeur -->
+            <div class="instructor-section">
+              <div class="instructor-avatar">
+                {{ getInstructorInitial(course.title) }}
+              </div>
+              <span class="instructor-name">{{ course.title }}</span>
+            </div>
+
+            <!-- Stats -->
+            <div class="course-stats">
+              <div class="stat-item">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+                <span>{{ course.sessions }} sessions</span>
+              </div>
+              <div class="stat-item">
+                <span>📝</span>
+                <span>{{ course.exercises }} exercices</span>
+              </div>
+            </div>
+
+            <!-- Niveaux -->
+            <div class="levels-container">
+              <div *ngFor="let level of course.levels" class="level-icon" [class.level-completed]="level.completed"
+                [class.level-incomplete]="!level.completed">
+                {{ level.icon }}
+              </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="course-footer">
+              <div class="rating-container">
+                <svg width="16" height="16" fill="#fbbf24" stroke="#fbbf24" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                </svg>
+                <span class="rating">{{ course.rating }}</span>
+                <span class="max-rating">/ {{ course.maxRating }}</span>
+              </div>
+              <button class="enroll-button">
+                Accéder au cours
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div *ngIf="filteredCourses.length > 0 && totalPages > 1" class="pagination">
+        <button (click)="previousPage()" [disabled]="currentPage === 1" class="page-button"
+          [class.page-button-disabled]="currentPage === 1">
+          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+          Précédent
+        </button>
+
+        <div class="page-numbers">
+          <button *ngFor="let page of getPageNumbers()" (click)="page > 0 ? goToPage(page) : null"
+            [disabled]="page === -1" class="page-number" [class.page-number-active]="currentPage === page"
+            [class.page-number-ellipsis]="page === -1">
+            {{ page === -1 ? '...' : page }}
+          </button>
+        </div>
+
+        <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="page-button"
+          [class.page-button-disabled]="currentPage === totalPages">
+          Suivant
+          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
     </div>
   </div>
 
 
-<!-- Modal d'ajout de cours -->
+  <!-- Modal d'ajout de cours -->
   <div *ngIf="showAddCourseModal" class="modal-overlay" (click)="closeAddCourseModal()">
     <div class="modal-content" (click)="$event.stopPropagation()">
       <!-- En-tête du modal -->
@@ -265,15 +258,7 @@
         <app-add-cours (formSubmit)="onCourseFormSubmit($event)"></app-add-cours>
       </div>
 
-      <!-- Footer avec boutons -->
-      <div class="modal-footer">
-        <button type="button" class="btn-secondary" (click)="closeAddCourseModal()">
-          Annuler
-        </button>
-        <button type="button" class="enroll-button" (click)="submitForm()">
-          Créer le cours
-        </button>
-      </div>
+
     </div>
   </div>
 </div>

@@ -1,0 +1,103 @@
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <button class="back-btn" routerLink="/admin-login/courses">← Retour</button>
+    <h1>{{ course.title }}</h1>
+  </div>
+
+  <!-- FORMULAIRE -->
+  <form (ngSubmit)="saveCourse()" #editForm="ngForm">
+
+    <div class="card">
+
+      <!-- INFOS PRINCIPALES -->
+      <section>
+        <h2>Informations du cours</h2>
+
+        <div class="grid">
+
+          <div class="info-block">
+            <p class="label">Titre</p>
+            <ion-input type="text" [(ngModel)]="course.title" name="title" required>
+            </ion-input>
+          </div>
+
+          <div class="info-block">
+            <p class="label">Type</p>
+            <ion-select [(ngModel)]="course.type" name="type">
+              <ion-select-option value="En ligne">En ligne</ion-select-option>
+              <ion-select-option value="Présentiel">Présentiel</ion-select-option>
+              <ion-select-option value="Hybride">Hybride</ion-select-option>
+            </ion-select>
+          </div>
+
+          <div class="info-block">
+            <p class="label">Prix (FCFA)</p>
+            <ion-input type="number" [(ngModel)]="course.price" name="price" min="0">
+            </ion-input>
+          </div>
+
+          <div class="info-block">
+            <p class="label">Niveau</p>
+            <ion-select [(ngModel)]="course.level" name="level">
+              <ion-select-option value="Débutant">Débutant</ion-select-option>
+              <ion-select-option value="Intermédiaire">Intermédiaire</ion-select-option>
+              <ion-select-option value="Avancé">Avancé</ion-select-option>
+            </ion-select>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- DESCRIPTION -->
+      <section>
+        <h2>Description</h2>
+
+        <ion-textarea [(ngModel)]="course.description" name="description" rows="5" placeholder="Description du cours">
+        </ion-textarea>
+
+      </section>
+
+      <!-- OPTIONS -->
+      <section>
+        <h2>Options</h2>
+
+        <div class="grid">
+
+          <div class="info-block">
+            <p class="label">Durée (heures)</p>
+            <ion-input type="number" [(ngModel)]="course.duration" name="duration" min="0">
+            </ion-input>
+          </div>
+
+          <div class="info-block">
+            <p class="label">Sessions</p>
+            <ion-input type="number" [(ngModel)]="course.sessions" name="sessions" min="0">
+            </ion-input>
+          </div>
+
+          <div class="info-block">
+            <p class="label">Exercices</p>
+            <ion-input type="number" [(ngModel)]="course.exercises" name="exercises" min="0">
+            </ion-input>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="actions">
+      <button type="button" class="btn-secondary" routerLink="/admin-login/courses">
+        Annuler
+      </button>
+
+      <button type="submit" class="btn-primary" [disabled]="editForm.invalid">
+        Enregistrer
+      </button>
+    </div>
+
+  </form>
+</div>

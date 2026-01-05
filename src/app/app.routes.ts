@@ -17,6 +17,18 @@ import { ProfilePage } from './features/auth/profile/profile.page';
 import { DetailPage } from './features/cours/pages/detail/detail.page';
 import { PaymentCallbackPage } from './features/payments/payment-callback/payment-callback.page';
 import { EditProfilePage } from './features/auth/edit-profile/edit-profile.page';
+import { HelpCenterPage } from './features/profile/help-center/help-center.page';
+import { TermsPage } from './features/profile/terms/terms.page';
+import { NotificationsPage } from './features/profile/notifications/notifications.page';
+import { MessagePage } from './features/chat/message/message.page';
+import { FaqPage } from './Admin/pages/faq/faq.page';
+import { UsersPage } from './Admin/pages/users/users.page';
+import { DashboardPage } from './Admin/pages/dashboard/dashboard.page';
+import { UserDetailsPage } from './Admin/pages/user-details/user-details.page';
+import { InstructorsPage } from './Admin/pages/instructors/instructors.page';
+import { EditCoursPage } from './Admin/pages/cours/pages/edit-cours/edit-cours.page';
+import { UserEditPage } from './Admin/pages/user-edit/user-edit.page';
+import { EnrollmentsPage } from './Admin/pages/enrollments/enrollments.page';
 import { SecurityPage } from './features/auth/security/security.page';
 import { PdfListPage } from './features/pdf/pdf-list/pdf-list.page';
 import { ForgotPasswordPage } from './features/auth/forgot-password/forgot-password.page';
@@ -46,6 +58,10 @@ export const routes: Routes = [
   {
     path: 'mes-cours',
     component: MesCoursPage,
+  },
+  {
+    path: 'message',
+    component: MessagePage,
   },
   {
     path: 'course-detail/:id',
@@ -79,7 +95,7 @@ export const routes: Routes = [
 
   {
     path: 'profile',
-    component: ProfilePage, // Remplacez par votre composant de profil
+    component: ProfilePage,
   },
 
   {
@@ -90,6 +106,18 @@ export const routes: Routes = [
   {
     path: 'edit-profile',
     component: EditProfilePage,
+  },
+  {
+    path: 'help-center',
+    component: HelpCenterPage,
+  },
+  {
+    path: 'terms',
+    component: TermsPage,
+  },
+  {
+    path: 'notifications',
+    component: NotificationsPage,
   },
 
   {
@@ -113,6 +141,25 @@ export const routes: Routes = [
     children: [
       { path: 'list-cours', component: ListCoursPage },
       { path: 'cours/:id', component: DetailCoursPage },
+      { path: 'faq', component: FaqPage },
+      { path: 'users', component: UsersPage },
+      { path: '', component: DashboardPage },
+      {
+        path: 'user-details/:id', component: UserDetailsPage
+      },
+      {
+        path: 'user-edit/:id', component: UserEditPage
+      },
+      {
+        path: 'instructors', component: InstructorsPage
+      },
+      {
+        path: 'edit-cours/:id', component: EditCoursPage
+      },
+      {
+        path: 'enrollments', component: EnrollmentsPage
+      },
+
     ],
   },
   {
@@ -129,4 +176,9 @@ export const routes: Routes = [
         './features/instructor/instructor-profile/instructor-profile.page'
       ).then((m) => m.InstructorProfilePage),
   },
+  {
+    path: 'instructor-details',
+    loadComponent: () => import('./Admin/pages/instructor-details/instructor-details.page').then(m => m.InstructorDetailsPage)
+  },
+
 ];

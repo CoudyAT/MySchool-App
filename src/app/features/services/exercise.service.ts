@@ -14,8 +14,8 @@ export class ExerciseService {
    */
 
   // Créer un nouvel exercice
-  createExercise(exercise: Exercise): Observable<Exercise> {
-    return this.api.post<Exercise>('/exercises', exercise);
+  createExercise(exercise: Exercise, chapterId: string, courseId: string): Observable<Exercise> {
+    return this.api.post<Exercise>('/exercises', { ...exercise, chapterId, courseId });
   }
 
   // Récupérer tous les exercices
@@ -75,7 +75,7 @@ export class ExerciseService {
   // Obtenir le nombre d'exercices d'un chapitre par type
   async getChapterExerciseCountByType(
     chapterId: string,
-    type: 'quiz' | 'coding' | 'essay'
+    type: 'qcm' | 'code' | 'text'
   ): Promise<number> {
     const exercises = await this.getExercisesByChapter(chapterId).toPromise();
     return exercises?.filter((ex) => ex.type === type).length || 0;

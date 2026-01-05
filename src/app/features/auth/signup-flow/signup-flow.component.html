@@ -2,12 +2,7 @@
   <!-- Header avec logo et progress -->
   <div class="header-section">
     <div class="nav-section">
-      <ion-button
-        *ngIf="currentStep > 0"
-        fill="clear"
-        color="dark"
-        (click)="previousStep()"
-        class="back-button"
+      <ion-button *ngIf="currentStep > 0" fill="clear" color="dark" (click)="previousStep()" class="back-button"
         [disabled]="isAnimating">
         <ion-icon name="chevron-back"></ion-icon>
       </ion-button>
@@ -15,15 +10,12 @@
 
     <div class="logo-container">
       <div class="logo">
-         <img src="assets/logo.svg" alt="MySchool Logo" />
+        <img src="assets/logo.svg" alt="MySchool Logo" />
       </div>
     </div>
 
     <div class="progress-container">
-      <ion-progress-bar
-        [value]="getProgressPercentage() / 100"
-        color="primary"
-        class="custom-progress">
+      <ion-progress-bar [value]="getProgressPercentage() / 100" color="primary" class="custom-progress">
       </ion-progress-bar>
       <div class="step-indicator">
         Étape {{ currentStep + 1 }} sur {{ totalSteps }}
@@ -129,15 +121,9 @@
         </div>
 
         <div class="form-group">
-          <ion-item 
-            class="custom-item"
-            [class.item-error]="isFieldInvalid(personalInfoForm, 'firstName')">
+          <ion-item class="custom-item" [class.item-error]="isFieldInvalid(personalInfoForm, 'firstName')">
             <ion-label position="stacked">Prénom(s)</ion-label>
-            <ion-input
-              type="text"
-              formControlName="firstName"
-              placeholder="Votre prénom"
-              class="custom-input">
+            <ion-input type="text" formControlName="firstName" placeholder="Votre prénom" class="custom-input">
               <ion-icon name="person" slot="start"></ion-icon>
             </ion-input>
           </ion-item>
@@ -147,15 +133,9 @@
         </div>
 
         <div class="form-group">
-          <ion-item 
-            class="custom-item"
-            [class.item-error]="isFieldInvalid(personalInfoForm, 'lastName')">
+          <ion-item class="custom-item" [class.item-error]="isFieldInvalid(personalInfoForm, 'lastName')">
             <ion-label position="stacked">Nom</ion-label>
-            <ion-input
-              type="text"
-              formControlName="lastName"
-              placeholder="Votre nom de famille"
-              class="custom-input">
+            <ion-input type="text" formControlName="lastName" placeholder="Votre nom de famille" class="custom-input">
               <ion-icon name="person" slot="start"></ion-icon>
             </ion-input>
           </ion-item>
@@ -164,15 +144,10 @@
           </div>
         </div>
         <div class="form-group">
-          <ion-item 
-            class="custom-item"
-            [class.item-error]="isFieldInvalid(personalInfoForm, 'birthDate')"
+          <ion-item class="custom-item" [class.item-error]="isFieldInvalid(personalInfoForm, 'birthDate')"
             (click)="openDatePicker()">
             <ion-label position="stacked">Date de naissance</ion-label>
-            <ion-input
-              readonly
-              [value]="getFormattedDate()"
-              placeholder="Sélectionnez votre date de naissance"
+            <ion-input readonly [value]="getFormattedDate()" placeholder="Sélectionnez votre date de naissance"
               class="custom-input">
               <ion-icon name="calendar-outline" slot="start"></ion-icon>
             </ion-input>
@@ -197,14 +172,9 @@
 
         <!-- NOUVEAU: Champs mot de passe -->
         <div class="form-group">
-          <ion-item 
-            class="custom-item"
-            [class.item-error]="isFieldInvalid(personalInfoForm, 'password')">
+          <ion-item class="custom-item" [class.item-error]="isFieldInvalid(personalInfoForm, 'password')">
             <ion-label position="stacked">Mot de passe</ion-label>
-            <ion-input
-              type="password"
-              formControlName="password"
-              placeholder="Créez votre mot de passe"
+            <ion-input type="password" formControlName="password" placeholder="Créez votre mot de passe"
               class="custom-input">
               <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
             </ion-input>
@@ -219,14 +189,9 @@
 
         <!-- NOUVEAU: Confirmation mot de passe -->
         <div class="form-group">
-          <ion-item 
-            class="custom-item"
-            [class.item-error]="passwordsMismatch()">
+          <ion-item class="custom-item" [class.item-error]="passwordsMismatch()">
             <ion-label position="stacked">Confirmer le mot de passe</ion-label>
-            <ion-input
-              type="password"
-              formControlName="confirmPassword"
-              placeholder="Répétez le mot de passe"
+            <ion-input type="password" formControlName="confirmPassword" placeholder="Répétez le mot de passe"
               class="custom-input">
               <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
             </ion-input>
@@ -238,9 +203,7 @@
 
         <div class="terms-section">
           <div class="checkbox-item">
-            <ion-checkbox 
-              [(ngModel)]="userData.acceptTerms" 
-              class="custom-checkbox">
+            <ion-checkbox [(ngModel)]="userData.acceptTerms" class="custom-checkbox">
             </ion-checkbox>
             <label class="checkbox-label">
               Je souhaite recevoir des offres et promotions provenant de MySchool
@@ -248,10 +211,7 @@
           </div>
 
           <div class="checkbox-item">
-            <ion-checkbox 
-              [(ngModel)]="userData.acceptPrivacy" 
-              color="primary"
-              class="custom-checkbox">
+            <ion-checkbox [(ngModel)]="userData.acceptPrivacy" color="primary" class="custom-checkbox">
             </ion-checkbox>
             <label class="checkbox-label">
               J'ai lu et accepté les
@@ -267,37 +227,26 @@
     <div *ngIf="currentStep === 2" class="step-content active">
       <form [formGroup]="userInfoForm" class="form-container">
         <div class="form-group">
-            <ion-item 
-              class="custom-item"
-              [class.item-error]="isFieldInvalid(userInfoForm, 'country')">
-              <ion-label position="stacked">Pays / Ville</ion-label>
-              <ion-select 
-                formControlName="country" 
-                placeholder="Sélectionnez votre pays"
-                class="custom-select">
+          <ion-item class="custom-item" [class.item-error]="isFieldInvalid(userInfoForm, 'country')">
+            <ion-label position="stacked">Pays / Ville</ion-label>
+            <ion-select formControlName="country" placeholder="Sélectionnez votre pays" class="custom-select">
 
-                <ion-select-option *ngFor="let item of countries" [value]="item.country">
-                  <img [src]="item.flag" alt="{{ item.country }}" width="20" height="14" style="margin-right:8px;">
-                  {{ item.country }}
-                </ion-select-option>
+              <ion-select-option *ngFor="let item of countries" [value]="item.country">
+                <img [src]="item.flag" alt="{{ item.country }}" width="20" height="14" style="margin-right:8px;">
+                {{ item.country }}
+              </ion-select-option>
 
-              </ion-select>
-            </ion-item>
+            </ion-select>
+          </ion-item>
           <div class="error-text" *ngIf="isFieldInvalid(userInfoForm, 'country')">
             {{ getFieldError(userInfoForm, 'country') }}
           </div>
         </div>
 
         <div class="form-group">
-          <ion-item 
-            class="custom-item"
-            [class.item-error]="isFieldInvalid(userInfoForm, 'address')">
+          <ion-item class="custom-item" [class.item-error]="isFieldInvalid(userInfoForm, 'address')">
             <ion-label position="stacked">Adresse</ion-label>
-            <ion-input
-              type="text"
-              formControlName="address"
-              placeholder="Votre adresse complète"
-              class="custom-input">
+            <ion-input type="text" formControlName="address" placeholder="Votre adresse complète" class="custom-input">
               <ion-icon name="location" slot="start"></ion-icon>
             </ion-input>
           </ion-item>
@@ -306,14 +255,9 @@
           </div>
         </div>
         <div class="form-group">
-          <ion-item 
-            class="custom-item"
-            [class.item-error]="isFieldInvalid(userInfoForm, 'profession')">
+          <ion-item class="custom-item" [class.item-error]="isFieldInvalid(userInfoForm, 'profession')">
             <ion-label position="stacked">Profession</ion-label>
-            <ion-select 
-              formControlName="profession" 
-              placeholder="Sélectionnez votre profession"
-              class="custom-select">
+            <ion-select formControlName="profession" placeholder="Sélectionnez votre profession" class="custom-select">
               <ion-icon name="business" slot="start"></ion-icon>
               <ion-select-option *ngFor="let profession of professions" [value]="profession">
                 {{ profession }}
@@ -328,10 +272,7 @@
         <div class="form-group">
           <ion-item class="custom-item">
             <ion-label position="stacked">École ou établissement de formation actuelle</ion-label>
-            <ion-input
-              type="text"
-              formControlName="school"
-              placeholder="Nom de votre école (optionnel)"
+            <ion-input type="text" formControlName="school" placeholder="Nom de votre école (optionnel)"
               class="custom-input">
               <ion-icon name="school" slot="start"></ion-icon>
             </ion-input>
@@ -341,33 +282,27 @@
     </div>
 
     <!-- Step 4: Objectives -->
-  <div *ngIf="currentStep === 3" class="step-content active">
-    <div class="objectives-container">
-      <div class="objectives-grid">
-        <button
-          *ngFor="let objective of availableObjectives"
-          class="objective-chip"
-          [class.selected]="objective.selected"
-          (click)="toggleObjective(objective.id)">
-          
-          <ion-icon [name]="objective.icon" class="chip-icon"></ion-icon>
-          <span class="chip-label">{{ objective.label }}</span>
+    <div *ngIf="currentStep === 3" class="step-content active">
+      <div class="objectives-container">
+        <div class="objectives-grid">
+          <button *ngFor="let objective of availableObjectives" class="objective-chip"
+            [class.selected]="objective.selected" (click)="toggleObjective(objective.id)">
 
-          <ion-icon
-            *ngIf="objective.selected"
-            name="checkmark-circle"
-            class="chip-check">
-          </ion-icon>
-        </button>
-      </div>
+            <ion-icon [name]="objective.icon" class="chip-icon"></ion-icon>
+            <span class="chip-label">{{ objective.label }}</span>
 
-      <div class="selection-summary" *ngIf="getSelectedObjectivesCount() > 0">
-        <p class="summary-text">
-          {{ getSelectedObjectivesCount() }} objectif(s) sélectionné(s)
-        </p>
+            <ion-icon *ngIf="objective.selected" name="checkmark-circle" class="chip-check">
+            </ion-icon>
+          </button>
+        </div>
+
+        <div class="selection-summary" *ngIf="getSelectedObjectivesCount() > 0">
+          <p class="summary-text">
+            {{ getSelectedObjectivesCount() }} objectif(s) sélectionné(s)
+          </p>
+        </div>
       </div>
     </div>
-  </div>
 
   </div>
 

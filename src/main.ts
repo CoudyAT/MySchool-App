@@ -17,6 +17,8 @@ import { provideHttpClient, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
 
+import { provideMessaging, getMessaging } from '@angular/fire/messaging';
+
 // 👇 Import Firebase
 import { provideFirebaseApp, initializeApp, getApp } from '@angular/fire/app';
 import { provideAuth, getAuth } from '@angular/fire/auth';
@@ -44,5 +46,6 @@ bootstrapApplication(AppComponent, {
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore(getApp(), 'myschool-1')),
     provideStorage(() => getStorage()),
+    provideMessaging(() => getMessaging()),
   ],
 });

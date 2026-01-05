@@ -23,7 +23,7 @@
             alt="Photo de profil"
           />
           <div *ngIf="!profileForm.photoURL" class="avatar-placeholder">
-            {{ profileForm.firstName?.charAt(0) || 'A' }}
+            {{ profileForm.firstName.charAt(0) || 'A' }}
           </div>
         </div>
         <button class="camera-button" (click)="selectImage()">

@@ -11,22 +11,25 @@ import { RouterModule } from '@angular/router';
   imports: [RouterOutlet, CommonModule],
 })
 export class BaseLayoutAdminComponent {
-  activePage = 'list-cours';
+  activePage = '';
   activeTab: string = 'dashboard';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
   navigate(page: string) {
-    this.activePage = page;
-
     // Map des pages vers les routes complètes
     const routeMap: { [key: string]: string } = {
-      stats: '/admin-login', // ou créez une route spécifique
-      users: '/admin-login/users', // si vous avez une route users
+      dashboard: '/admin-login/',
+      users: '/admin-login/users',
       'list-cours': '/admin-login/list-cours',
-      projects: '/admin-login/projects', // si vous avez cette route
-      chat: '/admin-login/chat', // si vous avez cette route
+      projects: '/admin-login/enrollments',
+      faq: '/admin-login/faq',
+      intructors: '/admin-login/instructors',
+      chat: '/admin-login/chat',
     };
+
+    this.activePage = page;
+
 
     const route = routeMap[page] || `/admin-login/${page}`;
     this.router.navigate([route]);

@@ -1,0 +1,111 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+        <span class="back-text"></span>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Conditions d'utilisation</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="terms-container">
+
+    <p>Veuillez lire attentivement les Conditions Générales d’Utilisation de l'application.</p>
+
+    <ion-accordion-group expand="inset" multiple="true">
+
+      <!-- SECTION 1 -->
+      <ion-accordion value="intro">
+        <ion-item slot="header">
+          <ion-label>1. Introduction</ion-label>
+        </ion-item>
+        <div class="accordion-content" slot="content">
+          <p>Les présentes Conditions Générales régissent l'utilisation de notre application et de nos services.</p>
+        </div>
+      </ion-accordion>
+
+      <!-- SECTION 2 -->
+      <ion-accordion value="acceptation">
+        <ion-item slot="header">
+          <ion-label>2. Acceptation des conditions</ion-label>
+        </ion-item>
+        <div class="accordion-content" slot="content">
+          <p>En utilisant l'application, vous acceptez pleinement les présentes conditions et vous engagez à les
+            respecter.</p>
+        </div>
+      </ion-accordion>
+
+      <!-- SECTION 3 -->
+      <ion-accordion value="compte">
+        <ion-item slot="header">
+          <ion-label>3. Création et gestion du compte</ion-label>
+        </ion-item>
+        <div class="accordion-content" slot="content">
+          <p>Vous êtes responsable de la confidentialité et de la sécurité de votre compte.</p>
+          <p>Vous devez fournir des informations exactes lors de votre inscription.</p>
+        </div>
+      </ion-accordion>
+
+      <!-- SECTION 4 -->
+      <ion-accordion value="donnees">
+        <ion-item slot="header">
+          <ion-label>4. Protection des données</ion-label>
+        </ion-item>
+        <div class="accordion-content" slot="content">
+          <p>Nous collectons certaines données dans le cadre du fonctionnement de l'application. Ces données sont
+            traitées conformément à notre politique de confidentialité.</p>
+        </div>
+      </ion-accordion>
+
+      <!-- SECTION 5 -->
+      <ion-accordion value="utilisation">
+        <ion-item slot="header">
+          <ion-label>5. Utilisation autorisée</ion-label>
+        </ion-item>
+        <div class="accordion-content" slot="content">
+          <p>Vous vous engagez à utiliser l'application de manière conforme à la loi et à ne pas porter atteinte à son
+            fonctionnement.</p>
+        </div>
+      </ion-accordion>
+
+      <!-- SECTION 6 -->
+      <ion-accordion value="responsabilite">
+        <ion-item slot="header">
+          <ion-label>6. Limitation de responsabilité</ion-label>
+        </ion-item>
+        <div class="accordion-content" slot="content">
+          <p>L'application est fournie "telle quelle". Nous ne pouvons être tenus responsables des dysfonctionnements
+            techniques ou pertes de données.</p>
+        </div>
+      </ion-accordion>
+
+      <!-- SECTION 7 -->
+      <ion-accordion value="modifications">
+        <ion-item slot="header">
+          <ion-label>7. Modifications des CGU</ion-label>
+        </ion-item>
+        <div class="accordion-content" slot="content">
+          <p>Nous pouvons modifier les conditions à tout moment. Vous serez informé(e) en cas de mises à jour
+            importantes.</p>
+        </div>
+      </ion-accordion>
+
+      <!-- SECTION 8 -->
+      <ion-accordion value="contact">
+        <ion-item slot="header">
+          <ion-label>8. Contact</ion-label>
+        </ion-item>
+        <div class="accordion-content" slot="content">
+          <p>Pour toute question concernant ces conditions, contactez-nous à :
+            <a href="mailto:support@myschoolapp.com">support@myschoolapp.com</a>.
+          </p>
+        </div>
+      </ion-accordion>
+
+    </ion-accordion-group>
+
+  </div>
+</ion-content>

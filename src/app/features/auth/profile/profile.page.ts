@@ -61,7 +61,7 @@ import { ReferralService } from '../services/referral.service';
     IonButtons,
     CommonModule,
     FormsModule,
-    IonToggle,
+
   ],
 })
 export class ProfilePage implements OnInit {
@@ -129,7 +129,7 @@ export class ProfilePage implements OnInit {
 
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        console.log('📄 Données Firestore chargées:', userData);
+        // console.log('📄 Données Firestore chargées:', userData);
 
         // Fusionner avec les données existantes
         if (userData?.['firstName'])
@@ -178,7 +178,7 @@ export class ProfilePage implements OnInit {
   }
 
   openNotifications() {
-    console.log('Notifications');
+    this.router.navigate(['/notifications']);
   }
 
   openSecurity() {
@@ -203,7 +203,7 @@ export class ProfilePage implements OnInit {
   // }
 
   openTerms() {
-    console.log("Conditions d'utilisation");
+    this.router.navigate(['/terms']);
   }
 
   openHelp() {

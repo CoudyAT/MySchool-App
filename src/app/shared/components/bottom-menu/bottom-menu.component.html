@@ -1,34 +1,22 @@
 <ion-footer class="ion-no-border">
   <ion-toolbar class="bottom-menu">
     <div class="menu-container">
-      <div 
-        class="menu-item" 
-        [class.active]="activePage === 'home'"
-        (click)="navigateTo('home')">
+      <div class="menu-item" [class.active]="activePage === 'home'" (click)="navigateTo('home')">
         <ion-icon name="home-outline"></ion-icon>
         <span class="menu-label">Accueil</span>
       </div>
-      
-      <div 
-        class="menu-item" 
-        [class.active]="activePage === 'courses'"
-        (click)="navigateTo('courses')">
+
+      <div class="menu-item" [class.active]="activePage === 'courses'" (click)="navigateTo('courses')">
         <ion-icon name="book-outline"></ion-icon>
         <span class="menu-label">Cours</span>
       </div>
-      
-      <div 
-        class="menu-item" 
-        [class.active]="activePage === 'messages'"
-        (click)="navigateTo('messages')">
+
+      <div class="menu-item" [class.active]="activePage === 'message'" (click)="navigateTo('message')">
         <ion-icon name="chatbubbles-outline"></ion-icon>
         <span class="menu-label">Messages</span>
       </div>
-      
-      <div 
-        class="menu-item" 
-        [class.active]="activePage === 'achievements'"
-        (click)="navigateTo('achievements')">
+
+      <div class="menu-item" [class.active]="activePage === 'achievements'" (click)="navigateTo('achievements')">
         <ion-icon name="trophy-outline"></ion-icon>
         <span class="menu-label">Réussites</span>
       </div>

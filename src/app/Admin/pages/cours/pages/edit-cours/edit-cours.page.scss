@@ -1,0 +1,166 @@
+.page {
+    padding: 2rem;
+    background: #f5f6f8;
+    min-height: 100vh;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.back-btn {
+    border: none;
+    background: none;
+    font-size: 1.1rem;
+    color: #555;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #222;
+    margin: 0;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.edit-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.btn-primary,
+.btn-secondary {
+    padding: 0.75rem 1.4rem;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+    border: none;
+}
+
+.btn-primary {
+    background: #2563eb;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.btn-secondary:hover {
+    background: #d1d5db;
+}
+
+.card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+}
+
+section {
+    margin-bottom: 2.5rem;
+}
+
+section h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1.2rem;
+    color: #333;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 0.5rem;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.2rem;
+}
+
+.info-block {
+    background: #fafafa;
+    border-radius: 12px;
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    transition: background 0.2s;
+}
+
+.info-block:hover {
+    background: #f1f3f5;
+}
+
+.label {
+    font-size: 0.85rem;
+    color: #666;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.value {
+    font-weight: 600;
+    color: #222;
+    font-size: 1.05rem;
+}
+
+.edit-input {
+    --padding-start: 12px;
+    --padding-end: 12px;
+    --background: #ffffff;
+    --border-radius: 10px;
+    font-weight: 600;
+    font-size: 1.05rem;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.4rem 0.9rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.status-badge.active {
+    background: #e3f8ec;
+    color: #2ea44f;
+}
+
+.status-badge:not(.active) {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.toggle-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.5rem;
+}
+
+.toggle-wrapper ion-label {
+    font-weight: 600;
+    color: #222;
+    font-size: 1.05rem;
+}

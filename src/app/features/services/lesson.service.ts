@@ -14,8 +14,8 @@ export class LessonService {
    */
 
   // Créer une nouvelle leçon
-  createLesson(lesson: Lesson): Observable<Lesson> {
-    return this.api.post<Lesson>('/lessons', lesson);
+  createLesson(lesson: Lesson, chapterId: string, courseId: string): Observable<Lesson> {
+    return this.api.post<Lesson>('/lessons', { ...lesson, chapterId, courseId });
   }
 
   // Récupérer toutes les leçons
@@ -59,7 +59,7 @@ export class LessonService {
   // Obtenir la durée totale des leçons d'un chapitre
   async getChapterDuration(chapterId: string): Promise<number> {
     const lessons = await this.getLessonsByChapter(chapterId).toPromise();
-    return lessons?.reduce((total, lesson) => total + (lesson.duration || 0), 0) || 0;
+    return lessons?.reduce((total, lesson) => total + (Number(lesson.duration) || 0), 0) || 0;
   }
 
   // Obtenir le nombre de leçons d'un chapitre
