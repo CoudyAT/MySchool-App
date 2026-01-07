@@ -171,18 +171,21 @@
             </div>
           </ion-button>
 
-          <!-- Si l'utilisateur n'est pas inscrit -->
-          <ion-button
-            *ngIf="!isUserEnrolled"
-            expand="block"
-            class="enroll-button"
-            (click)="enrollNow()"
-          >
-            <div class="button-content">
-              <span class="button-main-text">S'inscrire maintenant</span>
-              <span class="button-subtitle">Certificat inclus</span>
-            </div>
-          </ion-button>
+        <ion-button
+          *ngIf="!isUserEnrolled"
+          expand="block"
+          class="enroll-button"
+          (click)="handleEnroll()"
+        >
+          <div class="button-content">
+            <span class="button-main-text">
+              {{ (course?.price ?? 0) > 0 ? 'Payer le cours' : 'S’abonner' }}
+            </span>
+            <span class="button-subtitle">
+              {{ (course?.price ?? 0) > 0 ? ((course?.price ?? 0) + ' FCFA') : 'Accès à tous les cours' }}
+            </span>
+          </div>
+        </ion-button>
         </ion-card-content>
       </ion-card>
     </div>

@@ -181,12 +181,10 @@
     </div>
 
     <!-- Bouton final -->
-    <ion-button
-      expand="block"
-      class="proceed-button"
-      (click)="proceedToPayment()"
-    >
-      {{ isPremiumSubscription ? 'Activer Premium' : 'Procéder au paiement' }}
+    <ion-button expand="block" 
+    (click)="proceedToPayment()"
+    class="proceed-button">
+      {{ isPremium ? 'Activer Premium' : 'Payer le cours' }}
     </ion-button>
   </div>
 </ion-content>

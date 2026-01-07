@@ -77,18 +77,30 @@ export class CoursDetailPage implements OnInit, OnDestroy {
     private courseService: CourseService,
     private enrollmentService: EnrollmentService,
     private chapterService: ChapterService
-
   ) {
     addIcons({
-      chevronBackOutline, star, starHalf, timeOutline, lockOpenOutline, lockClosedOutline,
-      chevronForwardOutline, downloadOutline, eyeOutline, ellipsisVertical, languageOutline,
-      starOutline, checkmarkCircle, flagOutline, helpCircleOutline, trophyOutline, arrowBackOutline,
+      chevronBackOutline,
+      star,
+      starHalf,
+      timeOutline,
+      lockOpenOutline,
+      lockClosedOutline,
+      chevronForwardOutline,
+      downloadOutline,
+      eyeOutline,
+      ellipsisVertical,
+      languageOutline,
+      starOutline,
+      checkmarkCircle,
+      flagOutline,
+      helpCircleOutline,
+      trophyOutline,
+      arrowBackOutline,
     });
   }
 
   ngOnInit() {
     this.loadCourseDetails();
-
   }
 
   ngOnDestroy() {
@@ -197,24 +209,64 @@ export class CoursDetailPage implements OnInit, OnDestroy {
     this.router.navigate(['/mes-cours']);
   }
 
-  enrollNow() {
-    if (this.course) {
-      console.log("S'inscrire au cours:", this.course.title);
-      console.log('🔍 CoursDetailPage - Données avant navigation:', {
-        courseId: this.course.id,
-        courseTitle: this.course.title,
-        courseImage: this.course.image,
-      });
+  // enrollNow() {
+  //   if (this.course) {
+  //     console.log("S'inscrire au cours:", this.course.title);
+  //     console.log('🔍 CoursDetailPage - Données avant navigation:', {
+  //       courseId: this.course.id,
+  //       courseTitle: this.course.title,
+  //       courseImage: this.course.image,
+  //     });
 
-      this.router.navigate(['/subscription-plans'], {
+  //     this.router.navigate(['/subscription-plans'], {
+  //       state: {
+  //         course: this.course,
+  //         courseId: this.course.id,
+  //         courseTitle: this.course.title,
+  //         courseImage: this.course.image || 'assets/images/default-course.jpg',
+  //       },
+  //     });
+  //   }
+  // }
+
+  handleEnroll() {
+    if (!this.course) return;
+    
+
+    // 🔴 CAS 1 : COURS PAYANT → payer CE COURS
+    if (this.course.price && this.course.price > 0) {
+      const plan = {
+        plan: 'COURSE',
+        price: this.course.price,
+        type: 'COURSE',
+      };
+      console.log('Inscription au cours payant:', this.course.id);
+      
+      this.router.navigate(['/payment-method'], {
         state: {
+          plan,
           course: this.course,
           courseId: this.course.id,
           courseTitle: this.course.title,
           courseImage: this.course.image || 'assets/images/default-course.jpg',
         },
       });
+
+      return;
     }
+
+
+    // 🔵 CAS 2 : COURS GRATUIT → abonnement
+
+    this.router.navigate(['/subscription-plans'], {
+      state: {
+        isPremiumSubscription: true,
+        course: this.course,
+        courseId: this.course.id,
+        courseTitle: this.course.title,
+        courseImage: this.course.image || 'assets/images/default-course.jpg',
+      },
+    });
   }
 
   continueCourse() {
@@ -236,14 +288,13 @@ export class CoursDetailPage implements OnInit, OnDestroy {
   }
 
   goToDetailsCours() {
-    console.log('Aller aux détails du cours' , this.course?.id);
+    console.log('Aller aux détails du cours', this.course?.id);
     this.router.navigate(['/detail'], {
       queryParams: { courseId: this.course?.id },
     });
   }
 
   loadChapters(courseId: string) {
-
     this.chapterService.getChaptersByCourse(courseId).subscribe({
       next: (response: any) => {
         if (response && response.data) {
@@ -258,7 +309,7 @@ export class CoursDetailPage implements OnInit, OnDestroy {
       error: (err) => {
         console.error('Erreur chargement chapitres:', err);
         this.chapters = [];
-      }
+      },
     });
   }
 }

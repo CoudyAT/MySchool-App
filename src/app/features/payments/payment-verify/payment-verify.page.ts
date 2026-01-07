@@ -273,8 +273,98 @@ export class PaymentVerifyPage implements OnInit {
   /** ===============================
    *  🔥 ACTION PAIEMENT
    *  =============================== */
+  // async proceedToPayment() {
+  //   // Vérifier si l'utilisateur veut appliquer un code promo
+  //   if (this.showPromoInput && this.promoCodeInput.trim()) {
+  //     await this.showErrorAlert(
+  //       'Veuillez appliquer ou annuler le code promo avant de continuer'
+  //     );
+  //     return;
+  //   }
+
+  //   try {
+  //     /** ===== ABONNEMENT PREMIUM ===== */
+
+  //     if (this.isPremiumSubscription) {
+  //       console.log('Démarrage paiement abonnement Premium', this.selectedPlan);
+
+  //       if (!this.userId || !this.selectedPlan?.type) {
+  //         throw new Error('Infos abonnement manquantes');
+  //       }
+
+  //       try {
+  //         const response = await firstValueFrom(
+  //           this.paymentService.createSubscriptionPayment(
+  //             this.selectedPlan.type,
+  //             this.userId
+  //           )
+  //         );
+
+  //         console.log('Réponse paiement:', response);
+
+  //         // ✅ REDIRECTION VERS WAVE
+  //         if (response?.success && response?.data?.paymentUrl) {
+  //           window.location.href = response.data.paymentUrl;
+  //           return;
+  //         }
+
+  //         // ❌ Si jamais l’URL n’est pas là
+  //         throw new Error('URL de paiement introuvable');
+  //       } catch (error) {
+  //         console.error(error);
+
+  //         await this.toastCtrl
+  //           .create({
+  //             message: 'Erreur lors de la création du paiement ❌',
+  //             duration: 3000,
+  //             color: 'danger',
+  //           })
+  //           .then((t) => t.present());
+  //       }
+  //     }
+
+  //     /** ===== COURS INDIVIDUEL ===== */
+  //     const method = this.allPaymentMethods.find(
+  //       (m) => m.id === this.selectedPaymentOption
+  //     );
+
+  //     const alreadyEnrolled = await this.isUserEnrolledInCourse(this.courseId);
+  //     if (alreadyEnrolled) {
+  //       await this.showAlreadyEnrolledAlert();
+  //       return;
+  //     }
+
+  //     const paymentData: PaymentData = {
+  //       plan: this.selectedPlan,
+  //       method,
+  //       amount: this.summary.total,
+  //       courseId: this.courseId,
+  //       courseTitle: this.courseTitle,
+  //       courseImage: this.courseImage,
+  //       userId: this.userId,
+  //       promoCode: this.appliedPromoCode,
+  //       discountAmount: this.summary.promoCode,
+  //     };
+
+  //     const result = await this.enrollmentService.createEnrollment(paymentData);
+
+  //     if (result.payment?.data?.paymentUrl) {
+  //       window.location.href = result.payment.data.paymentUrl;
+  //       return;
+  //     }
+
+  //     this.router.navigate(['/course-video', this.courseId], {
+  //       replaceUrl: true,
+  //     });
+  //   } catch (err) {
+  //     console.error('❌ Erreur paiement', err);
+  //     await this.showErrorAlert('Erreur lors du paiement');
+  //   }
+  // }
+
   async proceedToPayment() {
-    // Vérifier si l'utilisateur veut appliquer un code promo
+    console.log('GGGG');
+
     if (this.showPromoInput && this.promoCodeInput.trim()) {
       await this.showErrorAlert(
         'Veuillez appliquer ou annuler le code promo avant de continuer'
@@ -283,47 +373,73 @@ export class PaymentVerifyPage implements OnInit {
     }
 
     try {
-      /** ===== ABONNEMENT PREMIUM ===== */
+      /** ===============================
+       *  ⭐ ABONNEMENT PREMIUM
+       *  =============================== */
+      if (this.isPremium) {
+        if (this.selectedPlan.plan) {
+            const planType = this.mapPlanTypeToBackend(
+            this.selectedPlan.plan
+            );
+            console.log(
+                    'Démarrage paiement abonnement Premium',
+                    this.selectedPlan.plan
+                  );
+                  console.log(this.userId);
+                  if (!this.userId || !planType) {
+                    throw new Error('Infos abonnement manquantes');
+                  }
 
-      if (this.isPremiumSubscription) {
-        console.log('Démarrage paiement abonnement Premium', this.selectedPlan);
+                  const response = await firstValueFrom(
+                    this.paymentService.createSubscriptionPayment(
+                      planType,
+                      this.userId
+                    )
+                  );
 
-        if (!this.userId || !this.selectedPlan?.type) {
-          throw new Error('Infos abonnement manquantes');
+                  if (response?.success && response?.data?.paymentUrl) {
+                    window.location.href = response.data.paymentUrl;
+                    return;
+                  }
+
+                  throw new Error('URL de paiement introuvable');
         }
 
-        try {
-          const response = await firstValueFrom(
-            this.paymentService.createSubscriptionPayment(
-              this.selectedPlan.type,
-              this.userId
-            )
-          );
+        if (this.selectedPlan.type) {
+                  const planType = this.selectedPlan.type;
 
-          console.log('Réponse paiement:', response);
+                  console.log(
+                    'Démarrage paiement abonnement Premium',
+                    this.selectedPlan.plan
+                  );
+                  console.log(this.userId);
+                  if (!this.userId || !planType) {
+                    throw new Error('Infos abonnement manquantes');
+                  }
 
-          // ✅ REDIRECTION VERS WAVE
-          if (response?.success && response?.data?.paymentUrl) {
-            window.location.href = response.data.paymentUrl;
-            return;
-          }
+                  const response = await firstValueFrom(
+                    this.paymentService.createSubscriptionPayment(
+                      planType,
+                      this.userId
+                    )
+                  );
 
-          // ❌ Si jamais l’URL n’est pas là
-          throw new Error('URL de paiement introuvable');
-        } catch (error) {
-          console.error(error);
+                  if (response?.success && response?.data?.paymentUrl) {
+                    window.location.href = response.data.paymentUrl;
+                    return;
+                  }
 
-          await this.toastCtrl
-            .create({
-              message: 'Erreur lors de la création du paiement ❌',
-              duration: 3000,
-              color: 'danger',
-            })
-            .then((t) => t.present());
-        }
+                  throw new Error('URL de paiement introuvable');
+                }
+
       }
 
-      /** ===== COURS INDIVIDUEL ===== */
+      /** ===============================
+       *  📘 COURS INDIVIDUEL
+       *  =============================== */
+
+      console.log('Paiement cours individuel');
+
       const method = this.allPaymentMethods.find(
         (m) => m.id === this.selectedPaymentOption
       );
@@ -381,8 +497,9 @@ export class PaymentVerifyPage implements OnInit {
 
   planLabels: Record<string, string> = {
     MONTHLY: 'Annuelle',
-    YEARLY: 'Annuelle',
+    // YEARLY: 'Annuelle',
     WEEKLY: 'Hebdomadaire',
+    COURSE: 'Cours individuel',
   };
 
   get formulaLabel(): string {
@@ -394,5 +511,30 @@ export class PaymentVerifyPage implements OnInit {
     const plan = raw.split(' ').pop()?.toUpperCase();
 
     return this.planLabels[plan!] || raw;
+  }
+
+  get isPremiumPayment(): boolean {
+    return this.selectedPlan?.plan == 'Annuelle';
+  }
+
+  get isCoursePayment(): boolean {
+    return !this.isPremiumPayment;
+  }
+
+  private mapPlanTypeToBackend(type: string): string {
+    const map: Record<string, string> = {
+      Annuelle: 'MONTHLY',
+      Mensuelle: 'MONTHLY',
+      Hebdomadaire: 'WEEKLY',
+      'Cours individuel': 'COURSE',
+      Premium: 'MONTHLY',
+    };
+
+    return map[type] || type;
+  }
+
+  get isPremium(): boolean {
+    // Si l'un ou l'autre est vrai, considère que c'est un paiement premium
+    return this.isPremiumPayment || this.isPremiumSubscription;
   }
 }

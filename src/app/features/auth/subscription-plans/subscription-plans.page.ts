@@ -99,11 +99,12 @@ export class SubscriptionPlansPage implements OnInit {
   }
 
   selectPlan(plan: any) {
+    console.log('cours:', this.course);
     this.router.navigate(['/payment-method'], {
       state: {
         course: this.course,
         plan,
-        courseId: this.courseId,
+        courseId: this.course.id,
         courseTitle: this.courseTitle,
         courseImage: this.courseImage,
       },
