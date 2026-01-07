@@ -80,8 +80,8 @@
 
     <!-- Sessions -->
     <div class="form-group">
-      <label for="sessions" class="form-label">Nombre de sessions</label>
-      <input id="sessions" type="number" formControlName="sessions" class="form-input" placeholder="Ex: 12" min="0" />
+      <label for="sessions" class="form-label">Lien video</label>
+      <input id="sessions" type="text" formControlName="sessions" class="form-input"  />
     </div>
 
     <!-- Exercices -->
@@ -108,12 +108,12 @@
       <input id="duration" type="number" formControlName="duration" class="form-input" placeholder="Ex: 40" min="0" />
     </div>
 
-    <!-- Support de cours -->
+    <!-- Support de cours
     <div class="form-group">
       <label for="support" class="form-label">Support de cours (PDF)</label>
       <input id="support" type="file" accept=".pdf" (change)="onPdfSelected($event)" class="form-input file-input" />
       <small class="file-hint">Fichier PDF uniquement</small>
-    </div>
+    </div>  -->
 
     <!-- Certificat disponible -->
     <div class="form-group full-width">

@@ -88,10 +88,12 @@ export class DetailPage implements OnInit {
   }
 
   loadChaptersWithExercises() {
+    this.isLoading = true;
     this.chapterService.getChaptersWithExercises(this.courseId).subscribe({
-      next: (chapters) => {
-        this.chapters = chapters;
+      next: (response: any) => {
+        this.chapters = response.data || [];
         this.isLoading = false;
+
         console.log('Chapitres chargés:', this.chapters);
       },
       error: (error) => {

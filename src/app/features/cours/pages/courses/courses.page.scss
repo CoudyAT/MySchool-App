@@ -812,3 +812,97 @@ ion-content {
     }
   }
 }
+
+
+/* =========================
+   DESKTOP & LARGE SCREENS
+   ========================= */
+@media (min-width: 1024px) {
+  ion-content {
+    --padding-start: 0;
+    --padding-end: 0;
+  }
+
+  .content-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-bottom: 120px;
+  }
+}
+@media (min-width: 1024px) {
+  .hero-section {
+    height: 420px;
+    margin: 24px auto 40px auto;
+    max-width: 1200px;
+  }
+}
+@media (min-width: 1024px) {
+  .quick-access-section .quick-access-grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 24px;
+  }
+}
+@media (min-width: 1024px) {
+  .courses-section .enrolled-courses-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+}
+@media (min-width: 1024px) {
+  .instructors-section .instructors-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+  }
+}
+@media (min-width: 1024px) {
+  ion-header ion-toolbar {
+    --min-height: 80px;
+  }
+
+  .header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  .preminum {
+    max-width: 420px;
+    margin: 0 auto;
+  }
+}
+
+/* =========================
+   PREMIUM BUTTON - DESKTOP
+   ========================= */
+@media (min-width: 1024px) {
+  .preminum {
+    width: 100%;
+    max-width: none;
+    margin: 16px 0;
+    height: 56px;
+    font-size: 18px;
+    --border-radius: 12px;
+  }
+}
+
+/* =========================
+   QUICK ACCESS - DESKTOP
+   ========================= */
+@media (min-width: 1024px) {
+  .quick-access-section {
+    display: flex;
+    justify-content: center;
+    padding: 32px 0;
+    margin-left: 100px;
+  }
+
+  .quick-access-grid {
+    max-width: 800px;   // largeur contrôlée
+    width: 100%;
+    justify-content: center;
+    gap: 32px;
+  }
+}
+
+
+

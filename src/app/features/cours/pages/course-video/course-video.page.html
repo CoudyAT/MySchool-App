@@ -12,9 +12,11 @@
 <ion-content>
   <div class="page-container">
     
-    <!-- Video Thumbnail avec Play Button -->
+    <!-- Zone vidéo / thumbnail -->
     <div class="video-container">
-      <div class="video-thumbnail">
+
+      <!-- Thumbnail + Play (affiché seulement si showVideo == false) -->
+      <div class="video-thumbnail" *ngIf="!showVideo">
         <div class="video-overlay">
           <div class="play-button" (click)="startCourse()">
             <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
@@ -23,20 +25,31 @@
             </svg>
           </div>
         </div>
-        <!-- Image du cours -->
+
         <img 
           [src]="course.image || course.courseImage || 'assets/algo.svg'" 
           [alt]="course.title || course.courseTitle" 
           class="course-image"
           *ngIf="course.image || course.courseImage"
-        >
-        <!-- Fallback si pas d'image -->
-        <div class="thumbnail-placeholder" *ngIf="!course.image && !course.courseImage">
-        </div>
+        />
+
+        <div class="thumbnail-placeholder" *ngIf="!course.image && !course.courseImage"></div>
       </div>
-      
+
+      <!-- 🎬 Lecteur vidéo (affiché après clic) -->
+      <video
+        *ngIf="showVideo"
+        width="100%"
+        height="250"
+        controls
+        autoplay
+      >
+        <source [src]="course.sessions" type="video/mp4">
+        Votre navigateur ne supporte pas la lecture vidéo.
+      </video>
+
       <!-- Bouton Commencer -->
-      <button class="start-button" (click)="startCourse()">
+      <button class="start-button" (click)="startCourse()" *ngIf="!showVideo">
         Commencer
       </button>
     </div>
@@ -49,7 +62,7 @@
 
     <!-- Durée et chapitres -->
     <div class="course-meta">
-      <span class="duration">{{ getFormattedDuration() }}</span>
+      <span class="duration">{{ getFormattedDuration() }} H</span>
       <span class="separator">·</span>
       <span class="chapters">{{ getChaptersCount() }} Chapitres</span>
     </div>

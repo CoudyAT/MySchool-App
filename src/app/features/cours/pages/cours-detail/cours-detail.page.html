@@ -40,7 +40,7 @@
           class="sessions"
           *ngIf="isUserEnrolled"
           (click)="goToDetailsCours()"
-          >{{course?.chaptersIds?.length}} Chapitres</span
+          >{{ (chapters?.length || course?.chaptersIds?.length || 0) }} Chapitres</span
         >
         <span class="separator">·</span>
         <span

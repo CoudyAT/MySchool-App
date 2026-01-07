@@ -53,7 +53,7 @@ export class AddCoursComponent implements OnInit {
       instructorId: [''],
       description: [''],
       price: [0],
-      sessions: [0],
+      sessions: [''],
       exercises: [0],
       certificateAvailable: [false],
       duration: [0],

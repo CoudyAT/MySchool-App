@@ -10,6 +10,7 @@ export interface Chapter {
   exercises?: Exercise[];
   lessons?: Lesson[];
   lessonsIds?: string[];
+  data?: any;
 }
 
 export interface Exercise {
