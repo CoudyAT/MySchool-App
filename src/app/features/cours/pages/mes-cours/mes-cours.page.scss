@@ -1,3 +1,7 @@
+/* =========================
+   HEADER & BACKGROUND
+========================= */
+
 ion-header {
   ion-toolbar {
     --background: #f5f5f5;
@@ -16,58 +20,21 @@ ion-content {
   --background: #f5f5f5;
 }
 
-.custom-segment {
-  margin: 16px 0;
-  
-  ion-segment-button {
-    --color: #666;
-    --color-checked: #2650BB;
-    --indicator-color: #2650BB;
-    font-weight: 500;
-    text-transform: none;
-    
-    &::part(indicator-background) {
-      background: #2650BB;
-    }
-    
-    &::part(native) {
-      border-radius: 8px;
-    }
-  }
-}
-
-// Container de chargement
-.loading-container,
-.empty-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 20px;
-  color: #666;
-  
-  ion-icon {
-    font-size: 64px;
-    margin-bottom: 16px;
-    color: #2650BB;
-    opacity: 0.5;
-  }
-  
-  p {
-    font-size: 16px;
-    margin: 0;
-    color: #666;
-  }
-}
+/* =========================
+   WRAPPER
+========================= */
 
 .content-wrapper {
   max-width: 600px;
   margin: 0 auto;
-  background: white;
+  background: #ffffff;
   min-height: 100%;
-  padding: 20px 16px;
-  padding-bottom: 100px; // Espace pour le menu bottom
+  padding: 20px 16px 100px;
 }
+
+/* =========================
+   LOGO & TITLE
+========================= */
 
 .logo-container {
   display: flex;
@@ -84,12 +51,39 @@ ion-content {
   font-size: 24px;
   font-weight: 700;
   color: #000;
-  margin: 0 0 20px 0;
+  margin-bottom: 20px;
 }
+
+/* =========================
+   SEGMENT
+========================= */
+
+.custom-segment {
+  margin: 16px 0;
+
+  ion-segment-button {
+    --color: #666;
+    --color-checked: #2650bb;
+    --indicator-color: #2650bb;
+    font-weight: 500;
+    text-transform: none;
+
+    &::part(indicator-background) {
+      background: #2650bb;
+    }
+
+    &::part(native) {
+      border-radius: 8px;
+    }
+  }
+}
+
+/* =========================
+   SEARCH & FILTER
+========================= */
 
 .search-filter-container {
   display: flex;
-  align-items: center;
   gap: 8px;
   margin-bottom: 24px;
   background: #f8f8f8;
@@ -102,36 +96,47 @@ ion-content {
     --border-radius: 12px;
     --box-shadow: none;
     --placeholder-color: #666;
-    --placeholder-opacity: 1;
-    --icon-color: #4CAF50;
-    padding: 0;
-    color: #000;
-    
-    .searchbar-input-container {
-      height: 40px;
-    }
+    --icon-color: #4caf50;
   }
 
   .filter-button {
-    --color: #2650BB;
+    --color: #2650bb;
+    height: 40px;
     font-size: 14px;
     font-weight: 500;
-    margin: 0;
-    height: 40px;
-
-    ion-icon {
-      color: #2196F3;
-      margin-right: 4px;
-    }
   }
 }
+
+/* =========================
+   LOADING & EMPTY
+========================= */
+
+.loading-container,
+.empty-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 20px;
+  color: #666;
+
+  ion-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+    color: #2650bb;
+    opacity: 0.5;
+  }
+}
+
+/* =========================
+   COURSES
+========================= */
 
 .courses-container {
   .category-title {
     font-size: 16px;
     font-weight: 600;
-    color: #2650BB;
-    margin: 0 0 12px 0;
+    color: #2650bb;
+    margin-bottom: 12px;
   }
 
   .courses-row {
@@ -139,141 +144,134 @@ ion-content {
     gap: 12px;
     margin-bottom: 24px;
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    /* Firefox */
 
     &::-webkit-scrollbar {
       display: none;
-      /* Chrome, Safari */
-    }
-
-    .course-card {
-      flex: 0 0 calc(50% - 6px);
-      min-width: 160px;
-      margin: 0;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-
-      @media (max-width: 480px) {
-        flex: 0 0 calc(50% - 6px);
-      }
-
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      }
-
-      .card-image {
-        position: relative;
-        height: 120px;
-        overflow: hidden;
-
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        .card-badge {
-          position: absolute;
-          top: 8px;
-          left: 8px;
-          background: white;
-          width: 32px;
-          height: 32px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-          ion-icon {
-            color: #666;
-            font-size: 18px;
-          }
-        }
-      }
-
-      ion-card-content {
-        padding: 12px;
-        background-color: white !important;
-
-        .status-badge {
-          display: flex;
-          align-items: center;
-          gap: 4px;
-          margin-bottom: 8px;
-          color: white;
-
-          .check-icon {
-            color: #2650BB;
-            font-size: 14px;
-          }
-
-          span {
-            font-size: 11px;
-            color: #2650BB;
-            font-weight: 900;
-
-          }
-        }
-
-        .course-title {
-          font-size: 18px;
-          font-weight: 700;
-          color: #000;
-          margin: 0 0 8px 0;
-        }
-
-        .course-info {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          font-size: 12px;
-          color: #666;
-
-          .sessions {
-            font-weight: 600;
-            color: #000;
-          }
-
-          .separator {
-            color: #ccc;
-          }
-
-          .exercises {
-            color: #FF9800;
-            font-weight: 600;
-          }
-        }
-      }
     }
   }
 }
 
-.courses-row {
-  display: flex;
-  overflow-x: auto;
-  gap: 16px;
-  padding: 8px 0;
-  scroll-snap-type: x mandatory;
+/* =========================
+   COURSE CARD
+========================= */
 
-  &::-webkit-scrollbar {
-    display: none;
+.course-card {
+  flex: 0 0 160px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: 0.25s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .card-image {
+    position: relative;
+    height: 120px;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .card-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  ion-card-content {
+    padding: 12px;
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 6px;
+
+      span {
+        font-size: 11px;
+        font-weight: 700;
+        color: #2650bb;
+      }
+    }
+
+    .course-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: white;
+    }
+
+    .course-info {
+      font-size: 12px;
+      color: #ff9800;
+      font-weight: 600;
+    }
+  }
+}
+
+/* =========================
+   DESKTOP RESPONSIVE
+========================= */
+
+@media (min-width: 992px) {
+  .content-wrapper {
+    max-width: 1200px;
+    padding: 32px 24px 120px;
+  }
+
+  .main-title {
+    font-size: 28px;
+  }
+
+  .search-filter-container {
+    max-width: 600px;
+  }
+
+  .courses-container {
+    .courses-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 24px;
+      overflow: visible;
+    }
   }
 
   .course-card {
-    flex: 0 0 280px;
-    scroll-snap-align: start;
+    flex: unset;
+
+    .card-image {
+      height: 160px;
+    }
+
+    ion-card-content {
+      .course-title {
+        font-size: 18px;
+      }
+    }
   }
 }
 
-.empty-category {
-  width: 100%;
-  text-align: center;
-  color: var(--ion-color-medium);
-  padding: 20px;
+/* =========================
+   LARGE DESKTOP
+========================= */
+
+@media (min-width: 1400px) {
+  .courses-container .courses-row {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }

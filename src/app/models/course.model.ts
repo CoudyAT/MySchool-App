@@ -67,7 +67,7 @@ export interface Course {
   exercises: number;
   image: string;
   isPublished: boolean;
-  certificateAvailable: boolean;
+  certificateAvailable?: boolean;
   price?: number;
   rating?: number;
   chapters: Chapter[];

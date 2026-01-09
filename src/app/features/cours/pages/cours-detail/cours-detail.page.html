@@ -26,7 +26,7 @@
     <!-- Contenu principal -->
     <div class="main-content">
       <!-- Badge Certificat -->
-      <div class="certificate-badge">
+      <div class="certificate-badge" *ngIf="course?.certificateAvailable">
         <img src="assets/icon-rosette.svg" alt="" class="cert-icon" />
         <span>Certificat Disponible</span>
       </div>
@@ -53,7 +53,7 @@
         <span class="exercises">{{course?.exercises}} Exercices</span>
       </div>
 
-      <!-- Note avec étoiles -->
+      <!-- Note avec étoiles
       <div class="rating-container">
         <div class="stars">
           <ion-icon name="star" class="star-icon filled"></ion-icon>
@@ -65,7 +65,7 @@
         <span class="rating-text"
           >{{course?.rating}}/{{course?.maxRating}}</span
         >
-      </div>
+      </div>  -->
 
       <!-- Niveaux/Progression -->
       <div class="levels-container">
@@ -142,12 +142,12 @@
                 <span class="document-name">Support de cours</span>
                 <span class="document-type">PDF</span>
               </div>
-              <ion-button fill="clear" class="download-button">
+             <!--  <ion-button fill="clear" class="download-button">
                 <ion-icon
                   name="download-outline"
                   class="download-icon"
                 ></ion-icon>
-              </ion-button>
+              </ion-button> -->
             </div>
           </ion-card-content>
         </ion-card>

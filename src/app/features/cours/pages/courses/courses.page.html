@@ -132,11 +132,15 @@
         <ion-card *ngFor="let course of enrolledCourses" class="course-card" (click)="openCourse(course)">
 
           <div class="card-image">
-            <img src="assets/algo.svg" alt="MySchool Logo">
-            <!-- Badge Certificat disponible -->
-            <div class="certificate-badge">
-              <ion-icon name="shield-checkmark"></ion-icon>
-              <span>Certificat disponible</span>
+            <img
+              [src]="course.courseDetails?.image || 'assets/algo.svg'"
+              alt="Image du cours"
+              class="course-image"
+            />           
+             <!-- Badge Certificat disponible -->
+            <div class="certificate-badge" *ngIf="course?.courseDetails?.certificateAvailable">
+                <ion-icon name="shield-checkmark"></ion-icon>
+                <span>Certificat disponible</span>
             </div>
 
             <!-- Icône play -->
@@ -148,8 +152,6 @@
           <ion-card-content>
             <h3 class="course-title">{{ course.courseTitle }}</h3>
             <div class="course-meta">
-              <span>{{ course.courseDetails?.sessions }} Sessions</span>
-              <span class="separator">•</span>
               <span style="color: #FF9500;">{{ course.courseDetails?.exercises }} Exercices</span>
             </div>
             <div class="enrollment-date" *ngIf="course.enrolledAt">
@@ -166,7 +168,11 @@
       <div class="instructors-grid">
         <div class="instructor-card" *ngFor="let instructor of instructors"
           [style.background-color]="instructor.backgroundColor" (click)="goToInstructorProfile(instructor.id)">
-          <img src="assets/slide1.svg" alt="Instructeur" class="instructor-image" />
+          <img
+              [src]="instructor?.image"
+              alt="Instructeur"
+              class="instructor-image"
+            />  
           <div class="instructor-name">{{ instructor.name }}</div>
         </div>
       </div>
@@ -215,8 +221,6 @@
             <h3 class="course-title">{{ course.title }}</h3>
 
             <div class="course-meta">
-              <span>{{ course.sessions || 0 }} Sessions</span>
-              <span class="separator">•</span>
               <span style="color: #FF9500;">
                 {{ course.exercises || 0 }} Exercices
               </span>

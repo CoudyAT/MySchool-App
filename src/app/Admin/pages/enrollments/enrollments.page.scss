@@ -1,0 +1,840 @@
+// ============================================
+// VARIABLES
+// ============================================
+$primary-color: #10b981;
+$primary-light: #10b981;
+$primary-dark: #10b981;
+$success-color: #10b981;
+$success-light: #34d399;
+$warning-color: #f59e0b;
+$danger-color: #ef4444;
+$background-color: #f8fafc;
+$background-gradient: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+$card-background: #ffffff;
+$text-primary: #1e293b;
+$text-secondary: #64748b;
+$text-muted: #94a3b8;
+$border-color: #e2e8f0;
+$border-radius-sm: 10px;
+$border-radius-md: 14px;
+$border-radius-lg: 18px;
+$border-radius-xl: 24px;
+$shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+$shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.06);
+$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+$shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+$shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.12);
+$transition-fast: 0.2s ease;
+$transition-normal: 0.3s ease;
+$transition-slow: 0.5s ease;
+
+// ============================================
+// MIXINS
+// ============================================
+@mixin card-hover {
+  transition: all $transition-normal;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-lg;
+  }
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin gradient-primary {
+  background: $primary-color;
+}
+
+@mixin gradient-success {
+  background: linear-gradient(135deg, $success-color 0%, $success-light 100%);
+}
+
+// ============================================
+// HEADER
+// ============================================
+.header-custom {
+  --background: $primary-color;
+  box-shadow: $shadow-md;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+@include gradient-primary;
+    z-index: -1;
+  }
+}
+
+.toolbar-custom {
+  --background: transparent;
+  --border-width: 0;
+  padding: 12px 0;
+}
+
+.title-custom {
+  font-weight: 700;
+  font-size: 22px;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  
+  .title-icon {
+    font-size: 30px;
+    animation: float 3s ease-in-out infinite;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+}
+
+// ============================================
+// CONTENT
+// ============================================
+.content-custom {
+  --background: #{$background-color};
+}
+
+.content-wrapper {
+  padding: 24px 16px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100%;
+}
+
+// ============================================
+// STATS HEADER
+// ============================================
+.stats-header {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 28px;
+  animation: fadeInUp 0.6s ease;
+}
+
+.stat-card {
+  background: $card-background;
+  border-radius: $border-radius-md;
+  padding: 18px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: $shadow-sm;
+  border: 1px solid $border-color;
+  transition: all $transition-normal;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: $primary-color;
+    transform: scaleY(0);
+    transition: transform $transition-normal;
+  }
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: $shadow-md;
+    border-color: $primary-color;
+    
+    &::before {
+      transform: scaleY(1);
+    }
+
+    ion-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+  }
+
+  &:nth-child(1) ion-icon { color: $primary-color; }
+  &:nth-child(2) ion-icon { color: $success-color; }
+  &:nth-child(3) ion-icon { color: $warning-color; }
+
+  ion-icon {
+    font-size: 36px;
+    transition: transform $transition-normal;
+  }
+
+  .stat-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .stat-number {
+    font-size: 26px;
+    font-weight: 800;
+    color: $text-primary;
+    line-height: 1;
+    letter-spacing: -0.5px;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: $text-secondary;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+// ============================================
+// ENROLLMENTS LIST
+// ============================================
+.enrollments-list {
+  background: transparent;
+  padding: 0;
+  margin: 0;
+}
+
+.enrollment-card {
+  --background: #{$card-background};
+  --padding-start: 0;
+  --padding-end: 0;
+  --inner-padding-end: 0;
+  --inner-padding-start: 0;
+  --border-width: 0;
+  margin-bottom: 18px;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-sm;
+  padding: 18px;
+  transition: all $transition-normal;
+  cursor: pointer;
+  border: 1px solid $border-color;
+  position: relative;
+  overflow: hidden;
+  animation: fadeInUp 0.5s ease backwards;
+
+  @for $i from 1 through 10 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.05}s;
+    }
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.03) 0%, rgba(139, 92, 246, 0.03) 100%);
+    opacity: 0;
+    transition: opacity $transition-normal;
+  }
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: $shadow-lg;
+    border-color: $primary-light;
+
+    &::before {
+      opacity: 1;
+    }
+
+    .course-thumbnail img {
+      transform: scale(1.08);
+    }
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// ============================================
+// COURSE THUMBNAIL
+// ============================================
+.course-thumbnail {
+  --size: 95px;
+  --border-radius: #{$border-radius-md};
+  margin-right: 16px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: $shadow-sm;
+  flex-shrink: 0;
+
+  img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    transition: transform $transition-slow;
+  }
+
+  .thumbnail-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.88) 0%, rgba(5, 150, 105, 0.92) 100%);
+    @include flex-center;
+    animation: fadeIn 0.4s ease;
+
+    ion-icon {
+      font-size: 44px;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+      animation: scaleIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+  }
+}
+
+// ============================================
+// ENROLLMENT LABEL
+// ============================================
+.enrollment-label {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.course-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: $text-primary;
+  margin: 0;
+  line-height: 1.4;
+  letter-spacing: -0.2px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// ============================================
+// PROGRESS BAR
+// ============================================
+.progress-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 9px;
+  background: #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.progress-fill {
+  height: 100%;
+  @include gradient-primary;
+  border-radius: 12px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: shimmer 2.5s infinite;
+  }
+
+  &.completed {
+    @include gradient-success;
+    
+    &::after {
+      animation: shimmer-success 2.5s infinite;
+    }
+  }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes shimmer-success {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.progress-text {
+  font-size: 13px;
+  font-weight: 700;
+  color: $text-primary;
+  min-width: 45px;
+  text-align: right;
+  letter-spacing: -0.3px;
+}
+
+// ============================================
+// ENROLLMENT DETAILS
+// ============================================
+.enrollment-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  color: $text-secondary;
+  font-weight: 500;
+  padding: 6px 10px;
+  background: rgba(99, 102, 241, 0.05);
+  border-radius: $border-radius-sm;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: rgba(99, 102, 241, 0.1);
+    transform: translateY(-1px);
+  }
+
+  ion-icon {
+    font-size: 17px;
+    color: $primary-color;
+  }
+
+  span {
+    white-space: nowrap;
+  }
+}
+
+// ============================================
+// CERTIFICATE BADGE
+// ============================================
+.certificate-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border-radius: $border-radius-sm;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: $shadow-xs;
+  animation: pulse 2s infinite;
+
+  ion-icon {
+    font-size: 15px;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+// ============================================
+// STATUS BADGE
+// ============================================
+.status-badge {
+  align-self: flex-start;
+  padding: 9px 16px;
+  border-radius: 11px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-left: 14px;
+  box-shadow: $shadow-xs;
+  transition: all $transition-fast;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  &.status-active {
+    background: rgba(99, 102, 241, 0.12);
+    color: $primary-dark;
+    border: 1.5px solid rgba(99, 102, 241, 0.3);
+  }
+
+  &.status-completed {
+    background: rgba(16, 185, 129, 0.12);
+    color: #047857;
+    border: 1.5px solid rgba(16, 185, 129, 0.3);
+  }
+
+  &.status-pending {
+    background: rgba(245, 158, 11, 0.12);
+    color: #b45309;
+    border: 1.5px solid rgba(245, 158, 11, 0.3);
+  }
+
+  &.status-failed {
+    background: rgba(239, 68, 68, 0.12);
+    color: #b91c1c;
+    border: 1.5px solid rgba(239, 68, 68, 0.3);
+  }
+}
+
+// ============================================
+// PAGINATION
+// ============================================
+.pagination-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 36px;
+  padding: 22px 20px;
+  background: $card-background;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-md;
+  border: 1px solid $border-color;
+  animation: fadeInUp 0.7s ease;
+}
+
+.pagination-btn {
+  --color: #{$primary-color};
+  --padding-start: 10px;
+  --padding-end: 10px;
+  --border-radius: #{$border-radius-sm};
+  margin: 0;
+  width: 42px;
+  height: 42px;
+
+  &::part(native) {
+    border-radius: $border-radius-sm;
+    transition: all $transition-fast;
+  }
+
+  &:hover:not([disabled]) {
+    --background: rgba(99, 102, 241, 0.12);
+    transform: scale(1.08);
+  }
+
+  &[disabled] {
+    opacity: 0.3;
+  }
+
+  ion-icon {
+    font-size: 22px;
+  }
+}
+
+.page-numbers {
+  display: flex;
+  gap: 7px;
+}
+
+.page-number {
+  min-width: 42px;
+  height: 42px;
+  border: 1.5px solid $border-color;
+  background: $card-background;
+  color: $text-secondary;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: $border-radius-sm;
+  cursor: pointer;
+  transition: all $transition-normal;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover:not(.active):not(.ellipsis):not(:disabled) {
+    background: rgba(99, 102, 241, 0.08);
+    color: $primary-color;
+    border-color: $primary-light;
+    transform: translateY(-2px);
+    box-shadow: $shadow-sm;
+  }
+
+  &.active {
+    @include gradient-primary;
+    color: white;
+    border-color: transparent;
+    box-shadow: $shadow-md;
+    transform: scale(1.08);
+  }
+
+  &.ellipsis {
+    cursor: default;
+    pointer-events: none;
+    border-color: transparent;
+    background: transparent;
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 1;
+  }
+}
+
+// ============================================
+// EMPTY STATE
+// ============================================
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 70px 24px;
+  text-align: center;
+  background: $card-background;
+  border-radius: $border-radius-xl;
+  box-shadow: $shadow-sm;
+  border: 2px dashed $border-color;
+  margin-top: 50px;
+  animation: fadeIn 0.6s ease;
+}
+
+.empty-icon {
+  width: 110px;
+  height: 110px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+  border-radius: 50%;
+  @include flex-center;
+  margin-bottom: 28px;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    border: 2px dashed rgba(99, 102, 241, 0.2);
+    animation: rotate 20s linear infinite;
+  }
+
+  ion-icon {
+    font-size: 54px;
+    color: $primary-color;
+    animation: float 3s ease-in-out infinite;
+  }
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.empty-state h3 {
+  font-size: 24px;
+  font-weight: 800;
+  color: $text-primary;
+  margin: 0 0 10px 0;
+  letter-spacing: -0.5px;
+}
+
+.empty-state p {
+  font-size: 15px;
+  color: $text-secondary;
+  margin: 0 0 30px 0;
+  max-width: 320px;
+  line-height: 1.6;
+}
+
+.browse-btn {
+  --background: #{$primary-color};
+  --background-hover: #{$primary-dark};
+  --border-radius: #{$border-radius-md};
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+  --padding-start: 28px;
+  --padding-end: 28px;
+  --box-shadow: #{$shadow-md};
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0.3px;
+  max-width: 300px;
+  font-size: 15px;
+  transition: all $transition-normal;
+
+  &:hover {
+    --box-shadow: #{$shadow-lg};
+    transform: translateY(-2px);
+  }
+
+  ion-icon {
+    font-size: 20px;
+  }
+}
+
+// ============================================
+// ANIMATIONS
+// ============================================
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// ============================================
+// RESPONSIVE DESIGN
+// ============================================
+@media (max-width: 768px) {
+  .content-wrapper {
+    padding: 20px 14px 36px;
+  }
+
+  .stats-header {
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    padding: 14px 12px;
+    gap: 10px;
+
+    ion-icon {
+      font-size: 30px;
+    }
+
+    .stat-number {
+      font-size: 22px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+    }
+  }
+
+  .enrollment-card {
+    padding: 14px;
+    margin-bottom: 14px;
+  }
+
+  .course-thumbnail {
+    --size: 75px;
+    margin-right: 12px;
+  }
+
+  .course-title {
+    font-size: 15px;
+  }
+
+  .enrollment-details {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .detail-item {
+    font-size: 12px;
+    padding: 5px 9px;
+  }
+
+  .status-badge {
+    margin-left: 0;
+    margin-top: 10px;
+    align-self: flex-start;
+  }
+
+  .pagination-container {
+    padding: 18px 14px;
+    gap: 10px;
+  }
+
+  .page-numbers {
+    gap: 5px;
+  }
+
+  .page-number {
+    min-width: 38px;
+    height: 38px;
+    font-size: 13px;
+  }
+
+  .pagination-btn {
+    width: 38px;
+    height: 38px;
+  }
+
+  .empty-state {
+    padding: 50px 20px;
+    margin-top: 30px;
+  }
+
+  .empty-icon {
+    width: 90px;
+    height: 90px;
+    margin-bottom: 22px;
+
+    &::before {
+      width: 110px;
+      height: 110px;
+    }
+
+    ion-icon {
+      font-size: 44px;
+    }
+  }
+
+  .empty-state h3 {
+    font-size: 20px;
+  }
+
+  .empty-state p {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 576px) {
+  .stats-header {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card {
+    justify-content: flex-start;
+  }
+
+  .title-custom {
+    font-size: 19px;
+  }
+
+  .title-wrapper .title-icon {
+    font-size: 26px;
+  }
+}

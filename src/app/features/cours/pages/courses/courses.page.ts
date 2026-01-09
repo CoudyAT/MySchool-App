@@ -45,7 +45,7 @@ import {
   bulbOutline,
   calculatorOutline,
   lockOpenOutline,
-  optionsOutline
+  optionsOutline,
 } from 'ionicons/icons';
 import { Router } from '@angular/router';
 
@@ -111,7 +111,25 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
     private fcmService: FcmService,
     private courseService: CourseService
   ) {
-    addIcons({ personCircleOutline, starOutline, addOutline, optionsOutline, lockOpenOutline, shieldCheckmark, trendingUpOutline, bookOutline, bulbOutline, calculatorOutline, logOutOutline, ribbonOutline, checkmarkCircle, cardOutline, shieldCheckmarkOutline, arrowForwardOutline, playCircleOutline, });
+    addIcons({
+      personCircleOutline,
+      starOutline,
+      addOutline,
+      shieldCheckmark,
+      optionsOutline,
+      lockOpenOutline,
+      trendingUpOutline,
+      bookOutline,
+      bulbOutline,
+      calculatorOutline,
+      logOutOutline,
+      ribbonOutline,
+      checkmarkCircle,
+      cardOutline,
+      shieldCheckmarkOutline,
+      arrowForwardOutline,
+      playCircleOutline,
+    });
   }
 
   ngOnInit() {
@@ -131,7 +149,6 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
     const userId = localUser.uid;
     this.fcmService.initFCM(userId);
     this.fcmService.listenMessages();
-
   }
 
   ngAfterViewInit() {

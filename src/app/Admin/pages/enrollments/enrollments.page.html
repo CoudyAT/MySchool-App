@@ -1,13 +1,163 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>enrollments</ion-title>
+<ion-header class="header-custom" [translucent]="true">
+  <ion-toolbar class="toolbar-custom">
+    <ion-title class="title-custom">
+      <div class="title-wrapper">
+        <ion-icon name="school-outline" class="title-icon"></ion-icon>
+        <span>Mes inscriptions</span>
+      </div>
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">enrollments</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="content-custom">
+  <div class="content-wrapper">
+    
+    <!-- En-tête avec statistiques -->
+    <div class="stats-header" *ngIf="enrollments.length > 0">
+      <div class="stat-card">
+        <ion-icon name="book-outline"></ion-icon>
+        <div class="stat-info">
+          <span class="stat-number">{{ enrollments.length }}</span>
+          <span class="stat-label">Cours inscrits</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <ion-icon name="checkmark-circle-outline"></ion-icon>
+        <div class="stat-info">
+          <span class="stat-number">{{ getCompletedCount() }}</span>
+          <span class="stat-label">Complétés</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <ion-icon name="time-outline"></ion-icon>
+        <div class="stat-info">
+          <span class="stat-number">{{ getActiveCount() }}</span>
+          <span class="stat-label">En cours</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Liste des inscriptions -->
+    <ion-list *ngIf="paginatedEnrollments.length > 0; else emptyState" class="enrollments-list">
+      <ion-item 
+        *ngFor="let enrollment of paginatedEnrollments" 
+        lines="none"
+        class="enrollment-card"
+        button
+        detail="false"
+      >
+        <!-- Image du cours -->
+        <ion-thumbnail slot="start" class="course-thumbnail">
+          <img [src]="enrollment.courseImage" alt="Course image" />
+          <div class="thumbnail-overlay" *ngIf="enrollment.status === 'completed'">
+            <ion-icon name="checkmark-circle" color="light"></ion-icon>
+          </div>
+        </ion-thumbnail>
+
+        <!-- Infos principales -->
+        <ion-label class="enrollment-label">
+          <h2 class="course-title">{{ enrollment.courseTitle }}</h2>
+
+          <!-- Barre de progression -->
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div 
+                class="progress-fill" 
+                [style.width.%]="enrollment.progress"
+                [class.completed]="enrollment.progress === 100"
+              ></div>
+            </div>
+            <span class="progress-text">{{ enrollment.progress }}%</span>
+          </div>
+
+          <div class="enrollment-details">
+            <div class="detail-item">
+              <ion-icon name="card-outline"></ion-icon>
+              <span>{{ enrollment.paymentMethod }}</span>
+            </div>
+            <div class="detail-item">
+              <ion-icon name="cash-outline"></ion-icon>
+              <span>{{ enrollment.amount | currency:'XOF':'symbol':'1.0-0' }}</span>
+            </div>
+            <div class="detail-item">
+              <ion-icon name="calendar-outline"></ion-icon>
+              <span>{{ enrollment.enrolledAt | date:'dd/MM/yyyy' }}</span>
+            </div>
+          </div>
+
+          <!-- Certificat -->
+          <ion-badge
+            class="certificate-badge"
+            color="success"
+            *ngIf="enrollment.courseDetails?.certificateAvailable"
+          >
+            <ion-icon name="ribbon-outline"></ion-icon>
+            Certificat disponible
+          </ion-badge>
+        </ion-label>
+
+        <!-- Statut -->
+        <ion-badge
+          slot="end"
+          class="status-badge"
+          [class.status-active]="enrollment.status === 'active'"
+          [class.status-completed]="enrollment.status === 'completed'"
+          [class.status-pending]="enrollment.status === 'pending'"
+          [class.status-failed]="enrollment.status === 'failed'"
+        >
+          {{ getStatusLabel(enrollment.status) }}
+        </ion-badge>
+      </ion-item>
+    </ion-list>
+
+    <!-- Pagination -->
+    <div class="pagination-container" *ngIf="totalPages > 1">
+      <ion-button 
+        fill="clear" 
+        [disabled]="currentPage === 1"
+        (click)="previousPage()"
+        class="pagination-btn"
+      >
+        <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+      </ion-button>
+
+      <div class="page-numbers">
+        <button 
+          *ngFor="let page of getPageNumbers()" 
+          class="page-number"
+          [class.active]="page === currentPage"
+          [class.ellipsis]="page === '...'"
+          [disabled]="page === '...'"
+          (click)="goToPage(page)"
+        >
+          {{ page }}
+        </button>
+      </div>
+
+      <ion-button 
+        fill="clear" 
+        [disabled]="currentPage === totalPages"
+        (click)="nextPage()"
+        class="pagination-btn"
+      >
+        <ion-icon slot="icon-only" name="chevron-forward-outline"></ion-icon>
+      </ion-button>
+    </div>
+
+    <!-- État vide -->
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <div class="empty-icon">
+          <ion-icon name="school-outline"></ion-icon>
+        </div>
+        <h3>Aucune inscription</h3>
+        <p>Vous n'êtes inscrit à aucun cours pour le moment</p>
+        <ion-button expand="block" class="browse-btn">
+          <ion-icon slot="start" name="search-outline"></ion-icon>
+          Parcourir les cours
+        </ion-button>
+      </div>
+    </ng-template>
+
+  </div>
 </ion-content>

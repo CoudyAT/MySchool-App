@@ -10,7 +10,8 @@ import {
   IonCard,
   IonCardContent,
   IonIcon,
-  IonButton, IonSpinner,
+  IonButton,
+  IonSpinner,
   IonSegment,
   IonLabel,
   IonSegmentButton,
@@ -20,7 +21,9 @@ import { addIcons } from 'ionicons';
 import {
   checkmarkCircle,
   lockOpenOutline,
-  optionsOutline
+  optionsOutline,
+  hourglassOutline,
+  bookOutline,
 } from 'ionicons/icons';
 
 @Component({
@@ -28,7 +31,8 @@ import {
   templateUrl: './mes-cours.page.html',
   styleUrls: ['./mes-cours.page.scss'],
   standalone: true,
-  imports: [IonSpinner,
+  imports: [
+    IonSpinner,
     IonSegmentButton,
     IonLabel,
     IonSegment,
@@ -52,7 +56,13 @@ export class MesCoursPage implements OnInit {
   selectedSegment: 'cours' | 'cours-en-ligne' = 'cours';
 
   constructor(private router: Router, private courseService: CourseService) {
-    addIcons({ optionsOutline, lockOpenOutline, checkmarkCircle });
+    addIcons({
+      optionsOutline,
+      hourglassOutline,
+      bookOutline,
+      lockOpenOutline,
+      checkmarkCircle,
+    });
   }
 
   ngOnInit() {
@@ -76,7 +86,10 @@ export class MesCoursPage implements OnInit {
           new Set<string>(
             this.courses
               .map((c) => c.category)
-              .filter((cat): cat is string => typeof cat === 'string' && cat.trim() !== '')
+              .filter(
+                (cat): cat is string =>
+                  typeof cat === 'string' && cat.trim() !== ''
+              )
           )
         );
 
