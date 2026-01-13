@@ -22,24 +22,124 @@ export class EnrollmentService {
    * Crée une inscription avec paiement optionnel
    * Si le cours est payant et paymentMethod = 'orange-money', crée le paiement
    */
+  // async createEnrollment(paymentData: PaymentData): Promise<{
+  //   enrollmentId: string;
+  //   payment?: any;
+  // }> {
+  //   // UTILISER LE UID DE VOTRE BASE, PAS CELUI DE FIREBASE AUTH
+  //   const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+
+  //   if (!localUser?.uid) {
+  //     throw new Error('Utilisateur non connecté');
+  //   }
+
+  //   const realUid = localUser.uid; // Le UID qui existe dans votre base
+
+  //   console.log('Création inscription avec le vrai UID:', realUid);
+  //   console.log('UID Firebase Auth (ignoré):', this.auth);
+
+  //   const enrollmentData = {
+  //     userId: realUid,
+  //     courseId: paymentData.courseId,
+  //     courseTitle: paymentData.courseTitle,
+  //     courseImage: paymentData.courseImage,
+  //     amount: paymentData.amount,
+  //     paymentMethod: paymentData.method?.id || 'unknown',
+  //     status: 'active',
+  //     enrolledAt: new Date(),
+  //     progress: 0,
+  //     chaptersCompleted: [],
+  //   };
+
+  //   try {
+  //     const response = await firstValueFrom(
+  //       this.api.post<{ id: string; enrollment: Enrollment }>(
+  //         '/enrollments',
+  //         enrollmentData
+  //       )
+  //     );
+
+  //     console.log('Inscription créée avec ID:', response?.id);
+  //     const enrollmentId = response?.id || '';
+
+  //     if (paymentData.amount > 0) {
+  //       console.log('💳 Création du paiement ...');
+
+  //       // Récupérer les données client du localStorage ou du paymentData
+  //       let customerData: any = {};
+  //       const savedCustomerData = localStorage.getItem('paymentCustomerData');
+
+  //       if (savedCustomerData) {
+  //         try {
+  //           customerData = JSON.parse(savedCustomerData);
+  //         } catch (e) {
+  //           console.error('Erreur parsing customerData:', e);
+  //         }
+  //       }
+
+  //       // Fallback sur les données de la méthode de paiement
+  //       if (!customerData.phone && paymentData.method.customerPhone) {
+  //         customerData = {
+  //           name: paymentData.method.customerName,
+  //           email: paymentData.method.customerEmail,
+  //           phone: paymentData.method.customerPhone,
+  //         };
+  //       }
+
+  //       // Fallback final sur l'utilisateur connecté
+  //       if (!customerData.phone) {
+  //         customerData = {
+  //           name:
+  //             localUser.firstName + ' ' + localUser.lastName ||
+  //             'Client MySchool',
+  //           email: localUser.email || 'client@myschool.sn',
+  //           phone: localUser.phone || '+221771234567',
+  //         };
+  //       }
+
+  //       const payment = await firstValueFrom(
+  //         this.paymentService.createPayment({
+  //           userId: realUid,
+  //           enrollmentId: enrollmentId,
+  //           courseId: paymentData.courseId,
+  //           amount: Math.round(paymentData.amount * 100), // Convertir en centimes
+  //           currency: 'XOF',
+  //           paymentMethod: 'wave',
+  //           customerPhoneNumber: customerData.phone,
+  //           customerFirstName: customerData.name.split(' ')[0] || 'Prénom',
+  //           customerLastName:
+  //             customerData.name.split(' ').slice(1).join(' ') || 'Nom',
+  //           description: `Paiement pour ${paymentData.courseTitle}`,
+  //         })
+  //       );
+
+  //       // Nettoyer les données client temporaires
+  //       localStorage.removeItem('paymentCustomerData');
+
+  //       if (payment.success && payment.data) {
+  //         console.log('✅ Paiement créé:', payment.data);
+  //         return {
+  //           enrollmentId: enrollmentId,
+  //           payment: payment.data,
+  //         };
+  //       }
+  //     }
+
+  //     return { enrollmentId: enrollmentId };
+  //   } catch (error) {
+  //     console.error('Erreur création inscription:', error);
+  //     throw error;
+  //   }
+  // }
+
   async createEnrollment(paymentData: PaymentData): Promise<{
-    enrollmentId: string;
+    enrollmentId?: string;
     payment?: any;
   }> {
-    // UTILISER LE UID DE VOTRE BASE, PAS CELUI DE FIREBASE AUTH
-    const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-
-    if (!localUser?.uid) {
-      throw new Error('Utilisateur non connecté');
-    }
-
-    const realUid = localUser.uid; // Le UID qui existe dans votre base
-
-    console.log('Création inscription avec le vrai UID:', realUid);
-    console.log('UID Firebase Auth (ignoré):', this.auth);
+    const backendUserId = this.getBackendUserId();
 
     const enrollmentData = {
-      userId: realUid,
+      userId: backendUserId,
       courseId: paymentData.courseId,
       courseTitle: paymentData.courseTitle,
       courseImage: paymentData.courseImage,
@@ -52,85 +152,54 @@ export class EnrollmentService {
     };
 
     try {
+      // 1️⃣ Création inscription
       const response = await firstValueFrom(
-        this.api.post<{ id: string; enrollment: Enrollment }>(
-          '/enrollments',
-          enrollmentData
-        )
+        this.api.post<EnrollmentApiResponse>('/enrollments', enrollmentData)
       );
 
-      console.log('Inscription créée avec ID:', response?.id);
-      const enrollmentId = response?.id || '';
+      console.log('Enrollment response:', response);
 
-      // Si le cours est payant et méthode = orange-money, créer le paiement
-      if (paymentData.amount > 0 && paymentData.method?.id === 'wave') {
-        console.log('💳 Création du paiement Orange Money...');
+      // ✅ récupérer l’ID correctement
+      const enrollmentId =
+        response.data?.id ||
+        response.data?._id ||
+        `${response.data.userId}_${response.data.courseId}`; // fallback sûr
 
-        // Récupérer les données client du localStorage ou du paymentData
-        let customerData: any = {};
-        const savedCustomerData = localStorage.getItem('paymentCustomerData');
-
-        if (savedCustomerData) {
-          try {
-            customerData = JSON.parse(savedCustomerData);
-          } catch (e) {
-            console.error('Erreur parsing customerData:', e);
-          }
-        }
-
-        // Fallback sur les données de la méthode de paiement
-        if (!customerData.phone && paymentData.method.customerPhone) {
-          customerData = {
-            name: paymentData.method.customerName,
-            email: paymentData.method.customerEmail,
-            phone: paymentData.method.customerPhone,
-          };
-        }
-
-        // Fallback final sur l'utilisateur connecté
-        if (!customerData.phone) {
-          customerData = {
-            name:
-              localUser.firstName + ' ' + localUser.lastName ||
-              'Client MySchool',
-            email: localUser.email || 'client@myschool.sn',
-            phone: localUser.phone || '+221771234567',
-          };
-        }
-
+      // 2️⃣ Paiement (SEULEMENT si payant)
+      if (paymentData.amount > 0) {
         const payment = await firstValueFrom(
           this.paymentService.createPayment({
-            userId: realUid,
-            enrollmentId: enrollmentId,
-            courseId: paymentData.courseId,
-            amount: Math.round(paymentData.amount * 100), // Convertir en centimes
-            currency: 'XOF',
-            paymentMethod: 'wave',
-            customerPhoneNumber: customerData.phone,
-            customerFirstName: customerData.name.split(' ')[0] || 'Prénom',
-            customerLastName:
-              customerData.name.split(' ').slice(1).join(' ') || 'Nom',
-            description: `Paiement pour ${paymentData.courseTitle}`,
+            userId: backendUserId, // ✅ ID backend
+            courseId: paymentData.courseId, // ✅ requis
           })
         );
 
-        // Nettoyer les données client temporaires
-        localStorage.removeItem('paymentCustomerData');
-
         if (payment.success && payment.data) {
-          console.log('✅ Paiement créé:', payment.data);
           return {
-            enrollmentId: enrollmentId,
+            enrollmentId,
             payment: payment.data,
           };
         }
       }
 
-      return { enrollmentId: enrollmentId };
+      // 3️⃣ Cours gratuit
+      return { enrollmentId };
     } catch (error) {
       console.error('Erreur création inscription:', error);
       throw error;
     }
+  }
+
+  private getBackendUserId(): string {
+    const localUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+
+    const backendUserId = localUser.id || localUser._id || localUser.userId; // ⚠️ PAS localUser.uid
+
+    if (!backendUserId) {
+      throw new Error('ID utilisateur backend introuvable');
+    }
+
+    return backendUserId;
   }
 
   // Vérifier si l'utilisateur est déjà inscrit à un cours

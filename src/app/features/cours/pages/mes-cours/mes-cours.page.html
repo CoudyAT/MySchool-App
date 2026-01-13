@@ -56,7 +56,11 @@
             class="course-card"
             (click)="openCourse(course)">
             <div class="card-image">
-              <img src="assets/algo.svg" alt="MySchool Logo">
+             <img
+              [src]="course?.image"
+              alt="Instructeur"
+              class="instructor-image"
+            /> 
               <div class="card-badge">
                 <ion-icon name="lock-open-outline"></ion-icon>
               </div>

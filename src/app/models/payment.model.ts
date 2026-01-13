@@ -8,18 +8,18 @@ export type PaymentMethod = 'orange-money' | 'wave' | 'free-money' | 'card';
 export interface Payment {
   id?: string;
   userId: string;
-  enrollmentId: string;
+ // enrollmentId?: string;
   courseId: string;
-  amount: number;
-  currency: string; // 'XOF' par défaut
-  paymentMethod: PaymentMethod;
-  status: PaymentStatus;
-  orderReferenceNumber?: string;
-  payToken?: string;
-  paymentUrl?: string;
-  customerPhoneNumber: string;
-  customerFirstName: string;
-  customerLastName: string;
+ // amount?: number;
+  // currency?: string; // 'XOF' par défaut
+  // paymentMethod: PaymentMethod;
+    status?: PaymentStatus;
+  // orderReferenceNumber?: string;
+  // payToken?: string;
+  // paymentUrl?: string;
+  // customerPhoneNumber: string;
+  // customerFirstName: string;
+  // customerLastName: string;
   transactionId?: string;
   operatorTransactionId?: string;
   description?: string;
@@ -85,7 +85,9 @@ export interface PaymentData {
 
 export interface EnrollmentApiResponse {
   success: boolean;
-  data: any[];
-  count: number;
+  data: any;
+  count?: number;
 }
+
+
 

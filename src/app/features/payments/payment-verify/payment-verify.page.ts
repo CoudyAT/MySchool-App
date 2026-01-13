@@ -28,6 +28,7 @@ import { PaymentData } from 'src/app/models/payment.model';
 import { EnrollmentService } from '../../services/enrollmentService';
 import { PaymentService } from '../../services/paymentService';
 import { firstValueFrom } from 'rxjs';
+import { LoadingController } from '@ionic/angular/standalone';
 
 interface PaymentMethod {
   id: string;
@@ -113,7 +114,8 @@ export class PaymentVerifyPage implements OnInit {
     private enrollmentService: EnrollmentService,
     private paymentService: PaymentService,
     private toastCtrl: ToastController,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private loadingCtrl: LoadingController // ✅ AJOUT
   ) {
     addIcons({
       chevronBackOutline,
@@ -270,97 +272,35 @@ export class PaymentVerifyPage implements OnInit {
     await alert.present();
   }
 
+  private loading?: HTMLIonLoadingElement;
+
+  // ✅ Afficher le loader
+  private async showLoader(message = 'Traitement en cours...') {
+    if (this.loading) {
+      this.loading.message = message;
+      return;
+    }
+
+    this.loading = await this.loadingCtrl.create({
+      message,
+      spinner: 'crescent',
+      backdropDismiss: false,
+    });
+
+    await this.loading.present();
+  }
+
+  // ❌ Fermer le loader
+  private async hideLoader() {
+    if (this.loading) {
+      await this.loading.dismiss();
+      this.loading = undefined;
+    }
+  }
+
   /** ===============================
    *  🔥 ACTION PAIEMENT
    *  =============================== */
-  // async proceedToPayment() {
-  //   // Vérifier si l'utilisateur veut appliquer un code promo
-  //   if (this.showPromoInput && this.promoCodeInput.trim()) {
-  //     await this.showErrorAlert(
-  //       'Veuillez appliquer ou annuler le code promo avant de continuer'
-  //     );
-  //     return;
-  //   }
-
-  //   try {
-  //     /** ===== ABONNEMENT PREMIUM ===== */
-
-  //     if (this.isPremiumSubscription) {
-  //       console.log('Démarrage paiement abonnement Premium', this.selectedPlan);
-
-  //       if (!this.userId || !this.selectedPlan?.type) {
-  //         throw new Error('Infos abonnement manquantes');
-  //       }
-
-  //       try {
-  //         const response = await firstValueFrom(
-  //           this.paymentService.createSubscriptionPayment(
-  //             this.selectedPlan.type,
-  //             this.userId
-  //           )
-  //         );
-
-  //         console.log('Réponse paiement:', response);
-
-  //         // ✅ REDIRECTION VERS WAVE
-  //         if (response?.success && response?.data?.paymentUrl) {
-  //           window.location.href = response.data.paymentUrl;
-  //           return;
-  //         }
-
-  //         // ❌ Si jamais l’URL n’est pas là
-  //         throw new Error('URL de paiement introuvable');
-  //       } catch (error) {
-  //         console.error(error);
-
-  //         await this.toastCtrl
-  //           .create({
-  //             message: 'Erreur lors de la création du paiement ❌',
-  //             duration: 3000,
-  //             color: 'danger',
-  //           })
-  //           .then((t) => t.present());
-  //       }
-  //     }
-
-  //     /** ===== COURS INDIVIDUEL ===== */
-  //     const method = this.allPaymentMethods.find(
-  //       (m) => m.id === this.selectedPaymentOption
-  //     );
-
-  //     const alreadyEnrolled = await this.isUserEnrolledInCourse(this.courseId);
-  //     if (alreadyEnrolled) {
-  //       await this.showAlreadyEnrolledAlert();
-  //       return;
-  //     }
-
-  //     const paymentData: PaymentData = {
-  //       plan: this.selectedPlan,
-  //       method,
-  //       amount: this.summary.total,
-  //       courseId: this.courseId,
-  //       courseTitle: this.courseTitle,
-  //       courseImage: this.courseImage,
-  //       userId: this.userId,
-  //       promoCode: this.appliedPromoCode,
-  //       discountAmount: this.summary.promoCode,
-  //     };
-
-  //     const result = await this.enrollmentService.createEnrollment(paymentData);
-
-  //     if (result.payment?.data?.paymentUrl) {
-  //       window.location.href = result.payment.data.paymentUrl;
-  //       return;
-  //     }
-
-  //     this.router.navigate(['/course-video', this.courseId], {
-  //       replaceUrl: true,
-  //     });
-  //   } catch (err) {
-  //     console.error('❌ Erreur paiement', err);
-  //     await this.showErrorAlert('Erreur lors du paiement');
-  //   }
-  // }
 
   async proceedToPayment() {
     console.log('GGGG');
@@ -373,82 +313,52 @@ export class PaymentVerifyPage implements OnInit {
     }
 
     try {
+      // ✅ AFFICHER LOADER
+      await this.showLoader('Initialisation du paiement...');
+
       /** ===============================
        *  ⭐ ABONNEMENT PREMIUM
        *  =============================== */
       if (this.isPremium) {
+        await this.showLoader('Redirection vers le paiement Premium...');
+
         if (this.selectedPlan.plan) {
-            const planType = this.mapPlanTypeToBackend(
-            this.selectedPlan.plan
-            );
-            console.log(
-                    'Démarrage paiement abonnement Premium',
-                    this.selectedPlan.plan
-                  );
-                  console.log(this.userId);
-                  if (!this.userId || !planType) {
-                    throw new Error('Infos abonnement manquantes');
-                  }
+          const planType = this.mapPlanTypeToBackend(this.selectedPlan.plan);
 
-                  const response = await firstValueFrom(
-                    this.paymentService.createSubscriptionPayment(
-                      planType,
-                      this.userId
-                    )
-                  );
+          if (!this.userId || !planType) {
+            throw new Error('Infos abonnement manquantes');
+          }
 
-                  if (response?.success && response?.data?.paymentUrl) {
-                    window.location.href = response.data.paymentUrl;
-                    return;
-                  }
+          const response = await firstValueFrom(
+            this.paymentService.createSubscriptionPayment(planType, this.userId)
+          );
 
-                  throw new Error('URL de paiement introuvable');
+          if (response?.success && response?.data?.paymentUrl) {
+            await this.hideLoader(); // 🔴 IMPORTANT
+            window.location.href = response.data.paymentUrl;
+            return;
+          }
+
+          throw new Error('URL de paiement introuvable');
         }
-
-        if (this.selectedPlan.type) {
-                  const planType = this.selectedPlan.type;
-
-                  console.log(
-                    'Démarrage paiement abonnement Premium',
-                    this.selectedPlan.plan
-                  );
-                  console.log(this.userId);
-                  if (!this.userId || !planType) {
-                    throw new Error('Infos abonnement manquantes');
-                  }
-
-                  const response = await firstValueFrom(
-                    this.paymentService.createSubscriptionPayment(
-                      planType,
-                      this.userId
-                    )
-                  );
-
-                  if (response?.success && response?.data?.paymentUrl) {
-                    window.location.href = response.data.paymentUrl;
-                    return;
-                  }
-
-                  throw new Error('URL de paiement introuvable');
-                }
-
       }
 
       /** ===============================
        *  📘 COURS INDIVIDUEL
        *  =============================== */
 
-      console.log('Paiement cours individuel');
+      await this.showLoader('Création de l’inscription...');
+
+      const alreadyEnrolled = await this.isUserEnrolledInCourse(this.courseId);
+      if (alreadyEnrolled) {
+        await this.hideLoader();
+        await this.showAlreadyEnrolledAlert();
+        return;
+      }
 
       const method = this.allPaymentMethods.find(
         (m) => m.id === this.selectedPaymentOption
       );
-
-      const alreadyEnrolled = await this.isUserEnrolledInCourse(this.courseId);
-      if (alreadyEnrolled) {
-        await this.showAlreadyEnrolledAlert();
-        return;
-      }
 
       const paymentData: PaymentData = {
         plan: this.selectedPlan,
@@ -462,18 +372,26 @@ export class PaymentVerifyPage implements OnInit {
         discountAmount: this.summary.promoCode,
       };
 
+      await this.showLoader('Redirection vers Wave...');
+
       const result = await this.enrollmentService.createEnrollment(paymentData);
 
-      if (result.payment?.data?.paymentUrl) {
-        window.location.href = result.payment.data.paymentUrl;
+      console.log('Résultat création inscription:', result);
+
+      if (result.payment?.paymentUrl) {
+        await this.hideLoader(); // 🔴 IMPORTANT
+        window.location.href = result.payment.paymentUrl;
         return;
       }
+
+      await this.hideLoader();
 
       this.router.navigate(['/course-video', this.courseId], {
         replaceUrl: true,
       });
     } catch (err) {
       console.error('❌ Erreur paiement', err);
+      await this.hideLoader();
       await this.showErrorAlert('Erreur lors du paiement');
     }
   }

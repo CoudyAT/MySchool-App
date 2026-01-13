@@ -23,14 +23,8 @@ export class PaymentService {
    */
   createPayment(payment: {
     userId: string;
-    enrollmentId: string;
     courseId: string;
-    amount: number;
     currency?: string;
-    paymentMethod: PaymentMethod;
-    customerPhoneNumber: string;
-    customerFirstName: string;
-    customerLastName: string;
     description?: string;
   }): Observable<ApiResponse<Payment>> {
     return this.api.post<ApiResponse<Payment>>('/wave/create-payment', {
