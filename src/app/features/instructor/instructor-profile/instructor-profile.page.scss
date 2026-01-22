@@ -25,9 +25,11 @@ ion-content {
 
 .content-wrapper {
   padding-bottom: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-// Section Hero
+// ============ SECTION HERO ============
 .hero-section {
   height: 280px;
   display: flex;
@@ -64,9 +66,9 @@ ion-content {
   }
 }
 
-// Informations principales
+// ============ INFORMATIONS PRINCIPALES ============
 .main-info {
-  padding: 24px 24px 16px 24px;
+  padding: 24px;
   background: #FFFFFF;
   margin-bottom: 16px;
   
@@ -95,6 +97,7 @@ ion-content {
     padding: 16px;
     background: #F8F9FA;
     border-radius: 12px;
+    flex-wrap: wrap;
     
     .stat-item {
       display: flex;
@@ -134,7 +137,7 @@ ion-content {
   }
 }
 
-// Biographie
+// ============ BIOGRAPHIE ============
 .bio-section {
   padding: 24px;
   background: #FFFFFF;
@@ -155,7 +158,7 @@ ion-content {
   }
 }
 
-// Expertise
+// ============ EXPERTISE ============
 .expertise-section {
   padding: 24px;
   background: #FFFFFF;
@@ -181,11 +184,18 @@ ion-content {
       font-size: 14px;
       font-weight: 600;
       border: 1px solid #B3D9FF;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      
+      &:hover {
+        background: #D0E5FF;
+        border-color: #0066FF;
+      }
     }
   }
 }
 
-// Cours de l'instructeur
+// ============ COURS ============
 .courses-section {
   padding: 0 24px 24px 24px;
   
@@ -199,16 +209,27 @@ ion-content {
     margin: 0 -24px 16px -24px;
   }
   
+  .courses-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
   .course-card {
-    margin: 0 0 16px 0;
+    margin: 0;
     border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: #FFFFFF;
     
     &:active {
       transform: translateY(-4px);
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
     }
     
     .card-image {
@@ -222,6 +243,11 @@ ion-content {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        transition: transform 0.3s ease;
+      }
+      
+      &:hover img {
+        transform: scale(1.05);
       }
       
       .certificate-badge {
@@ -261,6 +287,8 @@ ion-content {
         align-items: center;
         justify-content: center;
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+        opacity: 0;
         
         ion-icon {
           font-size: 32px;
@@ -270,10 +298,13 @@ ion-content {
       }
     }
     
+    &:hover .play-icon {
+      opacity: 1;
+    }
+    
     ion-card-content {
       padding: 16px;
       background-color: white;
-
       
       .course-title {
         font-size: 18px;
@@ -290,6 +321,7 @@ ion-content {
         margin-bottom: 12px;
         font-size: 14px;
         color: #666666;
+        flex-wrap: wrap;
         
         span {
           display: flex;
@@ -320,6 +352,8 @@ ion-content {
         align-items: center;
         padding-top: 12px;
         border-top: 1px solid #EEEEEE;
+        gap: 12px;
+        flex-wrap: wrap;
         
         .duration,
         .enrolled {
@@ -339,7 +373,147 @@ ion-content {
   }
 }
 
-// Responsive
+// ============ RESPONSIVE ============
+
+// Tablettes et petit desktop
+@media (min-width: 768px) {
+  .content-wrapper {
+    padding: 40px 32px;
+  }
+  
+  .main-info,
+  .bio-section,
+  .expertise-section {
+    margin-bottom: 24px;
+    border-radius: 16px;
+  }
+  
+  .courses-section {
+    padding: 0;
+    
+    .section-title {
+      margin: 0 0 24px 0;
+      padding: 0;
+      background: transparent;
+      font-size: 24px;
+    }
+    
+    .courses-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+  }
+  
+  .expertise-section .expertise-tags {
+    gap: 12px;
+    
+    .expertise-tag {
+      padding: 10px 18px;
+      font-size: 15px;
+    }
+  }
+}
+
+// Desktop
+@media (min-width: 1024px) {
+  .content-wrapper {
+    padding: 48px 40px;
+  }
+  
+  .hero-section {
+    height: 320px;
+    padding-bottom: 50px;
+    
+    .instructor-avatar {
+      width: 160px;
+      height: 160px;
+      border: 6px solid #FFFFFF;
+    }
+  }
+  
+  .main-info {
+    padding: 32px;
+    
+    .instructor-name {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+    
+    .instructor-title {
+      font-size: 18px;
+      margin-bottom: 28px;
+    }
+    
+    .stats-row {
+      padding: 20px 24px;
+      gap: 24px;
+      
+      .stat-item {
+        font-size: 15px;
+      }
+    }
+  }
+  
+  .bio-section,
+  .expertise-section {
+    padding: 32px;
+    
+    .section-title {
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+  }
+  
+  .bio-section .bio-text {
+    font-size: 16px;
+    line-height: 1.7;
+  }
+  
+  .courses-section {
+    .section-title {
+      font-size: 26px;
+      margin-bottom: 32px;
+    }
+    
+    .courses-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+    
+    .course-card {
+      .card-image {
+        height: 200px;
+      }
+      
+      ion-card-content {
+        padding: 20px;
+        
+        .course-title {
+          font-size: 17px;
+          margin-bottom: 14px;
+        }
+        
+        .course-meta {
+          font-size: 15px;
+        }
+        
+        .course-footer {
+          font-size: 14px;
+          padding-top: 16px;
+        }
+      }
+    }
+  }
+}
+
+// Grand desktop (écrans 1440px+)
+@media (min-width: 1440px) {
+  .courses-section .courses-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+// Petit mobile
 @media (max-width: 375px) {
   .hero-section {
     height: 240px;
@@ -348,25 +522,75 @@ ion-content {
     .instructor-avatar {
       width: 120px;
       height: 120px;
+      border-width: 4px;
     }
   }
   
   .main-info {
+    padding: 20px;
+    
     .instructor-name {
       font-size: 28px;
     }
     
+    .instructor-title {
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    
     .stats-row {
-      flex-wrap: wrap;
+      padding: 12px;
       gap: 8px;
       
       .stat-item {
-        font-size: 13px;
+        font-size: 12px;
+      }
+      
+      .stat-divider {
+        height: 16px;
       }
     }
   }
   
-  .courses-section .course-card .card-image {
-    height: 160px;
+  .bio-section,
+  .expertise-section {
+    padding: 20px;
+    margin-bottom: 12px;
+    
+    .section-title {
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+  }
+  
+  .bio-section .bio-text {
+    font-size: 14px;
+  }
+  
+  .courses-section {
+    padding: 0 16px 16px 16px;
+    
+    .section-title {
+      padding: 20px 16px 12px 16px;
+      margin: 0 -16px 12px -16px;
+      font-size: 18px;
+    }
+    
+    .courses-grid {
+      gap: 12px;
+    }
+    
+    .course-card .card-image {
+      height: 160px;
+    }
+  }
+  
+  .expertise-section .expertise-tags {
+    gap: 6px;
+    
+    .expertise-tag {
+      padding: 6px 12px;
+      font-size: 13px;
+    }
   }
 }

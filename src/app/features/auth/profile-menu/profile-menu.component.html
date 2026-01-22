@@ -1,0 +1,96 @@
+<div class="profile-menu-container " >
+
+  <!-- HEADER -->
+  <div class="profile-header ">
+
+    <div class="avatar-container">
+      <div class="avatar-circle">
+        <img *ngIf="currentUser?.photoURL" [src]="currentUser.photoURL" />
+        <div *ngIf="!currentUser?.photoURL" class="avatar-placeholder">
+          {{ currentUser?.firstName?.charAt(0) || 'A' }}
+        </div>
+      </div>
+
+      <button class="camera-button" (click)="changeProfilePicture()">
+        <ion-icon name="camera-outline"></ion-icon>
+      </button>
+    </div>
+
+    <h3>{{ currentUser?.firstName }} {{ currentUser?.lastName }}</h3>
+    <p>{{ currentUser?.phone }}</p>
+
+  </div>
+
+
+  <!-- OPTIONS -->
+  <div class="profile-options">
+
+    <button class="menu-item" (click)="modifyProfile()">
+      <ion-icon name="person-outline"></ion-icon>
+      Modifier profil
+    </button>
+
+    <button class="menu-item" (click)="openPaymentOptions()">
+      <ion-icon name="card-outline"></ion-icon>
+      Paiement
+    </button>
+
+    <button class="menu-item">
+      <ion-icon name="notifications-outline"></ion-icon>
+      Notifications
+    </button>
+
+    <button class="menu-item">
+      <ion-icon name="shield-checkmark-outline"></ion-icon>
+      Sécurité
+    </button>
+
+    <button class="menu-item">
+      <ion-icon name="language-outline"></ion-icon>
+      Langue
+    </button>
+
+    <button class="menu-item" (click)="inviteFriends()">
+      <ion-icon name="people-outline"></ion-icon>
+      Parrainage
+    </button>
+
+    <button class="menu-item logout" (click)="logout()">
+      <ion-icon name="log-out-outline"></ion-icon>
+      Déconnexion
+    </button>
+
+  </div>
+
+</div>
+
+
+<div class="referral-box" *ngIf="isReferralVisible">
+  <!-- Bouton de fermeture -->
+  <button class="close-btn" (click)="closeReferralBox()" aria-label="Fermer">
+    <ion-icon name="close-outline"></ion-icon>
+  </button>
+  
+  <p class="referral-title">
+    <ion-icon name="gift-outline" class="title-icon"></ion-icon>
+    Partage ton lien de parrainage
+  </p>
+
+  <div class="referral-input">
+    <input
+      type="text"
+      [value]="referralLink"
+      readonly
+      placeholder="Votre lien de parrainage"
+    />
+    <button class="copy-btn" (click)="copyReferralLink()">
+      <ion-icon name="copy-outline"></ion-icon>
+      Copier
+    </button>
+  </div>
+
+  <ion-button expand="block" class="lien" (click)="shareReferralLink()">
+    <ion-icon name="share-social-outline"></ion-icon>
+    Envoyer le lien
+  </ion-button>
+</div>

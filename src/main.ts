@@ -26,12 +26,16 @@ import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { provideStorage, getStorage } from '@angular/fire/storage';
 import { environment } from './environments/environment';
 import { ErrorInterceptor } from './app/core/interceptors/error.interceptor';
+import { importProvidersFrom } from '@angular/core';
+import { IonicModule } from '@ionic/angular';
 
 bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideIonicAngular(),
     provideRouter(routes, withPreloading(PreloadAllModules)),
+    importProvidersFrom(IonicModule.forRoot()),
+
 
     // HTTP Client avec intercepteur d'erreurs
     provideHttpClient(),

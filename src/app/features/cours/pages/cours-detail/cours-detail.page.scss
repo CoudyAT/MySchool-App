@@ -34,13 +34,13 @@ ion-header {
 }
 
 ion-content {
-  --background: #f5f5f5;
+  --background: #f8f9fa;
 }
 
 .content-wrapper {
   position: relative;
-  min-height: 100%;
-  background: white;
+  min-height: 100vh;
+  background: #f8f9fa;
 }
 
 .cover-image-container {
@@ -61,7 +61,7 @@ ion-content {
     left: 0;
     right: 0;
     height: 100px;
-    background: linear-gradient(to top, rgba(255, 255, 255, 1), transparent);
+    background: linear-gradient(to top, rgba(248, 249, 250, 1), transparent);
   }
 }
 
@@ -72,6 +72,22 @@ ion-content {
   border-radius: 24px 24px 0 0;
   padding: 24px 20px;
   z-index: 2;
+
+  @media (min-width: 768px) {
+    margin-top: 0;
+    border-radius: 0;
+    padding: 40px 60px;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 50px;
+    align-items: start;
+  }
+
+  @media (min-width: 1200px) {
+    padding: 50px 80px;
+    grid-template-columns: 1fr 420px;
+    gap: 60px;
+  }
 }
 
 .certificate-badge {
@@ -79,7 +95,7 @@ ion-content {
   align-items: center;
   gap: 6px;
   background: #E3F2FD;
-  padding: 6px 12px;
+  padding: 8px 14px;
   border-radius: 20px;
   margin-bottom: 16px;
   
@@ -93,6 +109,10 @@ ion-content {
     font-size: 12px;
     font-weight: 600;
   }
+
+  @media (min-width: 768px) {
+    margin-bottom: 24px;
+  }
 }
 
 .course-title {
@@ -102,7 +122,17 @@ ion-content {
   margin: 0 0 12px 0;
   line-height: 1.2;
   font-style: bold;
-  font-family: Archivo Black;
+  font-family: 'Archivo Black', sans-serif;
+
+  @media (min-width: 768px) {
+    font-size: 48px;
+    margin-bottom: 20px;
+  }
+
+  @media (min-width: 1200px) {
+    font-size: 56px;
+    line-height: 1.1;
+  }
 }
 
 .course-meta {
@@ -110,11 +140,18 @@ ion-content {
   align-items: center;
   gap: 8px;
   margin-bottom: 20px;
+  flex-wrap: wrap;
   
   .sessions {
     font-size: 14px;
     font-weight: 600;
     color: #000;
+    cursor: pointer;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: #2650BB;
+    }
   }
   
   .separator {
@@ -127,13 +164,18 @@ ion-content {
     font-weight: 600;
     color: #FF9800;
   }
+
+  @media (min-width: 768px) {
+    margin-bottom: 28px;
+    gap: 12px;
+  }
 }
 
 .course-info-row {
   display: flex;
- // flex-direction: column;
   gap: 8px;
   margin-bottom: 16px;
+  flex-wrap: wrap;
   
   .info-item {
     display: flex;
@@ -155,6 +197,12 @@ ion-content {
     .instructor-name {
       color: #2650BB;
     }
+  }
+
+  @media (min-width: 768px) {
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 24px;
   }
 }
 
@@ -192,11 +240,13 @@ ion-content {
   justify-content: space-between;
   margin-bottom: 32px;
   padding: 0 10px;
+  gap: 8px;
   
   .level-item {
     display: flex;
     align-items: center;
     flex: 1;
+    min-width: 0;
     
     .level-icon-wrapper {
       width: 40px;
@@ -227,6 +277,7 @@ ion-content {
       height: 2px;
       background: #E0E0E0;
       margin: 0 8px;
+      min-width: 20px;
       
       &.completed {
         background: #4CAF50;
@@ -237,16 +288,26 @@ ion-content {
       display: none;
     }
   }
+
+  @media (min-width: 768px) {
+    margin-bottom: 40px;
+    padding: 0;
+  }
 }
 
 .description-section {
- // margin-bottom: 100px; // Espace pour la card fixée en bas
+  margin-bottom: 40px;
   
   .section-title {
     font-size: 18px;
     font-weight: 700;
     color: #2650BB;
     margin: 0 0 12px 0;
+
+    @media (min-width: 768px) {
+      font-size: 20px;
+      margin-bottom: 16px;
+    }
   }
   
   .description-text {
@@ -254,135 +315,173 @@ ion-content {
     line-height: 1.6;
     color: #666;
     margin: 0;
+
+    @media (min-width: 768px) {
+      font-size: 15px;
+      line-height: 1.7;
+    }
+  }
+
+  @media (min-width: 768px) {
+    margin-bottom: 0;
   }
 }
 
-.enroll-card {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: 0;
-  border-radius: 20px 20px 0 0;
-  box-shadow: 0 -4px 12px white;
-  z-index: 100;
-  
-  .enroll-card-content {
-    padding: 16px 20px 20px 20px;
-    background: #f9f9fbfa;
+.chapters-section {
+  margin-bottom: 50px;
+
+  @media (min-width: 768px) {
+    grid-column: 1;
+    margin-bottom: 50px;
   }
-}
 
-.enroll-button {
-  --background: #2650BB;
-  --border-radius: 12px;
-  height: 70px;
-  font-size: 16px;
-  font-weight: 600;
-  text-transform: none;
-  margin: 0;
-  
-  .button-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    width: 100%;
-    padding: 12px 0;
-    
-    .button-main-text {
-      font-size: 18px;
-      font-weight: 700;
-      color: white;
-      line-height: 1.2;
-      letter-spacing: 0.3px;
-    }
-    
-    .button-subtitle {
-      font-size: 13px;
-      font-weight: 400;
-      color: white;
-      opacity: 1;
-      line-height: 1;
-      margin-top: 2px;
-    }
-  }
-}
-
-.enroll-card {
-  margin: 16px;
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  
-  .enroll-card-content {
-    padding: 0;
-  }
-}
-
-.enroll-button {
-  --background: linear-gradient(135deg, #3880ff 0%, #5260ff 100%);
-  --background-hover: linear-gradient(135deg, #5260ff 0%, #3880ff 100%);
-  --border-radius: 12px;
-  height: 70px;
-  margin: 0;
-
-  .button-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    
-    .button-main-text {
-      font-size: 16px;
-      font-weight: 600;
-      color: white;
-    }
-    
-    .button-subtitle {
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.8);
-      margin-top: 2px;
-    }
-  }
-}
-
-.continue-button {
-  --background: linear-gradient(135deg, #2dd36f 0%, #28ba62 100%);
-  --background-hover: linear-gradient(135deg, #28ba62 0%, #2dd36f 100%);
-  --border-radius: 12px;
-  height: 70px;
-  margin: 0;
-
-  .button-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    
-    .button-main-text {
-      font-size: 16px;
-      font-weight: 600;
-      color: white;
-    }
-    
-    .button-subtitle {
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.8);
-      margin-top: 2px;
-    }
-  }
-}
-
-/* Section Documents */
-.documents-section {
- margin-top: 34px;
-  margin-bottom: 100px;
-}
-
-.documents-section .section-title {
-   font-size: 18px;
+  .section-title {
+    font-size: 18px;
     font-weight: 700;
     color: #2650BB;
-    margin: 0 0 12px 0;
+    margin: 0 0 16px 0;
+
+    @media (min-width: 768px) {
+      font-size: 20px;
+    }
+
+    .chapters-count {
+      font-size: 14px;
+      color: #999;
+      font-weight: 500;
+      margin-left: 8px;
+    }
+  }
+
+  .chapters-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+.chapter-card {
+  margin: 0;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background-color: white;
+  border: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+
+    @media (min-width: 768px) {
+      transform: translateY(-4px);
+    }
+  }
+}
+
+.chapter-card-content {
+  padding: 16px;
+
+  @media (min-width: 768px) {
+    padding: 18px 20px;
+  }
+}
+
+.chapter-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.chapter-number {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #3880ff 0%, #5260ff 100%);
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.chapter-info {
+  flex: 1;
+}
+
+.chapter-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0 0 6px 0;
+
+  @media (min-width: 768px) {
+    font-size: 17px;
+  }
+}
+
+.chapter-duration {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: #999;
+  margin: 0;
+
+  ion-icon {
+    font-size: 14px;
+  }
+}
+
+.chapter-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #999;
+
+  .unlock-icon,
+  .lock-icon {
+    font-size: 20px;
+    color: #4CAF50;
+  }
+
+  .lock-icon {
+    color: #FF6B6B;
+  }
+
+  .arrow-icon {
+    font-size: 20px;
+    color: #ccc;
+  }
+}
+
+.empty-chapters {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+  font-size: 16px;
+}
+
+.documents-section {
+  margin-bottom: 100px;
+
+  @media (min-width: 768px) {
+    grid-column: 1;
+    margin-bottom: 80px;
+  }
+
+  .section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #2650BB;
+    margin: 0 0 16px 0;
+
+    @media (min-width: 768px) {
+      font-size: 20px;
+    }
+  }
 }
 
 .document-card {
@@ -390,13 +489,27 @@ ion-content {
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   background-color: white;
+  border: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  }
+}
+
+.document-card-content {
+  padding: 0;
 }
 
 .document-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px;
+  padding: 16px 20px;
+
+  @media (min-width: 768px) {
+    padding: 18px 24px;
+  }
 }
 
 .document-info {
@@ -410,12 +523,19 @@ ion-content {
   font-size: 16px;
   font-weight: 500;
   color: #2c3e50;
+
+  @media (min-width: 768px) {
+    font-size: 17px;
+  }
 }
 
 .document-type {
-  font-size: 14px;
-  font-weight: 600;
-  color: #4285F4;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #3880ff 0%, #5260ff 100%);
+  padding: 4px 10px;
+  border-radius: 6px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -425,11 +545,17 @@ ion-content {
   --padding-end: 12px;
   --padding-top: 10px;
   --padding-bottom: 10px;
-  margin: 0;
+  margin: 0 0 0 12px;
   height: 44px;
   width: 44px;
   border-radius: 50%;
-  background-color: #4285F4;
+  background: linear-gradient(135deg, #4285F4 0%, #3367D6 100%);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(66, 133, 244, 0.4);
+  }
 }
 
 .download-icon {
@@ -437,13 +563,89 @@ ion-content {
   color: white;
 }
 
-/* Effet hover pour le bouton de téléchargement */
-.download-button:hover {
-  background-color: #3367D6;
+/* Sidebar pour desktop */
+.enroll-card {
+  position: relative;
+  margin: 0;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  background: white;
+
+  @media (min-width: 768px) {
+    position: sticky;
+    top: 40px;
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .enroll-card-content {
+    padding: 24px 20px 20px 20px;
+
+    @media (min-width: 768px) {
+      padding: 24px;
+    }
+  }
 }
 
-/* Style alternatif avec un fond pour l'icône */
-.download-button::part(native) {
-  border-radius: 50%;
+.enroll-button,
+.continue-button {
+  --border-radius: 12px;
+  height: 70px;
+  margin: 0;
+  font-weight: 600;
+  text-transform: none;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    height: 60px;
+  }
 }
 
+.enroll-button {
+  --background: linear-gradient(135deg, #3880ff 0%, #5260ff 100%);
+  --background-hover: linear-gradient(135deg, #5260ff 0%, #3880ff 100%);
+}
+
+.continue-button {
+  --background: linear-gradient(135deg, #2dd36f 0%, #28ba62 100%);
+  --background-hover: linear-gradient(135deg, #28ba62 0%, #2dd36f 100%);
+}
+
+.button-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  padding: 12px 0;
+
+  @media (min-width: 768px) {
+    padding: 8px 0;
+  }
+
+  .button-main-text {
+    font-size: 16px;
+    font-weight: 700;
+    color: white;
+    line-height: 1.2;
+    letter-spacing: 0.3px;
+
+    @media (min-width: 768px) {
+      font-size: 15px;
+    }
+  }
+  
+  .button-subtitle {
+    font-size: 12px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.9);
+    opacity: 1;
+    line-height: 1;
+    margin-top: 2px;
+
+    @media (min-width: 768px) {
+      font-size: 11px;
+    }
+  }
+}

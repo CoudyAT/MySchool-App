@@ -174,7 +174,7 @@ export class ProfilePage implements OnInit {
   }
 
   openPaymentOptions() {
-    console.log('Options de paiement');
+     this.router.navigate(['/payment-option']);
   }
 
   openNotifications() {

@@ -114,4 +114,8 @@ export class DesktopHeaderComponent implements OnInit {
 
     await popover.present();
   }
+
+  openHelp() {
+    this.router.navigate(['/message']);
+  }
 }

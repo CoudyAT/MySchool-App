@@ -8,43 +8,148 @@
     <ion-title>
       Assistant IA
     </ion-title>
+    
+    <!-- Info utilisateur desktop seulement -->
+    <div class="desktop-user-info" slot="end" *ngIf="currentUser">
+      <ion-avatar class="desktop-avatar">
+        <ion-icon name="person-outline"></ion-icon>
+      </ion-avatar>
+      <div class="user-details">
+        <span class="user-name">{{ currentUser.firstName || 'Utilisateur' }}</span>
+      </div>
+    </div>
   </ion-toolbar>
 </ion-header>
 
 <ion-content #content class="chat-content" fullscreen>
-  <div class="messages-container">
-    <ng-container *ngFor="let msg of messages">
-      <div class="message-wrapper" [class.user]="msg.role === 'user'" [class.assistant]="msg.role === 'assistant'">
+  <!-- Desktop layout container -->
+  <div class="desktop-layout" *ngIf="isDesktop">
+    <!-- Sidebar desktop -->
+    <div class="desktop-sidebar">
+      <div class="sidebar-header">
+        <h3><ion-icon name="notifications-outline"></ion-icon> Notifications</h3>
+        <span class="badge">3</span>
+      </div>
+      
 
-        <ion-avatar class="msg-avatar" *ngIf="msg.role === 'assistant'">
-          <ion-icon name="sparkles"></ion-icon>
-        </ion-avatar>
-
-        <div class="bubble" [class.user-bubble]="msg.role === 'user'"
-          [class.assistant-bubble]="msg.role === 'assistant'">
-          <p class="message-text" [innerHTML]="msg.content || '&nbsp;'"></p>
-
-          <div class="message-meta">
-            <span class="timestamp">{{ msg.timestamp | date:'HH:mm' }}</span>
-            <ion-spinner name="dots" *ngIf="msg.loading"></ion-spinner>
-          </div>
+  
+      <div class="notification-item">
+        <div class="notification-icon">
+          <ion-icon name="alert-circle"></ion-icon>
+        </div>
+        <div class="notification-content">
+          <p class="notification-title">Expiration proche</p>
+          <p class="notification-time">2025-12-31</p>
         </div>
       </div>
-    </ng-container>
+      
+      <div class="notification-item">
+        <div class="notification-icon">
+          <ion-icon name="calendar"></ion-icon>
+        </div>
+        <div class="notification-content">
+          <p class="notification-title">Rappel d'abonnement</p>
+          <p class="notification-time">2025-12-29</p>
+        </div>
+      </div>
+      
+      <div class="sidebar-footer">
+        <p><strong>MySchool</strong> - Contrôle professionnel et supervision stricte.</p>
+      </div>
+    </div>
+    
+    <!-- Chat area desktop -->
+    <div class="desktop-chat-main">
+      <div class="messages-container">
+        <ng-container *ngFor="let msg of messages">
+          <div class="message-wrapper" [class.user]="msg.role === 'user'" [class.assistant]="msg.role === 'assistant'">
+            
+            <ion-avatar class="msg-avatar" *ngIf="msg.role === 'assistant'">
+              <ion-icon name="sparkles"></ion-icon>
+            </ion-avatar>
+            
+            <ion-avatar class="msg-avatar" *ngIf="msg.role === 'user'">
+              <ion-icon name="person-outline"></ion-icon>
+            </ion-avatar>
+            
+            <div class="bubble" [class.user-bubble]="msg.role === 'user'"
+                 [class.assistant-bubble]="msg.role === 'assistant'">
+              <p class="message-text" [innerHTML]="msg.content || '&nbsp;'"></p>
+              
+              <div class="message-meta">
+                <span class="timestamp">{{ msg.timestamp | date:'HH:mm' }}</span>
+                <ion-spinner name="dots" *ngIf="msg.loading"></ion-spinner>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Mobile layout container -->
+  <div class="mobile-layout" *ngIf="!isDesktop">
+    <div class="messages-container">
+      <ng-container *ngFor="let msg of messages">
+        <div class="message-wrapper" [class.user]="msg.role === 'user'" [class.assistant]="msg.role === 'assistant'">
+          
+          <ion-avatar class="msg-avatar" *ngIf="msg.role === 'assistant'">
+            <ion-icon name="sparkles"></ion-icon>
+          </ion-avatar>
+          
+          <div class="bubble" [class.user-bubble]="msg.role === 'user'"
+               [class.assistant-bubble]="msg.role === 'assistant'">
+            <p class="message-text" [innerHTML]="msg.content || '&nbsp;'"></p>
+            
+            <div class="message-meta">
+              <span class="timestamp">{{ msg.timestamp | date:'HH:mm' }}</span>
+              <ion-spinner name="dots" *ngIf="msg.loading"></ion-spinner>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
   </div>
 </ion-content>
 
 <ion-footer>
   <ion-toolbar class="input-toolbar">
-    <ion-item lines="none" class="input-item">
-      <ion-textarea [(ngModel)]="newMessage" name="newMessage" placeholder="Écrivez un message..." rows="1"
-        auto-grow="true" maxlength="2000" class="message-input">
-      </ion-textarea>
-
-      <ion-button slot="end" fill="clear" class="send-button" [disabled]="sending || !newMessage.trim()"
-        (click)="sendMessage()">
+    <!-- Desktop input -->
+    <div class="desktop-input-wrapper" *ngIf="isDesktop">
+      <div class="input-actions">
+        <ion-button fill="clear" size="small">
+          <ion-icon name="attach-outline"></ion-icon>
+        </ion-button>
+      </div>
+      
+      <ion-item lines="none" class="input-item">
+        <ion-textarea [(ngModel)]="newMessage" name="newMessage" 
+                     placeholder="Écrivez votre message..." 
+                     rows="1" auto-grow="true" maxlength="2000" 
+                     class="message-input">
+        </ion-textarea>
+      </ion-item>
+      
+      <ion-button class="send-button" [disabled]="sending || !newMessage.trim()"
+                 (click)="sendMessage()" fill="solid">
         <ion-icon name="send" slot="icon-only"></ion-icon>
       </ion-button>
-    </ion-item>
+    </div>
+    
+    <!-- Mobile input (votre version originale) -->
+    <div class="mobile-input-wrapper" *ngIf="!isDesktop">
+      <ion-item lines="none" class="input-item">
+        <ion-textarea [(ngModel)]="newMessage" name="newMessage" 
+                     placeholder="Écrivez un message..." rows="1"
+                     auto-grow="true" maxlength="2000" class="message-input">
+        </ion-textarea>
+        
+        <ion-button slot="end" fill="clear" class="send-button" 
+                   [disabled]="sending || !newMessage.trim()"
+                   (click)="sendMessage()">
+          <ion-icon name="send" slot="icon-only"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </div>
   </ion-toolbar>
 </ion-footer>

@@ -32,6 +32,7 @@ import { EnrollmentsPage } from './Admin/pages/enrollments/enrollments.page';
 import { SecurityPage } from './features/auth/security/security.page';
 import { PdfListPage } from './features/pdf/pdf-list/pdf-list.page';
 import { ForgotPasswordPage } from './features/auth/forgot-password/forgot-password.page';
+import { PaymentOptionComponent } from './features/payments/payment-option/payment-option.component';
 
 export const routes: Routes = [
   {
@@ -78,6 +79,10 @@ export const routes: Routes = [
   {
     path: 'payment-verify',
     component: PaymentVerifyPage,
+  },
+  {
+    path: 'payment-option',
+    component: PaymentOptionComponent,
   },
   {
     path: 'payment-callback',
@@ -145,21 +150,25 @@ export const routes: Routes = [
       { path: 'users', component: UsersPage },
       { path: '', component: DashboardPage },
       {
-        path: 'user-details/:id', component: UserDetailsPage
+        path: 'user-details/:id',
+        component: UserDetailsPage,
       },
       {
-        path: 'user-edit/:id', component: UserEditPage
+        path: 'user-edit/:id',
+        component: UserEditPage,
       },
       {
-        path: 'instructors', component: InstructorsPage
+        path: 'instructors',
+        component: InstructorsPage,
       },
       {
-        path: 'edit-cours/:id', component: EditCoursPage
+        path: 'edit-cours/:id',
+        component: EditCoursPage,
       },
       {
-        path: 'enrollments', component: EnrollmentsPage
+        path: 'enrollments',
+        component: EnrollmentsPage,
       },
-
     ],
   },
   {
@@ -178,7 +187,9 @@ export const routes: Routes = [
   },
   {
     path: 'instructor-details',
-    loadComponent: () => import('./Admin/pages/instructor-details/instructor-details.page').then(m => m.InstructorDetailsPage)
+    loadComponent: () =>
+      import('./Admin/pages/instructor-details/instructor-details.page').then(
+        (m) => m.InstructorDetailsPage
+      ),
   },
-
 ];
