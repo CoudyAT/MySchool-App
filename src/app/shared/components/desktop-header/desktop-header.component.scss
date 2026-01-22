@@ -64,11 +64,26 @@
 
     .help-btn {
       --border-radius: 12px;
-      --border-color: #6c63ff;
-      --color: #6c63ff;
+      --border-color: #005ADD;
+      --color: #005ADD;
     }
   }
 }
+
+  .profile-button {
+    --padding-start: 8px;
+    --padding-end: 8px;
+    --color: #5B5B5B;
+    margin: 0;
+    
+    .profile {
+      font-size: 30px;
+    }
+    
+    &:active {
+      --color: #0066FF;
+    }
+  }
 
 
 

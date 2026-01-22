@@ -15,6 +15,8 @@ import {
   IonSegment,
   IonLabel,
   IonSegmentButton,
+  IonHeader,
+  IonToolbar,
 } from '@ionic/angular/standalone';
 import { BottomMenuComponent } from 'src/app/shared/components/bottom-menu/bottom-menu.component';
 import { addIcons } from 'ionicons';
@@ -24,7 +26,11 @@ import {
   optionsOutline,
   hourglassOutline,
   bookOutline,
+  searchOutline,
+  personCircleOutline,
+  starOutline,
 } from 'ionicons/icons';
+import { DesktopHeaderComponent } from 'src/app/shared/components/desktop-header/desktop-header.component';
 
 @Component({
   selector: 'app-mes-cours',
@@ -32,6 +38,8 @@ import {
   styleUrls: ['./mes-cours.page.scss'],
   standalone: true,
   imports: [
+    IonToolbar,
+    IonHeader,
     IonSpinner,
     IonSegmentButton,
     IonLabel,
@@ -44,6 +52,7 @@ import {
     IonSearchbar,
     IonContent,
     BottomMenuComponent,
+    DesktopHeaderComponent,
   ],
 })
 export class MesCoursPage implements OnInit {
@@ -57,6 +66,9 @@ export class MesCoursPage implements OnInit {
 
   constructor(private router: Router, private courseService: CourseService) {
     addIcons({
+      searchOutline,
+      personCircleOutline,
+      starOutline,
       optionsOutline,
       hourglassOutline,
       bookOutline,
@@ -71,6 +83,10 @@ export class MesCoursPage implements OnInit {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  goToProfile() {
+    this.router.navigate(['/profile']);
   }
 
   loadCourses() {

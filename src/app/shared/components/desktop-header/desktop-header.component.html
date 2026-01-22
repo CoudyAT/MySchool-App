@@ -1,4 +1,4 @@
-<div class="desktop-premium-bar">
+<div class="desktop-premium-bar" *ngIf="showPremiumBar">
   <ion-button
     fill="solid"
     class="preminum"
@@ -17,7 +17,10 @@
 
       <!-- Menu -->
       <nav class="desktop-nav">
-
+      <div class="menu-item" [class.active]="activePage === 'home'" (click)="navigateTo('home')">
+        <ion-icon name="home-outline"></ion-icon>
+        <span class="menu-label">Accueil</span>
+      </div>
         <div
           class="menu-item"
           [class.active]="activePage === 'courses'"
@@ -56,7 +59,7 @@
           Obtenir de l'aide
         </ion-button>
 
-        <ion-button fill="clear" (click)="goToProfile()">
+        <ion-button fill="clear" (click)="goToProfile()"  class="profile-button">
           <ion-icon name="person-circle-outline"></ion-icon>
         </ion-button>
       </div>

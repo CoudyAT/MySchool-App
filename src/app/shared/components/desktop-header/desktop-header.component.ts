@@ -4,6 +4,9 @@ import { IonHeader, IonToolbar, IonIcon, IonButton } from "@ionic/angular/standa
 import { ModalController } from '@ionic/angular/standalone'; 
 import { ToastController } from '@ionic/angular';
 import { PreminumModalComponent } from 'src/app/features/component/preminum-modal/preminum-modal.component';
+import { NavigationEnd } from '@angular/router';
+import { CommonModule } from '@angular/common';
+
 
 
 @Component({
@@ -11,17 +14,36 @@ import { PreminumModalComponent } from 'src/app/features/component/preminum-moda
   templateUrl: './desktop-header.component.html',
   styleUrls: ['./desktop-header.component.scss'],
   standalone: true,
-  imports: [IonButton, IonIcon, IonToolbar, IonHeader],
+  imports: [CommonModule,IonButton, IonIcon, IonToolbar, IonHeader],
 })
 export class DesktopHeaderComponent implements OnInit {
-  @Input() activePage: string | undefined
+  @Input() activePage: string | undefined;
+  showPremiumBar: boolean = false;
   constructor(
     private router: Router,
     private modalCtrl: ModalController,
     private toastCtrl: ToastController
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    // Vérifie la route au chargement
+    // Cas 1 : au chargement de la page
+    this.updatePremiumBar(this.router.url);
+
+    // Cas 2 : quand on navigue
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.updatePremiumBar(event.urlAfterRedirects);
+      }
+    });
+  }
+
+  updatePremiumBar(url: string) {
+    console.log('Route actuelle:', url); // DEBUG
+
+    // Afficher UNIQUEMENT sur /courses
+    this.showPremiumBar = url === '/courses';
+  }
 
   goToProfile() {
     this.router.navigate(['/profile']);
@@ -66,4 +88,6 @@ export class DesktopHeaderComponent implements OnInit {
       }
     }
   }
+
+
 }

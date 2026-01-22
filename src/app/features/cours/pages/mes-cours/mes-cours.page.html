@@ -1,10 +1,20 @@
-<ion-content class="ion-padding">
-  <div class="content-wrapper">
-    <!-- Logo -->
-    <div class="logo-container">
-      <img src="assets/logo.svg" alt="MySchool Logo" class="logo">
+<app-desktop-header></app-desktop-header>
+<ion-header class="ion-no-border mobile-header">
+  <ion-toolbar>
+    <div class="header-content">
+      <img src="assets/logo.svg" alt="MySchool Logo" class="logo" />
+      <ion-button
+          fill="clear"
+          (click)="goToProfile()"
+          class="profile-button">
+          <ion-icon class="profile" name="person-circle-outline"></ion-icon>
+        </ion-button>
     </div>
+  </ion-toolbar>
+</ion-header> 
 
+<ion-content class="ion-padding" >
+  <div class="content-wrapper">
     <!-- Titre -->
     <h1 class="main-title">Les cours</h1>
 
@@ -82,4 +92,4 @@
   </div>
 </ion-content>
 
-<app-bottom-menu activePage="courses"></app-bottom-menu>
+<app-bottom-menu class="mobile-header" activePage="courses"></app-bottom-menu>
