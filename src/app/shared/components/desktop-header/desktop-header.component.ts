@@ -6,6 +6,8 @@ import { ToastController } from '@ionic/angular';
 import { PreminumModalComponent } from 'src/app/features/component/preminum-modal/preminum-modal.component';
 import { NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { PopoverController } from '@ionic/angular';
+import { ProfileMenuComponent } from 'src/app/features/auth/profile-menu/profile-menu.component';
 
 
 
@@ -14,7 +16,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './desktop-header.component.html',
   styleUrls: ['./desktop-header.component.scss'],
   standalone: true,
-  imports: [CommonModule,IonButton, IonIcon, IonToolbar, IonHeader],
+  imports: [CommonModule, IonButton, IonIcon, IonToolbar, IonHeader],
 })
 export class DesktopHeaderComponent implements OnInit {
   @Input() activePage: string | undefined;
@@ -22,7 +24,8 @@ export class DesktopHeaderComponent implements OnInit {
   constructor(
     private router: Router,
     private modalCtrl: ModalController,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
+    private popoverCtrl: PopoverController
   ) {}
 
   ngOnInit() {
@@ -89,5 +92,26 @@ export class DesktopHeaderComponent implements OnInit {
     }
   }
 
+  async openProfileMenu(ev: Event) {
+    ev.preventDefault();
+    ev.stopPropagation();
 
+    // Mobile → page profil
+    if (window.innerWidth < 1024) {
+      this.goToProfile();
+      return;
+    }
+
+    const popover = await this.popoverCtrl.create({
+      component: ProfileMenuComponent,
+      event: ev,
+      side: 'bottom',
+      alignment: 'end',
+      translucent: true,
+      showBackdrop: true,
+      cssClass: 'profile-popover',
+    });
+
+    await popover.present();
+  }
 }

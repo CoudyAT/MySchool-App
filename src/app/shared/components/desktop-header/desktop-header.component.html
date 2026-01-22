@@ -59,7 +59,11 @@
           Obtenir de l'aide
         </ion-button>
 
-        <ion-button fill="clear" (click)="goToProfile()"  class="profile-button">
+          <ion-button
+            fill="clear"
+            class="profile-button"
+            (click)="openProfileMenu($event); $event.stopPropagation()"
+          >
           <ion-icon name="person-circle-outline"></ion-icon>
         </ion-button>
       </div>
