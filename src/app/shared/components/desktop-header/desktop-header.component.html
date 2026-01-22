@@ -1,0 +1,66 @@
+<div class="desktop-premium-bar">
+  <ion-button
+    fill="solid"
+    class="preminum"
+    (click)="openPremiumModal()"
+  >
+    <ion-icon name="star-outline" slot="start"></ion-icon>
+    Abonnez-vous pour avoir accès à tous les cours
+  </ion-button>
+</div>
+<ion-header class="desktop-header ion-no-border">
+  <ion-toolbar>
+    <div class="desktop-header-content">
+
+      <!-- Logo -->
+      <img src="assets/logo.svg" class="logo" />
+
+      <!-- Menu -->
+      <nav class="desktop-nav">
+
+        <div
+          class="menu-item"
+          [class.active]="activePage === 'courses'"
+          (click)="navigateTo('courses')"
+        >
+          <ion-icon name="book-outline"></ion-icon>
+          <span class="menu-label">Cours</span>
+        </div>
+
+        <div
+          class="menu-item"
+          [class.active]="activePage === 'message'"
+          (click)="navigateTo('message')"
+        >
+          <ion-icon name="chatbubbles-outline"></ion-icon>
+          <span class="menu-label">Assistance IA</span>
+        </div>
+
+        <div
+          class="menu-item"
+          [class.active]="activePage === 'achievements'"
+          (click)="navigateTo('achievements')"
+        >
+          <ion-icon name="trophy-outline"></ion-icon>
+          <span class="menu-label">Réussites</span>
+        </div>
+
+      </nav>
+
+
+      <!-- Actions -->
+      <div class="desktop-actions">
+        <ion-icon name="search-outline"></ion-icon>
+
+        <ion-button fill="outline" class="help-btn">
+          Obtenir de l'aide
+        </ion-button>
+
+        <ion-button fill="clear" (click)="goToProfile()">
+          <ion-icon name="person-circle-outline"></ion-icon>
+        </ion-button>
+      </div>
+
+    </div>
+  </ion-toolbar>
+</ion-header>

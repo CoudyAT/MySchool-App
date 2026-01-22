@@ -904,5 +904,93 @@ ion-content {
   }
 }
 
+// @media (min-width: 1024px) {
+//   app-bottom-menu {
+//     position: sticky;
+//     top: 0;
+//     z-index: 1000;
+//     order: -2;
+//   }
+// }
+
+/* Mobile par défaut */
+.mobile-header {
+  display: block;
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .mobile-header {
+    display: none;
+  }
+}
+
+
+/* =========================
+   DESKTOP TOP BAR (HELP STYLE)
+   ========================= */
+@media (min-width: 1024px) {
+  .desktop-header {
+    ion-toolbar {
+      --background: #ffffff;
+      --min-height: 72px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .desktop-header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+
+     // display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+    //  gap: 16px;
+    }
+
+    /* Search */
+    .desktop-search-btn {
+      --color: #111827;
+      font-size: 20px;
+    }
+
+    /* Help button */
+    .help-button {
+      justify-self: center;
+      font-size: 18px;
+      font-weight: 600;
+      text-transform: none;
+      padding: 10px 28px;
+
+      --border-radius: 12px;
+      --border-color: #6c63ff;
+      --color: #6c63ff;
+      --background: transparent;
+    }
+
+    /* Profile */
+    .desktop-profile-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      --color: #111827;
+
+      ion-icon {
+        font-size: 22px;
+      }
+
+      .chevron {
+        font-size: 16px;
+        opacity: 0.6;
+      }
+    }
+  }
+}
+
+
+
+
+
 
 

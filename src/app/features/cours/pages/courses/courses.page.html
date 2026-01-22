@@ -1,7 +1,16 @@
-<ion-header class="ion-no-border">
+<app-desktop-header></app-desktop-header>
+<ion-header class="ion-no-border mobile-header">
   <ion-toolbar>
     <div class="header-content">
       <img src="assets/logo.svg" alt="MySchool Logo" class="logo" />
+      <ion-button
+        fill="outline"
+        class="help-button"
+      >
+       Recherche <br/>
+      <ion-icon name="search-outline"></ion-icon>
+      </ion-button>
+      
       <ion-button
           fill="clear"
           (click)="goToProfile()"
@@ -9,13 +18,14 @@
           <ion-icon class="profile" name="person-circle-outline"></ion-icon>
         </ion-button>
     </div>
-    <ion-button fill="solid" (click)="openPremiumModal()" class="preminum">
-      <ion-icon name="star-outline" slot="start"></ion-icon>
-      Abonner-vous pour avoir acces a tous les cours
-    </ion-button>
+    <div class="desktop-premium-bar">
+  <ion-button fill="solid" (click)="openPremiumModal()" class="preminum">
+    <ion-icon name="star-outline" slot="start"></ion-icon>
+    Abonnez-vous pour avoir accès à tous les cours
+  </ion-button>
+</div>
   </ion-toolbar>
-</ion-header>
-
+</ion-header> 
 <ion-content>
   <div class="content-wrapper">
 
@@ -238,4 +248,4 @@
 </ion-content>
 
 <!-- Menu du bas réutilisable -->
-<app-bottom-menu activePage="home"></app-bottom-menu>
+<app-bottom-menu class="mobile-header" activePage="home"></app-bottom-menu>

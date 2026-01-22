@@ -46,6 +46,12 @@ import {
   calculatorOutline,
   lockOpenOutline,
   optionsOutline,
+  searchOutline,
+  notificationsOutline,
+  chevronForwardOutline,
+  closeOutline,
+  chevronDownOutline,
+  personOutline,
 } from 'ionicons/icons';
 import { Router } from '@angular/router';
 
@@ -57,6 +63,7 @@ import { InstructorService } from 'src/app/features/services/instructorService';
 import { Instructor } from 'src/app/models/instructor.model';
 import { UserService } from 'src/app/features/auth/services/user.service';
 import { FcmService } from 'src/app/features/services/fcm.service';
+import { DesktopHeaderComponent } from 'src/app/shared/components/desktop-header/desktop-header.component';
 
 @Component({
   selector: 'app-courses',
@@ -75,6 +82,7 @@ import { FcmService } from 'src/app/features/services/fcm.service';
     IonCard,
     IonCardContent,
     IonSpinner,
+    DesktopHeaderComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
@@ -112,21 +120,27 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
     private courseService: CourseService
   ) {
     addIcons({
+      searchOutline,
       personCircleOutline,
       starOutline,
       addOutline,
       shieldCheckmark,
+      personOutline,
+      chevronDownOutline,
+      closeOutline,
+      notificationsOutline,
+      chevronForwardOutline,
+      shieldCheckmarkOutline,
+      bookOutline,
       optionsOutline,
       lockOpenOutline,
       trendingUpOutline,
-      bookOutline,
       bulbOutline,
       calculatorOutline,
       logOutOutline,
       ribbonOutline,
       checkmarkCircle,
       cardOutline,
-      shieldCheckmarkOutline,
       arrowForwardOutline,
       playCircleOutline,
     });

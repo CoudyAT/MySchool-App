@@ -1,0 +1,69 @@
+import { Component, OnInit, Input } from '@angular/core';
+import { Router } from '@angular/router';
+import { IonHeader, IonToolbar, IonIcon, IonButton } from "@ionic/angular/standalone";
+import { ModalController } from '@ionic/angular/standalone'; 
+import { ToastController } from '@ionic/angular';
+import { PreminumModalComponent } from 'src/app/features/component/preminum-modal/preminum-modal.component';
+
+
+@Component({
+  selector: 'app-desktop-header',
+  templateUrl: './desktop-header.component.html',
+  styleUrls: ['./desktop-header.component.scss'],
+  standalone: true,
+  imports: [IonButton, IonIcon, IonToolbar, IonHeader],
+})
+export class DesktopHeaderComponent implements OnInit {
+  @Input() activePage: string | undefined
+  constructor(
+    private router: Router,
+    private modalCtrl: ModalController,
+    private toastCtrl: ToastController
+  ) {}
+
+  ngOnInit() {}
+
+  goToProfile() {
+    this.router.navigate(['/profile']);
+  }
+
+  async openPremiumModal() {
+    const modal = await this.modalCtrl.create({
+      component: PreminumModalComponent,
+      cssClass: 'premium-modal',
+      breakpoints: [0, 0.5, 0.8, 1],
+      initialBreakpoint: 0.8,
+    });
+
+    await modal.present();
+
+    const { data } = await modal.onWillDismiss();
+
+    if (data?.subscribed) {
+      // L'utilisateur a souscrit
+      const toast = await this.toastCtrl.create({
+        message: 'Bienvenue dans Premium ! 🌟',
+        duration: 2000,
+        color: 'success',
+      });
+      await toast.present();
+    }
+  }
+
+  navigateTo(page: string) {
+    if (page !== this.activePage) {
+      // Mappage des routes
+      const routes: { [key: string]: string } = {
+        home: '/courses', // Accueil → CoursesPage
+        courses: '/mes-cours', // Cours → MesCoursPage
+        message: '/message', // Messages → Page messages
+        achievements: '/achievements', // Réussites → Page réussites
+      };
+
+      const route = routes[page];
+      if (route) {
+        this.router.navigate([route]);
+      }
+    }
+  }
+}

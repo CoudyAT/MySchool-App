@@ -1,0 +1,125 @@
+.desktop-header {
+  display: none;
+
+  ion-toolbar {
+    --background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .desktop-header-content {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 72px;
+  }
+
+  .logo {
+    height: 36px;
+  }
+
+.desktop-nav {
+  display: flex;
+  gap: 28px;
+  align-items: center;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #111827;
+  padding: 8px 12px;
+  border-radius: 10px;
+  transition: background 0.2s ease;
+}
+
+.menu-item ion-icon {
+  font-size: 18px;
+}
+
+.menu-item:hover {
+  background: #f3f4f6;
+}
+
+.menu-item.active {
+  color: #6c63ff;
+  background: #eef2ff;
+}
+
+
+  .desktop-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    ion-icon {
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    .help-btn {
+      --border-radius: 12px;
+      --border-color: #6c63ff;
+      --color: #6c63ff;
+    }
+  }
+}
+
+
+
+.preminum {
+    color: white;
+     width: 100%;
+    max-width: none;
+    height: 56px;
+    font-size: 18px;
+    --border-radius: 12px;
+    font-weight: 500;
+    text-transform: none;
+    --border-radius: 5px;
+    --padding-top: 8px;
+    margin-top: -1px;  
+  ion-icon {
+    font-size: 16px;
+  }
+  
+  &:active {
+    --background: #005ADD;
+  }
+}
+
+/* Desktop only */
+@media (min-width: 1024px) {
+  .desktop-header {
+    display: block;
+  }
+}
+
+
+
+/* DESKTOP ONLY */
+@media (min-width: 1024px) {
+  .announcement-bar {
+    display: flex;
+  }
+}
+
+.desktop-premium-bar {
+  display: none;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 12px 24px;
+}
+
+@media (min-width: 1024px) {
+  .desktop-premium-bar {
+    display: flex;
+    justify-content: center;
+  }
+}
+
