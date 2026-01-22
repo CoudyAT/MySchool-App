@@ -1,0 +1,81 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Retour</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="page-container">
+    <h1 class="page-title">Choisir une méthode<br>de paiement</h1>
+
+    <!-- Formulaire Orange Money (affiché si showPhoneInput est true)
+    <div class="phone-input-modal" *ngIf="showPhoneInput">
+      <div class="modal-backdrop" (click)="cancelPhoneInput()"></div>
+      <div class="modal-content">
+        <h2>Paiement Orange Money</h2>
+        <p class="modal-subtitle">Entrez vos informations pour continuer</p>
+
+        <ion-item>
+          <ion-label position="floating">Nom complet</ion-label>
+          <ion-input [(ngModel)]="customerName" type="text" placeholder="Ex: Mamadou Diop"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Email</ion-label>
+          <ion-input [(ngModel)]="customerEmail" type="email" placeholder="Ex: mamadou@example.com"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Numéro de téléphone</ion-label>
+          <ion-input [(ngModel)]="customerPhone" type="tel" placeholder="+221 77 123 45 67"></ion-input>
+        </ion-item>
+
+        <p class="phone-hint">Format accepté: +221 7X XXX XX XX (Senegal uniquement)</p>
+
+        <div class="modal-actions">
+          <ion-button expand="block" (click)="confirmOrangeMoneyPayment()">
+            Continuer
+          </ion-button>
+          <ion-button expand="block" fill="outline" (click)="cancelPhoneInput()">
+            Annuler
+          </ion-button>
+        </div>
+      </div>
+    </div>  -->
+
+<div class="payment-methods">
+  <!-- ✅ Wave (ACTIF) -->
+  <div class="wave-card" >
+    <img src="assets/wave.svg" alt="Wave" class="penguin-svg">
+  </div>
+
+  <!-- ❌ Orange Money (INDISPONIBLE) -->
+  <div class="payment-disabled">
+    <img src="assets/orange-money.svg" alt="Orange Money" class="penguin-svg">
+    <span class="disabled-label">Indisponible</span>
+  </div>
+
+  <!-- ❌ Yas Mixx (INDISPONIBLE) -->
+  <div class="payment-disabled">
+    <img src="assets/yas.svg" alt="Yas Mixx" class="penguin-svg">
+    <span class="disabled-label">Indisponible</span>
+  </div>
+
+  <!-- ❌ Carte bancaire (INDISPONIBLE) -->
+  <div class="payment-card card-payment payment-disabled">
+    <div class="card-content">
+      <div class="card-chip"></div>
+      <span class="card-text">Carte bancaire</span>
+    </div>
+    <span class="disabled-label">Indisponible</span>
+  </div>
+</div>
+
+  </div>
+</ion-content>
+
