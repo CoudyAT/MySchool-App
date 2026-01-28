@@ -71,7 +71,7 @@
     </div>
 
     <!-- Section Quick Access -->
-    <div class="quick-access-section">
+    <div class="quick-access-section desktop-style">
       <div class="quick-access-grid">
         <div class="quick-access-item" (click)="goToCoursesPage()">
           <div class="icon-container" style="background-color: #FF3B30;">
@@ -167,12 +167,20 @@
             <div class="enrollment-date" *ngIf="course.enrolledAt">
               Inscrit le {{ getFormattedDate(course.enrolledAt) }}
             </div>
+              <ion-button
+                expand="block"
+                size="small"
+                class="continue-button"
+                (click)="openCourse(course); $event.stopPropagation()"
+              >
+                Continuer
+              </ion-button>
           </ion-card-content>
         </ion-card>
       </div>
     </div>
     <!-- Section Instructeurs -->
-    <div class="instructors-section">
+    <div class="instructors-section ">
       <h2 class="section-title">Instructeurs</h2>
 
       <div class="instructors-grid">
@@ -189,7 +197,7 @@
     </div>
 
     <!-- Section Certifications -->
-    <div class="courses-section">
+    <div class="courses-section hide-desktop">
       <h1 class="section-title">Certifications</h1>
 
       <div class="add-button-container">

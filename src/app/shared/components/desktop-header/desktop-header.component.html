@@ -13,14 +13,20 @@
     <div class="desktop-header-content">
 
       <!-- Logo -->
-      <img src="assets/logo.svg" class="logo" />
+      <img 
+        src="assets/logo.svg" 
+        class="logo" 
+        (click)="navigateTo('home')"
+        style="cursor: pointer;"
+      />
 
       <!-- Menu -->
       <nav class="desktop-nav">
+        <!-- Menu 
       <div class="menu-item" [class.active]="activePage === 'home'" (click)="navigateTo('home')">
         <ion-icon name="home-outline"></ion-icon>
         <span class="menu-label">Accueil</span>
-      </div>
+      </div> -->
         <div
           class="menu-item"
           [class.active]="activePage === 'courses'"

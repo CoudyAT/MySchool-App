@@ -61,7 +61,6 @@ import { ReferralService } from '../services/referral.service';
     IonButtons,
     CommonModule,
     FormsModule,
-
   ],
 })
 export class ProfilePage implements OnInit {
@@ -102,7 +101,6 @@ export class ProfilePage implements OnInit {
 
   async ngOnInit() {
     await this.loadUserData();
-    // this.isDarkMode = this.darkModeService.getDarkModeStatus();
   }
 
   async loadUserData() {
@@ -174,7 +172,7 @@ export class ProfilePage implements OnInit {
   }
 
   openPaymentOptions() {
-     this.router.navigate(['/payment-option']);
+    this.router.navigate(['/payment-option']);
   }
 
   openNotifications() {
@@ -207,47 +205,8 @@ export class ProfilePage implements OnInit {
   }
 
   openHelp() {
-    console.log("Centre d'aide");
+    this.router.navigate(['/help-center']);
   }
-
-  // async logout() {
-  //   const alert = await this.alertCtrl.create({
-  //     header: 'Déconnexion',
-  //     message: 'Êtes-vous sûr de vouloir vous déconnecter ?',
-  //     buttons: [
-  //       {
-  //         text: 'Annuler',
-  //         role: 'cancel',
-  //       },
-  //       {
-  //         text: 'Déconnexion',
-  //         role: 'confirm',
-  //         handler: async () => {
-  //           try {
-  //             await signOut(this.auth);
-  //             const toast = await this.toastCtrl.create({
-  //               message: 'Déconnexion réussie ✅',
-  //               duration: 2000,
-  //               color: 'success',
-  //             });
-  //             await toast.present();
-  //             this.router.navigate(['/signup'], { replaceUrl: true });
-  //           } catch (error) {
-  //             console.error('Erreur de déconnexion :', error);
-  //             const toast = await this.toastCtrl.create({
-  //               message: 'Erreur lors de la déconnexion ❌',
-  //               duration: 2000,
-  //               color: 'danger',
-  //             });
-  //             await toast.present();
-  //           }
-  //         },
-  //       },
-  //     ],
-  //   });
-
-  //   await alert.present();
-  // }
 
   async changeProfilePicture() {
     const input = document.createElement('input');
@@ -475,9 +434,9 @@ export class ProfilePage implements OnInit {
   // Méthode pour fermer le bloc parrainage
   closeReferralBox() {
     // Option 1: Masquer directement
-  //  this.isReferralVisible = false;
+    //  this.isReferralVisible = false;
 
-   // Option 2: Animation avant de masquer
+    // Option 2: Animation avant de masquer
     const referralBox = document.querySelector('.referral-box');
     if (referralBox) {
       referralBox.classList.add('closing');
@@ -490,5 +449,9 @@ export class ProfilePage implements OnInit {
   // Option: Méthode pour afficher à nouveau
   showReferralBox() {
     this.isReferralVisible = true;
+  }
+
+  openSubscription() {
+    this.router.navigate(['/abonnement']);
   }
 }

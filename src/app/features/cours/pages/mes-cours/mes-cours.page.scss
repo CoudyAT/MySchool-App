@@ -20,13 +20,6 @@ ion-content {
   --background: #f5f5f5;
 }
 
-// ion-header {
-//   ion-toolbar {
-//     --background: #FFFFFF;
-//     --min-height: 60px;
-//   }
-// }
-
 .header-content {
   display: flex;
   justify-content: space-between;
@@ -55,15 +48,148 @@ ion-content {
 }
 
 /* =========================
+   DESKTOP HEADER SEARCH
+========================= */
+
+.desktop-header-search {
+  display: none;
+
+  @media (min-width: 1024px) {
+    display: block;
+    background: #ffffff;
+    border-bottom: 1px solid #e8eef5;
+    padding: 40px 60px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  @media (min-width: 1400px) {
+    padding: 40px 120px;
+  }
+}
+
+.desktop-search-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.desktop-main-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #000;
+  margin: 0;
+}
+
+.desktop-search-container {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+
+  .desktop-custom-searchbar {
+    flex: 1;
+    --background: #f8f8f8;
+    --border-radius: 12px;
+    --box-shadow: none;
+    --placeholder-color: #999;
+    --icon-color: #4caf50;
+    --padding-start: 16px;
+    --padding-end: 16px;
+  }
+
+  .desktop-filter-button {
+    --color: #2650bb;
+    --border-radius: 12px;
+    height: 48px;
+    min-width: 140px;
+    font-size: 14px;
+    font-weight: 600;
+    background: #f8f8f8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    ion-icon {
+      margin-right: 6px;
+      font-size: 18px;
+    }
+
+    &:hover {
+      background: #f0f0f0;
+    }
+  }
+}
+
+.desktop-custom-segment {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid #e8eef5;
+
+  @media (min-width: 1024px) {
+    width: fit-content;
+  }
+
+  ion-segment-button {
+    --color: #999;
+    --color-checked: #2650bb;
+    --indicator-color: #2650bb;
+    font-weight: 500;
+    text-transform: none;
+    padding: 0 24px;
+    height: 50px;
+    border-bottom: 3px solid transparent;
+
+    &.segment-button-checked {
+      --color: #2650bb;
+      border-bottom-color: #2650bb;
+    }
+
+    &::part(indicator-background) {
+      display: none;
+    }
+
+    &::part(native) {
+      border-radius: 0;
+    }
+  }
+}
+
+/* =========================
    WRAPPER
 ========================= */
 
 .content-wrapper {
-  max-width: 600px;
-  margin: 0 auto;
   background: #ffffff;
   min-height: 100%;
-  padding: 20px 16px 100px;
+
+  @media (max-width: 1023px) {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px 16px 100px;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 40px 60px 100px;
+    max-width: 100%;
+  }
+
+  @media (min-width: 1400px) {
+    padding: 40px 120px 100px;
+  }
+}
+
+/* =========================
+   MOBILE HEADER SECTION
+========================= */
+
+.mobile-header-section {
+  display: block;
+
+  @media (min-width: 1024px) {
+    display: none;
+  }
 }
 
 /* =========================
@@ -86,6 +212,10 @@ ion-content {
   font-weight: 700;
   color: #000;
   margin-bottom: 20px;
+
+  @media (min-width: 1024px) {
+    display: none;
+  }
 }
 
 /* =========================
@@ -94,6 +224,13 @@ ion-content {
 
 .custom-segment {
   margin: 16px 0;
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid #e8eef5;
+
+  @media (min-width: 1024px) {
+    display: none;
+  }
 
   ion-segment-button {
     --color: #666;
@@ -101,13 +238,21 @@ ion-content {
     --indicator-color: #2650bb;
     font-weight: 500;
     text-transform: none;
+    padding: 0 16px;
+    height: 48px;
+    border-bottom: 3px solid transparent;
+
+    &.segment-button-checked {
+      --color: #2650bb;
+      border-bottom-color: #2650bb;
+    }
 
     &::part(indicator-background) {
-      background: #2650bb;
+      display: none;
     }
 
     &::part(native) {
-      border-radius: 8px;
+      border-radius: 0;
     }
   }
 }
@@ -123,6 +268,10 @@ ion-content {
   background: #f8f8f8;
   border-radius: 12px;
   padding: 4px;
+
+  @media (min-width: 1024px) {
+    display: none;
+  }
 
   .custom-searchbar {
     flex: 1;
@@ -159,6 +308,10 @@ ion-content {
     color: #2650bb;
     opacity: 0.5;
   }
+
+  p {
+    font-size: 16px;
+  }
 }
 
 /* =========================
@@ -166,11 +319,30 @@ ion-content {
 ========================= */
 
 .courses-container {
+  @media (min-width: 1024px) {
+    margin-top: 32px;
+  }
+
   .category-title {
     font-size: 16px;
     font-weight: 600;
     color: #2650bb;
     margin-bottom: 12px;
+    margin-top: 24px;
+
+    @media (min-width: 1024px) {
+      font-size: 18px;
+      margin-top: 32px;
+      margin-bottom: 16px;
+    }
+
+    &:first-child {
+      margin-top: 0;
+
+      @media (min-width: 1024px) {
+        margin-top: 0;
+      }
+    }
   }
 
   .courses-row {
@@ -182,6 +354,18 @@ ion-content {
 
     &::-webkit-scrollbar {
       display: none;
+    }
+
+    @media (min-width: 1024px) {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 24px;
+      overflow: visible;
+      margin-bottom: 32px;
+    }
+
+    @media (min-width: 1400px) {
+      grid-template-columns: repeat(4, 1fr);
     }
   }
 }
@@ -196,16 +380,28 @@ ion-content {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   transition: 0.25s ease;
+  overflow: hidden;
+  margin: 0;
+  background: white;
 
   &:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   }
 
+  @media (min-width: 1024px) {
+    flex: unset;
+  }
+
   .card-image {
     position: relative;
     height: 120px;
     overflow: hidden;
+    background: #f0f0f0;
+
+    @media (min-width: 1024px) {
+      height: 160px;
+    }
 
     img {
       width: 100%;
@@ -224,17 +420,35 @@ ion-content {
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+      ion-icon {
+        color: #4caf50;
+        font-size: 18px;
+      }
     }
   }
 
   ion-card-content {
     padding: 12px;
 
+    @media (min-width: 1024px) {
+      padding: 14px;
+    }
+
     .status-badge {
       display: flex;
       align-items: center;
       gap: 4px;
       margin-bottom: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #2650bb;
+
+      ion-icon {
+        font-size: 14px;
+        color: #2650bb;
+      }
 
       span {
         font-size: 11px;
@@ -247,77 +461,49 @@ ion-content {
       font-size: 16px;
       font-weight: 700;
       margin-bottom: 6px;
-      color: white;
+      color: #000;
+      line-height: 1.3;
+
+      @media (min-width: 1024px) {
+        font-size: 16px;
+        margin-bottom: 8px;
+      }
     }
 
     .course-info {
       font-size: 12px;
       color: #ff9800;
       font-weight: 600;
-    }
-  }
-}
 
-/* =========================
-   DESKTOP RESPONSIVE
-========================= */
-
-@media (min-width: 992px) {
-  .content-wrapper {
-    max-width: 1200px;
-    padding: 32px 24px 120px;
-  }
-
-  .main-title {
-    font-size: 28px;
-  }
-
-  .search-filter-container {
-    max-width: 600px;
-  }
-
-  .courses-container {
-    .courses-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 24px;
-      overflow: visible;
-    }
-  }
-
-  .course-card {
-    flex: unset;
-
-    .card-image {
-      height: 160px;
-    }
-
-    ion-card-content {
-      .course-title {
-        font-size: 18px;
+      .exercises {
+        display: block;
       }
     }
   }
 }
 
 /* =========================
-   LARGE DESKTOP
+   MOBILE HEADER VISIBILITY
 ========================= */
 
-@media (min-width: 1400px) {
-  .courses-container .courses-row {
-    grid-template-columns: repeat(4, 1fr);
+.mobile-header {
+  display: block;
+
+  @media (min-width: 1024px) {
+    display: none;
   }
 }
 
-/* Mobile par défaut */
-.mobile-header {
-  display: block;
-}
+/* =========================
+   ION CONTENT PADDING
+========================= */
 
-/* Desktop */
-@media (min-width: 1024px) {
-  .mobile-header {
-    display: none;
+ion-content.ion-padding {
+  --padding-bottom: 80px;
+
+  @media (min-width: 1024px) {
+    --padding-bottom: 100px;
+    --padding-start: 0;
+    --padding-end: 0;
   }
 }

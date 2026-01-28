@@ -1,8 +1,1158 @@
-ion-header {
-  ion-toolbar {
-    --background: #FFFFFF;
-    --min-height: 60px;
-  }
+// ion-header {
+//   ion-toolbar {
+//     --background: #FFFFFF;
+//     --min-height: 60px;
+//   }
+// }
+
+// .header-content {
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+//   padding: 10px 16px;
+  
+//   .logo {
+//     height: 40px;
+//     width: auto;
+//   }
+  
+//   .profile-button {
+//     --padding-start: 8px;
+//     --padding-end: 8px;
+//     --color: #5B5B5B;
+//     margin: 0;
+    
+//     .profile {
+//       font-size: 30px;
+//     }
+    
+//     &:active {
+//       --color: #0066FF;
+//     }
+//   }
+// }
+
+// .preminum {
+//     font-size: 14px;
+//     font-weight: 500;
+//     text-transform: none;
+//     --border-radius: 5px;
+//     --padding-top: 8px;
+//     height: 48px;
+//    // width: 100px;
+//     margin-top: -1px;  
+//   ion-icon {
+//     font-size: 16px;
+//   }
+  
+//   &:active {
+//     --background: #005ADD;
+//   }
+// }
+
+// ion-content {
+//   --background: #FFFFFF;
+// }
+
+// .content-wrapper {
+//   padding-bottom: 80px; // Pour le menu du bas
+// }
+
+
+// // Hero Section - CARROUSEL SWIPER
+// .hero-section {
+//   background: linear-gradient(180deg, #004D00 0%, #00331A 100%);
+//   margin: 0 16px 24px 16px;
+//   border-radius: 20px;
+//   border: 1px solid #00331A;
+//   position: relative;
+//   height: 340px;
+//   overflow: hidden;
+
+//   // Swiper container
+//   .hero-swiper {
+//     width: 100%;
+//     height: 100%;
+    
+//     swiper-slide {
+//       width: 100%;
+//       height: 100%;
+//     }
+//   }
+
+//   .slide-container {
+//     width: 100%;
+//     height: 100%;
+//     position: relative;
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+    
+//     .slide-image {
+//       width: 100%;
+//       height: 100%;
+//       object-fit: cover; // ✅ Remplit tout l'espace
+//       object-position: center;
+//     }
+    
+//     .slide-overlay {
+//       position: absolute;
+//       top: 0;
+//       left: 0;
+//       right: 0;
+//       bottom: 0;
+//       background: linear-gradient(
+//         to bottom,
+//         rgba(0, 0, 0, 0.1) 0%,
+//         rgba(0, 0, 0, 0.3) 100%
+//       );
+//       pointer-events: none;
+//     }
+//   }
+
+//   // Pagination dots
+//   .pagination-dots {
+//     position: absolute;
+//     bottom: 20px;
+//     left: 0;
+//     right: 0;
+//     display: flex;
+//     justify-content: center;
+//     gap: 8px;
+//     z-index: 10;
+
+//     .dot {
+//       width: 8px;
+//       height: 8px;
+//       border-radius: 50%;
+//       background-color: rgba(255, 255, 255, 0.5);
+//       transition: all 0.3s ease;
+
+//       &.active {
+//         background-color: white;
+//         transform: scale(1.2);
+//         width: 20px;
+//         border-radius: 4px;
+//       }
+//     }
+//   }
+// }
+
+// // Section Mes cours
+// .courses-section {
+//   padding: 0 24px 32px 24px;
+  
+//   .section-title {
+//     font-size: 28px;
+//     font-weight: 700;
+//     color: #000000;
+//     margin: 0 0 16px 0;
+//   }
+  
+//   .section-description {
+//     font-size: 15px;
+//     color: #666666;
+//     line-height: 1.5;
+//     margin: 0 0 32px 0;
+//     text-align: center;
+//   }
+  
+//   .add-button-container {
+//     display: flex;
+//     justify-content: center;
+//     margin: 0 0 32px 0;
+//    // margin-bottom: 24px;
+    
+    
+//     .circular-progress {
+//       width: 80px;
+//       height: 80px;
+//       border-radius: 50%;
+//       background: #FFFFFF;
+//       border: 4px solid #0066FF;
+//       display: flex;
+//       align-items: center;
+//       justify-content: center;
+//       box-shadow: 0 4px 12px rgba(0, 102, 255, 0.2);
+//       cursor: pointer;
+//       transition: all 0.3s ease;
+      
+//       .add-icon {
+//         font-size: 40px;
+//         color: #0066FF;
+//       }
+      
+//       &:hover {
+//         transform: scale(1.05);
+//         box-shadow: 0 6px 16px rgba(0, 102, 255, 0.3);
+//       }
+      
+//       &:active {
+//         transform: scale(0.95);
+//       }
+//     }
+//   }
+  
+// .suivant-button {
+//   --background: #0066FF;
+//   --border-radius: 12px;
+//   --padding-top: 16px;
+//   --padding-bottom: 16px;
+//   font-size: 16px;
+//   font-weight: 600;
+//   text-transform: none;
+//   margin-top: 8px;
+//   height: 50px;
+//   --color: #FFFFFF; // ✅ CORRECTION : Utilisez --color au lieu de color
+  
+//   &:active {
+//     --background: #0052cc;
+//   }
+// }
+// }
+
+// // Section Instructeurs
+// .instructors-section {
+//   padding: 0 24px 24px 24px;
+  
+//   .section-title {
+//     font-size: 24px;
+//     font-weight: 700;
+//     color: #000000;
+//     margin: 0 0 20px 0;
+//   }
+  
+//   .instructors-grid {
+//     display: grid;
+//   //  grid-template-columns: repeat(3, 1fr);
+//     gap: 12px;
+    
+//     .instructor-card {
+//       border-radius: 12px;
+//       overflow: hidden;
+//       position: relative;
+//       aspect-ratio: 1;
+//       cursor: pointer;
+//       transition: transform 0.3s ease;
+//       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      
+//       &:active {
+//         transform: translateY(-4px);
+//       }
+      
+//       .instructor-image {
+//         width: 100%;
+//         height: 100%;
+//         object-fit: cover;
+//         display: block; // Important pour éviter l'espace réservé
+//       }
+      
+//       .instructor-name {
+//         position: absolute;
+//         bottom: 8px;
+//         left: 8px;
+//         color: #FFFFFF;
+//         font-size: 13px;
+//         font-weight: 700;
+//         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+//         letter-spacing: 0.5px;
+//         z-index: 2;
+//       }
+      
+//       // Overlay pour améliorer la lisibilité du texte
+//       &::after {
+//         content: '';
+//         position: absolute;
+//         bottom: 0;
+//         left: 0;
+//         right: 0;
+//         height: 40%;
+//         background: linear-gradient(transparent 0%, rgba(0, 0, 0, 0.5) 100%);
+//         pointer-events: none;
+//       }
+//     }
+//   }
+// }
+
+// // Responsive pour petits écrans
+// @media (max-width: 375px) {
+//   .hero-section {
+//     height: 280px;
+//     margin: 0 12px 20px 12px;
+//     padding: 16px;
+//   }
+  
+//   .courses-section {
+//     padding: 0 20px 24px 20px;
+    
+//     .section-title {
+//       font-size: 24px;
+//     }
+    
+//     .add-button-container .circular-progress {
+//       width: 70px;
+//       height: 70px;
+      
+//       .add-icon {
+//         font-size: 35px;
+//       }
+//     }
+//   }
+  
+//   .instructors-section {
+//     padding: 0 20px 20px 20px;
+    
+//     .instructors-grid {
+//       gap: 8px;
+      
+//       .instructor-card .instructor-name {
+//         font-size: 11px;
+//         bottom: 6px;
+//         left: 6px;
+//       }
+//     }
+//   }
+// }
+
+
+
+// .content-wrapper {
+//   padding-bottom: 80px;
+// }
+
+// /* Hero Section - CARROUSEL SWIPER */
+// .hero-section {
+//   background: linear-gradient(180deg, #004D00 0%, #00331A 100%);
+//   margin: 0 16px 24px 16px;
+//   border-radius: 20px;
+//   border: 1px solid #00331A;
+//   position: relative;
+//   height: 340px;
+//   overflow: hidden;
+// }
+
+// .hero-section .hero-swiper {
+//   width: 100%;
+//   height: 100%;
+// }
+
+// .hero-section .hero-swiper swiper-slide {
+//   width: 100%;
+//   height: 100%;
+// }
+
+// .hero-section .slide-container {
+//   width: 100%;
+//   height: 100%;
+//   position: relative;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+// }
+
+// .hero-section .slide-container .slide-image {
+//   width: 100%;
+//   height: 100%;
+//   object-fit: cover;
+//   object-position: center;
+// }
+
+// .hero-section .slide-container .slide-overlay {
+//   position: absolute;
+//   top: 0;
+//   left: 0;
+//   right: 0;
+//   bottom: 0;
+//   background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.3) 100%);
+//   pointer-events: none;
+// }
+
+// /* Pagination dots */
+// .hero-section .pagination-dots {
+//   position: absolute;
+//   bottom: 20px;
+//   left: 0;
+//   right: 0;
+//   display: flex;
+//   justify-content: center;
+//   gap: 8px;
+//   z-index: 10;
+// }
+
+// .hero-section .pagination-dots .dot {
+//   width: 8px;
+//   height: 8px;
+//   border-radius: 50%;
+//   background-color: rgba(255, 255, 255, 0.5);
+//   transition: all 0.3s ease;
+// }
+
+// .hero-section .pagination-dots .dot.active {
+//   background-color: white;
+//   transform: scale(1.2);
+//   width: 20px;
+//   border-radius: 4px;
+// }
+
+// /* Section Mes cours */
+// .courses-section {
+//   padding: 0 24px 32px 24px;
+// }
+
+// /* Header avec titre et bouton "Voir plus" */
+// .courses-section .section-header-row {
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+//   margin-bottom: 16px;
+// }
+
+// .courses-section .section-title {
+//   font-size: 28px;
+//   font-weight: 700;
+//   color: #000000;
+//   margin-bottom: 37px;
+// }
+
+// .courses-section .voir-plus-button {
+//   --color: #0066FF;
+//   font-size: 14px;
+//   font-weight: 500;
+//   text-transform: none;
+//   margin: 0;
+//   --padding-start: 0;
+//   --padding-end: 0;
+// }
+
+// .courses-section .section-description {
+//   font-size: 15px;
+//   color: #666666;
+//   line-height: 1.5;
+//   margin: 0 0 32px 0;
+//   text-align: center;
+// }
+
+// .courses-section .add-button-container {
+//   display: flex;
+//   justify-content: center;
+//   margin-bottom: 24px;
+// }
+
+// .courses-section .add-button-container .circular-progress {
+//   width: 80px;
+//   height: 80px;
+//   border-radius: 50%;
+//   background: #FFFFFF;
+//   border: 4px solid #0066FF;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   box-shadow: 0 4px 12px rgba(0, 102, 255, 0.2);
+//   cursor: pointer;
+//   transition: all 0.3s ease;
+// }
+
+// .courses-section .add-button-container .circular-progress .add-icon {
+//   font-size: 40px;
+//   color: #0066FF;
+// }
+
+// .courses-section .add-button-container .circular-progress:hover {
+//   transform: scale(1.05);
+//   box-shadow: 0 6px 16px rgba(0, 102, 255, 0.3);
+// }
+
+// .courses-section .add-button-container .circular-progress:active {
+//   transform: scale(0.95);
+// }
+
+// /* Grid 2 colonnes pour les cours */
+// .courses-section .enrolled-courses-grid {
+//   display: grid;
+//   grid-template-columns: repeat(2, 1fr);
+//   gap: 16px;
+// }
+
+// .courses-section .enrolled-courses-grid .course-card {
+//   margin: 0;
+//   border-radius: 16px;
+//   overflow: hidden;
+//   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+//   transition: transform 0.3s ease, box-shadow 0.3s ease;
+//   background-color: white;
+// }
+
+// .courses-section .enrolled-courses-grid .course-card:active {
+//   transform: translateY(-4px);
+//   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+// }
+
+// .courses-section .enrolled-courses-grid .course-card .card-image {
+//   position: relative;
+//   width: 100%;
+//   aspect-ratio: 4/3;
+//   overflow: hidden;
+// }
+
+// .courses-section .enrolled-courses-grid .course-card .card-image img {
+//   width: 100%;
+//   height: 100%;
+//   object-fit: cover;
+// }
+
+// /* Badge "Certificat disponible" en haut à gauche */
+// .courses-section .enrolled-courses-grid .course-card .card-image .certificate-badge {
+//   position: absolute;
+//   top: 8px;
+//   left: 8px;
+//   background: #FFFFFF;
+//   border-radius: 12px;
+//   padding: 4px 8px;
+//   display: flex;
+//   align-items: center;
+//   gap: 4px;
+//   z-index: 2;
+// }
+
+// .courses-section .enrolled-courses-grid .course-card .card-image .certificate-badge ion-icon {
+//   font-size: 14px;
+//   color: #0066FF;
+// }
+
+
+
+// .courses-section .enrolled-courses-grid .course-card .card-image .certificate-badge span {
+//   font-size: 11px;
+//   color: #0066FF;
+//   font-weight: 600;
+// }
+
+// /* Icône play en haut à droite */
+// .courses-section .enrolled-courses-grid .course-card .card-image .play-icon {
+//   position: absolute;
+//   top: 8px;
+//   right: 8px;
+//   width: 32px;
+//   height: 32px;
+//   background: rgba(255, 255, 255, 0.9);
+//   border-radius: 50%;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   z-index: 2;
+// }
+
+// .courses-section .enrolled-courses-grid .course-card .card-image .play-icon ion-icon {
+//   font-size: 20px;
+//   color: white;
+// }
+
+// /* Card Content */
+// .courses-section .enrolled-courses-grid .course-card ion-card-content {
+//   padding: 12px;
+// }
+
+// .courses-section .enrolled-courses-grid .course-card ion-card-content .course-title {
+//   font-size: 16px;
+//   font-weight: 700;
+//   color: black;
+//   margin: 0 0 8px 0;
+//   line-height: 1.3;
+//   display: -webkit-box;
+//   -webkit-line-clamp: 2;
+//   -webkit-box-orient: vertical;
+//   overflow: hidden;
+// }
+
+// .courses-section .enrolled-courses-grid .course-card ion-card-content .course-meta {
+//   display: flex;
+//   align-items: center;
+//   gap: 4px;
+//   color: black;
+//   font-size: 13px;
+//   margin-bottom: 4px;
+// }
+
+// .courses-section .enrolled-courses-grid .course-card ion-card-content .course-meta span {
+//   display: flex;
+//   align-items: center;
+//   gap: 2px;
+// }
+
+// .courses-section .enrolled-courses-grid .course-card ion-card-content .course-meta .separator {
+//   margin: 0 4px;
+// }
+
+// /* Bouton Suivant */
+// .courses-section .suivant-button {
+//   --background: #0066FF;
+//   --border-radius: 12px;
+//   --padding-top: 16px;
+//   --padding-bottom: 16px;
+//   font-size: 16px;
+//   font-weight: 600;
+//   text-transform: none;
+//   margin-top: 8px;
+//   height: 50px;
+//   --color: #FFFFFF;
+// }
+
+// .courses-section .suivant-button:active {
+//   --background: #0052cc;
+// }
+
+// /* Loading State */
+// .courses-section .loading-courses {
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   justify-content: center;
+//   padding: 40px 0;
+//   gap: 16px;
+// }
+
+// .courses-section .loading-courses p {
+//   color: #666666;
+//   font-size: 14px;
+// }
+
+// /* No Courses State */
+// .courses-section .no-courses {
+//   text-align: center;
+// }
+
+// .courses-section .no-courses > p:first-child {
+//   font-size: 16px;
+//   color: #000000;
+//   font-weight: 600;
+//   margin-bottom: 8px;
+// }
+
+// /* Section Instructeurs */
+// .instructors-section {
+//   padding: 0 24px 24px 24px;
+// }
+
+// .instructors-section .section-title {
+//   font-size: 24px;
+//   font-weight: 700;
+//   color: #000000;
+//   margin: 0 0 20px 0;
+// }
+
+// .instructors-section .instructors-grid {
+//   display: grid;
+//   grid-template-columns: repeat(3, 1fr);
+//   gap: 12px;
+// }
+
+// .instructors-section .instructors-grid .instructor-card {
+//   border-radius: 12px;
+//   overflow: hidden;
+//   position: relative;
+//   aspect-ratio: 1;
+//   cursor: pointer;
+//   transition: transform 0.3s ease;
+//   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+// }
+
+// .instructors-section .instructors-grid .instructor-card:active {
+//   transform: translateY(-4px);
+// }
+
+// .instructors-section .instructors-grid .instructor-card .instructor-image {
+//   width: 100%;
+//   height: 100%;
+//   object-fit: cover;
+//   display: block;
+// }
+
+// .instructors-section .instructors-grid .instructor-card .instructor-name {
+//   position: absolute;
+//   bottom: 8px;
+//   left: 8px;
+//   color: #FFFFFF;
+//   font-size: 13px;
+//   font-weight: 700;
+//   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+//   letter-spacing: 0.5px;
+//   z-index: 2;
+// }
+
+// /* Overlay pour améliorer la lisibilité du texte */
+// .instructors-section .instructors-grid .instructor-card::after {
+//   content: '';
+//   position: absolute;
+//   bottom: 0;
+//   left: 0;
+//   right: 0;
+//   height: 40%;
+//   background: linear-gradient(transparent 0%, rgba(0, 0, 0, 0.5) 100%);
+//   pointer-events: none;
+// }
+
+// /* Responsive pour petits écrans */
+// @media (max-width: 375px) {
+//   .hero-section {
+//     height: 280px;
+//     margin: 0 12px 20px 12px;
+//     padding: 16px;
+//   }
+  
+//   .courses-section {
+//     padding: 0 20px 24px 20px;
+//   }
+  
+//   .courses-section .section-title {
+//     font-size: 24px;
+//   }
+  
+//   .courses-section .add-button-container .circular-progress {
+//     width: 70px;
+//     height: 70px;
+//   }
+  
+//   .courses-section .add-button-container .circular-progress .add-icon {
+//     font-size: 35px;
+//   }
+  
+//   .instructors-section {
+//     padding: 0 20px 20px 20px;
+//   }
+  
+//   .instructors-section .instructors-grid {
+//     gap: 8px;
+//   }
+  
+//   .instructors-section .instructors-grid .instructor-card .instructor-name {
+//     font-size: 11px;
+//     bottom: 6px;
+//     left: 6px;
+//   }
+
+
+
+
+// }
+
+// .quick-access-section {
+//   padding: 24px 24px 32px 24px;
+  
+//   .quick-access-grid {
+//     display: grid;
+//     grid-template-columns: repeat(4, 1fr);
+//     gap: 16px;
+    
+//     .quick-access-item {
+//       display: flex;
+//       flex-direction: column;
+//       align-items: center;
+//       gap: 8px;
+//       cursor: pointer;
+//       transition: transform 0.2s ease;
+      
+//       &:active {
+//         transform: scale(0.95);
+//       }
+      
+//       .icon-container {
+//         width: 56px;
+//         height: 56px;
+//         border-radius: 16px;
+//         display: flex;
+//         align-items: center;
+//         justify-content: center;
+//         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+//         transition: all 0.3s ease;
+        
+//         .quick-icon {
+//           width: 32px;
+//           height: 32px;
+//           object-fit: contain;
+//         }
+        
+//         &:hover {
+//           transform: translateY(-2px);
+//           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+//         }
+//       }
+      
+//       .item-label {
+//         font-size: 13px;
+//         font-weight: 500;
+//         color: #000000;
+//         text-align: center;
+//       }
+//     }
+//   }
+// }
+
+// @media (max-width: 375px) {
+//   .quick-access-section {
+//     padding: 20px 16px 24px 16px;
+    
+//     .quick-access-grid {
+//       gap: 12px;
+      
+//       .quick-access-item {
+//         .icon-container {
+//           width: 50px;
+//           height: 50px;
+          
+//           .quick-icon {
+//             width: 28px;
+//             height: 28px;
+//           }
+//         }
+        
+//         .item-label {
+//           font-size: 12px;
+//         }
+//       }
+//     }
+//   }
+// }
+
+
+// /* =========================
+//    DESKTOP & LARGE SCREENS
+//    ========================= */
+// @media (min-width: 1024px) {
+//   ion-content {
+//     --padding-start: 0;
+//     --padding-end: 0;
+//   }
+
+//   .content-wrapper {
+//     max-width: 1200px;
+//     margin: 0 auto;
+//     padding-bottom: 120px;
+//   }
+// }
+// @media (min-width: 1024px) {
+//   .hero-section {
+//     height: 420px;
+//     margin: 24px auto 40px auto;
+//     max-width: 1200px;
+//   }
+// }
+// @media (min-width: 1024px) {
+//   .quick-access-section .quick-access-grid {
+//     grid-template-columns: repeat(6, 1fr);
+//     gap: 24px;
+//   }
+// }
+// @media (min-width: 1024px) {
+//   .courses-section .enrolled-courses-grid {
+//     grid-template-columns: repeat(4, 1fr);
+//     gap: 24px;
+//   }
+// }
+// @media (min-width: 1024px) {
+//   .instructors-section .instructors-grid {
+//     grid-template-columns: repeat(5, 1fr);
+//     gap: 20px;
+//   }
+// }
+// @media (min-width: 1024px) {
+//   ion-header ion-toolbar {
+//     --min-height: 80px;
+//   }
+
+//   .header-content {
+//     max-width: 1200px;
+//     margin: 0 auto;
+//     padding: 0 24px;
+//   }
+
+//   .preminum {
+//     max-width: 420px;
+//     margin: 0 auto;
+//   }
+// }
+
+// /* =========================
+//    PREMIUM BUTTON - DESKTOP
+//    ========================= */
+// @media (min-width: 1024px) {
+//   .preminum {
+//     width: 100%;
+//     max-width: none;
+//     margin: 16px 0;
+//     height: 56px;
+//     font-size: 18px;
+//     --border-radius: 12px;
+//   }
+// }
+
+// /* =========================
+//    QUICK ACCESS - DESKTOP
+//    ========================= */
+// @media (min-width: 1024px) {
+//   .quick-access-section {
+//     display: flex;
+//     justify-content: center;
+//     padding: 32px 0;
+//     margin-left: 100px;
+//   }
+
+//   .quick-access-grid {
+//     max-width: 800px;   // largeur contrôlée
+//     width: 100%;
+//     justify-content: center;
+//     gap: 32px;
+//   }
+// }
+
+// // @media (min-width: 1024px) {
+// //   app-bottom-menu {
+// //     position: sticky;
+// //     top: 0;
+// //     z-index: 1000;
+// //     order: -2;
+// //   }
+// // }
+
+// /* Mobile par défaut */
+// .mobile-header {
+//   display: block;
+// }
+
+// /* Desktop */
+// @media (min-width: 1024px) {
+//   .mobile-header {
+//     display: none;
+//   }
+// }
+
+// /* Cacher sur desktop */
+// @media (min-width: 992px) {
+//   .hide-desktop {
+//     display: none !important;
+//   }
+// }
+
+
+
+// /* =========================
+//    DESKTOP TOP BAR (HELP STYLE)
+//    ========================= */
+// @media (min-width: 1024px) {
+//   .desktop-header {
+//     ion-toolbar {
+//       --background: #ffffff;
+//       --min-height: 72px;
+//       border-bottom: 1px solid #e5e7eb;
+//     }
+
+//     .desktop-header-content {
+//       max-width: 1200px;
+//       margin: 0 auto;
+//       padding: 0 24px;
+
+//      // display: grid;
+//       grid-template-columns: auto 1fr auto;
+//       align-items: center;
+//     //  gap: 16px;
+//     }
+
+//     /* Search */
+//     .desktop-search-btn {
+//       --color: #111827;
+//       font-size: 20px;
+//     }
+
+//     /* Help button */
+//     .help-button {
+//       justify-self: center;
+//       font-size: 18px;
+//       font-weight: 600;
+//       text-transform: none;
+//       padding: 10px 28px;
+
+//       --border-radius: 12px;
+//       --border-color: #6c63ff;
+//       --color: #6c63ff;
+//       --background: transparent;
+//     }
+
+//     /* Profile */
+//     .desktop-profile-btn {
+//       display: flex;
+//       align-items: center;
+//       gap: 6px;
+
+//       --color: #111827;
+
+//       ion-icon {
+//         font-size: 22px;
+//       }
+
+//       .chevron {
+//         font-size: 16px;
+//         opacity: 0.6;
+//       }
+//     }
+//   }
+// }
+
+
+
+
+// /* ==============================
+//    QUICK ACCESS DESKTOP CARD UI
+//    ============================== */
+
+// @media (min-width: 1024px) {
+
+//   .desktop-style {
+//     grid-template-columns: repeat(2, 1fr);
+//     gap: 24px;
+//   }
+
+//   .desktop-style .quick-access-item {
+//     background: #f9fafb;
+//     //width: 100%;
+//     border-radius: 14px;
+//      padding: 20px 22px;
+//      box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+//      position: relative;
+//      align-items: flex-start;
+//      text-align: left;
+//      min-height: 130px;
+//   }
+
+//   // /* Barre couleur en haut */
+//   .desktop-style .quick-access-item::before {
+//     content: "";
+//     position: absolute;
+//     top: 0;
+//     left: 0;
+//     height: 6px;
+//     width: 100%;
+//    // background: linear-gradient(90deg,#facc15,#f97316);
+//     border-radius: 14px 14px 0 0;
+//   }
+
+//   // /* Icône */
+//   .desktop-style .icon-container {
+//     width: 48px;
+//     height: 48px;
+//     border-radius: 12px;
+//     margin-bottom: 12px;
+//   }
+
+//   .desktop-style .quick-icon {
+//     width: 26px;
+//     height: 26px;
+//   }
+
+//   // /* Titre */
+//   .desktop-style .item-label {
+//     font-size: 17px;
+//     font-weight: 700;
+//     margin-bottom: 10px;
+//   }
+
+
+
+// }
+
+// /* ================================
+//    DESKTOP COURSE CARD MARKETPLACE
+//    ================================ */
+// @media (min-width: 1024px) {
+
+//   .courses-section .enrolled-courses-grid {
+//     grid-template-columns: repeat(4, 1fr);
+//     gap: 28px;
+//   }
+
+//   .course-card {
+//     border-radius: 14px;
+//     overflow: hidden;
+//     background: #ffffff;
+//     box-shadow: 0 10px 25px rgba(0,0,0,.08);
+//     transition: all .25s ease;
+//   }
+
+//   .course-card:hover {
+//     transform: translateY(-6px);
+//     box-shadow: 0 16px 40px rgba(0,0,0,.12);
+//   }
+
+//   /* IMAGE */
+//   .course-card .card-image {
+//     aspect-ratio: 16 / 9;
+//     position: relative;
+//   }
+
+//   .course-card .card-image img {
+//     object-fit: cover;
+//   }
+
+//   /* BADGE BEST SELLER */
+//   .best-seller-badge {
+//     position: absolute;
+//     top: 12px;
+//     left: 12px;
+//     background: #facc15;
+//     color: #000;
+//     font-size: 12px;
+//     font-weight: 700;
+//     padding: 6px 12px;
+//     border-radius: 999px;
+//     z-index: 10;
+//   }
+
+//   /* CONTENU */
+//   .course-card ion-card-content {
+//     padding: 18px;
+//   }
+
+//   /* TITRE */
+//   .course-card .course-title {
+//     font-size: 18px;
+//     font-weight: 700;
+//     line-height: 1.3;
+//     margin-bottom: 6px;
+//   }
+
+//   /* META TEXTE */
+//   .course-card .course-meta span {
+//     font-size: 14px;
+//     color: #6b7280;
+//   }
+
+//   /* NIVEAU */
+//   .course-level {
+//     font-size: 13px;
+//     color: #9ca3af;
+//     margin-top: 6px;
+//   }
+
+// }
+
+/* =========================
+   GLOBAL
+========================= */
+
+ion-content {
+  --background: #ffffff;
+}
+
+.content-wrapper {
+  padding-bottom: 80px;
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+ion-header ion-toolbar {
+  --background: #ffffff;
+  --min-height: 60px;
 }
 
 .header-content {
@@ -10,54 +1160,24 @@ ion-header {
   justify-content: space-between;
   align-items: center;
   padding: 10px 16px;
-  
-  .logo {
-    height: 40px;
-    width: auto;
-  }
-  
-  .profile-button {
-    --padding-start: 8px;
-    --padding-end: 8px;
-    --color: #5B5B5B;
-    margin: 0;
-    
-    .profile {
-      font-size: 30px;
-    }
-    
-    &:active {
-      --color: #0066FF;
-    }
-  }
 }
 
-.preminum {
-    font-size: 14px;
-    font-weight: 500;
-    text-transform: none;
-    --border-radius: 5px;
-    --padding-top: 8px;
-    height: 48px;
-   // width: 100px;
-    margin-top: -1px;  
-  ion-icon {
-    font-size: 16px;
-  }
-  
-  &:active {
-    --background: #005ADD;
-  }
+.logo {
+  height: 40px;
 }
 
-ion-content {
-  --background: #FFFFFF;
+.profile-button {
+  --color: #5b5b5b;
 }
 
-.content-wrapper {
-  padding-bottom: 80px; // Pour le menu du bas
+.profile {
+  font-size: 30px;
 }
 
+
+/* =========================
+   HERO
+========================= */
 
 // Hero Section - CARROUSEL SWIPER
 .hero-section {
@@ -138,78 +1258,121 @@ ion-content {
   }
 }
 
-// Section Mes cours
+
+/* =========================
+   QUICK ACCESS
+========================= */
+
+.quick-access-section {
+  padding: 24px;
+}
+
+.quick-access-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.quick-access-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+
+.icon-container {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .1);
+}
+
+.quick-icon {
+  width: 32px;
+}
+
+.item-label {
+  font-size: 13px;
+  font-weight: 600;
+  color :#000000;
+  margin-top: 8px;
+  text-align: center;
+}
+
+
+/* =========================
+   COURSES GRID
+========================= */
+
+
+/* Section Mes cours */
 .courses-section {
   padding: 0 24px 32px 24px;
-  
-  .section-title {
-    font-size: 28px;
-    font-weight: 700;
-    color: #000000;
-    margin: 0 0 16px 0;
-  }
-  
-  .section-description {
-    font-size: 15px;
-    color: #666666;
-    line-height: 1.5;
-    margin: 0 0 32px 0;
-    text-align: center;
-  }
-  
-  .add-button-container {
-    display: flex;
-    justify-content: center;
-    margin: 0 0 32px 0;
-   // margin-bottom: 24px;
-    
-    
-    .circular-progress {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background: #FFFFFF;
-      border: 4px solid #0066FF;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 12px rgba(0, 102, 255, 0.2);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      
-      .add-icon {
-        font-size: 40px;
-        color: #0066FF;
-      }
-      
-      &:hover {
-        transform: scale(1.05);
-        box-shadow: 0 6px 16px rgba(0, 102, 255, 0.3);
-      }
-      
-      &:active {
-        transform: scale(0.95);
-      }
-    }
-  }
-  
-.suivant-button {
-  --background: #0066FF;
-  --border-radius: 12px;
-  --padding-top: 16px;
-  --padding-bottom: 16px;
-  font-size: 16px;
-  font-weight: 600;
+}
+
+/* Header avec titre et bouton "Voir plus" */
+.courses-section .section-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.courses-section .section-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 37px;
+}
+
+.courses-section .voir-plus-button {
+  --color: #0066FF;
+  font-size: 14px;
+  font-weight: 500;
   text-transform: none;
-  margin-top: 8px;
-  height: 50px;
-  --color: #FFFFFF; // ✅ CORRECTION : Utilisez --color au lieu de color
-  
-  &:active {
-    --background: #0052cc;
-  }
+  margin: 0;
+  --padding-start: 0;
+  --padding-end: 0;
 }
+
+
+
+
+.enrolled-courses-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
 }
+
+.course-card {
+  border-radius: 16px;
+  overflow: hidden;
+  background: white;
+}
+
+.card-image {
+  position: relative;
+  aspect-ratio: 4/3;
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.course-title {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+
+/* =========================
+   INSTRUCTORS
+========================= */
 
 // Section Instructeurs
 .instructors-section {
@@ -224,7 +1387,7 @@ ion-content {
   
   .instructors-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+  //  grid-template-columns: repeat(3, 1fr);
     gap: 12px;
     
     .instructor-card {
@@ -274,645 +1437,6 @@ ion-content {
   }
 }
 
-// Responsive pour petits écrans
-@media (max-width: 375px) {
-  .hero-section {
-    height: 280px;
-    margin: 0 12px 20px 12px;
-    padding: 16px;
-  }
-  
-  .courses-section {
-    padding: 0 20px 24px 20px;
-    
-    .section-title {
-      font-size: 24px;
-    }
-    
-    .add-button-container .circular-progress {
-      width: 70px;
-      height: 70px;
-      
-      .add-icon {
-        font-size: 35px;
-      }
-    }
-  }
-  
-  .instructors-section {
-    padding: 0 20px 20px 20px;
-    
-    .instructors-grid {
-      gap: 8px;
-      
-      .instructor-card .instructor-name {
-        font-size: 11px;
-        bottom: 6px;
-        left: 6px;
-      }
-    }
-  }
-}
-
-
-
-.content-wrapper {
-  padding-bottom: 80px;
-}
-
-/* Hero Section - CARROUSEL SWIPER */
-.hero-section {
-  background: linear-gradient(180deg, #004D00 0%, #00331A 100%);
-  margin: 0 16px 24px 16px;
-  border-radius: 20px;
-  border: 1px solid #00331A;
-  position: relative;
-  height: 340px;
-  overflow: hidden;
-}
-
-.hero-section .hero-swiper {
-  width: 100%;
-  height: 100%;
-}
-
-.hero-section .hero-swiper swiper-slide {
-  width: 100%;
-  height: 100%;
-}
-
-.hero-section .slide-container {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.hero-section .slide-container .slide-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
-
-.hero-section .slide-container .slide-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.3) 100%);
-  pointer-events: none;
-}
-
-/* Pagination dots */
-.hero-section .pagination-dots {
-  position: absolute;
-  bottom: 20px;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  z-index: 10;
-}
-
-.hero-section .pagination-dots .dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.5);
-  transition: all 0.3s ease;
-}
-
-.hero-section .pagination-dots .dot.active {
-  background-color: white;
-  transform: scale(1.2);
-  width: 20px;
-  border-radius: 4px;
-}
-
-/* Section Mes cours */
-.courses-section {
-  padding: 0 24px 32px 24px;
-}
-
-/* Header avec titre et bouton "Voir plus" */
-.courses-section .section-header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.courses-section .section-title {
-  font-size: 28px;
-  font-weight: 700;
-  color: #000000;
-  margin-bottom: 37px;
-}
-
-.courses-section .voir-plus-button {
-  --color: #0066FF;
-  font-size: 14px;
-  font-weight: 500;
-  text-transform: none;
-  margin: 0;
-  --padding-start: 0;
-  --padding-end: 0;
-}
-
-.courses-section .section-description {
-  font-size: 15px;
-  color: #666666;
-  line-height: 1.5;
-  margin: 0 0 32px 0;
-  text-align: center;
-}
-
-.courses-section .add-button-container {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 24px;
-}
-
-.courses-section .add-button-container .circular-progress {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: #FFFFFF;
-  border: 4px solid #0066FF;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 12px rgba(0, 102, 255, 0.2);
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.courses-section .add-button-container .circular-progress .add-icon {
-  font-size: 40px;
-  color: #0066FF;
-}
-
-.courses-section .add-button-container .circular-progress:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(0, 102, 255, 0.3);
-}
-
-.courses-section .add-button-container .circular-progress:active {
-  transform: scale(0.95);
-}
-
-/* Grid 2 colonnes pour les cours */
-.courses-section .enrolled-courses-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-}
-
-.courses-section .enrolled-courses-grid .course-card {
-  margin: 0;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  background-color: white;
-}
-
-.courses-section .enrolled-courses-grid .course-card:active {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-}
-
-.courses-section .enrolled-courses-grid .course-card .card-image {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 4/3;
-  overflow: hidden;
-}
-
-.courses-section .enrolled-courses-grid .course-card .card-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Badge "Certificat disponible" en haut à gauche */
-.courses-section .enrolled-courses-grid .course-card .card-image .certificate-badge {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  background: #FFFFFF;
-  border-radius: 12px;
-  padding: 4px 8px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  z-index: 2;
-}
-
-.courses-section .enrolled-courses-grid .course-card .card-image .certificate-badge ion-icon {
-  font-size: 14px;
-  color: #0066FF;
-}
-
-
-
-.courses-section .enrolled-courses-grid .course-card .card-image .certificate-badge span {
-  font-size: 11px;
-  color: #0066FF;
-  font-weight: 600;
-}
-
-/* Icône play en haut à droite */
-.courses-section .enrolled-courses-grid .course-card .card-image .play-icon {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 32px;
-  height: 32px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
-}
-
-.courses-section .enrolled-courses-grid .course-card .card-image .play-icon ion-icon {
-  font-size: 20px;
-  color: white;
-}
-
-/* Card Content */
-.courses-section .enrolled-courses-grid .course-card ion-card-content {
-  padding: 12px;
-}
-
-.courses-section .enrolled-courses-grid .course-card ion-card-content .course-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: black;
-  margin: 0 0 8px 0;
-  line-height: 1.3;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.courses-section .enrolled-courses-grid .course-card ion-card-content .course-meta {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  color: black;
-  font-size: 13px;
-  margin-bottom: 4px;
-}
-
-.courses-section .enrolled-courses-grid .course-card ion-card-content .course-meta span {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-}
-
-.courses-section .enrolled-courses-grid .course-card ion-card-content .course-meta .separator {
-  margin: 0 4px;
-}
-
-/* Bouton Suivant */
-.courses-section .suivant-button {
-  --background: #0066FF;
-  --border-radius: 12px;
-  --padding-top: 16px;
-  --padding-bottom: 16px;
-  font-size: 16px;
-  font-weight: 600;
-  text-transform: none;
-  margin-top: 8px;
-  height: 50px;
-  --color: #FFFFFF;
-}
-
-.courses-section .suivant-button:active {
-  --background: #0052cc;
-}
-
-/* Loading State */
-.courses-section .loading-courses {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 0;
-  gap: 16px;
-}
-
-.courses-section .loading-courses p {
-  color: #666666;
-  font-size: 14px;
-}
-
-/* No Courses State */
-.courses-section .no-courses {
-  text-align: center;
-}
-
-.courses-section .no-courses > p:first-child {
-  font-size: 16px;
-  color: #000000;
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-
-/* Section Instructeurs */
-.instructors-section {
-  padding: 0 24px 24px 24px;
-}
-
-.instructors-section .section-title {
-  font-size: 24px;
-  font-weight: 700;
-  color: #000000;
-  margin: 0 0 20px 0;
-}
-
-.instructors-section .instructors-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-}
-
-.instructors-section .instructors-grid .instructor-card {
-  border-radius: 12px;
-  overflow: hidden;
-  position: relative;
-  aspect-ratio: 1;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.instructors-section .instructors-grid .instructor-card:active {
-  transform: translateY(-4px);
-}
-
-.instructors-section .instructors-grid .instructor-card .instructor-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.instructors-section .instructors-grid .instructor-card .instructor-name {
-  position: absolute;
-  bottom: 8px;
-  left: 8px;
-  color: #FFFFFF;
-  font-size: 13px;
-  font-weight: 700;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  letter-spacing: 0.5px;
-  z-index: 2;
-}
-
-/* Overlay pour améliorer la lisibilité du texte */
-.instructors-section .instructors-grid .instructor-card::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 40%;
-  background: linear-gradient(transparent 0%, rgba(0, 0, 0, 0.5) 100%);
-  pointer-events: none;
-}
-
-/* Responsive pour petits écrans */
-@media (max-width: 375px) {
-  .hero-section {
-    height: 280px;
-    margin: 0 12px 20px 12px;
-    padding: 16px;
-  }
-  
-  .courses-section {
-    padding: 0 20px 24px 20px;
-  }
-  
-  .courses-section .section-title {
-    font-size: 24px;
-  }
-  
-  .courses-section .add-button-container .circular-progress {
-    width: 70px;
-    height: 70px;
-  }
-  
-  .courses-section .add-button-container .circular-progress .add-icon {
-    font-size: 35px;
-  }
-  
-  .instructors-section {
-    padding: 0 20px 20px 20px;
-  }
-  
-  .instructors-section .instructors-grid {
-    gap: 8px;
-  }
-  
-  .instructors-section .instructors-grid .instructor-card .instructor-name {
-    font-size: 11px;
-    bottom: 6px;
-    left: 6px;
-  }
-
-
-
-
-}
-
-.quick-access-section {
-  padding: 24px 24px 32px 24px;
-  
-  .quick-access-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    
-    .quick-access-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      transition: transform 0.2s ease;
-      
-      &:active {
-        transform: scale(0.95);
-      }
-      
-      .icon-container {
-        width: 56px;
-        height: 56px;
-        border-radius: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-        
-        .quick-icon {
-          width: 32px;
-          height: 32px;
-          object-fit: contain;
-        }
-        
-        &:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-      }
-      
-      .item-label {
-        font-size: 13px;
-        font-weight: 500;
-        color: #000000;
-        text-align: center;
-      }
-    }
-  }
-}
-
-@media (max-width: 375px) {
-  .quick-access-section {
-    padding: 20px 16px 24px 16px;
-    
-    .quick-access-grid {
-      gap: 12px;
-      
-      .quick-access-item {
-        .icon-container {
-          width: 50px;
-          height: 50px;
-          
-          .quick-icon {
-            width: 28px;
-            height: 28px;
-          }
-        }
-        
-        .item-label {
-          font-size: 12px;
-        }
-      }
-    }
-  }
-}
-
-
-/* =========================
-   DESKTOP & LARGE SCREENS
-   ========================= */
-@media (min-width: 1024px) {
-  ion-content {
-    --padding-start: 0;
-    --padding-end: 0;
-  }
-
-  .content-wrapper {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding-bottom: 120px;
-  }
-}
-@media (min-width: 1024px) {
-  .hero-section {
-    height: 420px;
-    margin: 24px auto 40px auto;
-    max-width: 1200px;
-  }
-}
-@media (min-width: 1024px) {
-  .quick-access-section .quick-access-grid {
-    grid-template-columns: repeat(6, 1fr);
-    gap: 24px;
-  }
-}
-@media (min-width: 1024px) {
-  .courses-section .enrolled-courses-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
-  }
-}
-@media (min-width: 1024px) {
-  .instructors-section .instructors-grid {
-    grid-template-columns: repeat(5, 1fr);
-    gap: 20px;
-  }
-}
-@media (min-width: 1024px) {
-  ion-header ion-toolbar {
-    --min-height: 80px;
-  }
-
-  .header-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 24px;
-  }
-
-  .preminum {
-    max-width: 420px;
-    margin: 0 auto;
-  }
-}
-
-/* =========================
-   PREMIUM BUTTON - DESKTOP
-   ========================= */
-@media (min-width: 1024px) {
-  .preminum {
-    width: 100%;
-    max-width: none;
-    margin: 16px 0;
-    height: 56px;
-    font-size: 18px;
-    --border-radius: 12px;
-  }
-}
-
-/* =========================
-   QUICK ACCESS - DESKTOP
-   ========================= */
-@media (min-width: 1024px) {
-  .quick-access-section {
-    display: flex;
-    justify-content: center;
-    padding: 32px 0;
-    margin-left: 100px;
-  }
-
-  .quick-access-grid {
-    max-width: 800px;   // largeur contrôlée
-    width: 100%;
-    justify-content: center;
-    gap: 32px;
-  }
-}
-
-// @media (min-width: 1024px) {
-//   app-bottom-menu {
-//     position: sticky;
-//     top: 0;
-//     z-index: 1000;
-//     order: -2;
-//   }
-// }
-
 /* Mobile par défaut */
 .mobile-header {
   display: block;
@@ -926,67 +1450,140 @@ ion-content {
 }
 
 
-/* =========================
-   DESKTOP TOP BAR (HELP STYLE)
-   ========================= */
+/* =====================================================
+   MOBILE SMALL
+===================================================== */
+
+@media (max-width: 375px) {
+
+  .hero-section {
+    height: 280px;
+  }
+
+  .quick-access-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+}
+
+
+/* =====================================================
+   DESKTOP LAYOUT
+===================================================== */
+
 @media (min-width: 1024px) {
-  .desktop-header {
-    ion-toolbar {
-      --background: #ffffff;
-      --min-height: 72px;
-      border-bottom: 1px solid #e5e7eb;
-    }
 
-    .desktop-header-content {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 24px;
+  .content-wrapper {
+    max-width: 1200px;
+    margin: auto;
+    padding-bottom: 120px;
+  }
 
-     // display: grid;
-      grid-template-columns: auto 1fr auto;
-      align-items: center;
-    //  gap: 16px;
-    }
+  ion-header ion-toolbar {
+    --min-height: 80px;
+  }
 
-    /* Search */
-    .desktop-search-btn {
-      --color: #111827;
-      font-size: 20px;
-    }
+  /* HERO */
+  .hero-section {
+    height: 420px;
+    margin: 24px auto 40px;
+  }
 
-    /* Help button */
-    .help-button {
-      justify-self: center;
-      font-size: 18px;
-      font-weight: 600;
-      text-transform: none;
-      padding: 10px 28px;
+  /* QUICK ACCESS DESKTOP CARD UI */
 
-      --border-radius: 12px;
-      --border-color: #6c63ff;
-      --color: #6c63ff;
-      --background: transparent;
-    }
+  .quick-access-grid.desktop-style {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
 
-    /* Profile */
-    .desktop-profile-btn {
-      display: flex;
-      align-items: center;
-      gap: 6px;
+  }
 
-      --color: #111827;
+  .desktop-style .quick-access-item {
+    background: #f9fafb;
+    padding: 36px;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .07);
+    align-items: flex-start;
+    min-height: 130px;
+    position: relative;
+    flex-direction:row;
+  }
 
-      ion-icon {
-        font-size: 22px;
-      }
+  .desktop-style .quick-access-item::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 6px;
+    width: 100%;
+    background: linear-gradient(90deg, #facc15, #f97316);
+    border-radius: 16px 16px 0 0;
+  }
 
-      .chevron {
-        font-size: 16px;
-        opacity: 0.6;
-      }
-    }
+  .desktop-style .item-label {
+    font-size: 17px;
+    font-weight: 700;
+    color:#000000;
+    margin-top: 20px;
+    margin-left: 20px;
+  }
+
+
+  /* COURSES MARKETPLACE STYLE */
+
+  .enrolled-courses-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 28px;
+  }
+
+  .course-card {
+    border-radius: 14px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, .08);
+    transition: .3s;
+  }
+
+  .course-card:hover {
+    transform: translateY(-6px);
+  }
+
+  .card-image {
+    aspect-ratio: 16 / 9;
+  }
+
+  .course-title {
+    font-size: 18px;
+  }
+
+
+  /* INSTRUCTORS */
+
+  .instructors-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+}
+
+/* Cacher sur desktop */
+@media (min-width: 992px) {
+  .hide-desktop {
+    display: none !important;
   }
 }
+
+.continue-button {
+  --background: #10b981;
+ // position: fixed;
+  --color: #ffffff;
+  --border-radius: 10px;
+  height: 40px;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: none;
+}
+
+.continue-button:active {
+  --background: #10b981;
+}
+
 
 
 

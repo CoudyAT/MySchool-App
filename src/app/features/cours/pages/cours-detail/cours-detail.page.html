@@ -1,3 +1,6 @@
+
+<app-desktop-header></app-desktop-header>
+
 <ion-header class="ion-no-border transparent-header">
   <ion-toolbar class="transparent-toolbar">
     <ion-buttons slot="start">
@@ -9,7 +12,135 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<!-- DESKTOP VERSION AVEC ONGLETS - SCROLLABLE -->
+<div class="hide-desktop" style="display: block; overflow: auto;">
+  <!-- Hero Section - Desktop uniquement -->
+  <div class="hero-section">
+    <!-- Colonne Gauche - Contenu SCROLLABLE -->
+    <div class="hero-left">
+      <!-- Badge Catégorie -->
+      <div class="category-badge">BUREAUTIQUE</div>
+
+      <!-- Titre du cours -->
+      <h1 class="course-title">{{course?.title}}</h1>
+
+      <!-- Description courte -->
+      <p class="course-description">{{course?.description}}</p>
+
+      <!-- Info sessions et exercices -->
+      <div class="course-meta">
+        <span class="meta-item">
+          <ion-icon name="bar-chart-outline"></ion-icon>
+          <strong>{{course?.level || 'Facile'}}</strong>
+        </span>
+        <span class="meta-item">
+          <ion-icon name="time-outline"></ion-icon>
+          <strong>{{course?.duration}} heure</strong>
+        </span>
+      </div>
+
+      <!-- Texte Call-to-Action -->
+      <div class="cta-text">
+        <p>Ce cours en libre accès vous intéresse ?</p>
+        <ion-button
+          *ngIf="isUserEnrolled"
+          expand="block"
+          class="enroll-button-mobile"
+          (click)="continueCourse()"
+        >
+          <div class="button-content">
+            <span class="button-main-text">Continuer le cours</span>
+            <span class="button-subtitle"
+              >Progression: {{enrollmentProgress}}%</span
+            >
+          </div>
+        </ion-button>
+        <!-- Bouton d'inscription (desktop) -->
+        <ion-button *ngIf="!isUserEnrolled"
+            expand="block" class="enroll-button-mobile" (click)="handleEnroll()">
+          {{(course?.price ?? 0) > 0 ? 'Payer le cours' : "S'abonner"}}
+        </ion-button>
+      </div>
+
+      <!-- ========== ONGLETS CHAPITRES ET DOCUMENTS ========== -->
+      <div class="hero-tabs-container">
+        <!-- En-tête des onglets -->
+        <div class="hero-tabs-header">
+          <button 
+            class="hero-tab-button" 
+            [class.active]="heroActiveTab === 'chapters'"
+            (click)="heroActiveTab = 'chapters'"
+          >
+            <ion-icon name="list-outline"></ion-icon>
+            Chapitres
+          </button>
+          <button 
+            class="hero-tab-button" 
+            [class.active]="heroActiveTab === 'documents'"
+            (click)="heroActiveTab = 'documents'"
+          >
+            <ion-icon name="document-outline"></ion-icon>
+            Documents
+          </button>
+        </div>
+
+        <!-- Contenu Chapitres -->
+        <div class="hero-tab-content" *ngIf="heroActiveTab === 'chapters'">
+          <div class="hero-chapters-list" *ngIf="chapters.length > 0">
+            <div class="hero-chapter-item" *ngFor="let chapter of chapters.slice(0, 3); let i = index">
+              <div class="hero-chapter-number">{{ i + 1 }}</div>
+              <div class="hero-chapter-info">
+                <h4 class="hero-chapter-title">{{ chapter.title }}</h4>
+                <p class="hero-chapter-duration" *ngIf="chapter.duration">
+                  <ion-icon name="time-outline"></ion-icon>
+                  {{ chapter.duration }} min
+                </p>
+              </div>
+            </div>
+            <div class="hero-see-more" *ngIf="chapters.length > 3">
+              <p>+{{ chapters.length - 3 }} chapitres supplémentaires</p>
+            </div>
+          </div>
+          <div class="hero-empty-state" *ngIf="chapters.length === 0">
+            <p>Aucun chapitre disponible</p>
+          </div>
+        </div>
+
+        <!-- Contenu Documents -->
+        <div class="hero-tab-content" *ngIf="heroActiveTab === 'documents'">
+          <div class="hero-documents-list">
+            <div class="hero-document-item">
+              <div class="hero-document-icon">
+                <ion-icon name="document-text-outline"></ion-icon>
+              </div>
+              <div class="hero-document-info">
+                <h4 class="hero-document-name">Support de cours</h4>
+                <p class="hero-document-type">PDF</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Colonne Droite - Image (STICKY) -->
+    <div class="hero-right">
+      <div class="hero-image-container">
+        <img src="{{course?.image}}" alt="Course" class="hero-image">
+        <div class="image-overlay-shape"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- IMAGE DE COUVERTURE - MOBILE UNIQUEMENT -->
+<div class="cover-image-container hide-desktop">
+  <img src="{{course?.image}}" alt="MySchool Logo" class="cover-image">
+  <div class="image-overlay"></div>
+</div>
+
+<!-- MOBILE VERSION -->
+<ion-content class="mobile-only">
   <div class="content-wrapper">
     <!-- Image de couverture avec overlay -->
     <div class="cover-image-container">
@@ -47,20 +178,6 @@
         <span class="exercises">{{course?.exercises}} Exercices</span>
       </div>
 
-      <!-- Note avec étoiles
-      <div class="rating-container">
-        <div class="stars">
-          <ion-icon name="star" class="star-icon filled"></ion-icon>
-          <ion-icon name="star" class="star-icon filled"></ion-icon>
-          <ion-icon name="star" class="star-icon filled"></ion-icon>
-          <ion-icon name="star" class="star-icon filled"></ion-icon>
-          <ion-icon name="star-half" class="star-icon filled"></ion-icon>
-        </div>
-        <span class="rating-text"
-          >{{course?.rating}}/{{course?.maxRating}}</span
-        >
-      </div>  -->
-
       <!-- Niveaux/Progression -->
       <div class="levels-container">
         <div
@@ -93,7 +210,6 @@
 
         <div class="chapters-list">
           <ion-card *ngFor="let chapter of chapters; let i = index" class="chapter-card">
-
             <ion-card-content class="chapter-card-content">
               <div class="chapter-left">
                 <div class="chapter-number">
@@ -109,12 +225,10 @@
               </div>
 
               <div class="chapter-right">
-                <!-- Indicateur verrouillé / déverrouillé (si tu gères cela plus tard) -->
                 <ion-icon name="lock-open-outline" class="unlock-icon" *ngIf="isUserEnrolled">
                 </ion-icon>
                 <ion-icon name="lock-closed-outline" class="lock-icon" *ngIf="!isUserEnrolled">
                 </ion-icon>
-
                 <ion-icon name="chevron-forward-outline" class="arrow-icon"></ion-icon>
               </div>
             </ion-card-content>
@@ -122,10 +236,10 @@
         </div>
       </div>
 
-
       <div class="empty-chapters" *ngIf="chapters.length === 0">
         <p>Aucun chapitre disponible pour ce cours.</p>
       </div>
+
       <!-- Section Documents -->
       <div class="documents-section">
         <h2 class="section-title">Documents</h2>
@@ -136,12 +250,6 @@
                 <span class="document-name">Support de cours</span>
                 <span class="document-type">PDF</span>
               </div>
-             <!--  <ion-button fill="clear" class="download-button">
-                <ion-icon
-                  name="download-outline"
-                  class="download-icon"
-                ></ion-icon>
-              </ion-button> -->
             </div>
           </ion-card-content>
         </ion-card>
@@ -165,21 +273,21 @@
             </div>
           </ion-button>
 
-        <ion-button
-          *ngIf="!isUserEnrolled"
-          expand="block"
-          class="enroll-button"
-          (click)="handleEnroll()"
-        >
-          <div class="button-content">
-            <span class="button-main-text">
-              {{ (course?.price ?? 0) > 0 ? 'Payer le cours' : 'S’abonner' }}
-            </span>
-            <span class="button-subtitle">
-              {{ (course?.price ?? 0) > 0 ? ((course?.price ?? 0) + ' FCFA') : 'Accès à tous les cours' }}
-            </span>
-          </div>
-        </ion-button>
+          <ion-button
+            *ngIf="!isUserEnrolled"
+            expand="block"
+            class="enroll-button"
+            (click)="handleEnroll()"
+          >
+            <div class="button-content">
+              <span class="button-main-text">
+                {{ (course?.price ?? 0) > 0 ? 'Payer le cours' : "S'abonner" }}
+              </span>
+              <span class="button-subtitle">
+                {{ (course?.price ?? 0) > 0 ? ((course?.price ?? 0) + ' FCFA') : 'Accès à tous les cours' }}
+              </span>
+            </div>
+          </ion-button>
         </ion-card-content>
       </ion-card>
     </div>

@@ -1,7 +1,10 @@
-<ion-header class="ion-no-border">
+<app-desktop-header></app-desktop-header>
+
+
+<ion-header class="ion-no-border help-header">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button (click)="goBack()">
+      <ion-button (click)="goBack()" class="back-button">
         <ion-icon name="chevron-back-outline"></ion-icon>
         <span class="back-text">Retour</span>
       </ion-button>
@@ -10,53 +13,133 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="help-content">
   <div class="help-center-container">
 
-    <p class="intro-text">Trouvez rapidement une réponse à votre question</p>
+    <!-- Hero section -->
+    <div class="hero-section">
+      <div class="hero-icon">
+        <ion-icon name="help-circle-outline"></ion-icon>
+      </div>
+      <h1 class="hero-title">Centre d'aide</h1>
+      <p class="hero-subtitle">Trouvez rapidement une réponse à vos questions</p>
+    </div>
 
     <!-- Barre de recherche -->
-    <ion-item class="search-item" lines="none">
-      <ion-input placeholder="Rechercher une question..." [(ngModel)]="searchQuery" (ionInput)="onSearch()" clearInput>
-      </ion-input>
-    </ion-item>
+    <div class="search-container">
+      <ion-item class="search-item" lines="none">
+        <ion-icon name="search-outline" slot="start" class="search-icon"></ion-icon>
+        <ion-input 
+          placeholder="Rechercher une question..." 
+          [(ngModel)]="searchQuery" 
+          (ionInput)="onSearch()" 
+          clearInput
+          class="search-input">
+        </ion-input>
+      </ion-item>
+    </div>
 
     <!-- Loader -->
-    <div class="loading" *ngIf="loading">
-      <ion-spinner name="crescent"></ion-spinner>
+    <div class="loading-state" *ngIf="loading">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
       <p>Chargement des questions...</p>
     </div>
 
     <!-- FAQs groupées par catégorie -->
-    <div *ngIf="!loading && categories.length > 0; else noResults">
-      <div *ngFor="let cat of categories">
-        <h2 class="category-title">{{ cat.title }}</h2>
+    <div class="faqs-section" *ngIf="!loading && categories.length > 0; else noResults">
+      
+      <!-- Catégories en grille sur desktop -->
+      <div class="categories-grid">
+        <div *ngFor="let cat of categories" class="category-group">
+          
+          <h2 class="category-title">
+            <ion-icon [name]="getCategoryIcon(cat.title)" class="category-icon"></ion-icon>
+            {{ cat.title }}
+          </h2>
 
-        <ion-accordion-group>
-          <ion-accordion *ngFor="let faq of cat.faqs">
-            <ion-item slot="header">
-              <ion-label class="question-label">{{ faq.question }}</ion-label>
-            </ion-item>
-            <div class="ion-padding answer-content" slot="content">
-              <p [innerHTML]="faq.answer"></p>
-            </div>
-          </ion-accordion>
-        </ion-accordion-group>
+          <ion-accordion-group class="faq-accordion">
+            <ion-accordion *ngFor="let faq of cat.faqs; let i = index" [value]="cat.key + '-' + i">
+              <ion-item slot="header" class="accordion-header">
+                <div class="accordion-header-content">
+                  <ion-icon name="help-outline" class="faq-icon"></ion-icon>
+                  <ion-label class="question-label">{{ faq.question }}</ion-label>
+                </div>
+                <ion-icon name="chevron-down-outline" class="chevron-icon"></ion-icon>
+              </ion-item>
+              
+              <div class="ion-padding answer-content" slot="content">
+                <p [innerHTML]="faq.answer"></p>
+                
+                <!-- Boutons d'action -->
+                <div class="answer-actions">
+                  <span class="helpful-text">Cette réponse vous a-t-elle été utile ?</span>
+                  <div class="helpful-buttons">
+                    <button class="helpful-btn yes" (click)="markHelpful(faq.id, true)">
+                      <ion-icon name="thumbs-up-outline"></ion-icon>
+                      Oui
+                    </button>
+                    <button class="helpful-btn no" (click)="markHelpful(faq.id, false)">
+                      <ion-icon name="thumbs-down-outline"></ion-icon>
+                      Non
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </ion-accordion>
+          </ion-accordion-group>
+        </div>
       </div>
+
     </div>
 
     <!-- Aucune FAQ trouvée -->
     <ng-template #noResults>
-      <div class="no-results" *ngIf="!loading">
-        <ion-icon name="information-circle-outline" color="medium" size="large"></ion-icon>
+      <div class="no-results-state" *ngIf="!loading">
+        <div class="empty-icon">
+          <ion-icon name="search-outline"></ion-icon>
+        </div>
+        <h3>Aucun résultat trouvé</h3>
         <p>Aucune question ne correspond à votre recherche.</p>
+        <p class="no-results-hint">Essayez avec d'autres mots-clés ou contactez le support.</p>
       </div>
     </ng-template>
 
-    <!-- Bouton support -->
-    <ion-button expand="block" fill="outline" class="contact-button" (click)="contactSupport()">
-      Contacter le support
-    </ion-button>
+    <!-- Section support -->
+    <div class="support-section">
+      <div class="support-card">
+        <div class="support-icon">
+          <ion-icon name="chatbubble-outline"></ion-icon>
+        </div>
+        <h3>Vous n'avez pas trouvé votre réponse ?</h3>
+        <p>Notre équipe de support est disponible pour vous aider 24/7</p>
+        <ion-button 
+          expand="block" 
+          fill="solid" 
+          class="contact-button" 
+          (click)="contactSupport()">
+          <ion-icon slot="start" name="mail-outline"></ion-icon>
+          Contacter le support
+        </ion-button>
+      </div>
+
+      <!-- Info additionnelle -->
+      <div class="support-info">
+        <div class="info-item">
+          <ion-icon name="time-outline"></ion-icon>
+          <div>
+            <strong>Temps de réponse</strong>
+            <p>Réponse en moins de 24h</p>
+          </div>
+        </div>
+        <div class="info-item">
+          <ion-icon name="call-outline"></ion-icon>
+          <div>
+            <strong>Support par téléphone</strong>
+            <p>+221 77 123 45 67</p>
+          </div>
+        </div>
+      </div>
+    </div>
 
   </div>
 </ion-content>

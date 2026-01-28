@@ -1,0 +1,628 @@
+/* ==========================================
+   HEADER
+   ========================================== */
+
+.subscriptions-header {
+  ion-toolbar {
+    --background: white;
+    --border-bottom: 1px solid #e8eef5;
+
+    ion-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #000;
+
+      @media (min-width: 1024px) {
+        font-size: 28px;
+      }
+    }
+  }
+}
+
+/* ==========================================
+   CONTENT
+   ========================================== */
+
+.subscriptions-content {
+  --background: #f8f9fa;
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-bottom: 80px;
+
+  @media (min-width: 1024px) {
+    --padding-bottom: 100px;
+  }
+}
+
+/* ==========================================
+   EMPTY STATE
+   ========================================== */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px 100px;
+  text-align: center;
+  min-height: 70vh;
+
+  @media (min-width: 1024px) {
+    padding: 100px 60px;
+    min-height: 80vh;
+  }
+
+  .empty-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3880ff 0%, #5260ff 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+
+    ion-icon {
+      font-size: 48px;
+      color: white;
+    }
+
+    @media (min-width: 1024px) {
+      width: 100px;
+      height: 100px;
+
+      ion-icon {
+        font-size: 56px;
+      }
+    }
+  }
+
+  h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #000;
+    margin: 0 0 12px 0;
+
+    @media (min-width: 1024px) {
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+  }
+
+  p {
+    font-size: 16px;
+    color: #999;
+    margin: 0 0 32px 0;
+    max-width: 400px;
+
+    @media (min-width: 1024px) {
+      font-size: 18px;
+      margin-bottom: 40px;
+    }
+  }
+
+  .empty-action-button {
+    --background: linear-gradient(135deg, #3880ff 0%, #5260ff 100%);
+    --border-radius: 12px;
+    height: 48px;
+    font-weight: 600;
+    padding: 0 32px;
+
+    @media (min-width: 1024px) {
+      height: 52px;
+    }
+  }
+}
+
+/* ==========================================
+   TABLE CONTAINER
+   ========================================== */
+
+.table-container {
+  background: white;
+  padding: 24px 16px;
+
+  @media (min-width: 768px) {
+    padding: 32px 24px;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 40px 60px;
+  }
+
+  @media (min-width: 1400px) {
+    padding: 40px 120px;
+  }
+}
+
+/* ==========================================
+   TABLE HEADER (SEARCH & FILTER)
+   ========================================== */
+
+.table-header {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+
+  @media (min-width: 768px) {
+    gap: 16px;
+    margin-bottom: 32px;
+    flex-wrap: nowrap;
+  }
+
+  @media (min-width: 1024px) {
+    margin-bottom: 40px;
+  }
+}
+
+/* ==========================================
+   SEARCH BOX
+   ========================================== */
+
+.search-box {
+  flex: 1;
+  min-width: 250px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 12px 16px;
+  border: 1px solid #e8eef5;
+  transition: all 0.3s ease;
+
+  &:focus-within {
+    border-color: #2650bb;
+    background: white;
+  }
+
+  .search-icon {
+    font-size: 20px;
+    color: #999;
+  }
+
+  .search-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 14px;
+    color: #000;
+
+    @media (min-width: 768px) {
+      font-size: 15px;
+    }
+
+    &::placeholder {
+      color: #999;
+    }
+  }
+}
+
+/* ==========================================
+   FILTER SELECT
+   ========================================== */
+
+.filter-select {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 12px 16px;
+  border: 1px solid #e8eef5;
+  min-width: 180px;
+
+  @media (min-width: 768px) {
+    min-width: 200px;
+  }
+
+  .filter-icon {
+    font-size: 18px;
+    color: #2650bb;
+  }
+
+  .status-select {
+    flex: 1;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 14px;
+    color: #000;
+    cursor: pointer;
+
+    @media (min-width: 768px) {
+      font-size: 15px;
+    }
+
+    option {
+      color: #000;
+      background: white;
+    }
+  }
+}
+
+/* ==========================================
+   TABLE WRAPPER
+   ========================================== */
+
+.table-wrapper {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid #e8eef5;
+}
+
+/* ==========================================
+   TABLE STYLES
+   ========================================== */
+
+.subscriptions-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+
+  thead {
+    background: #f8f9fa;
+    border-bottom: 2px solid #e8eef5;
+
+    th {
+      padding: 16px;
+      text-align: left;
+      font-size: 13px;
+      font-weight: 600;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+
+      @media (min-width: 768px) {
+        padding: 20px;
+        font-size: 14px;
+      }
+
+      @media (min-width: 1024px) {
+        padding: 24px;
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid #e8eef5;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #fafbfc;
+      }
+
+      &.active {
+        background: #fafcfb;
+
+        td {
+          border-bottom-color: #e8f5e9;
+        }
+      }
+
+      &.pending {
+        background: #fffaf5;
+
+        td {
+          border-bottom-color: #fff3e0;
+        }
+      }
+
+      &.expired {
+        opacity: 0.7;
+      }
+
+      td {
+        padding: 16px;
+        font-size: 14px;
+        color: #333;
+
+        @media (min-width: 768px) {
+          padding: 20px;
+          font-size: 15px;
+        }
+
+        @media (min-width: 1024px) {
+          padding: 24px;
+        }
+      }
+    }
+  }
+}
+
+/* ==========================================
+   TABLE COLUMNS
+   ========================================== */
+
+.col-user {
+  width: 35%;
+
+  @media (max-width: 767px) {
+    width: 50%;
+  }
+}
+
+.col-amount {
+  width: 15%;
+
+  @media (max-width: 767px) {
+    display: none;
+  }
+}
+
+.col-period {
+  width: 20%;
+
+  @media (max-width: 767px) {
+    display: none;
+  }
+}
+
+.col-renewal {
+  width: 15%;
+
+  @media (max-width: 767px) {
+    display: none;
+  }
+}
+
+.col-status {
+  width: 10%;
+
+  @media (max-width: 767px) {
+    width: 25%;
+  }
+}
+
+.col-actions {
+  width: 10%;
+  text-align: right;
+
+  @media (max-width: 767px) {
+    width: 25%;
+  }
+}
+
+/* ==========================================
+   USER CELL
+   ========================================== */
+
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .user-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3880ff 0%, #5260ff 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    ion-icon {
+      font-size: 20px;
+      color: white;
+    }
+
+    @media (min-width: 768px) {
+      width: 44px;
+      height: 44px;
+
+      ion-icon {
+        font-size: 22px;
+      }
+    }
+  }
+
+  .user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+
+    .user-name {
+      font-weight: 600;
+      color: #000;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      @media (min-width: 768px) {
+        font-size: 15px;
+      }
+    }
+
+    .user-email {
+      font-size: 13px;
+      color: #999;
+
+      @media (min-width: 768px) {
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+/* ==========================================
+   AMOUNT BADGE
+   ========================================== */
+
+.amount-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  background: #e8eef5;
+  border-radius: 6px;
+  font-weight: 600;
+  color: #2650bb;
+  font-size: 13px;
+
+  @media (min-width: 768px) {
+    padding: 8px 14px;
+    font-size: 14px;
+  }
+}
+
+/* ==========================================
+   RENEWAL BADGE
+   ========================================== */
+
+.renewal-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  background: #f0f0f0;
+  border-radius: 6px;
+  font-weight: 600;
+  color: #666;
+  font-size: 13px;
+
+  &.active {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  @media (min-width: 768px) {
+    padding: 8px 14px;
+    font-size: 14px;
+  }
+}
+
+/* ==========================================
+   STATUS BADGE
+   ========================================== */
+
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  &.active {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  &.pending {
+    background: #fff3e0;
+    color: #e65100;
+  }
+
+  &.expired {
+    background: #ffebee;
+    color: #c62828;
+  }
+
+  @media (min-width: 768px) {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+}
+
+/* ==========================================
+   ACTIONS
+   ========================================== */
+
+.actions-group {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+
+  @media (min-width: 768px) {
+    gap: 12px;
+  }
+}
+
+.action-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  border: 1px solid #e8eef5;
+  background: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+
+  @media (min-width: 768px) {
+    width: 40px;
+    height: 40px;
+  }
+
+  ion-icon {
+    font-size: 18px;
+
+    @media (min-width: 768px) {
+      font-size: 20px;
+    }
+  }
+
+  &.edit {
+    color: #2650bb;
+
+    &:hover {
+      background: #e8eef5;
+      border-color: #2650bb;
+    }
+  }
+
+  &.delete {
+    color: #f44336;
+
+    &:hover {
+      background: #ffebee;
+      border-color: #f44336;
+    }
+  }
+}
+
+/* ==========================================
+   NO RESULTS
+   ========================================== */
+
+.no-results {
+  padding: 40px 20px;
+  text-align: center;
+  color: #999;
+  font-size: 15px;
+
+  @media (min-width: 768px) {
+    padding: 60px 20px;
+    font-size: 16px;
+  }
+}
+
+/* ==========================================
+   TABLE FOOTER
+   ========================================== */
+
+.table-footer {
+  padding: 16px;
+  background: #f8f9fa;
+  border-top: 1px solid #e8eef5;
+  border-radius: 0 0 8px 8px;
+  margin-top: -1px;
+
+  @media (min-width: 768px) {
+    padding: 20px;
+  }
+
+  .results-count {
+    margin: 0;
+    font-size: 13px;
+    color: #666;
+    font-weight: 500;
+
+    @media (min-width: 768px) {
+      font-size: 14px;
+    }
+  }
+}

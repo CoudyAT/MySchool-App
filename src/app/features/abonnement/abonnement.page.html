@@ -1,0 +1,128 @@
+
+<app-desktop-header></app-desktop-header>
+<ion-header [translucent]="true" class="subscriptions-header">
+  <ion-toolbar>
+    <ion-title>Mes abonnements</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="subscriptions-content">
+  
+  <!-- Aucun abonnement -->
+  <div *ngIf="subscriptions.length === 0" class="empty-state">
+    <div class="empty-icon">
+      <ion-icon name="card-outline"></ion-icon>
+    </div>
+    <h2>Aucun abonnement</h2>
+    <p>Vous n'avez actuellement aucun abonnement actif</p>
+    <ion-button 
+      fill="solid" 
+      (click)="goToCourses()"
+      class="empty-action-button">
+      <ion-icon slot="start" name="school-outline"></ion-icon>
+      Découvrir nos cours
+    </ion-button>
+  </div>
+
+  <!-- Table des abonnements -->
+  <div class="table-container" *ngIf="subscriptions.length > 0">
+    
+    <!-- Header avec recherche et filtres -->
+    <div class="table-header">
+      <div class="search-box">
+        <ion-icon name="search-outline" class="search-icon"></ion-icon>
+        <input 
+          type="text" 
+          placeholder="Rechercher un abonnement..."
+          [(ngModel)]="searchText"
+          (keyup)="filterSubscriptions()"
+          class="search-input">
+      </div>
+
+      <div class="filter-select">
+        <ion-icon name="funnel-outline" class="filter-icon"></ion-icon>
+        <select 
+          [(ngModel)]="selectedStatus"
+          (change)="filterSubscriptions()"
+          class="status-select">
+          <option value="">Tous les statuts</option>
+          <option value="ACTIVE">Actif</option>
+          <option value="PENDING">En attente</option>
+          <option value="EXPIRED">Expiré</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrapper">
+      <table class="subscriptions-table">
+        <thead>
+          <tr>
+            <th class="col-user">Plan</th>
+            <th class="col-amount">Montant</th>
+            <th class="col-period">Période</th>
+            <th class="col-renewal">Renouvellement</th>
+            <th class="col-status">Statut</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr 
+            *ngFor="let sub of filteredSubscriptions; let i = index"
+            class="table-row"
+            [class.active]="sub.status === 'ACTIVE'"
+            [class.pending]="sub.status === 'PENDING'"
+            [class.expired]="sub.status === 'EXPIRED'">
+            
+            <!-- Plan -->
+            <td class="col-user">
+              <div class="user-cell">
+                <div class="user-icon">
+                  <ion-icon name="calendar-outline"></ion-icon>
+                </div>
+                <div class="user-info">
+                  <div class="user-name">{{ sub.plan }}</div>
+                  <div class="user-email">{{ sub.currency }}</div>
+                </div>
+              </div>
+            </td>
+
+            <!-- Montant -->
+            <td class="col-amount">
+              <span class="amount-badge">{{ sub.amount }} {{ sub.currency }}</span>
+            </td>
+
+            <!-- Période -->
+            <td class="col-period">
+              {{ sub.startDate | date:'dd MMM' }} - {{ sub.endDate | date:'dd MMM yyyy' }}
+            </td>
+
+            <!-- Renouvellement -->
+            <td class="col-renewal">
+              <span class="renewal-badge" [class.active]="sub.autoRenew">
+                {{ sub.autoRenew ? 'Oui' : 'Non' }}
+              </span>
+            </td>
+
+            <!-- Statut -->
+            <td class="col-status">
+              <span class="status-badge" [ngClass]="sub.status | lowercase">
+                {{ sub.status }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Message si pas de résultats -->
+    <div *ngIf="filteredSubscriptions.length === 0" class="no-results">
+      <p>Aucun abonnement ne correspond à vos critères de recherche</p>
+    </div>
+
+    <!-- Info du nombre de résultats -->
+    <div class="table-footer">
+      <p class="results-count">{{ filteredSubscriptions.length }} abonnement(s) trouvé(s)</p>
+    </div>
+  </div>
+
+</ion-content>

@@ -192,4 +192,8 @@ export const routes: Routes = [
         (m) => m.InstructorDetailsPage
       ),
   },
+  {
+    path: 'abonnement',
+    loadComponent: () => import('./features/abonnement/abonnement.page').then( m => m.AbonnementPage)
+  },
 ];

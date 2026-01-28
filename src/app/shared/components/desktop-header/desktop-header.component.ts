@@ -116,6 +116,6 @@ export class DesktopHeaderComponent implements OnInit {
   }
 
   openHelp() {
-    this.router.navigate(['/message']);
+    this.router.navigate(['/help-center']);
   }
 }

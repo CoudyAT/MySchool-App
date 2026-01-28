@@ -30,13 +30,22 @@ import {
   trophyOutline,
   downloadOutline,
   ellipsisVertical,
-  eyeOutline, lockOpenOutline, lockClosedOutline, chevronForwardOutline
+  eyeOutline,
+  lockOpenOutline,
+  lockClosedOutline,
+  chevronForwardOutline,
+  barChartOutline,
+  schoolOutline,
+  listOutline,
+  documentOutline,
+  documentTextOutline,
 } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { CourseService } from 'src/app/features/services/courseService';
 import { Chapter, Course } from 'src/app/models/course.model';
 import { EnrollmentService } from 'src/app/features/services/enrollmentService'; // Ajouter cet import
 import { ChapterService } from 'src/app/features/services/chapter.service';
+import { DesktopHeaderComponent } from 'src/app/shared/components/desktop-header/desktop-header.component';
 
 @Component({
   selector: 'app-cours-detail',
@@ -56,6 +65,7 @@ import { ChapterService } from 'src/app/features/services/chapter.service';
     RouterModule,
     IonCard,
     IonCardContent,
+    DesktopHeaderComponent,
   ],
 })
 export class CoursDetailPage implements OnInit, OnDestroy {
@@ -65,6 +75,7 @@ export class CoursDetailPage implements OnInit, OnDestroy {
   enrollmentProgress = 0;
   currentEnrollment: any = null;
   chapter!: Chapter;
+  heroActiveTab: 'chapters' | 'documents' = 'chapters';
 
   chapters: Chapter[] = [];
   private courseSubscription: Subscription = new Subscription();
@@ -80,12 +91,17 @@ export class CoursDetailPage implements OnInit, OnDestroy {
   ) {
     addIcons({
       chevronBackOutline,
-      star,
-      starHalf,
+      barChartOutline,
       timeOutline,
+      listOutline,
+      documentOutline,
+      documentTextOutline,
       lockOpenOutline,
       lockClosedOutline,
       chevronForwardOutline,
+      schoolOutline,
+      star,
+      starHalf,
       downloadOutline,
       eyeOutline,
       ellipsisVertical,
@@ -231,7 +247,6 @@ export class CoursDetailPage implements OnInit, OnDestroy {
 
   handleEnroll() {
     if (!this.course) return;
-    
 
     // 🔴 CAS 1 : COURS PAYANT → payer CE COURS
     if (this.course.price && this.course.price > 0) {
@@ -241,7 +256,7 @@ export class CoursDetailPage implements OnInit, OnDestroy {
         type: 'COURSE',
       };
       console.log('Inscription au cours payant:', this.course.id);
-      
+
       this.router.navigate(['/payment-method'], {
         state: {
           plan,
@@ -254,7 +269,6 @@ export class CoursDetailPage implements OnInit, OnDestroy {
 
       return;
     }
-
 
     // 🔵 CAS 2 : COURS GRATUIT → abonnement
 

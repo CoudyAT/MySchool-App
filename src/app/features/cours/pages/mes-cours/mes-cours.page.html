@@ -1,4 +1,6 @@
 <app-desktop-header></app-desktop-header>
+
+<!-- HEADER MOBILE -->
 <ion-header class="ion-no-border mobile-header">
   <ion-toolbar>
     <div class="header-content">
@@ -11,18 +13,30 @@
         </ion-button>
     </div>
   </ion-toolbar>
-</ion-header> 
+</ion-header>
 
-<ion-content class="ion-padding" >
-  <div class="content-wrapper">
-    <!-- Titre -->
-    <h1 class="main-title">Les cours</h1>
+<!-- DESKTOP HEADER AVEC RECHERCHE -->
+<div class="desktop-header-search">
+  <div class="desktop-search-wrapper">
+    <h1 class="desktop-main-title">Les cours</h1>
+    
+    <div class="desktop-search-container">
+      <ion-searchbar 
+        placeholder="Rechercher un cours"
+        (ionInput)="searchCourse($event)"
+        class="desktop-custom-searchbar">
+      </ion-searchbar>
+      <ion-button fill="clear" class="desktop-filter-button" (click)="openFilters()">
+        <ion-icon slot="start" name="options-outline"></ion-icon>
+        FILTRES
+      </ion-button>
+    </div>
 
-    <!-- Segment pour les onglets -->
+    <!-- Segment pour les onglets - DESKTOP -->
     <ion-segment 
       [value]="selectedSegment" 
       (ionChange)="onSegmentChange($event)"
-      class="custom-segment">
+      class="desktop-custom-segment">
       <ion-segment-button value="cours">
         <ion-label>Cours</ion-label>
       </ion-segment-button>
@@ -30,18 +44,41 @@
         <ion-label>Cours en ligne</ion-label>
       </ion-segment-button>
     </ion-segment>
+  </div>
+</div>
 
-    <!-- Barre de recherche et filtres -->
-    <div class="search-filter-container">
-      <ion-searchbar 
-        placeholder="Rechercher un cours"
-        (ionInput)="searchCourse($event)"
-        class="custom-searchbar">
-      </ion-searchbar>
-      <ion-button fill="clear" class="filter-button" (click)="openFilters()">
-        <ion-icon slot="start" name="options-outline"></ion-icon>
-        Filtres
-      </ion-button>
+<!-- CONTENU PRINCIPAL -->
+<ion-content class="ion-padding">
+  <div class="content-wrapper">
+    <!-- MOBILE: Titre et Segment -->
+    <div class="mobile-header-section">
+      <h1 class="main-title">Les cours</h1>
+
+      <!-- Segment pour les onglets - MOBILE -->
+      <ion-segment 
+        [value]="selectedSegment" 
+        (ionChange)="onSegmentChange($event)"
+        class="custom-segment">
+        <ion-segment-button value="cours">
+          <ion-label>Cours</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="cours-en-ligne">
+          <ion-label>Cours en ligne</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+
+      <!-- Barre de recherche et filtres - MOBILE -->
+      <div class="search-filter-container">
+        <ion-searchbar 
+          placeholder="Rechercher un cours"
+          (ionInput)="searchCourse($event)"
+          class="custom-searchbar">
+        </ion-searchbar>
+        <ion-button fill="clear" class="filter-button" (click)="openFilters()">
+          <ion-icon slot="start" name="options-outline"></ion-icon>
+          Filtres
+        </ion-button>
+      </div>
     </div>
 
     <!-- Message de chargement -->

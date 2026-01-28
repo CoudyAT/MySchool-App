@@ -171,4 +171,9 @@ export class ProfileMenuComponent implements OnInit {
   openPaymentOptions() {
     this.router.navigate(['/payment-option']);
   }
+
+  openAbonnement() {
+    this.router.navigate(['/abonnement']);
+  }
+
 }
