@@ -79,8 +79,40 @@ h1 {
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
 }
 
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 0.8rem;
+}
+
+.form-group label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #4b5563;
+    margin-bottom: 0.35rem;
+}
+
+.form-group ion-input,
+.form-group ion-select,
+.form-group ion-textarea {
+    --padding-start: 14px;
+    --padding-end: 14px;
+    --border-radius: 10px;
+    --border-color: #d1d5db;
+    --highlight-color-focused: #2563eb;
+    font-size: 1rem;
+    height: 46px;
+}
+
+.form-group ion-textarea {
+    min-height: 110px;
+    --padding-top: 12px;
+    --padding-bottom: 12px;
+}
+
 section {
-    margin-bottom: 2.5rem;
+    margin-bottom: 2.8rem;
 }
 
 section h2 {
@@ -164,4 +196,92 @@ section h2 {
     font-weight: 600;
     color: #222;
     font-size: 1.05rem;
+}
+
+.image-upload-container {
+    border: 2px dashed #d1d5db;
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    background: #f9fafb;
+    transition: border-color 0.2s ease;
+    margin-bottom: 1.5rem;
+}
+
+.image-upload-container:hover {
+    border-color: #9ca3af;
+}
+
+.image-preview {
+    max-width: 100%;
+    max-height: 220px;
+    border-radius: 10px;
+    object-fit: cover;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    display: block;
+    margin: 0 auto;
+}
+
+.upload-placeholder {
+    color: #6b7280;
+    padding: 2rem 1rem;
+}
+
+.upload-placeholder ion-icon {
+    font-size: 3.2rem;
+    color: #d1d5db;
+    margin-bottom: 0.8rem;
+}
+
+.upload-placeholder p {
+    margin: 0.5rem 0;
+    font-weight: 500;
+}
+
+.upload-placeholder small {
+    font-size: 0.85rem;
+    color: #9ca3af;
+}
+
+.category-section {
+    max-width: 500px;
+}
+
+.new-category-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.new-category-row ion-input {
+    flex: 1 1 220px;
+    min-width: 0;
+}
+
+section:has(ion-textarea) {
+    margin-bottom: 3rem;
+}
+
+.actions.bottom-fixed {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e5e7eb;
+    position: sticky;
+    bottom: 0;
+    background: #f5f6f8;
+    z-index: 10;
+}
+
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: 1fr;
+        gap: 1.4rem;
+    }
+
+    .image-preview {
+        max-height: 180px;
+    }
 }

@@ -50,7 +50,7 @@ export class AddCoursComponent implements OnInit {
       category: ['', Validators.required],
       selectedCategoryOption: [''],
       newCategoryName: [''],
-      instructorId: [''],
+      instructorId: ['', Validators.required],
       description: [''],
       price: [0],
       sessions: [''],

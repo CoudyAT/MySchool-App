@@ -62,6 +62,14 @@ export class DetailCoursPage implements OnInit {
     difficulty: 'moyen',
     questions: [],
   };
+  isEditChapterModalOpen = false;
+  editingChapter: any = {
+    id: '',
+    title: '',
+    order: 1,
+    description: '',
+    duration: '',
+  };
   isLoading: boolean = false;
 
   selectedLessonId: string = '';
@@ -147,6 +155,60 @@ export class DetailCoursPage implements OnInit {
     this.isAddChapterModalOpen = false;
   }
 
+  openEditChapterModal(chapter: any) {
+    this.editingChapter = {
+      id: chapter.id,
+      title: chapter.title || '',
+      order: chapter.order || 1,
+      description: chapter.description || '',
+      duration: chapter.duration || ''
+    };
+    this.isEditChapterModalOpen = true;
+  }
+
+  // Méthode pour fermer
+  closeEditChapterModal() {
+    this.isEditChapterModalOpen = false;
+    // Optionnel : reset editingChapter
+    this.editingChapter = { id: '', title: '', order: 1, description: '', duration: '' };
+  }
+
+  updateChapter() {
+    if (this.isSubmitting) return;
+    this.isSubmitting = true;
+
+    const updatedData = {
+      title: this.editingChapter.title,
+      order: Number(this.editingChapter.order),
+      description: this.editingChapter.description || '',
+      duration: this.editingChapter.duration || ''
+    };
+
+    this.chapterService.updateChapter(this.editingChapter.id, updatedData).subscribe({
+      next: () => {
+        this.presentToast('Chapitre modifié avec succès', 'success');
+
+        // Mise à jour locale (optimiste)
+        const chapterIndex = this.course.chapters.findIndex(ch => ch.id === this.editingChapter.id);
+        if (chapterIndex !== -1) {
+          this.course.chapters[chapterIndex] = {
+            ...this.course.chapters[chapterIndex],
+            ...updatedData
+          };
+        }
+
+        this.closeEditChapterModal();
+        this.loadChapters(); // ou pas nécessaire si mise à jour locale suffit
+      },
+      error: (err) => {
+        console.error('Erreur lors de la modification du chapitre', err);
+        this.presentToast('Erreur lors de la modification', 'danger');
+      },
+      complete: () => {
+        this.isSubmitting = false;
+      }
+    });
+  }
   openAddLessonModal(chapterId: string) {
     this.currentChapterId = chapterId;
     this.newLesson = {

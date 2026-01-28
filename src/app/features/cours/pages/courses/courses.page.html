@@ -27,7 +27,35 @@
   </ion-toolbar>
 </ion-header> 
 <ion-content>
-  <div class="content-wrapper">
+  <!-- Conteneur principal : 1 colonne sur mobile, 2 colonnes sur desktop -->
+  <div class="desktop-split-container">
+
+    <!-- COLONNE GAUCHE : Texte d'accueil (visible seulement sur desktop) -->
+    <div class="left-column">
+      <div class="welcome-text">
+        <img src="assets/logo.svg" alt="MySchool Logo" class="desktop-logo" />
+
+        <h1>Bienvenue dans MySchool</h1>
+        <p class="subtitle">
+          Votre plateforme en ligne de formation et d’apprentissage pluridisciplinaire
+        </p>
+
+        <div class="benefits">
+          <h2>Des experts formateurs</h2>
+          <p>Apprenez avec les meilleurs.</p>
+
+          <h2>Accédez à des cours de qualité</h2>
+          <p>Développez vos compétences à votre rythme.</p>
+
+          <h2>Certifications reconnues</h2>
+          <p>Obtenez des certificats valides internationalement.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- COLONNE DROITE : Tout le contenu principal -->
+    <div class="right-column">
+      <div class="content-wrapper">
 
     <!-- Hero Section - CARROUSEL SWIPER -->
     <div class="hero-section">
@@ -62,13 +90,12 @@
         </swiper-slide>
       </swiper-container>
 
-      <!-- Pagination -->
-      <div class="pagination-dots">
-        <span class="dot" [class.active]="currentSlide === 0"></span>
-        <span class="dot" [class.active]="currentSlide === 1"></span>
-        <span class="dot" [class.active]="currentSlide === 2"></span>
-      </div>
-    </div>
+          <div class="pagination-dots">
+            <span class="dot" [class.active]="currentSlide === 0"></span>
+            <span class="dot" [class.active]="currentSlide === 1"></span>
+            <span class="dot" [class.active]="currentSlide === 2"></span>
+          </div>
+        </div>
 
     <!-- Section Quick Access -->
     <div class="quick-access-section desktop-style">
@@ -103,39 +130,37 @@
       </div>
     </div>
 
-    <!-- Section Mes cours achetés -->
-    <div class="courses-section">
-      <div class="section-header-row">
-        <h1 class="section-title">Mes cours</h1>
-        <ion-button fill="clear" (click)="goToCoursesPage()" class="voir-plus-button">
-          Voir plus
-        </ion-button>
-      </div>
-
-      <!-- Loading State -->
-      <div *ngIf="isLoading" class="loading-courses">
-        <ion-spinner></ion-spinner>
-        <p>Chargement de vos cours...</p>
-      </div>
-
-      <!-- Aucun cours acheté -->
-      <div *ngIf="!isLoading && enrolledCourses.length === 0" class="no-courses">
-        <p class="section-description">
-          Parcourez plus de 150 cours et contenus de formation qui vous correspondent
-        </p>
-
-        <!-- Bouton d'ajout -->
-        <div class="add-button-container">
-          <div class="circular-progress" (click)="goToCoursesPage()">
-            <ion-icon name="add-outline" class="add-icon"></ion-icon>
+        <!-- Section Mes cours achetés -->
+        <div class="courses-section">
+          <div class="section-header-row">
+            <h1 class="section-title">Mes cours</h1>
+            <ion-button fill="clear" (click)="goToCoursesPage()" class="voir-plus-button">
+              Voir plus
+            </ion-button>
           </div>
-        </div>
 
-        <!-- Bouton Suivant -->
-        <ion-button expand="block" class="suivant-button" (click)="goToCoursesPage()">
-          Découvrir les cours
-        </ion-button>
-      </div>
+          <!-- Loading State -->
+          <div *ngIf="isLoading" class="loading-courses">
+            <ion-spinner></ion-spinner>
+            <p>Chargement de vos cours...</p>
+          </div>
+
+          <!-- Aucun cours acheté -->
+          <div *ngIf="!isLoading && enrolledCourses.length === 0" class="no-courses">
+            <p class="section-description">
+              Parcourez plus de 150 cours et contenus de formation qui vous correspondent
+            </p>
+
+            <div class="add-button-container">
+              <div class="circular-progress" (click)="goToCoursesPage()">
+                <ion-icon name="add-outline" class="add-icon"></ion-icon>
+              </div>
+            </div>
+
+            <ion-button expand="block" class="suivant-button" (click)="goToCoursesPage()">
+              Découvrir les cours
+            </ion-button>
+          </div>
 
       <!-- Cours achetés - Grid 2 colonnes -->
       <div *ngIf="!isLoading && enrolledCourses.length > 0" class="enrolled-courses-grid">

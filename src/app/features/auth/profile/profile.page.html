@@ -10,21 +10,49 @@
 </ion-header>
 
 <ion-content>
-  <div class="profile-container">
+  <!-- Conteneur principal : 1 colonne mobile, 2 colonnes desktop -->
+  <div class="desktop-split-container">
 
-    <!-- Section Avatar et Infos Utilisateur -->
-    <div class="profile-header">
-      <div class="avatar-container">
-        <div class="avatar-circle">
-          <img *ngIf="currentUser?.photoURL" [src]="currentUser.photoURL" alt="Profile picture" />
-          <div *ngIf="!currentUser?.photoURL" class="avatar-placeholder">
-            {{ currentUser?.firstName?.charAt(0) || 'A' }}
-          </div>
+    <!-- COLONNE GAUCHE : Message de bienvenue (visible uniquement sur desktop) -->
+    <div class="left-column">
+      <div class="welcome-text">
+        <img src="assets/logo.svg" alt="MySchool Logo" class="desktop-logo" />
+
+        <h1>Bienvenue, {{ currentUser?.firstName || 'Amy' }} !</h1>
+        <p class="subtitle">
+          Gérez votre profil, vos préférences et votre compte en toute simplicité.
+        </p>
+
+        <div class="benefits">
+          <h2>Profil personnalisé</h2>
+          <p>Mettez à jour vos informations et votre photo.</p>
+
+          <h2>Sécurité renforcée</h2>
+          <p>Protégez votre compte avec les options de sécurité.</p>
+
+          <h2>Paramètres sur mesure</h2>
+          <p>Choisissez votre langue, notifications et mode d’affichage.</p>
         </div>
-        <button class="camera-button" (click)="changeProfilePicture()">
-          <ion-icon name="camera-outline"></ion-icon>
-        </button>
       </div>
+    </div>
+
+    <!-- COLONNE DROITE : Contenu du profil -->
+    <div class="right-column">
+      <div class="profile-container">
+
+        <!-- Section Avatar et Infos Utilisateur -->
+        <div class="profile-header">
+          <div class="avatar-container">
+            <div class="avatar-circle">
+              <img *ngIf="currentUser?.photoURL" [src]="currentUser.photoURL" alt="Profile picture" />
+              <div *ngIf="!currentUser?.photoURL" class="avatar-placeholder">
+                {{ currentUser?.firstName?.charAt(0) || 'A' }}
+              </div>
+            </div>
+            <button class="camera-button" (click)="changeProfilePicture()">
+              <ion-icon name="camera-outline"></ion-icon>
+            </button>
+          </div>
 
       <h2 class="user-name">
         {{ currentUser?.firstName  }} {{ currentUser?.lastName  }}
@@ -32,26 +60,23 @@
       <p class="user-phone">{{ currentUser?.phone }}</p>
     </div>
 
-    <!-- Liste des Options -->
-    <ion-list class="options-list" lines="none">
+        <!-- Liste des Options -->
+        <ion-list class="options-list" lines="none">
 
-      <!-- Modifier Profile -->
-      <ion-item button (click)="modifyProfile()" class="option-item">
-        <ion-icon name="person-outline" slot="start" class="option-icon"></ion-icon>
-        <ion-label>Modifier mon profil</ion-label>
-      </ion-item>
+          <ion-item button (click)="modifyProfile()" class="option-item">
+            <ion-icon name="person-outline" slot="start" class="option-icon"></ion-icon>
+            <ion-label>Modifier mon profil</ion-label>
+          </ion-item>
 
-      <!-- Option de paiement -->
-      <ion-item button (click)="openPaymentOptions()" class="option-item">
-        <ion-icon name="card-outline" slot="start" class="option-icon"></ion-icon>
-        <ion-label>Option de paiement</ion-label>
-      </ion-item>
+          <ion-item button (click)="openPaymentOptions()" class="option-item">
+            <ion-icon name="card-outline" slot="start" class="option-icon"></ion-icon>
+            <ion-label>Option de paiement</ion-label>
+          </ion-item>
 
-      <!-- Notifications -->
-      <ion-item button (click)="openNotifications()" class="option-item">
-        <ion-icon name="notifications-outline" slot="start" class="option-icon"></ion-icon>
-        <ion-label>Notifications</ion-label>
-      </ion-item>
+          <ion-item button (click)="openNotifications()" class="option-item">
+            <ion-icon name="notifications-outline" slot="start" class="option-icon"></ion-icon>
+            <ion-label>Notifications</ion-label>
+          </ion-item>
 
       <!-- Sécurité -->
       <ion-item button (click)="openSecurity()" class="option-item">
@@ -65,56 +90,35 @@
         <ion-label>Abonnement</ion-label>
       </ion-item>
 
-      <!-- Langue -->
-      <ion-item button (click)="openLanguage()" class="option-item">
-        <ion-icon name="language-outline" slot="start" class="option-icon"></ion-icon>
-        <ion-label>Langue</ion-label>
-        <span class="language-value">Français (FR)</span>
-      </ion-item>
+          <ion-item button (click)="openLanguage()" class="option-item">
+            <ion-icon name="language-outline" slot="start" class="option-icon"></ion-icon>
+            <ion-label>Langue</ion-label>
+            <span class="language-value">Français (FR)</span>
+          </ion-item>
 
-      <!-- Mode Sombre 
-      <ion-item button (click)="toggleDarkMode()" class="option-item">
-        <ion-icon name="eye-outline" slot="start" class="option-icon"></ion-icon>
-        <ion-label>Mode Sombre</ion-label>
-      </ion-item> -->
-      <!-- Mode Sombre
-      <ion-item class="option-item">
-        <ion-icon [name]="isDarkMode ? 'moon-outline' : 'sunny-outline'" slot="start" class="option-icon"></ion-icon>
-        <ion-label>Mode Sombre</ion-label>
-        <ion-toggle 
-          slot="end" 
-          [(ngModel)]="isDarkMode"
-          name="darkMode"
-          (ionChange)="toggleDarkMode()"
-          class="dark-mode-toggle"
-        ></ion-toggle>
-      </ion-item>  -->
+          <ion-item button (click)="openTerms()" class="option-item">
+            <ion-icon name="document-text-outline" slot="start" class="option-icon"></ion-icon>
+            <ion-label>Conditions d'utilisation</ion-label>
+          </ion-item>
 
-      <!-- Conditions d'utilisation -->
-      <ion-item button (click)="openTerms()" class="option-item">
-        <ion-icon name="document-text-outline" slot="start" class="option-icon"></ion-icon>
-        <ion-label>Conditions d'utilisation</ion-label>
-      </ion-item>
+          <ion-item button (click)="openHelp()" class="option-item">
+            <ion-icon name="help-circle-outline" slot="start" class="option-icon"></ion-icon>
+            <ion-label>Centre d'aide</ion-label>
+          </ion-item>
 
-      <!-- Centre d'aide -->
-      <ion-item button (click)="openHelp()" class="option-item">
-        <ion-icon name="help-circle-outline" slot="start" class="option-icon"></ion-icon>
-        <ion-label>Centre d'aide</ion-label>
-      </ion-item>
+          <ion-item button (click)="inviteFriends()" class="option-item">
+            <ion-icon name="people-outline" slot="start" class="option-icon"></ion-icon>
+            <ion-label>Parrainer des amis</ion-label>
+          </ion-item>
 
-      <!-- Parrainer des amis -->
-      <ion-item button (click)="inviteFriends()" class="option-item">
-        <ion-icon name="people-outline" slot="start" class="option-icon"></ion-icon>
-        <ion-label>Parrainer des amis</ion-label>
-      </ion-item>
+          <ion-item button (click)="logout()" class="option-item logout-item">
+            <ion-icon name="log-out-outline" slot="start" class="option-icon logout-icon"></ion-icon>
+            <ion-label class="logout-label">Déconnexion</ion-label>
+          </ion-item>
 
-      <!-- Déconnexion -->
-      <ion-item button (click)="logout()" class="option-item logout-item">
-        <ion-icon name="log-out-outline" slot="start" class="option-icon logout-icon"></ion-icon>
-        <ion-label class="logout-label">Déconnexion</ion-label>
-      </ion-item>
-
-    </ion-list>
+        </ion-list>
+      </div>
+    </div>
   </div>
 </ion-content>
 

@@ -134,7 +134,7 @@
 
           <!-- Actions -->
           <div class="chapter-actions">
-            <button class="action-button" title="Modifier">
+            <button class="action-button" title="Modifier" (click)="openEditChapterModal(ch)">
               <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -336,6 +336,68 @@
         <button type="button" class="btn-secondary" (click)="closeAddExerciseModal()">Annuler</button>
         <button type="submit" class="btn-primary" [disabled]="exerciseForm.invalid || isSubmitting">
           {{ isSubmitting ? 'Création...' : 'Créer l\'exercice' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL MODIFIER UN CHAPITRE -->
+<div *ngIf="isEditChapterModalOpen" class="modal-overlay" (click)="closeEditChapterModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">Modifier le chapitre</h2>
+      <button class="modal-close" (click)="closeEditChapterModal()">
+        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <form (ngSubmit)="updateChapter()" #editChapterForm="ngForm" class="modal-body">
+      <div class="form-grid">
+        <!-- Titre du chapitre -->
+        <div class="form-group">
+          <label for="editChapterTitle">Titre du chapitre</label>
+          <input type="text" id="editChapterTitle" name="title" [(ngModel)]="editingChapter.title" required
+            #titleEdit="ngModel" class="form-input" placeholder="Ex: Introduction à Angular">
+          <div *ngIf="titleEdit.invalid && titleEdit.touched" class="error-text">
+            Le titre est obligatoire
+          </div>
+        </div>
+
+        <!-- Ordre -->
+        <div class="form-group">
+          <label for="editChapterOrder">Position dans le cours</label>
+          <input type="number" id="editChapterOrder" name="order" [(ngModel)]="editingChapter.order" required min="1"
+            #orderEdit="ngModel" class="form-input">
+          <div *ngIf="orderEdit.invalid && orderEdit.touched" class="error-text">
+            Position obligatoire (≥ 1)
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group full-width">
+          <label for="editChapterDesc">Description</label>
+          <textarea id="editChapterDesc" name="description" [(ngModel)]="editingChapter.description" rows="4"
+            class="form-input" placeholder="Décrivez brièvement le contenu de ce chapitre...">
+          </textarea>
+        </div>
+
+        <!-- Durée estimée -->
+        <div class="form-group">
+          <label for="editChapterDuration">Durée estimée</label>
+          <input type="text" id="editChapterDuration" name="duration" [(ngModel)]="editingChapter.duration"
+            class="form-input" placeholder="Ex: 2h30">
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" (click)="closeEditChapterModal()">
+          Annuler
+        </button>
+        <button type="submit" class="btn-primary" [disabled]="editChapterForm.invalid || isSubmitting">
+          {{ isSubmitting ? 'Modification en cours...' : 'Enregistrer les modifications' }}
         </button>
       </div>
     </form>

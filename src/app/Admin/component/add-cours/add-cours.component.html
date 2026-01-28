@@ -42,6 +42,26 @@
       </div>
     </div>
 
+    <!-- Professeur / Formateur -->
+    <div class="form-group">
+      <label for="instructor" class="form-label">
+        Professeur <span class="required">*</span>
+      </label>
+      <select id="instructor" formControlName="instructorId" class="form-input">
+        <option value="">Sélectionnez un professeur</option>
+        <option *ngFor="let prof of instructors" [value]="prof.id">
+          {{ prof.name }}
+          <ng-container *ngIf="prof.title"> • {{ prof.title }}</ng-container>
+        </option>
+      </select>
+
+      <!-- Message d'erreur -->
+      <div *ngIf="courseForm.get('instructorId')?.invalid && courseForm.get('instructorId')?.touched"
+        class="error-message">
+        Veuillez sélectionner un professeur
+      </div>
+    </div>
+
     <!-- Catégorie -->
     <div class="form-group">
       <label class="form-label">Catégorie <span class="required">*</span></label>

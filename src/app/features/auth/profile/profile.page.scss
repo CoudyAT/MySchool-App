@@ -2,17 +2,17 @@ ion-header {
   ion-toolbar {
     --background: #FFFFFF;
     --min-height: 60px;
-    
+
     ion-buttons {
       ion-button {
         --color: #000000;
         font-size: 16px;
-        
+
         .back-text {
           margin-left: 4px;
           font-weight: 500;
         }
-        
+
         ion-icon {
           font-size: 24px;
         }
@@ -35,12 +35,12 @@ ion-content {
   padding: 32px 24px;
   text-align: center;
   margin-bottom: 16px;
-  
+
   .avatar-container {
     position: relative;
     display: inline-block;
     margin-bottom: 16px;
-    
+
     .avatar-circle {
       width: 100px;
       height: 100px;
@@ -51,20 +51,20 @@ ion-content {
       display: flex;
       align-items: center;
       justify-content: center;
-      
+
       img {
         width: 100%;
         height: 100%;
         object-fit: cover;
       }
-      
+
       .avatar-placeholder {
         font-size: 40px;
         font-weight: 700;
         color: #666666;
       }
     }
-    
+
     .camera-button {
       position: absolute;
       bottom: 0;
@@ -79,30 +79,30 @@ ion-content {
       justify-content: center;
       cursor: pointer;
       transition: all 0.3s ease;
-      
+
       ion-icon {
         font-size: 20px;
         color: #00B894;
       }
-      
+
       &:active {
         transform: scale(0.95);
         background: #00B894;
-        
+
         ion-icon {
           color: #FFFFFF;
         }
       }
     }
   }
-  
+
   .user-name {
     font-size: 24px;
     font-weight: 700;
     color: #000000;
     margin: 0 0 8px 0;
   }
-  
+
   .user-phone {
     font-size: 15px;
     color: #666666;
@@ -114,7 +114,7 @@ ion-content {
 .options-list {
   background: transparent;
   padding: 0 16px;
-  
+
   .option-item {
     --background: #FFFFFF;
     --padding-start: 16px;
@@ -124,49 +124,49 @@ ion-content {
     margin-bottom: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     transition: all 0.3s ease;
-    
+
     &::part(native) {
       border-radius: 12px;
     }
-    
+
     .option-icon {
       font-size: 24px;
       color: #666666;
       margin-right: 16px;
     }
-    
+
     ion-label {
       font-size: 16px;
       color: #000000;
       font-weight: 500;
     }
-    
+
     .language-value {
       font-size: 14px;
       color: #0066FF;
       font-weight: 600;
       margin-right: 8px;
     }
-    
+
     .chevron-icon {
       font-size: 20px;
       color: #CCCCCC;
     }
-    
+
     &:active {
       transform: scale(0.98);
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
     }
   }
-  
+
   /* Style spécial pour la déconnexion */
   .logout-item {
     margin-top: 16px;
-    
+
     .logout-icon {
       color: #FF3B30;
     }
-    
+
     .logout-label {
       color: #FF3B30;
     }
@@ -177,31 +177,31 @@ ion-content {
 @media (max-width: 375px) {
   .profile-header {
     padding: 24px 20px;
-    
+
     .avatar-container .avatar-circle {
       width: 90px;
       height: 90px;
-      
+
       .avatar-placeholder {
         font-size: 36px;
       }
     }
-    
+
     .user-name {
       font-size: 22px;
     }
   }
-  
+
   .options-list {
     padding: 0 12px;
-    
+
     .option-item {
       --min-height: 52px;
-      
+
       .option-icon {
         font-size: 22px;
       }
-      
+
       ion-label {
         font-size: 15px;
       }
