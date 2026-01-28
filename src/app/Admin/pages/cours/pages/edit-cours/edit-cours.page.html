@@ -1,86 +1,129 @@
 <div class="page">
 
-  <!-- HEADER -->
   <div class="header">
     <button class="back-btn" routerLink="/admin-login/courses">← Retour</button>
-    <h1>{{ course.title }}</h1>
+    <h1>Modifier le cours</h1>
   </div>
 
-  <!-- FORMULAIRE -->
-  <form (ngSubmit)="saveCourse()" #editForm="ngForm">
+  <form [formGroup]="editForm" (ngSubmit)="saveCourse()" class="edit-form">
 
     <div class="card">
 
-      <!-- INFOS PRINCIPALES -->
+      <!-- Image de couverture -->
       <section>
-        <h2>Informations du cours</h2>
+        <h2>Image de couverture</h2>
+        <div class="image-upload-container" (click)="fileInput.click()">
+          <img *ngIf="imagePreview" [src]="imagePreview" alt="Prévisualisation" class="image-preview" />
+          <div *ngIf="!imagePreview" class="upload-placeholder">
+            <ion-icon name="image-outline" size="large"></ion-icon>
+            <p>Cliquez pour changer l'image</p>
+            <small>Recommandé : 1200x600 – JPG/PNG</small>
+          </div>
+        </div>
+        <input #fileInput type="file" accept="image/*" (change)="onImageSelected($event)" hidden />
+      </section>
 
+      <!-- Informations principales -->
+      <section>
+        <h2>Informations principales</h2>
         <div class="grid">
 
-          <div class="info-block">
-            <p class="label">Titre</p>
-            <ion-input type="text" [(ngModel)]="course.title" name="title" required>
-            </ion-input>
+          <div class="form-group">
+            <label>Titre <span class="required">*</span></label>
+            <ion-input formControlName="title" required></ion-input>
+            <div class="error" *ngIf="editForm.get('title')?.touched && editForm.get('title')?.invalid">
+              Le titre est obligatoire
+            </div>
           </div>
 
-          <div class="info-block">
-            <p class="label">Type</p>
-            <ion-select [(ngModel)]="course.type" name="type">
+          <div class="form-group">
+            <label>Professeur <span class="required">*</span></label>
+            <ion-select formControlName="instructorId" interface="popover" placeholder="Choisir un formateur">
+              <ion-select-option *ngFor="let instr of instructors" [value]="instr.id">
+                {{ instr.name }}
+                <span *ngIf="instr.title"> • {{ instr.title }}</span>
+              </ion-select-option>
+            </ion-select>
+            <div class="error" *ngIf="editForm.get('instructorId')?.touched && editForm.get('instructorId')?.invalid">
+              Veuillez sélectionner un formateur
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Type</label>
+            <ion-select formControlName="type">
               <ion-select-option value="En ligne">En ligne</ion-select-option>
               <ion-select-option value="Présentiel">Présentiel</ion-select-option>
               <ion-select-option value="Hybride">Hybride</ion-select-option>
             </ion-select>
           </div>
 
-          <div class="info-block">
-            <p class="label">Prix (FCFA)</p>
-            <ion-input type="number" [(ngModel)]="course.price" name="price" min="0">
-            </ion-input>
-          </div>
-
-          <div class="info-block">
-            <p class="label">Niveau</p>
-            <ion-select [(ngModel)]="course.level" name="level">
+          <div class="form-group">
+            <label>Niveau</label>
+            <ion-select formControlName="level">
               <ion-select-option value="Débutant">Débutant</ion-select-option>
               <ion-select-option value="Intermédiaire">Intermédiaire</ion-select-option>
               <ion-select-option value="Avancé">Avancé</ion-select-option>
             </ion-select>
           </div>
 
+          <div class="form-group">
+            <label>Prix (FCFA)</label>
+            <ion-input type="number" formControlName="price" min="0"></ion-input>
+          </div>
+
         </div>
       </section>
 
-      <!-- DESCRIPTION -->
+      <!-- Catégorie -->
       <section>
-        <h2>Description</h2>
+        <h2>Catégorie</h2>
+        <div class="category-section">
+          <ion-select formControlName="selectedCategoryOption" (ionChange)="onCategoryOptionChange($event.detail.value)"
+            interface="popover">
+            <ion-select-option value="">Choisir une catégorie</ion-select-option>
+            <ion-select-option *ngFor="let cat of categories" [value]="cat">{{ cat }}</ion-select-option>
+            <ion-select-option value="__add_new__">+ Nouvelle catégorie...</ion-select-option>
+          </ion-select>
 
-        <ion-textarea [(ngModel)]="course.description" name="description" rows="5" placeholder="Description du cours">
-        </ion-textarea>
-
+          <div *ngIf="showNewCategoryInput" class="new-category-row">
+            <ion-input formControlName="newCategoryName" placeholder="Nom de la nouvelle catégorie"></ion-input>
+            <button type="button" class="btn-small" (click)="addNewCategory()">Ajouter</button>
+            <button type="button" class="btn-small btn-outline" (click)="cancelNewCategory()">Annuler</button>
+          </div>
+        </div>
       </section>
 
-      <!-- OPTIONS -->
+      <!-- Description -->
       <section>
-        <h2>Options</h2>
+        <h2>Description</h2>
+        <ion-textarea formControlName="description" rows="6"
+          placeholder="Décrivez le cours, les objectifs..."></ion-textarea>
+      </section>
 
+      <!-- Options / Statistiques -->
+      <section>
+        <h2>Options du cours</h2>
         <div class="grid">
 
-          <div class="info-block">
-            <p class="label">Durée (heures)</p>
-            <ion-input type="number" [(ngModel)]="course.duration" name="duration" min="0">
-            </ion-input>
+          <div class="form-group">
+            <label>Durée (heures)</label>
+            <ion-input type="number" formControlName="duration" min="0"></ion-input>
           </div>
 
-          <div class="info-block">
-            <p class="label">Sessions</p>
-            <ion-input type="number" [(ngModel)]="course.sessions" name="sessions" min="0">
-            </ion-input>
+          <div class="form-group">
+            <label>Nombre de sessions</label>
+            <ion-input type="number" formControlName="sessions" min="0"></ion-input>
           </div>
 
-          <div class="info-block">
-            <p class="label">Exercices</p>
-            <ion-input type="number" [(ngModel)]="course.exercises" name="exercises" min="0">
-            </ion-input>
+          <div class="form-group">
+            <label>Nombre d'exercices</label>
+            <ion-input type="number" formControlName="exercises" min="0"></ion-input>
+          </div>
+
+          <div class="form-group checkbox">
+            <ion-checkbox formControlName="certificateAvailable"></ion-checkbox>
+            <label>Certificat disponible à la fin du cours</label>
           </div>
 
         </div>
@@ -88,14 +131,14 @@
 
     </div>
 
-    <!-- ACTIONS -->
-    <div class="actions">
+    <!-- Actions -->
+    <div class="actions bottom-fixed">
       <button type="button" class="btn-secondary" routerLink="/admin-login/courses">
         Annuler
       </button>
-
-      <button type="submit" class="btn-primary" [disabled]="editForm.invalid">
-        Enregistrer
+      <button type="submit" class="btn-primary" [disabled]="editForm.invalid || isSaving">
+        <ion-spinner *ngIf="isSaving" name="crescent"></ion-spinner>
+        {{ isSaving ? 'Enregistrement...' : 'Enregistrer les modifications' }}
       </button>
     </div>
 

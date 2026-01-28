@@ -15,7 +15,7 @@
             <p class="subtitle">Découvrez et gérez vos instructeurs</p>
           </div>
 
-          <button class="add-button" (click)="openCreateInstructorModal()">
+          <button class="add-button" (click)="openInstructorModal()">
             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
@@ -93,7 +93,7 @@
 
           <!-- Actions -->
           <div class="user-actions">
-            <button class="action-button" title="Modifier">
+            <button class="action-button" title="Modifier" (click)="openInstructorModal(inst)">
               <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -122,7 +122,7 @@
           <h2 class="empty-title">Aucun instructeur trouvé</h2>
           <p class="empty-text">Essayez d'ajuster votre recherche ou ajoutez un nouvel instructeur.</p>
 
-          <button class="add-button add-button-empty" (click)="openCreateInstructorModal()">
+          <button class="add-button add-button-empty" (click)="openInstructorModal()">
             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
@@ -160,67 +160,71 @@
     </div>
   </div>
 </div>
-
-<!-- MODAL DE CRÉATION D'INSTRUCTEUR -->
-<div *ngIf="isCreateModalOpen" class="modal-overlay" (click)="closeCreateModal()">
+<!-- MODAL CRÉATION / ÉDITION D'INSTRUCTEUR -->
+<div *ngIf="isInstructorModalOpen" class="modal-overlay" (click)="closeInstructorModal()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h2 class="modal-title">Créer un nouvel instructeur</h2>
-      <button class="modal-close" (click)="closeCreateModal()">
+      <h2 class="modal-title">
+        {{ isEditing ? 'Modifier l’instructeur' : 'Créer un nouvel instructeur' }}
+      </h2>
+      <button class="modal-close" (click)="closeInstructorModal()">
         <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
     </div>
 
-    <form (ngSubmit)="createInstructor()" #createForm="ngForm" class="modal-body">
+    <form (ngSubmit)="saveInstructor()" #instructorForm="ngForm" class="modal-body">
       <div class="form-grid">
+
         <!-- Nom complet -->
         <div class="form-group">
-          <label for="name">Nom complet</label>
-          <input type="text" id="name" name="name" [(ngModel)]="newInstructor.name" required #name="ngModel"
+          <label for="modalName">Nom complet</label>
+          <input type="text" id="modalName" name="name" [(ngModel)]="modalInstructor.name" required #nameCtrl="ngModel"
             class="form-input" placeholder="MR COLIBALY">
-          <div *ngIf="name.invalid && name.touched" class="error-text">
+          <div *ngIf="nameCtrl.invalid && nameCtrl.touched" class="error-text">
             Le nom est obligatoire
           </div>
         </div>
 
-        <!-- Titre / Biographie courte -->
+        <!-- Titre -->
         <div class="form-group">
-          <label for="title">Titre</label>
-          <input type="text" id="title" name="title" [(ngModel)]="newInstructor.title" required #title="ngModel"
-            class="form-input" placeholder="Professeur Mathématiques">
-          <div *ngIf="title.invalid && title.touched" class="error-text">
+          <label for="modalTitle">Titre / Poste</label>
+          <input type="text" id="modalTitle" name="title" [(ngModel)]="modalInstructor.title" required
+            #titleCtrl="ngModel" class="form-input" placeholder="Professeur Mathématiques">
+          <div *ngIf="titleCtrl.invalid && titleCtrl.touched" class="error-text">
             Le titre est obligatoire
           </div>
         </div>
 
-        <!-- Bio complète -->
+        <!-- Bio -->
         <div class="form-group full-width">
-          <label for="bio">Biographie complète</label>
-          <textarea id="bio" name="bio" [(ngModel)]="newInstructor.bio" rows="4" class="form-input"
-            placeholder="Professeur de mathématiques depuis 15 ans, spécialisé en logique et algorithmes..."></textarea>
+          <label for="modalBio">Biographie complète</label>
+          <textarea id="modalBio" name="bio" [(ngModel)]="modalInstructor.bio" rows="5" class="form-input"
+            placeholder="Décrivez l'expérience, les spécialités...">
+          </textarea>
         </div>
 
-        <!-- Image (URL ou chemin) -->
+        <!-- Image (simplifié – URL ou file plus tard) -->
         <div class="form-group">
-          <label for="image">Image (URL ou chemin)</label>
-          <input type="file" id="image" name="image" [(ngModel)]="newInstructor.image" class="form-input"
-            placeholder="assets/colibaly.png">
+          <label for="modalImage">URL de l'image</label>
+          <input type="text" id="modalImage" name="image" [(ngModel)]="modalInstructor.image" class="form-input"
+            placeholder="https://... ou assets/photo.jpg">
         </div>
 
-        <!-- Expertise (multi-sélection simulée) -->
+        <!-- Expertises -->
         <div class="form-group full-width">
           <label>Expertises</label>
           <div class="expertise-input-container">
-            <input type="text" placeholder="Ajouter une expertise (ex: Algorithmes)" [(ngModel)]="currentExpertise"
+            <input type="text" placeholder="Ajouter une expertise (Entrée pour valider)" [(ngModel)]="currentExpertise"
               name="currentExpertise" (keydown.enter)="addExpertise()" class="form-input expertise-input">
             <button type="button" (click)="addExpertise()" class="btn-add-expertise">
               Ajouter
             </button>
           </div>
-          <div class="expertise-badges-preview" *ngIf="newInstructor.expertiseIds.length > 0">
-            <span *ngFor="let exp of newInstructor.expertiseIds; let i = index" class="badge badge-premium text-xs">
+
+          <div class="expertise-badges-preview" *ngIf="modalInstructor.expertiseIds?.length">
+            <span *ngFor="let exp of modalInstructor.expertiseIds; let i = index" class="badge badge-premium text-xs">
               {{ exp }}
               <button type="button" (click)="removeExpertise(i)" class="badge-remove">×</button>
             </span>
@@ -230,9 +234,11 @@
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn-secondary" (click)="closeCreateModal()">Annuler</button>
-        <button type="submit" class="btn-primary" [disabled]="createForm.invalid">
-          Créer l'instructeur
+        <button type="button" class="btn-secondary" (click)="closeInstructorModal()">
+          Annuler
+        </button>
+        <button type="submit" class="btn-primary" [disabled]="instructorForm.invalid">
+          {{ isEditing ? 'Enregistrer les modifications' : 'Créer l’instructeur' }}
         </button>
       </div>
     </form>
