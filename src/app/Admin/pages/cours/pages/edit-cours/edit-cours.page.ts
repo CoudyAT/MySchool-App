@@ -52,7 +52,7 @@ export class EditCoursPage implements OnInit {
       price: [0, Validators.min(0)],
       description: [''],
       duration: [0, Validators.min(0)],
-      sessions: [0, Validators.min(0)],
+      sessions: [''],
       exercises: [0, Validators.min(0)],
       certificateAvailable: [false],
       selectedCategoryOption: [''],

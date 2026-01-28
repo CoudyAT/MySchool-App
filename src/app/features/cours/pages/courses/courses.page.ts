@@ -119,7 +119,31 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
     private fcmService: FcmService,
     private courseService: CourseService
   ) {
-    addIcons({searchOutline,personCircleOutline,starOutline,addOutline,shieldCheckmark,personOutline,chevronDownOutline,closeOutline,notificationsOutline,chevronForwardOutline,shieldCheckmarkOutline,bookOutline,optionsOutline,lockOpenOutline,trendingUpOutline,bulbOutline,calculatorOutline,logOutOutline,ribbonOutline,checkmarkCircle,cardOutline,arrowForwardOutline,playCircleOutline,});
+    addIcons({
+      searchOutline,
+      personCircleOutline,
+      starOutline,
+      addOutline,
+      shieldCheckmark,
+      personOutline,
+      chevronDownOutline,
+      closeOutline,
+      notificationsOutline,
+      chevronForwardOutline,
+      shieldCheckmarkOutline,
+      bookOutline,
+      optionsOutline,
+      lockOpenOutline,
+      trendingUpOutline,
+      bulbOutline,
+      calculatorOutline,
+      logOutOutline,
+      ribbonOutline,
+      checkmarkCircle,
+      cardOutline,
+      arrowForwardOutline,
+      playCircleOutline,
+    });
   }
 
   ngOnInit() {

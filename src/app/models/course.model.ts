@@ -63,7 +63,7 @@ export interface Course {
   level: 'DEBUTANT' | 'INTERMEDIAIRE' | 'AVANCE';
   type: 'En ligne' | 'VIDEO';
   duration: number;
-  sessions: number;
+  sessions: string;
   exercises: number;
   image: string;
   isPublished: boolean;

@@ -112,15 +112,17 @@
           </div>
 
           <div class="form-group">
-            <label>Nombre de sessions</label>
+            <label>Sessions</label>
             <ion-input type="number" formControlName="sessions" min="0"></ion-input>
           </div>
 
           <div class="info-block">
             <p class="label">Lien vidéo</p>
-            <ion-input type="text" [(ngModel)]="course.sessions" name="sessions" min="0">
+            <ion-input type="text" [value]="course.sessions" placeholder="URL de la vidéo">
             </ion-input>
           </div>
+
+ 
 
           <div class="form-group checkbox">
             <ion-checkbox formControlName="certificateAvailable"></ion-checkbox>
