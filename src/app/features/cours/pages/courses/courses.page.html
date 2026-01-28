@@ -2,195 +2,197 @@
   <ion-toolbar>
     <div class="header-content">
       <img src="assets/logo.svg" alt="MySchool Logo" class="logo" />
-      <!--  <ion-button
-          fill="solid"
-          color="warning"
-          (click)="openPremiumModal()"
-          class="premium-button">
-          <ion-icon name="star-outline" slot="start"></ion-icon>
-          Premium
-      </ion-button> 
-    -->
       <ion-button fill="clear" (click)="goToProfile()" class="profile-button">
         <ion-icon class="profile" name="person-circle-outline"></ion-icon>
       </ion-button>
     </div>
     <ion-button fill="solid" (click)="openPremiumModal()" class="preminum">
       <ion-icon name="star-outline" slot="start"></ion-icon>
-      Abonner-vous pour avoir acces a tous les cours
+      Abonner-vous pour avoir accès à tous les cours
     </ion-button>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <div class="content-wrapper">
+  <!-- Conteneur principal : 1 colonne sur mobile, 2 colonnes sur desktop -->
+  <div class="desktop-split-container">
 
-    <!-- Hero Section - CARROUSEL SWIPER -->
-    <div class="hero-section">
+    <!-- COLONNE GAUCHE : Texte d'accueil (visible seulement sur desktop) -->
+    <div class="left-column">
+      <div class="welcome-text">
+        <img src="assets/logo.svg" alt="MySchool Logo" class="desktop-logo" />
 
-
-
-      <swiper-container class="hero-swiper" [config]="slideOpts" (swiperslidechange)="onSlideChange($event)"
-        (swiperinit)="onSwiperInit($event)">
-        <!-- Slide 1 -->
-        <swiper-slide>
-          <div class="slide-container">
-            <img src="assets/slide1.svg" alt="Formation 1" class="slide-image" />
-            <div class="slide-overlay"></div>
-          </div>
-        </swiper-slide>
-
-        <!-- Slide 2 -->
-        <swiper-slide>
-          <div class="slide-container">
-            <img src="assets/logo.svg" alt="Formation 2" class="slide-image" />
-            <div class="slide-overlay"></div>
-          </div>
-        </swiper-slide>
-
-        <!-- Slide 3 -->
-        <swiper-slide>
-          <div class="slide-container">
-            <img src="assets/slide1.svg" alt="Formation 3" class="slide-image" />
-            <div class="slide-overlay"></div>
-          </div>
-        </swiper-slide>
-      </swiper-container>
-
-      <!-- Pagination -->
-      <div class="pagination-dots">
-        <span class="dot" [class.active]="currentSlide === 0"></span>
-        <span class="dot" [class.active]="currentSlide === 1"></span>
-        <span class="dot" [class.active]="currentSlide === 2"></span>
-      </div>
-    </div>
-
-    <!-- Section Quick Access -->
-    <div class="quick-access-section">
-      <div class="quick-access-grid">
-        <div class="quick-access-item" (click)="goToCoursesPage()">
-          <div class="icon-container" style="background-color: #FF3B30;">
-            <img src="assets/cours.svg" alt="Cours" class="quick-icon">
-          </div>
-          <span class="item-label">Cours</span>
-        </div>
-
-        <div class="quick-access-item" (click)="goToBiblio()">
-          <div class="icon-container" style="background-color: #34C759;">
-            <img src="assets/biblio.svg" alt="Biblio" class="quick-icon">
-          </div>
-          <span class="item-label">Biblio</span>
-        </div>
-
-        <div class="quick-access-item" (click)="goToTutos()">
-          <div class="icon-container" style="background-color: #FFCC00;">
-            <img src="assets/tuto.svg" alt="Tutos" class="quick-icon">
-          </div>
-          <span class="item-label">Tutos</span>
-        </div>
-
-        <div class="quick-access-item" (click)="goToExos()">
-          <div class="icon-container" style="background-color: #FF9500;">
-            <img src="assets/exos.svg" alt="Exos" class="quick-icon">
-          </div>
-          <span class="item-label">Exos</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Section Mes cours achetés -->
-    <div class="courses-section">
-      <div class="section-header-row">
-        <h1 class="section-title">Mes cours</h1>
-        <ion-button fill="clear" (click)="goToCoursesPage()" class="voir-plus-button">
-          Voir plus
-        </ion-button>
-      </div>
-
-      <!-- Loading State -->
-      <div *ngIf="isLoading" class="loading-courses">
-        <ion-spinner></ion-spinner>
-        <p>Chargement de vos cours...</p>
-      </div>
-
-      <!-- Aucun cours acheté -->
-      <div *ngIf="!isLoading && enrolledCourses.length === 0" class="no-courses">
-        <p class="section-description">
-          Parcourez plus de 150 cours et contenus de formation qui vous correspondent
+        <h1>Bienvenue dans MySchool</h1>
+        <p class="subtitle">
+          Votre plateforme en ligne de formation et d’apprentissage pluridisciplinaire
         </p>
 
-        <!-- Bouton d'ajout -->
-        <div class="add-button-container">
-          <div class="circular-progress" (click)="goToCoursesPage()">
-            <ion-icon name="add-outline" class="add-icon"></ion-icon>
-          </div>
-        </div>
+        <div class="benefits">
+          <h2>Des experts formateurs</h2>
+          <p>Apprenez avec les meilleurs.</p>
 
-        <!-- Bouton Suivant -->
-        <ion-button expand="block" class="suivant-button" (click)="goToCoursesPage()">
-          Découvrir les cours
-        </ion-button>
-      </div>
+          <h2>Accédez à des cours de qualité</h2>
+          <p>Développez vos compétences à votre rythme.</p>
 
-      <!-- Cours achetés - Grid 2 colonnes -->
-      <div *ngIf="!isLoading && enrolledCourses.length > 0" class="enrolled-courses-grid">
-        <ion-card *ngFor="let course of enrolledCourses" class="course-card" (click)="openCourse(course)">
-
-          <div class="card-image">
-            <img src="assets/algo.svg" alt="MySchool Logo">
-            <!-- Badge Certificat disponible -->
-            <div class="certificate-badge">
-              <ion-icon name="shield-checkmark"></ion-icon>
-              <span>Certificat disponible</span>
-            </div>
-
-            <!-- Icône play -->
-            <div class="play-icon">
-              <ion-icon name="play"></ion-icon>
-            </div>
-          </div>
-
-          <ion-card-content>
-            <h3 class="course-title">{{ course.courseTitle }}</h3>
-            <div class="course-meta">
-              <span>{{ course.courseDetails?.sessions }} Sessions</span>
-              <span class="separator">•</span>
-              <span style="color: #FF9500;">{{ course.courseDetails?.exercises }} Exercices</span>
-            </div>
-            <div class="enrollment-date" *ngIf="course.enrolledAt">
-              Inscrit le {{ getFormattedDate(course.enrolledAt) }}
-            </div>
-          </ion-card-content>
-        </ion-card>
-      </div>
-    </div>
-    <!-- Section Instructeurs -->
-    <div class="instructors-section">
-      <h2 class="section-title">Instructeurs</h2>
-
-      <div class="instructors-grid">
-        <div class="instructor-card" *ngFor="let instructor of instructors"
-          [style.background-color]="instructor.backgroundColor" (click)="goToInstructorProfile(instructor.id)">
-          <img src="assets/slide1.svg" alt="Instructeur" class="instructor-image" />
-          <div class="instructor-name">{{ instructor.name }}</div>
+          <h2>Certifications reconnues</h2>
+          <p>Obtenez des certificats valides internationalement.</p>
         </div>
       </div>
     </div>
 
-    <!-- Section Certifications -->
-    <div class="courses-section">
-      <h1 class="section-title">Certifications</h1>
+    <!-- COLONNE DROITE : Tout le contenu principal -->
+    <div class="right-column">
+      <div class="content-wrapper">
 
-      <div class="add-button-container">
-        <img src="assets/tabler.svg" alt="Exos" class="quick-icon">
-      </div>
-      <p class="section-description">
-        Bénéficiez des certifications de l’OIT
-        (Organisation Internationale du Travail)
-      </p>
-    </div>
-  </div>
+        <!-- Hero Section - CARROUSEL SWIPER -->
+        <div class="hero-section">
+          <swiper-container class="hero-swiper" [config]="slideOpts" (swiperslidechange)="onSlideChange($event)"
+            (swiperinit)="onSwiperInit($event)">
+            <swiper-slide>
+              <div class="slide-container">
+                <img src="assets/slide1.svg" alt="Formation 1" class="slide-image" />
+                <div class="slide-overlay"></div>
+              </div>
+            </swiper-slide>
+            <swiper-slide>
+              <div class="slide-container">
+                <img src="assets/logo.svg" alt="Formation 2" class="slide-image" />
+                <div class="slide-overlay"></div>
+              </div>
+            </swiper-slide>
+            <swiper-slide>
+              <div class="slide-container">
+                <img src="assets/slide1.svg" alt="Formation 3" class="slide-image" />
+                <div class="slide-overlay"></div>
+              </div>
+            </swiper-slide>
+          </swiper-container>
+
+          <div class="pagination-dots">
+            <span class="dot" [class.active]="currentSlide === 0"></span>
+            <span class="dot" [class.active]="currentSlide === 1"></span>
+            <span class="dot" [class.active]="currentSlide === 2"></span>
+          </div>
+        </div>
+
+        <!-- Section Quick Access -->
+        <div class="quick-access-section">
+          <div class="quick-access-grid">
+            <div class="quick-access-item" (click)="goToCoursesPage()">
+              <div class="icon-container" style="background-color: #FF3B30;">
+                <img src="assets/cours.svg" alt="Cours" class="quick-icon">
+              </div>
+              <span class="item-label">Cours</span>
+            </div>
+            <div class="quick-access-item" (click)="goToBiblio()">
+              <div class="icon-container" style="background-color: #34C759;">
+                <img src="assets/biblio.svg" alt="Biblio" class="quick-icon">
+              </div>
+              <span class="item-label">Biblio</span>
+            </div>
+            <div class="quick-access-item" (click)="goToTutos()">
+              <div class="icon-container" style="background-color: #FFCC00;">
+                <img src="assets/tuto.svg" alt="Tutos" class="quick-icon">
+              </div>
+              <span class="item-label">Tutos</span>
+            </div>
+            <div class="quick-access-item" (click)="goToExos()">
+              <div class="icon-container" style="background-color: #FF9500;">
+                <img src="assets/exos.svg" alt="Exos" class="quick-icon">
+              </div>
+              <span class="item-label">Exos</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section Mes cours achetés -->
+        <div class="courses-section">
+          <div class="section-header-row">
+            <h1 class="section-title">Mes cours</h1>
+            <ion-button fill="clear" (click)="goToCoursesPage()" class="voir-plus-button">
+              Voir plus
+            </ion-button>
+          </div>
+
+          <!-- Loading State -->
+          <div *ngIf="isLoading" class="loading-courses">
+            <ion-spinner></ion-spinner>
+            <p>Chargement de vos cours...</p>
+          </div>
+
+          <!-- Aucun cours acheté -->
+          <div *ngIf="!isLoading && enrolledCourses.length === 0" class="no-courses">
+            <p class="section-description">
+              Parcourez plus de 150 cours et contenus de formation qui vous correspondent
+            </p>
+
+            <div class="add-button-container">
+              <div class="circular-progress" (click)="goToCoursesPage()">
+                <ion-icon name="add-outline" class="add-icon"></ion-icon>
+              </div>
+            </div>
+
+            <ion-button expand="block" class="suivant-button" (click)="goToCoursesPage()">
+              Découvrir les cours
+            </ion-button>
+          </div>
+
+          <!-- Cours achetés -->
+          <div *ngIf="!isLoading && enrolledCourses.length > 0" class="enrolled-courses-grid">
+            <ion-card *ngFor="let course of enrolledCourses" class="course-card" (click)="openCourse(course)">
+              <div class="card-image">
+                <img src="assets/algo.svg" alt="Course">
+                <div class="certificate-badge">
+                  <ion-icon name="shield-checkmark"></ion-icon>
+                  <span>Certificat disponible</span>
+                </div>
+                <div class="play-icon">
+                  <ion-icon name="play"></ion-icon>
+                </div>
+              </div>
+              <ion-card-content>
+                <h3 class="course-title">{{ course.courseTitle }}</h3>
+                <div class="course-meta">
+                  <span>{{ course.courseDetails?.sessions }} Sessions</span>
+                  <span class="separator">•</span>
+                  <span style="color: #FF9500;">{{ course.courseDetails?.exercises }} Exercices</span>
+                </div>
+                <div class="enrollment-date" *ngIf="course.enrolledAt">
+                  Inscrit le {{ getFormattedDate(course.enrolledAt) }}
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </div>
+        </div>
+
+        <!-- Section Instructeurs -->
+        <div class="instructors-section">
+          <h2 class="section-title">Instructeurs</h2>
+          <div class="instructors-grid">
+            <div class="instructor-card" *ngFor="let instructor of instructors"
+              (click)="goToInstructorProfile(instructor.id)">
+              <img src="assets/slide1.svg" alt="Instructeur" class="instructor-image" />
+              <div class="instructor-name">{{ instructor.name }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section Certifications -->
+        <div class="courses-section">
+          <h1 class="section-title">Certifications</h1>
+          <div class="add-button-container">
+            <img src="assets/tabler.svg" alt="Certifications" class="quick-icon">
+          </div>
+          <p class="section-description">
+            Bénéficiez des certifications de l’OIT<br>
+            (Organisation Internationale du Travail)
+          </p>
+        </div>
+
+      </div> <!-- fin content-wrapper -->
+    </div> <!-- fin right-column -->
+  </div> <!-- fin desktop-split-container -->
 </ion-content>
 
-<!-- Menu du bas réutilisable -->
+<!-- Menu du bas -->
 <app-bottom-menu activePage="home"></app-bottom-menu>
