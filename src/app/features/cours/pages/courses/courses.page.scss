@@ -1193,7 +1193,7 @@ ion-header ion-toolbar {
   .hero-swiper {
     width: 100%;
     height: 100%;
-
+    
     swiper-slide {
       width: 100%;
       height: 100%;
@@ -1207,23 +1207,25 @@ ion-header ion-toolbar {
     display: flex;
     align-items: center;
     justify-content: center;
-
+    
     .slide-image {
       width: 100%;
       height: 100%;
       object-fit: cover; // ✅ Remplit tout l'espace
       object-position: center;
     }
-
+    
     .slide-overlay {
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background: linear-gradient(to bottom,
-          rgba(0, 0, 0, 0.1) 0%,
-          rgba(0, 0, 0, 0.3) 100%);
+      background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.1) 0%,
+        rgba(0, 0, 0, 0.3) 100%
+      );
       pointer-events: none;
     }
   }
@@ -1580,104 +1582,4 @@ ion-header ion-toolbar {
 
 .continue-button:active {
   --background: #10b981;
-}
-
-
-
-
-
-
-
-
-
-// Conteneur principal pour le split desktop
-.desktop-split-container {
-  display: flex;
-  min-height: 100%;
-  padding-bottom: 80px; // Pour le menu du bas
-
-  // Sur mobile : tout en colonne
-  flex-direction: column;
-
-  // Sur desktop : deux colonnes
-  @media (min-width: 992px) {
-    flex-direction: row;
-  }
-}
-
-// Colonne gauche (texte descriptif)
-.left-column {
-  display: none; // Caché sur mobile
-
-  @media (min-width: 992px) {
-    display: block;
-    width: 50%;
-    background: #f8f9fa;
-    padding: 60px 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .welcome-text {
-    max-width: 500px;
-
-    h1 {
-      font-size: 42px;
-      font-weight: 700;
-      color: #000;
-      margin-bottom: 24px;
-    }
-
-    .subtitle {
-      font-size: 20px;
-      color: #333;
-      margin-bottom: 60px;
-      line-height: 1.6;
-    }
-
-    .benefits {
-      h2 {
-        font-size: 24px;
-        font-weight: 600;
-        color: #000;
-        margin: 32px 0 12px;
-      }
-
-      p {
-        font-size: 18px;
-        color: #555;
-        line-height: 1.6;
-      }
-    }
-  }
-}
-
-// Colonne droite (contenu principal)
-.right-column {
-  width: 100%;
-
-  @media (min-width: 992px) {
-    width: 50%;
-    padding: 40px 60px 0 60px;
-    overflow-y: auto;
-  }
-
-  .content-wrapper {
-    max-width: 800px;
-    margin: 0 auto;
-
-    @media (min-width: 1200px) {
-      max-width: 900px;
-    }
-  }
-}
-
-// Ajustement du hero sur desktop
-@media (min-width: 992px) {
-  .hero-section {
-    height: 500px;
-    margin: 0 0 40px 0;
-    border-radius: 24px;
-  }
 }
