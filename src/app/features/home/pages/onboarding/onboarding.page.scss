@@ -215,3 +215,17 @@
   }
 
 }
+
+
+/* Caché par défaut (desktop, tablet) */
+.onboarding-container {
+  display: none;
+}
+
+/* Visible seulement sur mobile */
+@media (max-width: 768px) {
+  .onboarding-container {
+    display: block;
+  }
+}
+

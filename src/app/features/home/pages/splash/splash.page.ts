@@ -1,8 +1,14 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  HostListener,
+  ViewEncapsulation,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonRow, IonGrid, IonCol, IonIcon, IonButton } from '@ionic/angular/standalone';
-import { ActivatedRoute, Router } from '@angular/router';
+import { IonContent } from '@ionic/angular/standalone';
+import { Router } from '@angular/router';
+
 @Component({
   selector: 'app-splash',
   templateUrl: './splash.page.html',
@@ -12,13 +18,34 @@ import { ActivatedRoute, Router } from '@angular/router';
   imports: [IonContent, CommonModule, FormsModule],
 })
 export class SplashPage implements OnInit {
+  isMobile = false;
 
   constructor(private router: Router) {}
 
   ngOnInit() {
-    setTimeout(() => {
-      this.router.navigate(['/onboarding']); 
-    }, 3000);
+    this.checkDevice();
+
+    // ⏱ Splash seulement sur mobile
+    if (this.isMobile) {
+      setTimeout(() => {
+        this.router.navigate(['/onboarding'], { replaceUrl: true });
+      }, 3000);
+    }
+  }
+
+  // 🔁 Resize écran
+  @HostListener('window:resize')
+  onResize() {
+    this.checkDevice();
+  }
+
+  // 📱 Détection appareil
+  checkDevice() {
+    this.isMobile = window.innerWidth <= 768;
+
+    // 👉 Desktop → Login direct
+    if (!this.isMobile) {
+      this.router.navigate(['/login'], { replaceUrl: true });
+    }
   }
 }
-

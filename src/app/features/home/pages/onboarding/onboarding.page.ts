@@ -4,6 +4,7 @@ import {
   ViewChild,
   ElementRef,
   CUSTOM_ELEMENTS_SCHEMA,
+  HostListener,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -15,13 +16,17 @@ import { IonButton, IonContent } from '@ionic/angular/standalone';
   styleUrls: ['./onboarding.page.scss'],
   standalone: true,
   imports: [CommonModule, IonContent, IonButton],
-  // autorise les web components comme <swiper-container>
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class OnboardingPage implements OnInit {
-  @ViewChild('swiperEl', { static: true }) swiperEl!: ElementRef<HTMLElement>;
+  @ViewChild('swiperEl', { static: true })
+  swiperEl!: ElementRef<HTMLElement>;
 
+  // 👉 Index slide actuel
   currentSlide = 0;
+
+  // 👉 Autoriser uniquement mobile
+  isMobile = false;
 
   onboardingData = [
     {
@@ -49,17 +54,36 @@ export class OnboardingPage implements OnInit {
   constructor(private router: Router) {}
 
   ngOnInit() {
-      const onboardingCompleted = localStorage.getItem('onboardingCompleted');
+    // ✅ Vérification device
+    this.checkDevice();
 
-      if (onboardingCompleted === 'true') {
-        // 👉 utilisateur déjà passé par l'onboarding
-        this.router.navigate(['/login'], { replaceUrl: true });
-      }
+    // ✅ Vérifier si onboarding déjà fait
+    const onboardingCompleted = localStorage.getItem('onboardingCompleted');
+
+    if (onboardingCompleted === 'true') {
+      this.router.navigate(['/login'], { replaceUrl: true });
+    }
   }
 
-  // appeler la méthode slideNext() du webcomponent
+  // 🔁 Quand on redimensionne l'écran
+  @HostListener('window:resize')
+  onResize() {
+    this.checkDevice();
+  }
+
+  // 📱 Vérifie si mobile
+  checkDevice() {
+    this.isMobile = window.innerWidth <= 768;
+
+    // 👉 Desktop = redirection login
+    if (!this.isMobile) {
+      this.router.navigate(['/login'], { replaceUrl: true });
+    }
+  }
+
+  // ▶ Slide suivant
   nextSlide() {
-    // 👉 si on est sur la dernière slide
+    // Dernière slide
     if (this.currentSlide === this.onboardingData.length - 1) {
       this.finishOnboarding();
       return;
@@ -71,22 +95,24 @@ export class OnboardingPage implements OnInit {
     }
   }
 
-  // écouter le changement de slide (dans ngAfterViewInit tu peux ajouter l'écoute si besoin)
+  // 👂 Écoute changement slide
   ngAfterViewInit() {
     const el = this.swiperEl?.nativeElement as any;
     if (!el) return;
-    // met à jour currentSlide quand swiper change
+
     el.addEventListener('swiperslidechange', (ev: any) => {
       const [swiper] = ev.detail;
       this.currentSlide = swiper.activeIndex;
     });
   }
 
+  // ✅ Fin onboarding
   finishOnboarding() {
     localStorage.setItem('onboardingCompleted', 'true');
     this.router.navigate(['/login'], { replaceUrl: true });
   }
 
+  // ⏭ Skip
   skipOnboarding() {
     this.finishOnboarding();
   }
