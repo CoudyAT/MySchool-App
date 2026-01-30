@@ -21,6 +21,7 @@ ion-header {
 
 ion-content {
   --background: #F8F9FA;
+  --color: #000000;
 }
 
 .content-wrapper {
@@ -495,6 +496,7 @@ ion-content {
         
         .course-meta {
           font-size: 15px;
+          color: white;
         }
         
         .course-footer {
@@ -592,5 +594,125 @@ ion-content {
       padding: 6px 12px;
       font-size: 13px;
     }
+  }
+}
+
+/* ============================
+   MODAL
+============================ */
+
+ion-modal {
+  --border-radius: 20px 20px 0 0;
+  --background: #f7f8fa;
+}
+
+/* Header */
+
+ion-modal ion-toolbar {
+  --background: #ffffff;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-name {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* Contenu */
+
+ion-modal ion-content {
+  --background: #f7f8fa;
+  padding: 12px;
+}
+
+/* ============================
+   COURSE CARD
+============================ */
+
+ion-modal ion-card {
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+ion-modal ion-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+/* Image */
+
+ion-modal ion-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+/* Card Content */
+
+ion-modal ion-card-content {
+  padding: 14px;
+}
+
+/* Titre */
+
+ion-modal h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+/* Meta */
+
+.course-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+/* Badge */
+
+.course-meta span {
+  background: #eef2ff;
+  color: #4f46e5;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+/* Séparateur point */
+
+.course-meta span:nth-child(2) {
+  background: transparent;
+  color: #aaa;
+  padding: 0;
+}
+
+/* Prix */
+
+.course-meta span:last-child {
+  background: #ecfeff;
+  color: #0891b2;
+}
+
+/* ============================
+   ANIMATION
+============================ */
+
+ion-modal::part(content) {
+  animation: slideUp .3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }

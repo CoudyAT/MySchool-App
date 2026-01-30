@@ -13,7 +13,7 @@ export interface Instructor {
   totalHours: number;
   expertiseIds: string[];
   coursesIds: string[];
-  courses?: Course[];
+  courses?: any[];
   expertise: string[];
   active: boolean;
 }

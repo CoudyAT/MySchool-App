@@ -1181,12 +1181,17 @@ ion-header ion-toolbar {
 
 // Hero Section - CARROUSEL SWIPER
 .hero-section {
-  background: linear-gradient(180deg, #004D00 0%, #00331A 100%);
+  // background: linear-gradient(180deg, #004D00 0%, #00331A 100%);
+  // margin: 0 16px 24px 16px;
+  // border-radius: 20px;
+  // border: 1px solid #00331A;
+  // position: relative;
+  // height: 340px;
+  // overflow: hidden;
+   // background: linear-gradient(180deg, #004D00 0%, #00331A 100%);
   margin: 0 16px 24px 16px;
   border-radius: 20px;
-  border: 1px solid #00331A;
   position: relative;
-  height: 340px;
   overflow: hidden;
 
   // Swiper container
@@ -1211,7 +1216,7 @@ ion-header ion-toolbar {
     .slide-image {
       width: 100%;
       height: 100%;
-      object-fit: cover; // ✅ Remplit tout l'espace
+     // object-fit:none; // ✅ Remplit tout l'espace
       object-position: center;
     }
     

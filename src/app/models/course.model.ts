@@ -82,6 +82,7 @@ export interface Course {
   enrolled?: boolean;
   data?: any;
   instructorId?: string;
+  instructorName?: string;
   support?: string;
   isOnline?: boolean;
   onlineExtras?: OnlineCourseExtras;

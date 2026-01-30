@@ -40,7 +40,7 @@
         <!-- Slide 1 -->
         <swiper-slide>
           <div class="slide-container">
-            <img src="assets/slide1.svg" alt="Formation 1" class="slide-image" />
+            <img src="assets/masterclass.png" alt="Formation 1" class="slide-image" />
             <div class="slide-overlay"></div>
           </div>
         </swiper-slide>
@@ -48,7 +48,7 @@
         <!-- Slide 2 -->
         <swiper-slide>
           <div class="slide-container">
-            <img src="assets/logo.svg" alt="Formation 2" class="slide-image" />
+            <img src="assets/renforcement.png" alt="Formation 2" class="slide-image" />
             <div class="slide-overlay"></div>
           </div>
         </swiper-slide>
@@ -187,11 +187,11 @@
         <div class="instructor-card" *ngFor="let instructor of instructors"
           [style.background-color]="instructor.backgroundColor" (click)="goToInstructorProfile(instructor.id)">
           <img
-              [src]="instructor?.image"
-              alt="Instructeur"
-              class="instructor-image"
-            />  
-          <div class="instructor-name">{{ instructor.name }}</div>
+             [src]="instructor.image"
+              [alt]="instructor.name"
+            class="instructor-image"
+          /> 
+        <!--   <div class="instructor-name">{{ instructor.name }}</div> -->
         </div>
       </div>
     </div>

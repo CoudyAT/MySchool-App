@@ -1,0 +1,135 @@
+<ion-content class="login-container" [fullscreen]="true">
+  <div class="login-wrapper">
+    <!-- Header -->
+    <div class="header-section">
+      <div class="nav-section">
+        <ion-button
+          fill="clear"
+          color="dark"
+          routerLink="/"
+          class="back-button"
+          *ngIf="!otpSent">
+          <ion-icon name="chevron-back"></ion-icon>
+        </ion-button>
+
+        <ion-button
+          fill="clear"
+          color="dark"
+          class="back-button"
+          (click)="editPhoneNumber()"
+          *ngIf="otpSent">
+          <ion-icon name="chevron-back"></ion-icon>
+        </ion-button>
+      </div>
+
+      <div class="logo-container">
+        <img src="assets/logo.svg" alt="MySchool Logo" class="logo" />
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="titles-section">
+        <h1 class="main-title">
+          {{ otpSent ? 'Vérifiez votre numéro' : 'Connexion Admin' }}
+        </h1>
+        <p class="subtitle">
+          <span *ngIf="!otpSent">
+            Entrez votre numéro de téléphone admin pour vous connecter
+          </span>
+          <span *ngIf="otpSent">
+            Entrez le code à 6 chiffres envoyé par SMS
+          </span>
+        </p>
+      </div>
+
+      <!-- Étape 1: Saisie du téléphone -->
+      <div *ngIf="!otpSent" class="step-content active">
+        <form [formGroup]="phoneForm" class="form-container-modern">
+          <div class="input-group-modern">
+            <label class="input-label-modern">Numéro de téléphone</label>
+            <div class="phone-input-wrapper">
+              <ion-input
+                #phoneInput
+                type="tel"
+                formControlName="phone"
+                placeholder="+221 77 123 45 67"
+                (ionInput)="onPhoneInput($event)"
+                (keyup.enter)="sendOtp()"
+                class="phone-input">
+              </ion-input>
+            </div>
+            <div class="error-text" *ngIf="isFieldInvalid()">
+              {{ getFieldError() }}
+            </div>
+          </div>
+
+          <ion-button
+            expand="block"
+            class="modern-primary-button"
+            [disabled]="!phoneForm.valid || loading"
+            (click)="sendOtp()">
+            <ion-icon name="send-outline" slot="start" *ngIf="!loading"></ion-icon>
+            {{ loading ? 'Envoi en cours...' : 'Recevoir le code' }}
+          </ion-button>
+        </form>
+      </div>
+
+      <!-- Étape 2: Vérification OTP -->
+      <div *ngIf="otpSent" class="step-content active">
+        <form [formGroup]="otpForm" class="form-container-modern">
+          <div class="otp-instructions">
+            <p>Code envoyé au numéro :</p>
+            <p class="phone-display">{{ displayedPhone }}</p>
+          </div>
+          <div class="input-group-modern">
+            <label class="input-label-modern">Code de vérification</label>
+            <div class="otp-input-container">
+              <div class="otp-inputs">
+                <input
+                  *ngFor="let i of [0,1,2,3,4,5]; let idx = index"
+                  type="text"
+                  maxlength="1"
+                  [formControlName]="'digit' + i"
+                  class="otp-input"
+                  (input)="onOtpInput($event, idx)"
+                  (keydown.backspace)="onOtpBackspace($event, idx)"
+                  (keydown)="onOtpKeyDown($event, idx)"
+                  inputmode="numeric"
+                  pattern="[0-9]*"
+                  autocomplete="one-time-code">
+              </div>
+            </div>
+            <div class="error-text" *ngIf="otpError">
+              {{ otpError }}
+            </div>
+          </div>
+
+          <div class="timer-section" *ngIf="countdown > 0">
+            <p class="timer-text">
+              Renvoyer le code dans <span class="timer">{{ countdown }}s</span>
+            </p>
+          </div>
+
+          <div class="resend-section" *ngIf="countdown === 0">
+            <button type="button" class="resend-link" (click)="resendOtp()">
+              Renvoyer le code
+            </button>
+          </div>
+
+          <ion-button
+            expand="block"
+            class="modern-primary-button"
+            [disabled]="!isOtpComplete() || verifying"
+            (click)="verifyOtp()">
+            <ion-icon name="checkmark-outline" slot="start" *ngIf="!verifying"></ion-icon>
+            {{ verifying ? 'Vérification...' : 'Vérifier le code' }}
+          </ion-button>
+        </form>
+      </div>
+
+      <!-- reCAPTCHA invisible -->
+      <div id="recaptcha-container"></div>
+    </div>
+  </div>
+</ion-content>

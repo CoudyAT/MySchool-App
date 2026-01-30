@@ -196,4 +196,8 @@ export const routes: Routes = [
     path: 'abonnement',
     loadComponent: () => import('./features/abonnement/abonnement.page').then( m => m.AbonnementPage)
   },
+  {
+    path: 'login-admin',
+    loadComponent: () => import('./features/auth/login-admin/login-admin.page').then( m => m.LoginAdminPage)
+  },
 ];

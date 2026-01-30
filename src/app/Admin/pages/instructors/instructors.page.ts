@@ -4,25 +4,35 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule, ToastController } from '@ionic/angular';
 import { Instructor } from 'src/app/models/instructor.model';
 import { InstructorService } from 'src/app/features/services/instructorService';
+import {
+  getStorage,
+  ref,
+  uploadString,
+  getDownloadURL,
+} from 'firebase/storage';
+
 
 @Component({
   selector: 'app-instructors',
   templateUrl: './instructors.page.html',
   styleUrls: ['./instructors.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule]
+  imports: [CommonModule, FormsModule, IonicModule],
 })
 export class InstructorsPage implements OnInit {
-
   // ── Données liste ────────────────────────────────────────
   allInstructors: Instructor[] = [];
   filteredInstructors: Instructor[] = [];
   paginatedInstructors: Instructor[] = [];
+  private storage = getStorage();
 
   totalInstructors = 0;
   currentPage = 1;
   itemsPerPage = 20;
   totalPages = 0;
+  selectedFile: File | null = null;
+  imagePreview: string | null = null;
+  imageBase64: string | null = null;
 
   searchText = '';
   isLoading = false;
@@ -42,13 +52,13 @@ export class InstructorsPage implements OnInit {
     expertiseIds: [],
     coursesIds: [],
     rating: undefined,
-    backgroundColor: '#ff9933'
+    backgroundColor: '#ff9933',
   };
 
   constructor(
     private instructorService: InstructorService,
     private toastCtrl: ToastController
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.loadInstructors();
@@ -71,7 +81,7 @@ export class InstructorsPage implements OnInit {
         console.error('Erreur chargement instructeurs', err);
         this.showToast('Impossible de charger les instructeurs', 'danger');
         this.isLoading = false;
-      }
+      },
     });
   }
 
@@ -79,9 +89,14 @@ export class InstructorsPage implements OnInit {
   // Pagination
   // ─────────────────────────────────────────────────────────
   updatePagination() {
-    this.totalPages = Math.ceil(this.filteredInstructors.length / this.itemsPerPage);
+    this.totalPages = Math.ceil(
+      this.filteredInstructors.length / this.itemsPerPage
+    );
     const start = (this.currentPage - 1) * this.itemsPerPage;
-    this.paginatedInstructors = this.filteredInstructors.slice(start, start + this.itemsPerPage);
+    this.paginatedInstructors = this.filteredInstructors.slice(
+      start,
+      start + this.itemsPerPage
+    );
   }
 
   previousPage() {
@@ -133,11 +148,12 @@ export class InstructorsPage implements OnInit {
     if (!term) {
       this.filteredInstructors = [...this.allInstructors];
     } else {
-      this.filteredInstructors = this.allInstructors.filter(inst =>
-        inst.name?.toLowerCase().includes(term) ||
-        inst.title?.toLowerCase().includes(term) ||
-        inst.bio?.toLowerCase().includes(term) ||
-        inst.expertiseIds?.some(exp => exp.toLowerCase().includes(term))
+      this.filteredInstructors = this.allInstructors.filter(
+        (inst) =>
+          inst.name?.toLowerCase().includes(term) ||
+          inst.title?.toLowerCase().includes(term) ||
+          inst.bio?.toLowerCase().includes(term) ||
+          inst.expertiseIds?.some((exp) => exp.toLowerCase().includes(term))
       );
     }
 
@@ -168,7 +184,7 @@ export class InstructorsPage implements OnInit {
         expertiseIds: [...(instructor.expertiseIds || [])],
         coursesIds: [...(instructor.coursesIds || [])],
         rating: instructor.rating ?? null,
-        backgroundColor: instructor.backgroundColor || '#ff9933'
+        backgroundColor: instructor.backgroundColor || '#ff9933',
       };
     } else {
       // Création
@@ -195,7 +211,7 @@ export class InstructorsPage implements OnInit {
       expertiseIds: [],
       coursesIds: [],
       rating: undefined,
-      backgroundColor: '#ff9933'
+      backgroundColor: '#ff9933',
     };
     this.currentExpertise = '';
   }
@@ -212,7 +228,7 @@ export class InstructorsPage implements OnInit {
     if (!this.modalInstructor.expertiseIds?.includes(exp)) {
       this.modalInstructor.expertiseIds = [
         ...(this.modalInstructor.expertiseIds || []),
-        exp
+        exp,
       ];
     }
 
@@ -227,46 +243,156 @@ export class InstructorsPage implements OnInit {
   // ─────────────────────────────────────────────────────────
   // Sauvegarde (create + update)
   // ─────────────────────────────────────────────────────────
-  saveInstructor() {
-    if (!this.modalInstructor.name?.trim() || !this.modalInstructor.title?.trim()) {
+  // saveInstructor() {
+  //   if (
+  //     !this.modalInstructor.name?.trim() ||
+  //     !this.modalInstructor.title?.trim()
+  //   ) {
+  //     this.showToast('Le nom et le titre sont obligatoires', 'warning');
+  //     return;
+  //   }
+
+  //   if (this.isEditing && this.editingInstructorId) {
+  //     // Mise à jour
+  //     const dataToSave = { ...this.modalInstructor };
+  //     this.instructorService
+  //       .updateInstructor(this.editingInstructorId, dataToSave)
+  //       .subscribe({
+  //         next: (updated) => {
+  //           const idx = this.allInstructors.findIndex(
+  //             (i) => i.id === this.editingInstructorId
+  //           );
+  //           if (idx !== -1) {
+  //             this.allInstructors[idx] = {
+  //               ...this.allInstructors[idx],
+  //               ...updated,
+  //             };
+  //             this.onSearchChange();
+  //           }
+  //           this.closeInstructorModal();
+  //           this.showToast('Instructeur modifié avec succès', 'success');
+  //         },
+  //         error: (err) => {
+  //           console.error('Erreur mise à jour instructeur', err);
+  //           this.showToast('Erreur lors de la modification', 'danger');
+  //         },
+  //       });
+  //   } else {
+  //     // Création
+  //     const { id, ...dataToSave } = this.modalInstructor;
+  //     this.instructorService
+  //       .createInstructor(dataToSave as Instructor)
+  //       .subscribe({
+  //         next: (created) => {
+  //           this.allInstructors = [...this.allInstructors, created];
+  //           this.onSearchChange();
+  //           this.closeInstructorModal();
+  //           this.showToast('Instructeur créé avec succès', 'success');
+  //         },
+  //         error: (err) => {
+  //           console.error('Erreur création instructeur', err);
+  //           this.showToast('Erreur lors de la création', 'danger');
+  //         },
+  //       });
+  //   }
+  // }
+
+  async saveInstructor() {
+    if (
+      !this.modalInstructor.name?.trim() ||
+      !this.modalInstructor.title?.trim()
+    ) {
       this.showToast('Le nom et le titre sont obligatoires', 'warning');
       return;
     }
 
-    if (this.isEditing && this.editingInstructorId) {
-      // Mise à jour
-      const dataToSave = { ...this.modalInstructor };
-      this.instructorService.updateInstructor(this.editingInstructorId, dataToSave).subscribe({
-        next: (updated) => {
-          const idx = this.allInstructors.findIndex(i => i.id === this.editingInstructorId);
-          if (idx !== -1) {
-            this.allInstructors[idx] = { ...this.allInstructors[idx], ...updated };
-            this.onSearchChange();
-          }
-          this.closeInstructorModal();
-          this.showToast('Instructeur modifié avec succès', 'success');
-        },
-        error: (err) => {
-          console.error('Erreur mise à jour instructeur', err);
-          this.showToast('Erreur lors de la modification', 'danger');
+    try {
+      // ✅ Upload image si sélectionnée
+      if (this.imageBase64) {
+        const filePath = `instructors/${Date.now()}.jpg`;
+        const storageRef = ref(this.storage, filePath);
+
+        await uploadString(storageRef, this.imageBase64, 'data_url');
+
+        const imageUrl = await getDownloadURL(storageRef);
+
+        // 👉 on met l'URL dans l'instructeur
+        this.modalInstructor.image = imageUrl;
+      }
+
+      // =========================
+      // UPDATE
+      // =========================
+      if (this.isEditing && this.editingInstructorId) {
+        const dataToSave = { ...this.modalInstructor };
+
+        const updated = await this.instructorService
+          .updateInstructor(this.editingInstructorId, dataToSave)
+          .toPromise();
+
+        const idx = this.allInstructors.findIndex(
+          (i) => i.id === this.editingInstructorId
+        );
+
+        if (idx !== -1 && updated) {
+          this.allInstructors[idx] = {
+            ...this.allInstructors[idx],
+            ...updated,
+          };
         }
-      });
-    } else {
-      // Création
-      const { id, ...dataToSave } = this.modalInstructor;
-      this.instructorService.createInstructor(dataToSave as Instructor).subscribe({
-        next: (created) => {
+
+        this.onSearchChange();
+        this.closeInstructorModal();
+        this.showToast('Instructeur modifié avec succès', 'success');
+      }
+
+      // =========================
+      // CREATE
+      // =========================
+      else {
+        const created = await this.instructorService
+          .createInstructor(this.modalInstructor as Instructor)
+          .toPromise();
+
+        if (created) {
           this.allInstructors = [...this.allInstructors, created];
-          this.onSearchChange();
-          this.closeInstructorModal();
-          this.showToast('Instructeur créé avec succès', 'success');
-        },
-        error: (err) => {
-          console.error('Erreur création instructeur', err);
-          this.showToast('Erreur lors de la création', 'danger');
         }
-      });
+
+        this.onSearchChange();
+        this.closeInstructorModal();
+        this.showToast('Instructeur créé avec succès', 'success');
+      }
+    } catch (err) {
+      console.error(err);
+      this.showToast("Erreur lors de l'enregistrement", 'danger');
     }
+  }
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+
+    const file = input.files[0];
+
+    // Validation
+    if (!file.type.startsWith('image/')) {
+      alert('Veuillez sélectionner une image valide');
+      return;
+    }
+    if (file.size > 16 * 1024 * 1024) {
+      alert("L'image ne doit pas dépasser 5 Mo");
+      return;
+    }
+
+    this.selectedFile = file;
+
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      const base64 = e.target.result;
+      this.imagePreview = base64;
+      this.imageBase64 = base64;
+    };
+    reader.readAsDataURL(file);
   }
 
   // ─────────────────────────────────────────────────────────
@@ -276,14 +402,18 @@ export class InstructorsPage implements OnInit {
     if (!confirm('Voulez-vous vraiment désactiver cet instructeur ?')) return;
 
     try {
-      const current = await this.instructorService.getInstructorById(instructorId).toPromise();
+      const current = await this.instructorService
+        .getInstructorById(instructorId)
+        .toPromise();
       if (!current) throw new Error('Instructeur non trouvé');
 
       const updated = { ...current, active: false };
 
-      await this.instructorService.updateInstructor(instructorId, updated).toPromise();
+      await this.instructorService
+        .updateInstructor(instructorId, updated)
+        .toPromise();
 
-      const idx = this.allInstructors.findIndex(i => i.id === instructorId);
+      const idx = this.allInstructors.findIndex((i) => i.id === instructorId);
       if (idx !== -1) {
         this.allInstructors[idx] = { ...this.allInstructors[idx], ...updated };
         this.onSearchChange();
@@ -307,7 +437,7 @@ export class InstructorsPage implements OnInit {
       message,
       duration: 2400,
       color,
-      position: 'top'
+      position: 'top',
     });
     await toast.present();
   }

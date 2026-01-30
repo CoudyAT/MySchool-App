@@ -117,7 +117,7 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
     private modalCtrl: ModalController,
     private instructorService: InstructorService,
     private fcmService: FcmService,
-    private courseService: CourseService
+    private courseService: CourseService,
   ) {
     addIcons({
       searchOutline,
@@ -178,7 +178,7 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
     console.log(
       '👤 Utilisateur connecté:',
       localUser?.firstName,
-      localUser?.lastName
+      localUser?.lastName,
     );
     console.log('🔑 UID:', localUser?.uid);
 
@@ -194,7 +194,7 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
         next: (enrollmentsWithDetails) => {
           console.log(
             '✅ Cours avec détails chargés:',
-            enrollmentsWithDetails.length
+            enrollmentsWithDetails.length,
           );
 
           this.enrolledCourses = enrollmentsWithDetails;

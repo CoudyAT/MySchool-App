@@ -1,126 +1,113 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
+
     <ion-buttons slot="start">
       <ion-button (click)="goBack()">
-        <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+        <ion-icon name="arrow-back-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
+
     <ion-buttons slot="end">
-      <ion-button>
-        <ion-icon name="share-social-outline" slot="icon-only"></ion-icon>
+      <ion-button (click)="shareInstructor()">
+        <ion-icon name="share-social-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
+
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <div class="content-wrapper" *ngIf="instructor">
-    
-    <!-- Section Hero avec photo de profil -->
-    <div class="hero-section" [style.background-color]="instructor.backgroundColor">
+
+  <div *ngIf="instructor">
+
+    <!-- HERO -->
+    <div class="hero-section"
+      [style.backgroundColor]="instructor.backgroundColor">
+
       <div class="instructor-avatar">
-        <img [src]="instructor.image" [alt]="instructor.name">
+        <img [src]="instructor.image">
       </div>
+
     </div>
 
-    <!-- Informations principales -->
+    <!-- INFOS -->
     <div class="main-info">
-      <h1 class="instructor-name">{{ instructor.name }}</h1>
-      <p class="instructor-title">{{ instructor.title }}</p>
-      
-      <!-- Note et statistiques -->
+
+      <h1>{{ instructor.name }}</h1>
+      <p>{{ instructor.title }}</p>
+
       <div class="stats-row">
-        <div class="stat-item">
-          <div class="rating-container">
-            <ion-icon *ngFor="let star of getStars(instructor.rating)" name="star"></ion-icon>
-            <ion-icon *ngIf="getHalfStar(instructor.rating)" name="star-half"></ion-icon>
-            <span class="rating-number">{{ instructor.rating }}</span>
-          </div>
+
+        <div class="rating-container">
+          <ion-icon *ngFor="let s of getStars(instructor.rating)" name="star"></ion-icon>
+          <ion-icon *ngIf="getHalfStar(instructor.rating)" name="star-half"></ion-icon>
+          <span>{{ instructor.rating }}</span>
         </div>
-        <div class="stat-divider"></div>
-        <div class="stat-item">
-          <ion-icon name="people-outline"></ion-icon>
-          <span>{{ instructor.totalStudents }} étudiants</span>
-        </div>
-        <div class="stat-divider"></div>
-        <div class="stat-item">
+
+        <div (click)="openCoursesModal()">
           <ion-icon name="book-outline"></ion-icon>
-          <span>{{ instructor.totalCourses }} cours</span>
+          {{ instructor.courses?.length || 0 }} cours
         </div>
+
       </div>
+
     </div>
 
-    <!-- Biographie -->
+    <!-- BIO -->
     <div class="bio-section">
-      <h2 class="section-title">À propos</h2>
-      <p class="bio-text">{{ instructor.bio }}</p>
+      <h2>À propos</h2>
+      <p>{{ instructor.bio }}</p>
     </div>
 
-    <!-- Domaines d'expertise -->
+    <!-- EXPERTISE -->
     <div class="expertise-section">
-      <h2 class="section-title">Domaines d'expertise</h2>
+
+      <h2>Domaines d'expertise</h2>
+
       <div class="expertise-tags">
-        <span class="expertise-tag" *ngFor="let skill of instructor.expertise">
+        <span *ngFor="let skill of instructor.expertise">
           {{ skill }}
         </span>
       </div>
+
     </div>
 
-    <!-- Cours de l'instructeur -->
-    <div class="courses-section">
-      <h2 class="section-title">Cours proposés ({{ instructor.courses?.length }})</h2>
-      
-      <ion-card 
-        *ngFor="let course of instructor.courses" 
-        class="course-card"
-        (click)="openCourse(course)">
-        
-        <div class="card-image">
-            <img
-              src="assets/algo.svg"
-              alt="Instructeur"
-              class="instructor-image"
-            />          
-          <!-- Badge Certificat -->
-          <div class="certificate-badge">
-            <ion-icon name="ribbon-outline"></ion-icon>
-            <span>Certificat</span>
-          </div>
-          
-          <!-- Icône play -->
-          <div class="play-icon">
-            <ion-icon name="play-circle-outline"></ion-icon>
-          </div>
-        </div>
-        
-        <ion-card-content>
-          <h3 class="course-title">{{ course.title }}</h3>
-          
-          <div class="course-meta">
-            <span>
-              <ion-icon name="book-outline"></ion-icon>
-              {{ course.sessions }} Sessions
-            </span>
-            <span class="separator">•</span>
-            <span class="exercises">
-              <ion-icon name="calculator-outline"></ion-icon>
-              {{ course.exercises }} Exercices
-            </span>
-          </div>
-          
-          <div class="course-footer">
-            <div class="duration">
-              <ion-icon name="time-outline"></ion-icon>
-              {{ course.duration }}
-            </div>
-            <div class="enrolled">
-              <ion-icon name="people-outline"></ion-icon>
-              {{ course.enrolled }} inscrits
-            </div>
-          </div>
-        </ion-card-content>
-      </ion-card>
+    <!-- COURS -->
+    <div class="courses-section" >
+      <h2>
+        Cours proposés ({{ instructor.courses?.length || 0 }})
+      </h2>
+
+      <p class="see-more">Voir les cours</p>
     </div>
 
   </div>
+
+  <!-- ================= MODAL ================= -->
+
+  <ion-modal
+    [isOpen]="showCoursesModal"
+    initialBreakpoint="0.5"
+    [breakpoints]="[0,0.5,1]"
+    (didDismiss)="closeCoursesModal()">
+    <ion-content>
+    <ion-card
+      *ngFor="let course of instructor?.courses || []"
+      (click)="openCourse(course)">
+      <img src="assets/algo.svg">
+      <ion-card-content>
+        <h3>{{ course?.title || 'Titre non disponible' }}</h3>
+        <div class="course-meta">
+          <span>{{ course?.level || 'Niveau non spécifié' }}</span>
+          <span>•</span>
+          <span>{{ (course?.price || 0) | number }} FCFA</span>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+
+    </ion-content>
+
+  </ion-modal>
+
 </ion-content>

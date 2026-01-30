@@ -43,24 +43,19 @@ import {
   checkmarkOutline,
   pencilOutline,
 } from 'ionicons/icons';
-
+import { IonicModule } from "@ionic/angular";
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
+  selector: 'app-login-admin',
+  templateUrl: './login-admin.page.html',
+  styleUrls: ['./login-admin.page.scss'],
   standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    IonContent,
-    IonButton,
-    IonInput,
-    IonIcon,
-    IonProgressBar,
+    IonicModule,
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class LoginComponent implements OnInit {
+export class LoginAdminPage implements OnInit {
   phoneForm: FormGroup;
   otpForm: FormGroup;
   otpSent = false;
@@ -515,7 +510,7 @@ export class LoginComponent implements OnInit {
         );
 
         // 🔹 Redirection selon le rôle
-        const roleObj = userData['role']; 
+        const roleObj = userData['role'];
         const role = roleObj?.libelle?.toString().toLowerCase() || 'user';
         if (role.toLowerCase() === 'admin') {
           // Redirection vers l'admin

@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { Subscription } from 'rxjs';
 import {
   IonContent,
@@ -87,7 +88,8 @@ export class CoursDetailPage implements OnInit, OnDestroy {
     private location: Location,
     private courseService: CourseService,
     private enrollmentService: EnrollmentService,
-    private chapterService: ChapterService
+    private chapterService: ChapterService,
+    private firestore: Firestore,
   ) {
     addIcons({
       chevronBackOutline,
@@ -124,40 +126,95 @@ export class CoursDetailPage implements OnInit, OnDestroy {
     this.enrollmentSubscription.unsubscribe();
   }
 
-  loadCourseDetails() {
+  // loadCourseDetails() {
+  //   const courseId = this.route.snapshot.paramMap.get('id');
+
+  //   if (courseId) {
+  //     console.log('Loading course details for ID:', courseId);
+
+  //     this.courseSubscription = this.courseService
+  //       .getCourse(courseId)
+  //       .subscribe({
+  //         next: (courseData: any) => {
+  //           if (courseData) {
+  //             this.course = courseData;
+  //             console.log('Course loaded:', this.course);
+
+  //             // Charger les chapitres après avoir le cours
+  //             this.loadChapters(courseId);
+
+  //             // Vérifier si l'utilisateur est déjà inscrit à ce cours
+  //             this.checkUserEnrollment(courseId);
+  //           } else {
+  //             console.error('Course not found');
+  //             this.router.navigate(['/mes-cours']);
+  //           }
+  //           this.isLoading = false;
+  //         },
+  //         error: (error) => {
+  //           console.error('Error loading course:', error);
+  //           this.isLoading = false;
+  //         },
+  //       });
+  //   } else {
+  //     console.error('No course ID provided');
+  //     this.router.navigate(['/mes-cours']);
+  //   }
+  // }
+
+  async loadCourseDetails() {
     const courseId = this.route.snapshot.paramMap.get('id');
 
-    if (courseId) {
-      console.log('Loading course details for ID:', courseId);
-
-      this.courseSubscription = this.courseService
-        .getCourse(courseId)
-        .subscribe({
-          next: (courseData: any) => {
-            if (courseData) {
-              this.course = courseData;
-              console.log('Course loaded:', this.course);
-
-              // Charger les chapitres après avoir le cours
-              this.loadChapters(courseId);
-
-              // Vérifier si l'utilisateur est déjà inscrit à ce cours
-              this.checkUserEnrollment(courseId);
-            } else {
-              console.error('Course not found');
-              this.router.navigate(['/mes-cours']);
-            }
-            this.isLoading = false;
-          },
-          error: (error) => {
-            console.error('Error loading course:', error);
-            this.isLoading = false;
-          },
-        });
-    } else {
+    if (!courseId) {
       console.error('No course ID provided');
       this.router.navigate(['/mes-cours']);
+      return;
     }
+
+    console.log('Loading course details for ID:', courseId);
+
+    this.courseSubscription = this.courseService.getCourse(courseId).subscribe({
+      next: async (courseData: any) => {
+        if (!courseData) {
+          console.error('Course not found');
+          this.router.navigate(['/mes-cours']);
+          return;
+        }
+
+        // 🔹 Données venant de l'API
+        this.course = courseData;
+        console.log('Course loaded from API:', this.course);
+
+        // 🔥 Lecture Firestore pour champs manquants
+        try {
+          const courseRef = doc(this.firestore, 'courses', courseId);
+          const snap = await getDoc(courseRef);
+
+          if (snap.exists()) {
+            const firestoreCourse: any = snap.data();
+
+            if (this.course) {
+              this.course.instructorId = firestoreCourse.instructorId || null;
+
+              this.course.instructorName = firestoreCourse.instructorName || null;
+            }
+          }
+        } catch (err) {
+          console.error('Erreur lecture Firestore:', err);
+        }
+
+        // Charger autres données
+        this.loadChapters(courseId);
+        this.checkUserEnrollment(courseId);
+
+        this.isLoading = false;
+      },
+
+      error: (error) => {
+        console.error('Error loading course:', error);
+        this.isLoading = false;
+      },
+    });
   }
 
   checkUserEnrollment(courseId: string) {
@@ -169,7 +226,7 @@ export class CoursDetailPage implements OnInit, OnDestroy {
 
           // Vérifier si l'utilisateur est inscrit à ce cours
           const enrollment = enrollments.find(
-            (enroll) => enroll.courseId === courseId
+            (enroll) => enroll.courseId === courseId,
           );
 
           if (enrollment) {
@@ -178,7 +235,7 @@ export class CoursDetailPage implements OnInit, OnDestroy {
             this.enrollmentProgress = enrollment.progress || 0;
             console.log(
               'Utilisateur déjà inscrit, progression:',
-              this.enrollmentProgress + '%'
+              this.enrollmentProgress + '%',
             );
           } else {
             this.isUserEnrolled = false;
