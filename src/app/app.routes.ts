@@ -33,6 +33,8 @@ import { SecurityPage } from './features/auth/security/security.page';
 import { PdfListPage } from './features/pdf/pdf-list/pdf-list.page';
 import { ForgotPasswordPage } from './features/auth/forgot-password/forgot-password.page';
 import { PaymentOptionComponent } from './features/payments/payment-option/payment-option.component';
+import { VideoDetailPage } from './features/cours/pages/video-detail/video-detail.page';
+import { VideoPlayerPage } from './features/cours/pages/video-player/video-player.page';
 
 export const routes: Routes = [
   {
@@ -175,29 +177,64 @@ export const routes: Routes = [
     path: 'detail-cours',
     loadComponent: () =>
       import('./Admin/pages/cours/pages/detail-cours/detail-cours.page').then(
-        (m) => m.DetailCoursPage
+        (m) => m.DetailCoursPage,
       ),
   },
   {
     path: 'instructor-profile/:id',
     loadComponent: () =>
-      import(
-        './features/instructor/instructor-profile/instructor-profile.page'
-      ).then((m) => m.InstructorProfilePage),
+      import('./features/instructor/instructor-profile/instructor-profile.page').then(
+        (m) => m.InstructorProfilePage,
+      ),
   },
   {
     path: 'instructor-details',
     loadComponent: () =>
       import('./Admin/pages/instructor-details/instructor-details.page').then(
-        (m) => m.InstructorDetailsPage
+        (m) => m.InstructorDetailsPage,
       ),
   },
   {
     path: 'abonnement',
-    loadComponent: () => import('./features/abonnement/abonnement.page').then( m => m.AbonnementPage)
+    loadComponent: () =>
+      import('./features/abonnement/abonnement.page').then(
+        (m) => m.AbonnementPage,
+      ),
   },
   {
     path: 'login-admin',
-    loadComponent: () => import('./features/auth/login-admin/login-admin.page').then( m => m.LoginAdminPage)
+    loadComponent: () =>
+      import('./features/auth/login-admin/login-admin.page').then(
+        (m) => m.LoginAdminPage,
+      ),
   },
+  {
+    path: 'premium-course-selection',
+    loadComponent: () =>
+      import('./features/component/premium-course-selection/premium-course-selection.page').then(
+        (m) => m.PremiumCourseSelectionPage,
+      ),
+  },
+  {
+    path: 'video-page',
+    loadComponent: () =>
+      import('./features/cours/pages/video-page/video-page.page').then(
+        (m) => m.VideoPagePage,
+      ),
+  },
+
+  {
+    path: 'video-detail/:id',
+    component: VideoDetailPage,
+  },
+
+  {
+    path: 'video-player/:id',
+    component: VideoPlayerPage,
+  },
+  {
+    path: 'conditions',
+    loadComponent: () => import('./features/auth/conditions/conditions.page').then( m => m.ConditionsPage)
+  },
+
 ];

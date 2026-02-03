@@ -3,13 +3,15 @@
   <ion-toolbar>
     <div class="header-content">
       <img src="assets/logo.svg" alt="MySchool Logo" class="logo" />
+      <!-- Hero Section - CARROUSEL SWIPER  -->
       <ion-button
         fill="outline"
         class="help-button"
+        (click)="openHelp()"
       >
-       Recherche <br/>
-      <ion-icon name="search-outline"></ion-icon>
-      </ion-button>
+        <br/>
+      <ion-icon (click)="openHelp()" name="search-outline"></ion-icon>
+      </ion-button> 
       
       <ion-button
           fill="clear"
@@ -103,6 +105,49 @@
       </div>
     </div>
 
+        <!-- Section Tous les cours -->
+    <div class="courses-section">
+       <h1 class="section-title">Liste des cours</h1>
+      <div *ngIf="isCoursesLoading" class="loading-courses">
+        <ion-spinner></ion-spinner>
+        <p>Chargement des cours...</p>
+      </div>
+
+      <!-- Liste des cours -->
+      <div *ngIf="!isCoursesLoading" class="enrolled-courses-grid">
+        <ion-card
+          *ngFor="let course of allCourses"
+          class="course-card"
+          (click)="openCour(course)"
+        >
+          <div class="card-image">
+            <img
+              [src]="course.image || 'assets/algo.svg'"
+              alt="{{ course.title }}"
+            />
+
+            <div class="play-icon">
+              <ion-icon name="play"></ion-icon>
+            </div>
+          </div>
+
+          <ion-card-content>
+            <h3 class="course-title">{{ course.title }}</h3>
+
+            <div class="course-meta">
+              <span style="color: #FF9500;">
+                {{ course.exercises || 0 }} Exercices
+              </span>
+            </div>
+
+            <div class="course-level">
+              Niveau : {{ course.level || 'Débutant' }}
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
+
     <!-- Section Mes cours achetés -->
     <div class="courses-section">
       <div class="section-header-row">
@@ -130,7 +175,6 @@
             <ion-icon name="add-outline" class="add-icon"></ion-icon>
           </div>
         </div>
-
         <!-- Bouton Suivant -->
         <ion-button expand="block" class="suivant-button" (click)="goToCoursesPage()">
           Découvrir les cours
@@ -209,51 +253,11 @@
       </p>
     </div>
 
-    <!-- Section Tous les cours -->
-    <div class="courses-section">
-       <h1 class="section-title">Liste des cours</h1>
-      <div *ngIf="isCoursesLoading" class="loading-courses">
-        <ion-spinner></ion-spinner>
-        <p>Chargement des cours...</p>
-      </div>
 
-      <!-- Liste des cours -->
-      <div *ngIf="!isCoursesLoading" class="enrolled-courses-grid">
-        <ion-card
-          *ngFor="let course of allCourses"
-          class="course-card"
-          (click)="openCour(course)"
-        >
-          <div class="card-image">
-            <img
-              [src]="course.image || 'assets/algo.svg'"
-              alt="{{ course.title }}"
-            />
-
-            <div class="play-icon">
-              <ion-icon name="play"></ion-icon>
-            </div>
-          </div>
-
-          <ion-card-content>
-            <h3 class="course-title">{{ course.title }}</h3>
-
-            <div class="course-meta">
-              <span style="color: #FF9500;">
-                {{ course.exercises || 0 }} Exercices
-              </span>
-            </div>
-
-            <div class="course-level">
-              Niveau : {{ course.level || 'Débutant' }}
-            </div>
-          </ion-card-content>
-        </ion-card>
-      </div>
-    </div>
 
   </div>
 </ion-content>
 
 <!-- Menu du bas réutilisable -->
 <app-bottom-menu class="mobile-header" activePage="home"></app-bottom-menu>
+<app-footer class="desktop-footer"></app-footer>

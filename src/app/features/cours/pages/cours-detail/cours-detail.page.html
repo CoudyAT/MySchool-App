@@ -19,7 +19,7 @@
     <!-- Colonne Gauche - Contenu SCROLLABLE -->
     <div class="hero-left">
       <!-- Badge Catégorie -->
-      <div class="category-badge">BUREAUTIQUE</div>
+      <div class="category-badge">{{course?.category}}</div>
 
       <!-- Titre du cours -->
       <h1 class="course-title">{{course?.title}}</h1>
@@ -57,10 +57,16 @@
           </div>
         </ion-button>
         <!-- Bouton d'inscription (desktop) -->
-        <ion-button *ngIf="!isUserEnrolled"
-            expand="block" class="enroll-button-mobile" (click)="handleEnroll()">
-          {{(course?.price ?? 0) > 0 ? 'Payer le cours' : "S'abonner"}}
+        <ion-button
+          *ngIf="!isUserEnrolled"
+          expand="block"
+          class="enroll-button-mobile"
+          (click)="handleEnrollClick()">
+          <div class="button-content">
+            <span class="button-main-text">{{ (course?.price ?? 0) > 0 ? 'Payer le cours' : "S'abonner" }}</span>
+          </div>
         </ion-button>
+
       </div>
 
       <!-- ========== ONGLETS CHAPITRES ET DOCUMENTS ========== -->
@@ -278,7 +284,7 @@
             *ngIf="!isUserEnrolled"
             expand="block"
             class="enroll-button"
-            (click)="handleEnroll()"
+            (click)="handleEnrollClick()"
           >
             <div class="button-content">
               <span class="button-main-text">

@@ -84,10 +84,6 @@
           </div>
         </div>
 
-        <div class="summary-row">
-          <span class="label">TVA</span>
-          <span class="value">{{ summary.tva }} FCFA</span>
-        </div>
 
         <div class="summary-row total-row">
           <span class="label-total">TOTAL</span>
@@ -182,8 +178,8 @@
 
     <!-- Bouton final -->
     <ion-button expand="block" 
-    (click)="proceedToPayment()"
-    class="proceed-button">
+      (click)="proceedToPayment()"
+      class="proceed-button">
       {{ isPremium ? 'Activer Premium' : 'Payer le cours' }}
     </ion-button>
   </div>

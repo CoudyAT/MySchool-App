@@ -18,7 +18,7 @@
 <!-- DESKTOP HEADER AVEC RECHERCHE -->
 <div class="desktop-header-search">
   <div class="desktop-search-wrapper">
-    <h1 class="desktop-main-title">Les cours</h1>
+    <h1 class="desktop-main-title">Liste des videos</h1>
     
     <div class="desktop-search-container">
       <ion-searchbar 
@@ -33,20 +33,6 @@
     </div>
 
     <!-- Segment pour les onglets - DESKTOP -->
-    <ion-segment 
-      [value]="selectedSegment" 
-      (ionChange)="onSegmentChange($event)"
-      class="desktop-custom-segment">
-      <ion-segment-button value="cours-en-ligne">
-        <ion-label>Cours video</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="cours">
-        <ion-label>Cours en ligne</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="cours-en-ligne">
-        <ion-label>Tutoriel</ion-label>
-      </ion-segment-button>
-    </ion-segment>
   </div>
 </div>
 
@@ -58,20 +44,7 @@
       <h1 class="main-title">Les cours</h1>
 
       <!-- Segment pour les onglets - MOBILE -->
-      <ion-segment 
-        [value]="selectedSegment" 
-        (ionChange)="onSegmentChange($event)"
-        class="custom-segment">
-      <ion-segment-button value="cours-en-ligne">
-        <ion-label>Cours video</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="cours">
-        <ion-label>Cours en ligne</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="cours-en-ligne">
-        <ion-label>Tutoriel</ion-label>
-      </ion-segment-button>
-      </ion-segment>
+  
 
       <!-- Barre de recherche et filtres - MOBILE -->
       <div class="search-filter-container">
@@ -101,11 +74,10 @@
 
     <!-- Liste des cours par catégorie -->
     <div class="courses-container" *ngIf="!isLoading && filteredCourses.length > 0">
-      <ng-container *ngFor="let category of getFilteredCategories()">
-        <h2 class="category-title">{{ category }}</h2>
+      <ng-container >
         <div class="courses-row">
           <ion-card 
-            *ngFor="let course of getCoursesByCategory(category)" 
+            *ngFor="let course of filteredCourses" 
             class="course-card"
             (click)="openCourse(course)">
             <div class="card-image">
@@ -119,17 +91,16 @@
               </div>
             </div>
             <ion-card-content>
-              <div *ngIf="course.certificateAvailable" class="status-badge">
-                <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
-                <span>Certificat disponible</span>
-              </div>
               <h3 class="course-title">{{course.title}}</h3>
-              <div class="course-info">
-                <span class="exercises">{{course.exercises}} Exercices</span>
+              <div class="course-date">
+                  <ion-icon name="calendar-outline"></ion-icon>
+                  {{ getSimpleDate(course.createdAt) }}
               </div>
             </ion-card-content>
           </ion-card>
         </div>
+
+
       </ng-container>
     </div>
   </div>

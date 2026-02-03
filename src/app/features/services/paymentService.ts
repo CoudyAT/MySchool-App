@@ -166,10 +166,11 @@ export class PaymentService {
     return cleanPhone;
   }
 
-  createSubscriptionPayment(plan: string, userId: string) {
+  createSubscriptionPayment(plan: string, userId: string, category: string) {
     return this.api.post<any>('/subscriptions/create-payment', {
       plan,
       userId,
+      category,
     });
   }
 }

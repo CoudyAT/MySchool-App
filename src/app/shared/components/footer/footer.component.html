@@ -1,0 +1,37 @@
+<footer class="app-footer">
+
+  <div class="footer-container">
+
+    <!-- TOP ROW -->
+    <div class="footer-top-row">
+
+      <!-- LOGO -->
+      <div class="footer-logo">
+        <img src="assets/logo.svg" alt="MySchool Logo" class="logo" />
+      </div>
+
+      <!-- LINKS -->
+      <nav class="footer-nav">
+        <a 
+          *ngFor="let link of footerLinks" 
+          [href]="link.href"
+          class="footer-link"
+          [attr.target]="link.external ? '_blank' : null"
+          [attr.rel]="link.external ? 'noopener noreferrer' : null">
+          {{ link.label }}
+        </a>
+      </nav>
+
+    </div>
+
+    <!-- DIVIDER -->
+    <div class="footer-divider"></div>
+
+    <!-- COPYRIGHT -->
+    <div class="footer-copyright">
+      <p>© {{ currentYear }} MySchool. Tous droits réservés.</p>
+    </div>
+
+  </div>
+
+</footer>

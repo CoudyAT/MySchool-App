@@ -1,0 +1,153 @@
+/* ==========================================
+   FOOTER CONTAINER
+   ========================================== */
+
+.app-footer {
+  background: #ffffff;
+  border-top: 1px solid #e8eef5;
+  margin-top: auto;
+}
+
+.footer-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* ==========================================
+   TOP ROW (LOGO + LINKS)
+   ========================================== */
+
+.footer-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 20px 0;
+}
+
+/* ==========================================
+   LOGO
+   ========================================== */
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+
+  .logo {
+    height: 32px;
+    width: auto;
+    cursor: pointer;
+
+    @media (min-width: 768px) {
+      height: 36px;
+    }
+  }
+}
+
+/* ==========================================
+   FOOTER NAVIGATION
+   ========================================== */
+
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+
+  @media (min-width: 1024px) {
+    flex-wrap: nowrap;
+  }
+}
+
+.footer-link {
+  display: inline-block;
+  font-size: 14px;
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  white-space: nowrap;
+  position: relative;
+  padding-bottom: 2px;
+  transition: all 0.3s ease;
+
+  @media (min-width: 768px) {
+    font-size: 15px;
+  }
+
+  @media (min-width: 1024px) {
+    font-size: 16px;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transition: width 0.3s ease;
+  }
+
+  &:hover {
+    color: #667eea;
+
+    &::after {
+      width: 100%;
+    }
+  }
+}
+
+/* ==========================================
+   DIVIDER
+   ========================================== */
+
+.footer-divider {
+  height: 1px;
+  background: #e8eef5;
+  margin: 12px 0 16px 0;
+}
+
+/* ==========================================
+   COPYRIGHT
+   ========================================== */
+
+.footer-copyright {
+  text-align: center;
+  padding-bottom: 12px;
+
+  p {
+    margin: 0;
+    font-size: 13px;
+    color: #999;
+    font-weight: 500;
+
+    @media (min-width: 768px) {
+      font-size: 14px;
+    }
+
+    @media (min-width: 1024px) {
+      font-size: 15px;
+    }
+  }
+}
+
+/* ==========================================
+   MOBILE ADAPTATION
+   ========================================== */
+
+@media (max-width: 767px) {
+
+  .footer-top-row {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .footer-nav {
+    justify-content: center;
+  }
+
+}

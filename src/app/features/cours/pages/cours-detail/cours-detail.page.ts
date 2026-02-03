@@ -4,6 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { Subscription } from 'rxjs';
+import { ModalController } from '@ionic/angular/standalone'; 
+import { PreminumModalComponent } from 'src/app/features/component/preminum-modal/preminum-modal.component';
+import { ToastController } from '@ionic/angular';
+
 import {
   IonContent,
   IonHeader,
@@ -90,6 +94,8 @@ export class CoursDetailPage implements OnInit, OnDestroy {
     private enrollmentService: EnrollmentService,
     private chapterService: ChapterService,
     private firestore: Firestore,
+    private modalCtrl: ModalController,
+    private toastCtrl: ToastController,
   ) {
     addIcons({
       chevronBackOutline,
@@ -196,7 +202,8 @@ export class CoursDetailPage implements OnInit, OnDestroy {
             if (this.course) {
               this.course.instructorId = firestoreCourse.instructorId || null;
 
-              this.course.instructorName = firestoreCourse.instructorName || null;
+              this.course.instructorName =
+                firestoreCourse.instructorName || null;
             }
           }
         } catch (err) {
@@ -338,6 +345,34 @@ export class CoursDetailPage implements OnInit, OnDestroy {
         courseImage: this.course.image || 'assets/images/default-course.jpg',
       },
     });
+  }
+
+  async handleEnrollClick() {
+    if ((this.course?.price ?? 0) > 0) {
+      // Cours payant
+      this.handleEnroll();
+    } else {
+      const modal = await this.modalCtrl.create({
+        component: PreminumModalComponent,
+        cssClass: 'premium-modal',
+        breakpoints: [0, 0.5, 0.8, 1],
+        initialBreakpoint: 0.8,
+      });
+
+      await modal.present();
+
+      const { data } = await modal.onWillDismiss();
+
+      if (data?.subscribed) {
+        // L'utilisateur a souscrit
+        const toast = await this.toastCtrl.create({
+          message: 'Bienvenue dans Premium ! 🌟',
+          duration: 2000,
+          color: 'success',
+        });
+        await toast.present();
+      }
+    }
   }
 
   continueCourse() {

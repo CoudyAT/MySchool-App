@@ -9,6 +9,8 @@
         <option value="En ligne">En ligne</option>
         <option value="Présentiel">Présentiel</option>
         <option value="Hybride">Hybride</option>
+        <option value="Video">Video</option>
+        <option value="Tuto">Tuto</option>
       </select>
     </div>
     <!-- Prix -->
@@ -54,7 +56,6 @@
           <ng-container *ngIf="prof.title"> • {{ prof.title }}</ng-container>
         </option>
       </select>
-
       <!-- Message d'erreur -->
       <div *ngIf="courseForm.get('instructorId')?.invalid && courseForm.get('instructorId')?.touched"
         class="error-message">
@@ -65,7 +66,6 @@
     <!-- Catégorie -->
     <div class="form-group">
       <label class="form-label">Catégorie <span class="required">*</span></label>
-
       <!-- Sélection ou ajout de catégorie -->
       <div class="category-selector">
         <select formControlName="selectedCategoryOption" class="form-input">
@@ -73,7 +73,6 @@
           <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
           <option value="__add_new__">+ Ajouter une nouvelle catégorie...</option>
         </select>
-
         <div *ngIf="showNewCategoryInput" class="new-category-input ml-2">
           <input type="text" formControlName="newCategoryName" placeholder="Nom de la nouvelle catégorie"
             class="form-input" (blur)="addNewCategoryIfValid()" (keyup.enter)="addNewCategoryIfValid()" />
@@ -115,12 +114,29 @@
       <label for="level" class="form-label">Niveau</label>
       <select id="level" formControlName="level" class="form-input">
         <option value="">Sélectionnez un niveau</option>
-        <option value="Débutant">Débutant</option>
-        <option value="Intermédiaire">Intermédiaire</option>
-        <option value="Avancé">Avancé</option>
-        <option value="Débutant">Débutant</option>
-        <option value="Intermédiaire">Intermédiaire</option>
-        <option value="Avancé">Avancé</option>
+        <option value="CM2">CM2</option>
+        <option value="6iem">6iem</option>
+        <option value="5iem">5iem</option>
+        <option value="4iem">4iem</option>
+        <option value="3iem">3iem</option>
+        <option value="2ndS">2ndS</option>
+        <option value="1ER-S2">1ER-S2</option>
+        <option value="BAC-L'">BAC-L'</option>
+        <option value="BAC-L1">BAC-L1</option>
+        <option value="BAC-L2">BAC-L2</option>
+        <option value="BAC-S1">BAC-S1</option>
+        <option value="BAC-S2">BAC-S2</option>
+        <option value="BAC-G">BAC-G</option>
+        <option value="BAC-TECHNIQUE">BAC-TECHNIQUE</option>
+        <option value="BAC-STEG">BAC-STEG</option>
+        <option value="LICENCE-1">LICENCE-1</option>
+        <option value="LICENCE-2">LICENCE-2</option>
+        <option value="LICENCE-3">LICENCE-3</option>
+        <option value="MASTER-1">MASTER-1</option>
+        <option value="MASTER-2">MASTER-2</option>
+        <option value="BUREAUTIQUE-INITIATION">BUREAUTIQUE-INITIATION</option>
+        <option value="BUREAUTIQUE-INTERMEDIAIRE">BUREAUTIQUE-INTERMEDIAIRE</option>
+        <option value="BUREAUTIQUE-EXPERIMENTE">BUREAUTIQUE-EXPERIMENTE</option>
       </select>
     </div>
 

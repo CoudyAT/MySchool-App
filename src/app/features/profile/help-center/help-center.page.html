@@ -4,10 +4,6 @@
 <ion-header class="ion-no-border help-header">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button (click)="goBack()" class="back-button">
-        <ion-icon name="chevron-back-outline"></ion-icon>
-        <span class="back-text">Retour</span>
-      </ion-button>
     </ion-buttons>
     <ion-title>Centre d'aide</ion-title>
   </ion-toolbar>
@@ -25,19 +21,6 @@
       <p class="hero-subtitle">Trouvez rapidement une réponse à vos questions</p>
     </div>
 
-    <!-- Barre de recherche -->
-    <div class="search-container">
-      <ion-item class="search-item" lines="none">
-        <ion-icon name="search-outline" slot="start" class="search-icon"></ion-icon>
-        <ion-input 
-          placeholder="Rechercher une question..." 
-          [(ngModel)]="searchQuery" 
-          (ionInput)="onSearch()" 
-          clearInput
-          class="search-input">
-        </ion-input>
-      </ion-item>
-    </div>
 
     <!-- Loader -->
     <div class="loading-state" *ngIf="loading">

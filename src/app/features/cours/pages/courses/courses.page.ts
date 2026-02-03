@@ -64,6 +64,7 @@ import { Instructor } from 'src/app/models/instructor.model';
 import { UserService } from 'src/app/features/auth/services/user.service';
 import { FcmService } from 'src/app/features/services/fcm.service';
 import { DesktopHeaderComponent } from 'src/app/shared/components/desktop-header/desktop-header.component';
+import { FooterComponent } from 'src/app/shared/components/footer/footer.component';
 
 @Component({
   selector: 'app-courses',
@@ -83,6 +84,7 @@ import { DesktopHeaderComponent } from 'src/app/shared/components/desktop-header
     IonCardContent,
     IonSpinner,
     DesktopHeaderComponent,
+    FooterComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
@@ -257,6 +259,10 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
     this.router.navigate(['/course-detail', course.id]);
   }
 
+  openHelp() {
+    this.router.navigate(['/mes-cours']);
+  }
+
   // Obtenir le texte de progression
   getProgressText(progress: number): string {
     return `${progress}% complété`;
@@ -333,6 +339,7 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
       await toast.present();
     }
   }
+
   private async showPremiumSuccessToast() {
     const toast = await this.toastCtrl.create({
       message: '🎉 Félicitations ! Votre abonnement Premium est activé !',

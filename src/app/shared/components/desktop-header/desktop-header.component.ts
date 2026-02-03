@@ -83,6 +83,7 @@ export class DesktopHeaderComponent implements OnInit {
         courses: '/mes-cours', // Cours → MesCoursPage
         message: '/message', // Messages → Page messages
         achievements: '/achievements', // Réussites → Page réussites
+        videos: '/video-page', // Videos → Page videos
       };
 
       const route = routes[page];

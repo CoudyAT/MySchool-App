@@ -1374,6 +1374,11 @@ ion-header ion-toolbar {
   font-weight: 700;
 }
 
+.courses-section .add-button-container .circular-progress .add-icon {
+  font-size: 40px;
+  color: #0066FF;
+}
+
 
 /* =========================
    INSTRUCTORS
@@ -1588,3 +1593,100 @@ ion-header ion-toolbar {
 .continue-button:active {
   --background: #10b981;
 }
+
+.desktop-footer {
+  display: none;
+}
+
+/* Afficher le footer sur desktop */
+@media (min-width: 1024px) {
+  .desktop-footer {
+    display: block;
+  }
+}
+
+.courses-section .enrolled-courses-grid .course-card {
+  margin: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: white;
+}
+
+.courses-section .enrolled-courses-grid .course-card:active {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.courses-section .enrolled-courses-grid .course-card .card-image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+}
+
+.courses-section .enrolled-courses-grid .course-card .card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.circular-progress {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      border: 4px solid #0066FF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0, 102, 255, 0.2);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      
+      .add-icon {
+        font-size: 40px;
+        color: #0066FF;
+      }
+      
+      &:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 16px rgba(0, 102, 255, 0.3);
+      }
+      
+      &:active {
+        transform: scale(0.95);
+      }
+    }
+
+
+.courses-section .add-button-container .circular-progress {
+  width: 80px;
+  margin-left: 42%;
+  height: 80px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 4px solid #0066FF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 102, 255, 0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.courses-section .add-button-container .circular-progress .add-icon {
+  font-size: 40px;
+  color: #0066FF;
+}
+
+.courses-section .add-button-container .circular-progress:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0, 102, 255, 0.3);
+}
+
+.courses-section .add-button-container .circular-progress:active {
+  transform: scale(0.95);
+}
+  

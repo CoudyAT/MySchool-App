@@ -1,6 +1,5 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
-
     <ion-buttons slot="start">
       <ion-button (click)="goBack()">
         <ion-icon name="arrow-back-outline"></ion-icon>
@@ -12,102 +11,149 @@
         <ion-icon name="share-social-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
-
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
-  <div *ngIf="instructor">
+  <div class="content-wrapper" *ngIf="instructor">
 
     <!-- HERO -->
-    <div class="hero-section"
-      [style.backgroundColor]="instructor.backgroundColor">
-
+    <div class="hero-section" [style.backgroundColor]="instructor.backgroundColor">
       <div class="instructor-avatar">
-        <img [src]="instructor.image">
+        <img [src]="instructor.image" [alt]="instructor.name">
       </div>
-
     </div>
 
     <!-- INFOS -->
     <div class="main-info">
-
-      <h1>{{ instructor.name }}</h1>
-      <p>{{ instructor.title }}</p>
+      <h1 class="instructor-name">{{ instructor.name }}</h1>
+      <p class="instructor-title">{{ instructor.title }}</p>
 
       <div class="stats-row">
-
-        <div class="rating-container">
-          <ion-icon *ngFor="let s of getStars(instructor.rating)" name="star"></ion-icon>
-          <ion-icon *ngIf="getHalfStar(instructor.rating)" name="star-half"></ion-icon>
-          <span>{{ instructor.rating }}</span>
+        <div class="stat-item">
+          <div class="rating-container">
+            <ion-icon *ngFor="let s of getStars(instructor.rating)" name="star"></ion-icon>
+            <ion-icon *ngIf="getHalfStar(instructor.rating)" name="star-half"></ion-icon>
+            <span class="rating-number">{{ instructor.rating | number:'1.1-1' }}</span>
+          </div>
         </div>
 
-        <div (click)="openCoursesModal()">
+        <div class="stat-divider"></div>
+
+        <div class="stat-item" (click)="openCoursesModal()" style="cursor: pointer;">
           <ion-icon name="book-outline"></ion-icon>
           {{ instructor.courses?.length || 0 }} cours
         </div>
-
       </div>
-
     </div>
 
     <!-- BIO -->
     <div class="bio-section">
-      <h2>À propos</h2>
-      <p>{{ instructor.bio }}</p>
+      <h2 class="section-title">À propos</h2>
+      <p class="bio-text">{{ instructor.bio }}</p>
     </div>
 
     <!-- EXPERTISE -->
     <div class="expertise-section">
-
-      <h2>Domaines d'expertise</h2>
-
+      <h2 class="section-title">Domaines d'expertise</h2>
       <div class="expertise-tags">
-        <span *ngFor="let skill of instructor.expertise">
+        <span class="expertise-tag" *ngFor="let skill of instructor.expertise">
           {{ skill }}
         </span>
       </div>
-
     </div>
 
-    <!-- COURS -->
-    <div class="courses-section" >
-      <h2>
+    <!-- COURS PROPOSÉS -->
+    <div class="courses-section">
+      <h2 class="section-title">
         Cours proposés ({{ instructor.courses?.length || 0 }})
       </h2>
 
-      <p class="see-more">Voir les cours</p>
+      <div class="courses-grid" *ngIf="instructor.courses && instructor.courses.length > 0">
+        <ion-card 
+          *ngFor="let course of instructor.courses.slice(0, 4)" 
+          class="course-card"
+          (click)="openCourse(course)">
+          
+
+          <ion-card-content>
+            <h3 class="course-title">{{ course.title || 'Titre non disponible' }}</h3>
+            
+            <p class="course-description">
+              {{ (course.description || 'Pas de description disponible') | slice:0:100 }}{{ (course.description?.length || 0) > 100 ? '...' : '' }}
+            </p>
+            
+
+            <div class="course-footer">
+              <div class="duration" *ngIf="course.duration">
+                <ion-icon name="time-outline"></ion-icon>
+                {{ course.duration }}
+              </div>
+              
+              <div class="price" *ngIf="course.price">
+                {{ course.price | number }} FCFA
+              </div>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+
+      <!-- Bouton Voir plus si plus de 4 cours -->
+      <div class="see-more-container" *ngIf="instructor.courses && instructor.courses.length > 4">
+        <ion-button expand="block" fill="clear" (click)="openCoursesModal()">
+          Voir tous les cours ({{ instructor.courses.length }})
+          <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
+        </ion-button>
+      </div>
+
+      <!-- Message si aucun cours -->
+      <div class="no-courses" *ngIf="!instructor.courses || instructor.courses.length === 0">
+        <p>Aucun cours disponible pour le moment.</p>
+      </div>
     </div>
 
   </div>
 
-  <!-- ================= MODAL ================= -->
-
+  <!-- MODAL DES COURS -->
   <ion-modal
     [isOpen]="showCoursesModal"
     initialBreakpoint="0.5"
-    [breakpoints]="[0,0.5,1]"
+    [breakpoints]="[0, 0.5, 1]"
     (didDismiss)="closeCoursesModal()">
+    
+    <ion-header>
+      <ion-toolbar>
+        <ion-title class="modal-name">Tous les cours</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="closeCoursesModal()">
+            <ion-icon name="close-outline"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
     <ion-content>
-    <ion-card
-      *ngFor="let course of instructor?.courses || []"
-      (click)="openCourse(course)">
-      <img src="assets/algo.svg">
-      <ion-card-content>
-        <h3>{{ course?.title || 'Titre non disponible' }}</h3>
-        <div class="course-meta">
-          <span>{{ course?.level || 'Niveau non spécifié' }}</span>
-          <span>•</span>
-          <span>{{ (course?.price || 0) | number }} FCFA</span>
-        </div>
-      </ion-card-content>
-    </ion-card>
-
-
+      <ion-card 
+        *ngFor="let course of instructor?.courses || []"
+        (click)="openCourse(course)">
+        
+        <img [src]="course.image || 'assets/default-course.png'" [alt]="course.title">
+        
+        <ion-card-content>
+          <h3>{{ course.title || 'Titre non disponible' }}</h3>
+          
+          <div class="course-meta">
+            <span>{{ course.level || 'Niveau non spécifié' }}</span>
+            <span>•</span>
+            <span>{{ (course.price || 0) | number }} FCFA</span>
+          </div>
+          
+          <p class="course-description">
+            {{ course.description || 'Pas de description disponible' }}
+          </p>
+        </ion-card-content>
+      </ion-card>
     </ion-content>
-
   </ion-modal>
 
 </ion-content>

@@ -1,0 +1,44 @@
+.conditions-container {
+  --padding-start: 16px;
+  --padding-end: 16px;
+}
+
+.content-wrapper {
+  max-width: 900px;
+  margin: auto;
+  padding-bottom: 40px;
+}
+
+h2 {
+  text-align: center;
+  margin-top: 16px;
+}
+
+.address {
+  text-align: center;
+  font-size: 14px;
+  color: gray;
+}
+
+h3 {
+  margin-top: 24px;
+  color: #3880ff;
+}
+
+h4 {
+  margin-top: 16px;
+  font-weight: 600;
+}
+
+p {
+  line-height: 1.6;
+}
+
+ul {
+  padding-left: 18px;
+}
+
+.contact {
+  margin-top: 20px;
+  font-weight: 500;
+}

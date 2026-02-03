@@ -49,7 +49,7 @@ export class SubscriptionPlansPage implements OnInit {
   constructor(
     private router: Router,
     private location: Location,
-    private subscriptionService: SubscriptionService
+    private subscriptionService: SubscriptionService,
   ) {
     addIcons({
       chevronBackOutline,
@@ -71,20 +71,43 @@ export class SubscriptionPlansPage implements OnInit {
     this.loadPlans();
   }
 
+  // loadPlans() {
+  //   this.loading = true;
+  //   this.subscriptionService.getPlans().subscribe({
+  //     next: (res) => {
+  //       if (res.success) {
+  //         this.plans = res.data.plans
+  //           .filter((plan: any) => plan.price === 5000)
+  //           .map((plan: any) => ({
+  //             ...plan,
+  //             plan: 'Annuelle', // 🔥 remplace MONTHLY
+  //             duration: 'an', // optionnel
+  //           }));
+  //       }
+  //       this.loading = false;
+  //     },
+  //     error: (err) => {
+  //       console.error('Erreur chargement plans', err);
+  //       this.loading = false;
+  //     },
+  //   });
+  // }
+
   loadPlans() {
     this.loading = true;
 
     this.subscriptionService.getPlans().subscribe({
       next: (res) => {
         if (res.success) {
-          this.plans = res.data
-            .filter((plan: any) => plan.price === 5000)
+          this.plans = res.data.plans
+            .filter((plan: any) => plan.plan === 'MONTHLY')
             .map((plan: any) => ({
               ...plan,
-              plan: 'Annuelle', // 🔥 remplace MONTHLY
-              duration: 'an', // optionnel
+              plan: 'Annuelle', // affichage
+              duration: 'an',
             }));
         }
+
         this.loading = false;
       },
       error: (err) => {

@@ -10,7 +10,6 @@ import {
   getDocs,
 } from '@angular/fire/firestore';
 
-
 import {
   IonContent,
   IonHeader,
@@ -38,6 +37,7 @@ import {
   shareSocialOutline,
   calculatorOutline,
   closeOutline,
+  arrowForwardOutline,
 } from 'ionicons/icons';
 
 import { InstructorService } from 'src/app/features/services/instructorService';
@@ -85,14 +85,15 @@ export class InstructorProfilePage implements OnInit {
       shareSocialOutline,
       star,
       starHalf,
-      peopleOutline,
       bookOutline,
-      ribbonOutline,
       playCircleOutline,
+      ribbonOutline,
       calculatorOutline,
       timeOutline,
-      starOutline,
+      peopleOutline,
+      arrowForwardOutline,
       closeOutline,
+      starOutline,
     });
   }
 

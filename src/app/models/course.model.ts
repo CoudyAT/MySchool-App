@@ -60,8 +60,8 @@ export interface Course {
   title: string;
   category: string;
   description: string;
-  level: 'DEBUTANT' | 'INTERMEDIAIRE' | 'AVANCE';
-  type: 'En ligne' | 'VIDEO';
+  level: string;
+  type: string;
   duration: number;
   sessions: string;
   exercises: number;

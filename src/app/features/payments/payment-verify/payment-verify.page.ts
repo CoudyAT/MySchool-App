@@ -61,6 +61,7 @@ export class PaymentVerifyPage implements OnInit {
   selectedPlan: any;
   selectedMethod: any;
   selectedPaymentOption = '';
+  selectedCategory: string | null = null;
 
   isPremiumSubscription = false;
 
@@ -115,7 +116,7 @@ export class PaymentVerifyPage implements OnInit {
     private paymentService: PaymentService,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
-    private loadingCtrl: LoadingController // ✅ AJOUT
+    private loadingCtrl: LoadingController, // ✅ AJOUT
   ) {
     addIcons({
       chevronBackOutline,
@@ -129,9 +130,12 @@ export class PaymentVerifyPage implements OnInit {
      *  =============================== */
     const state =
       this.router.getCurrentNavigation()?.extras?.state || history.state;
-
+    console.log("State reçu dans PaymentVerifyPage:", state);
+    
     this.selectedPlan = state?.plan;
+     console.log('State reçu dans PaymentVerifyPage:', this.selectedPlan);
     this.selectedMethod = state?.method;
+    this.selectedCategory = state?.selectedCategory || null;
     this.isPremiumSubscription = state?.isPremiumSubscription || false;
 
     this.course = state?.course || {};
@@ -184,7 +188,7 @@ export class PaymentVerifyPage implements OnInit {
 
   setupDisplayedMethods() {
     const selected = this.allPaymentMethods.find(
-      (m) => m.id === this.selectedPaymentOption
+      (m) => m.id === this.selectedPaymentOption,
     );
 
     this.displayedPaymentMethods = selected ? [selected] : [];
@@ -193,7 +197,7 @@ export class PaymentVerifyPage implements OnInit {
   calculateTotal() {
     const subtotal = this.summary.price - this.summary.promoCode;
     this.summary.tva = Math.round(subtotal * 0.1);
-    this.summary.total = subtotal + this.summary.tva;
+    this.summary.total = subtotal ;
   }
 
   goBack() {
@@ -222,7 +226,7 @@ export class PaymentVerifyPage implements OnInit {
         validPromoCodes[promo as keyof typeof validPromoCodes];
       this.appliedPromoCode = promo;
       this.summary.promoCode = Math.round(
-        (this.summary.price * this.discountPercentage) / 100
+        (this.summary.price * this.discountPercentage) / 100,
       );
       this.calculateTotal();
 
@@ -231,7 +235,7 @@ export class PaymentVerifyPage implements OnInit {
       this.promoCodeInput = '';
     } else {
       this.showErrorAlert(
-        'Code promo invalide. Codes valides : SANK10, IMMA10'
+        'Code promo invalide. Codes valides : SANK10, IMMA10',
       );
     }
   }
@@ -303,11 +307,9 @@ export class PaymentVerifyPage implements OnInit {
    *  =============================== */
 
   async proceedToPayment() {
-    console.log('GGGG');
-
     if (this.showPromoInput && this.promoCodeInput.trim()) {
       await this.showErrorAlert(
-        'Veuillez appliquer ou annuler le code promo avant de continuer'
+        'Veuillez appliquer ou annuler le code promo avant de continuer',
       );
       return;
     }
@@ -320,17 +322,24 @@ export class PaymentVerifyPage implements OnInit {
        *  ⭐ ABONNEMENT PREMIUM
        *  =============================== */
       if (this.isPremium) {
+        
+        
         await this.showLoader('Redirection vers le paiement Premium...');
+        console.log('PREMINNUM', this.selectedPlan.type);
+        if (this.selectedPlan.type) {
+          console.log('PREMINNUM', this.selectedPlan.type);
+          const planType = this.mapPlanTypeToBackend(this.selectedPlan.type);
 
-        if (this.selectedPlan.plan) {
-          const planType = this.mapPlanTypeToBackend(this.selectedPlan.plan);
-
-          if (!this.userId || !planType) {
+          if (!this.userId || !planType || !this.selectedCategory) {
             throw new Error('Infos abonnement manquantes');
           }
 
           const response = await firstValueFrom(
-            this.paymentService.createSubscriptionPayment(planType, this.userId)
+            this.paymentService.createSubscriptionPayment(
+              planType,
+              this.userId,
+              this.selectedCategory,
+            ),
           );
 
           if (response?.success && response?.data?.paymentUrl) {
@@ -357,7 +366,7 @@ export class PaymentVerifyPage implements OnInit {
       }
 
       const method = this.allPaymentMethods.find(
-        (m) => m.id === this.selectedPaymentOption
+        (m) => m.id === this.selectedPaymentOption,
       );
 
       const paymentData: PaymentData = {
@@ -400,7 +409,7 @@ export class PaymentVerifyPage implements OnInit {
     const enrollments =
       (await this.enrollmentService.getUserEnrollments().toPromise()) || [];
     return enrollments.some(
-      (e: any) => e.courseId === courseId && e.status === 'completed'
+      (e: any) => e.courseId === courseId && e.status === 'completed',
     );
   }
 

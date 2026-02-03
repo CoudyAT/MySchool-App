@@ -45,14 +45,19 @@
           <span class="menu-label">Assistance IA</span>
         </div>
 
-        <div
+       <!-- Menu <div
           class="menu-item"
           [class.active]="activePage === 'achievements'"
           (click)="navigateTo('achievements')"
         >
           <ion-icon name="trophy-outline"></ion-icon>
           <span class="menu-label">Réussites</span>
-        </div>
+        </div> -->  
+
+        <div class="menu-item" [class.active]="activePage === 'videos'" (click)="navigateTo('videos')">
+        <ion-icon name="play-circle-outline"></ion-icon>
+        <span class="menu-label">Videos</span>
+      </div>
 
       </nav>
 

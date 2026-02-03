@@ -1,0 +1,74 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Cours vidéo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="page-container">
+    
+    <!-- Zone vidéo / thumbnail -->
+    <div class="video-container">
+
+      <!-- Thumbnail + Play (affiché seulement si showVideo == false) -->
+      <div class="video-thumbnail" *ngIf="!showVideo">
+        <div class="video-overlay">
+          <div class="play-button" (click)="startCourse()">
+            <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+              <circle cx="40" cy="40" r="40" fill="white"/>
+              <path d="M32 25L55 40L32 55V25Z" fill="#000"/>
+            </svg>
+          </div>
+        </div>
+
+        <img 
+          [src]="course.image || course.courseImage || 'assets/algo.svg'" 
+          [alt]="course.title || course.courseTitle" 
+          class="course-image"
+          *ngIf="course.image || course.courseImage"
+        />
+
+        <div class="thumbnail-placeholder" *ngIf="!course.image && !course.courseImage"></div>
+      </div>
+
+      <!-- 🎬 Lecteur vidéo (affiché après clic) -->
+      <video
+        *ngIf="showVideo"
+        width="100%"
+        height="250"
+        controls
+        autoplay
+      >
+        <source [src]="course.sessions" type="video/mp4">
+        Votre navigateur ne supporte pas la lecture vidéo.
+      </video>
+
+      <!-- Bouton Commencer -->
+      <button class="start-button" (click)="startCourse()" *ngIf="!showVideo">
+        Commencer
+      </button>
+    </div>
+
+
+
+    <!-- Barre de progression -->
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="progress"></div>
+      </div>
+      <span class="progress-text">{{ progress }}%</span>
+    </div>
+
+    <!-- Description -->
+    <div class="description-section" *ngIf="course.description">
+      <h2 class="section-title">Description video</h2>
+      <p class="description-text">{{ course.description }}</p>
+    </div>  
+
+  </div>
+</ion-content>

@@ -225,17 +225,7 @@ export class HelpCenterPage implements OnInit {
    * Contacter le support
    */
   contactSupport() {
-    // Ouvrir le client email par défaut
-    window.location.href =
-      "mailto:support@myschool.sn?subject=Support%20MySchool&body=Bonjour%2C%0A%0AJ'ai%20besoin%20d'aide%20avec%3A%0A%0AMerci";
-
-    // Alternative : rediriger vers une page de contact
-    // this.router.navigate(['/support-form']);
-
-    // Alternative : ouvrir un modal
-    // this.modalController.create({
-    //   component: SupportFormComponent
-    // }).then(modal => modal.present());
+     this.router.navigate(['/message']);
   }
 
   /**

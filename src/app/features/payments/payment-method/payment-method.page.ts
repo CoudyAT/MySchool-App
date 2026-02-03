@@ -41,6 +41,7 @@ import { PaymentService } from '../../services/paymentService';
 export class PaymentMethodPage implements OnInit {
   selectedPlan: any;
   isPremiumSubscription = false;
+  selectedCategory: string | null = null;
 
   course: any = null;
   courseId = '';
@@ -79,6 +80,7 @@ export class PaymentMethodPage implements OnInit {
     if (state) {
       this.selectedPlan = state['plan'];
       this.isPremiumSubscription = state['isPremiumSubscription'] ?? false;
+      this.selectedCategory = state['selectedCategory'] || null;
 
       if (!this.isPremiumSubscription) {
         this.course = state['course'] ?? null;
@@ -187,6 +189,7 @@ export class PaymentMethodPage implements OnInit {
           method,
           plan: this.selectedPlan,
           isPremiumSubscription: true,
+          selectedCategory: this.selectedCategory,
         },
       });
     } else {

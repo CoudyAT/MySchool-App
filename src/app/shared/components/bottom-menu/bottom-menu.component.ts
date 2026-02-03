@@ -9,8 +9,7 @@ import {
   bookOutline,
   chatbubblesOutline,
   trophyOutline,
-  homeOutline,
-} from 'ionicons/icons';
+  homeOutline, playCircleOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-bottom-menu',
@@ -24,7 +23,7 @@ export class BottomMenuComponent {
 
   constructor(private router: Router) {
     // Ajout des icônes au composant
-    addIcons({ homeOutline, bookOutline, chatbubblesOutline, trophyOutline });
+    addIcons({homeOutline,bookOutline,chatbubblesOutline,trophyOutline,playCircleOutline});
   }
 
   navigateTo(page: string) {
@@ -35,6 +34,7 @@ export class BottomMenuComponent {
         courses: '/mes-cours', // Cours → MesCoursPage
         message: '/message', // Messages → Page messages
         achievements: '/achievements', // Réussites → Page réussites
+        videos: '/video-page', // Videos → Page videos
       };
 
       const route = routes[page];

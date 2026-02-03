@@ -1,0 +1,134 @@
+
+<app-desktop-header></app-desktop-header>
+
+<ion-header class="ion-no-border transparent-header">
+  <ion-toolbar class="transparent-toolbar">
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()" class="back-button">
+        <ion-icon name="chevron-back-outline" class="back-icon"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="header-title">Page Cours</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<!-- DESKTOP VERSION AVEC ONGLETS - SCROLLABLE -->
+<div class="hide-desktop" style="display: block; overflow: auto;">
+  <!-- Hero Section - Desktop uniquement -->
+  <div class="hero-section">
+    <!-- Colonne Gauche - Contenu SCROLLABLE -->
+    <div class="hero-left">
+      <!-- Badge Catégorie -->
+
+      <!-- Titre du cours -->
+      <h1 class="course-title">{{course?.title}}</h1>
+
+      <!-- Description courte -->
+      <p class="course-description">{{course?.description}}</p>
+      <p class="course-description">{{ getSimpleDate(course?.createdAt) }}</p>
+
+      <!-- Info sessions et exercices -->
+
+
+      <!-- Texte Call-to-Action -->
+      <div class="cta-text">
+        <!-- Bouton d'inscription (desktop) -->
+        <ion-button
+          *ngIf="!isUserEnrolled"
+          expand="block"
+          class="enroll-button-mobile"
+          (click)="goToVideo()">
+          <div class="button-content">
+            <span class="button-main-text">Visionner la video </span>
+          </div>
+        </ion-button>
+
+      </div>
+
+    </div>
+
+    <!-- Colonne Droite - Image (STICKY) -->
+    <div class="hero-right">
+      <div class="hero-image-container">
+        <img src="{{course?.image}}" alt="Course" class="hero-image">
+        <div class="image-overlay-shape"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- IMAGE DE COUVERTURE - MOBILE UNIQUEMENT -->
+<div class="cover-image-container hide-desktop">
+  <img src="{{course?.image}}" alt="MySchool Logo" class="cover-image">
+  <div class="image-overlay"></div>
+</div>
+
+<!-- MOBILE VERSION -->
+<ion-content class="mobile-only">
+  <div class="content-wrapper">
+    <!-- Image de couverture avec overlay -->
+    <div class="cover-image-container">
+      <img src="{{course?.image}}" alt="MySchool Logo" class="cover-image">
+      <div class="image-overlay"></div>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="main-content">
+      <!-- Badge Certificat -->
+      
+
+      <!-- Titre du cours -->
+      <h1 class="course-title">{{course?.title}}</h1>
+
+      <!-- Info sessions et exercices -->
+
+
+      <!-- Niveaux/Progression -->
+      <div class="levels-container">
+        <div
+          *ngFor="let level of course?.levels; let i = index"
+          class="level-item"
+        >
+          <div class="level-icon-wrapper" [class.completed]="level.completed">
+            <ion-icon [name]="level.icon" class="level-icon"></ion-icon>
+          </div>
+          <div
+            *ngIf="i < (course?.levels?.length || 0) - 1"
+            class="level-connector"
+            [class.completed]="level.completed"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="description-section">
+        <h2 class="section-title">Description cours</h2>
+        <p class="description-text">{{course?.description}}</p>
+      </div>
+
+
+
+
+
+
+      <!-- Bouton d'inscription ou accès au cours -->
+      <ion-card class="enroll-card">
+        <ion-card-content class="enroll-card-content">
+
+          <ion-button
+            *ngIf="!isUserEnrolled"
+            expand="block"
+            class="enroll-button"
+            (click)="goToVideo()"
+          >
+            <div class="button-content">
+              <span class="button-main-text">
+                Visionner le cours
+              </span>
+            </div>
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+</ion-content>

@@ -1,23 +1,10 @@
 <ion-content class="login-container" [fullscreen]="true">
   <div class="login-wrapper">
-    <!-- Header -->
+
+    <!-- HEADER -->
     <div class="header-section">
       <div class="nav-section">
-        <ion-button
-          fill="clear"
-          color="dark"
-          routerLink="/"
-          class="back-button"
-          *ngIf="!otpSent">
-          <ion-icon name="chevron-back"></ion-icon>
-        </ion-button>
-
-        <ion-button
-          fill="clear"
-          color="dark"
-          class="back-button"
-          (click)="editPhoneNumber()"
-          *ngIf="otpSent">
+        <ion-button fill="clear" color="dark" routerLink="/" class="back-button">
           <ion-icon name="chevron-back"></ion-icon>
         </ion-button>
       </div>
@@ -27,109 +14,69 @@
       </div>
     </div>
 
-    <!-- Main Content -->
+    <!-- CONTENT -->
     <div class="main-content">
+
+      <!-- TITLES -->
       <div class="titles-section">
-        <h1 class="main-title">
-          {{ otpSent ? 'Vérifiez votre numéro' : 'Connexion Admin' }}
-        </h1>
+        <h1 class="main-title">Connexion Admin</h1>
         <p class="subtitle">
-          <span *ngIf="!otpSent">
-            Entrez votre numéro de téléphone admin pour vous connecter
-          </span>
-          <span *ngIf="otpSent">
-            Entrez le code à 6 chiffres envoyé par SMS
-          </span>
+          Connectez-vous avec votre email et mot de passe
         </p>
       </div>
 
-      <!-- Étape 1: Saisie du téléphone -->
-      <div *ngIf="!otpSent" class="step-content active">
-        <form [formGroup]="phoneForm" class="form-container-modern">
-          <div class="input-group-modern">
-            <label class="input-label-modern">Numéro de téléphone</label>
-            <div class="phone-input-wrapper">
-              <ion-input
-                #phoneInput
-                type="tel"
-                formControlName="phone"
-                placeholder="+221 77 123 45 67"
-                (ionInput)="onPhoneInput($event)"
-                (keyup.enter)="sendOtp()"
-                class="phone-input">
-              </ion-input>
-            </div>
-            <div class="error-text" *ngIf="isFieldInvalid()">
-              {{ getFieldError() }}
-            </div>
+      <!-- FORM -->
+      <form [formGroup]="loginForm" class="form-container-modern">
+
+        <!-- EMAIL -->
+        <div class="input-group-modern">
+          <label class="input-label-modern">Login</label>
+
+          <div class="phone-input-wrapper">
+            <ion-input
+              type="email"
+              placeholder="admin@myschool.com"
+              formControlName="email">
+            </ion-input>
           </div>
 
-          <ion-button
-            expand="block"
-            class="modern-primary-button"
-            [disabled]="!phoneForm.valid || loading"
-            (click)="sendOtp()">
-            <ion-icon name="send-outline" slot="start" *ngIf="!loading"></ion-icon>
-            {{ loading ? 'Envoi en cours...' : 'Recevoir le code' }}
-          </ion-button>
-        </form>
-      </div>
-
-      <!-- Étape 2: Vérification OTP -->
-      <div *ngIf="otpSent" class="step-content active">
-        <form [formGroup]="otpForm" class="form-container-modern">
-          <div class="otp-instructions">
-            <p>Code envoyé au numéro :</p>
-            <p class="phone-display">{{ displayedPhone }}</p>
+          <div class="error-text"
+               *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+            Email invalide
           </div>
-          <div class="input-group-modern">
-            <label class="input-label-modern">Code de vérification</label>
-            <div class="otp-input-container">
-              <div class="otp-inputs">
-                <input
-                  *ngFor="let i of [0,1,2,3,4,5]; let idx = index"
-                  type="text"
-                  maxlength="1"
-                  [formControlName]="'digit' + i"
-                  class="otp-input"
-                  (input)="onOtpInput($event, idx)"
-                  (keydown.backspace)="onOtpBackspace($event, idx)"
-                  (keydown)="onOtpKeyDown($event, idx)"
-                  inputmode="numeric"
-                  pattern="[0-9]*"
-                  autocomplete="one-time-code">
-              </div>
-            </div>
-            <div class="error-text" *ngIf="otpError">
-              {{ otpError }}
-            </div>
+        </div>
+
+        <!-- PASSWORD -->
+        <div class="input-group-modern">
+          <label class="input-label-modern">Mot de passe</label>
+
+          <div class="phone-input-wrapper">
+            <ion-input
+              type="password"
+              placeholder="********"
+              formControlName="password">
+            </ion-input>
           </div>
 
-          <div class="timer-section" *ngIf="countdown > 0">
-            <p class="timer-text">
-              Renvoyer le code dans <span class="timer">{{ countdown }}s</span>
-            </p>
+          <div class="error-text"
+               *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+            Mot de passe requis
           </div>
+        </div>
 
-          <div class="resend-section" *ngIf="countdown === 0">
-            <button type="button" class="resend-link" (click)="resendOtp()">
-              Renvoyer le code
-            </button>
-          </div>
+        <!-- BUTTON -->
+        <ion-button
+          expand="block"
+          class="modern-primary-button"
+          [disabled]="loginForm.invalid || loading"
+          (click)="login()">
 
-          <ion-button
-            expand="block"
-            class="modern-primary-button"
-            [disabled]="!isOtpComplete() || verifying"
-            (click)="verifyOtp()">
-            <ion-icon name="checkmark-outline" slot="start" *ngIf="!verifying"></ion-icon>
-            {{ verifying ? 'Vérification...' : 'Vérifier le code' }}
-          </ion-button>
-        </form>
-      </div>
+          {{ loading ? 'Connexion...' : 'Se connecter' }}
 
-      <!-- reCAPTCHA invisible -->
-      <div id="recaptcha-container"></div>
+        </ion-button>
+
+      </form>
+
     </div>
   </div>
 </ion-content>
