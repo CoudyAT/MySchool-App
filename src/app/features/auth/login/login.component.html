@@ -84,7 +84,7 @@
         </form>
       </div>
 
-      <!-- Étape 2: Vérification OTP -->
+      <!-- Étape 2: Vérification OTP
       <div *ngIf="otpSent" class="step-content active">
         <form [formGroup]="otpForm" class="form-container-modern">
           <div class="otp-instructions">
@@ -93,22 +93,23 @@
           </div>
           <div class="input-group-modern">
             <label class="input-label-modern">Code de vérification</label>
-            <div class="otp-input-container">
-              <div class="otp-inputs">
-                <input
-                  *ngFor="let i of [0,1,2,3,4,5]; let idx = index"
-                  type="text"
-                  maxlength="1"
-                  [formControlName]="'digit' + i"
-                  class="otp-input"
-                  (input)="onOtpInput($event, idx)"
-                  (keydown.backspace)="onOtpBackspace($event, idx)"
-                  (keydown)="onOtpKeyDown($event, idx)"
-                  [attr.inputmode]="'numeric'"
-                  pattern="[0-9]*"
-                  autocomplete="one-time-code">
-              </div>
-            </div>
+                <div class="otp-input-container">
+                  <div class="otp-inputs">
+                    <input
+                      *ngFor="let i of [0,1,2,3,4,5]; let idx = index"
+                      type="text"
+                      maxlength="1"
+                      [formControlName]="'digit' + i"
+                      class="otp-input"
+                      [attr.id]="'otp-input-' + idx"
+                      (input)="onOtpInput($event, idx)"
+                      (keydown.backspace)="onOtpBackspace($event, idx)"
+                      (keydown)="onOtpKeyDown($event, idx)"
+                      [attr.inputmode]="'numeric'"
+                      pattern="[0-9]*"
+                      autocomplete="one-time-code">
+                  </div>
+                </div>
             <div class="error-text" *ngIf="otpError">
               {{ otpError }}
             </div>
@@ -137,6 +138,95 @@
             <ion-icon name="checkmark-outline" slot="start" *ngIf="!verifying"></ion-icon>
             {{ verifying ? 'Vérification...' : 'Vérifier le code' }}
           </ion-button>
+        </form>
+      </div>  -->
+
+
+      <div *ngIf="otpSent" class="step-content active">
+        <form [formGroup]="otpForm" class="form-container-modern">
+          <div class="otp-instructions">
+            <p>Code envoyé au numéro :</p>
+            <p class="phone-display">{{ displayedPhone }}</p>
+            <p class="code-instruction">Entrez le code à 6 chiffres reçu par SMS</p>
+          </div>
+          
+          <div class="input-group-modern">
+            <label class="input-label-modern">Code de vérification</label>
+            
+            <!-- UN SEUL CHAMP SIMPLE -->
+            <div class="single-otp-container">
+              <ion-input
+                #otpInput
+                type="text"
+                formControlName="otpCode"
+                placeholder="123456"
+                maxlength="6"
+                [inputmode]="'numeric'"
+                pattern="[0-9]*"
+                autocomplete="one-time-code"
+                class="single-otp-input"
+                (ionInput)="onSingleOtpInput($event)"
+                (keydown)="onOtpKeyDown($event)"
+                (paste)="onOtpPaste($event)"
+                (ionBlur)="validateOtpLength()">
+                <ion-icon name="key-outline" slot="start"></ion-icon>
+              </ion-input>
+              
+              <!-- Indicateur de longueur -->
+              <div class="length-indicator">
+                <span class="length-text">{{ otpForm.get('otpCode')?.value?.length || 0 }}/6</span>
+              </div>
+            </div>
+            
+            <div class="error-text" *ngIf="otpError">
+              {{ otpError }}
+            </div>
+            
+            <!-- Bouton pour afficher/masquer le code -->
+            <div class="toggle-visibility">
+              <ion-button 
+                fill="clear" 
+                size="small" 
+                (click)="toggleOtpVisibility()"
+                class="visibility-btn">
+                <ion-icon 
+                  [name]="showOtpText ? 'eye-off-outline' : 'eye-outline'" 
+                  slot="start">
+                </ion-icon>
+                {{ showOtpText ? 'Masquer' : 'Afficher' }}
+              </ion-button>
+            </div>
+          </div>
+
+          <div class="timer-section" *ngIf="countdown > 0">
+            <p class="timer-text">
+              Renvoyer le code dans <span class="timer">{{ countdown }}s</span>
+            </p>
+          </div>
+
+          <div class="resend-section" *ngIf="countdown === 0">
+            <button 
+              type="button" 
+              class="resend-link" 
+              (click)="resendOtp()">
+              Renvoyer le code
+            </button>
+          </div>
+
+          <ion-button
+            expand="block"
+            class="modern-primary-button"
+            [disabled]="!isOtpComplete() || verifying"
+            (click)="verifyOtp()">
+            <ion-icon name="checkmark-outline" slot="start" *ngIf="!verifying"></ion-icon>
+            {{ verifying ? 'Vérification...' : 'Vérifier le code' }}
+          </ion-button>
+          
+          <!-- Option de vérification automatique -->
+          <div class="auto-verify-option">
+            <ion-checkbox [(ngModel)]="autoVerify" (ionChange)="onAutoVerifyChange()"></ion-checkbox>
+            <ion-label class="auto-verify-label">Vérifier automatiquement quand le code est complet</ion-label>
+          </div>
         </form>
       </div>
 

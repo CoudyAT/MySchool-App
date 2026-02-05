@@ -42,67 +42,111 @@
   </p>
 </div>
 
+<!-- Ajoutez cette section au début du contenu principal -->
 
-<!-- Step 1: Téléphone et mot de passe (Connexion/Inscription) -->
-<!-- STEP 1 : Téléphone -->
-<div *ngIf="currentStep === 0 && !otpSent" class="step-content active">
-  <form [formGroup]="welcomeForm" class="form-container-modern">
-
-    <div class="input-group-modern">
-      <label class="input-label-modern">Numéro de téléphone</label>
-      <div class="input-wrapper">
-        <div class="input-icon">
-          <ion-icon name="call-outline"></ion-icon>
+<!-- Step 0: Vérification du téléphone -->
+<div *ngIf="currentStep === 0" class="step-content active">
+  <!-- Étape téléphone sans OTP -->
+  <div *ngIf="!otpSent">
+    <form [formGroup]="welcomeForm" class="form-container-modern">
+      <div class="input-group-modern">
+        <label class="input-label-modern">Numéro de téléphone</label>
+        <div class="input-wrapper">
+          <div class="input-icon">
+            <ion-icon name="call-outline"></ion-icon>
+          </div>
+          <ion-input
+            type="tel"
+            formControlName="phone"
+            placeholder="+221 77 000 00 00"
+            [disabled]="isSendingOtp">
+          </ion-input>
         </div>
-        <ion-input
-          type="tel"
-          formControlName="phone"
-          placeholder="+221 77 000 00 00">
-        </ion-input>
+        <div class="phone-hint">
+          Nous enverrons un code de vérification par SMS
+        </div>
       </div>
-    </div>
 
-    <ion-button
-      expand="block"
-      class="modern-primary-button"
-      [disabled]="!welcomeForm.valid"
-      (click)="sendOtp()">
-      Continuer
-    </ion-button>
-  </form>
+      <ion-button
+        expand="block"
+        class="modern-primary-button"
+        [disabled]="!welcomeForm.valid || isSendingOtp"
+        (click)="sendOtp()">
+        <ion-spinner *ngIf="isSendingOtp" name="crescent" class="spinner"></ion-spinner>
+        <span *ngIf="!isSendingOtp">Envoyer le code de vérification</span>
+        <span *ngIf="isSendingOtp">Envoi en cours...</span>
+      </ion-button>
+    </form>
+  </div>
+
+  <!-- Étape OTP -->
+  <div *ngIf="otpSent">
+    <form [formGroup]="otpForm" class="form-container-modern">
+      <div class="otp-header">
+        <p class="otp-instruction">
+          Entrez le code à 6 chiffres envoyé au<br>
+          <strong>{{ welcomeForm.value.phone }}</strong>
+        </p>
+      </div>
+
+      <div class="input-group-modern">
+        <label class="input-label-modern">Code de vérification</label>
+        <div class="input-wrapper">
+          <ion-input
+            type="text"
+            maxlength="6"
+            formControlName="otp"
+            placeholder="123456"
+            inputmode="numeric"
+            pattern="[0-9]*"
+            [disabled]="isVerifyingOtp">
+          </ion-input>
+        </div>
+        
+        <!-- Compte à rebours pour renvoyer le code -->
+        <div class="otp-actions">
+          <div class="otp-countdown" *ngIf="otpCountdown > 0">
+            Vous pourrez renvoyer le code dans {{ otpCountdown }} seconde{{ otpCountdown > 1 ? 's' : '' }}
+          </div>
+          
+          <button 
+            type="button" 
+            class="resend-button" 
+            (click)="resendOtp()"
+            [disabled]="!canResendOtp || isSendingOtp">
+            <span *ngIf="!isSendingOtp">Renvoyer le code</span>
+            <span *ngIf="isSendingOtp">Envoi en cours...</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="otp-buttons">
+        <ion-button
+          expand="block"
+          class="modern-primary-button"
+          [disabled]="!otpForm.valid || isVerifyingOtp"
+          (click)="verifyOtp()">
+          <ion-spinner *ngIf="isVerifyingOtp" name="crescent" class="spinner"></ion-spinner>
+          <span *ngIf="!isVerifyingOtp">Vérifier</span>
+          <span *ngIf="isVerifyingOtp">Vérification...</span>
+        </ion-button>
+        
+        <ion-button
+          fill="clear"
+          color="medium"
+          expand="block"
+          (click)="otpSent = false">
+          Modifier le numéro
+        </ion-button>
+      </div>
+    </form>
+  </div>
 </div>
 
-<!-- STEP OTP -->
-<div *ngIf="currentStep === 0 && otpSent" class="step-content active">
-  <form [formGroup]="otpForm" class="form-container-modern">
+<!-- Recaptcha container (toujours caché) -->
+<div id="recaptcha-container" style="display: none;"></div>
 
-    <div class="input-group-modern">
-      <label class="input-label-modern">Code reçu par SMS</label>
-      <div class="input-wrapper">
-        <ion-input
-          type="text"
-          maxlength="6"
-          formControlName="otp"
-          placeholder="123456">
-        </ion-input>
-      </div>
-    </div>
-
-    <ion-button
-      expand="block"
-      class="modern-primary-button"
-      (click)="verifyOtp()">
-      Vérifier
-    </ion-button>
-
-  </form>
-</div>
-
-<!-- Recaptcha -->
-<div id="recaptcha-container"></div>
-
-
-    <!-- Step 2: Personal Info -->
+    <!-- Step 1: Personal Info -->
     <div *ngIf="currentStep === 1" class="step-content active">
       <form [formGroup]="personalInfoForm" class="form-container">
         <div class="form-group">
@@ -143,6 +187,7 @@
             {{ getFieldError(personalInfoForm, 'lastName') }}
           </div>
         </div>
+        <!-- NOUVEAU: Champs mot de passe
         <div class="form-group">
           <ion-item class="custom-item" [class.item-error]="isFieldInvalid(personalInfoForm, 'birthDate')"
             (click)="openDatePicker()">
@@ -153,7 +198,7 @@
             </ion-input>
           </ion-item>
           
-          <!-- Input date natif pour mobile -->
+          <!-- Input date natif pour mobile 
           <input
             #dateInput
             type="date"
@@ -168,7 +213,106 @@
           <div class="error-text" *ngIf="isFieldInvalid(personalInfoForm, 'birthDate')">
             {{ getFieldError(personalInfoForm, 'birthDate') }}
           </div>
-        </div>
+        </div>  -->
+          <div class="form-group">
+            <ion-item class="custom-item date-field" 
+                      [class.item-error]="isFieldInvalid(personalInfoForm, 'birthDate')"
+                      [class.has-value]="personalInfoForm.get('birthDate')?.value">
+              <ion-label position="stacked">Date de naissance *</ion-label>
+              <ion-input
+                #dateDisplay
+                type="text"
+                [value]="getFormattedDate()"
+                placeholder="JJ/MM/AAAA"
+                class="custom-input date-input"
+                (click)="showDatePicker()"
+                readonly>
+                <ion-icon name="calendar-outline" slot="start"></ion-icon>
+              </ion-input>
+              <ion-icon *ngIf="personalInfoForm.get('birthDate')?.value" 
+                        name="close-circle" 
+                        slot="end" 
+                        class="clear-date"
+                        (click)="clearDate($event)">
+              </ion-icon>
+            </ion-item>
+
+            <!-- Input caché pour la valeur réelle -->
+            <input
+              type="hidden"
+              formControlName="birthDate"
+              [value]="personalInfoForm.get('birthDate')?.value"
+            />
+
+            <div class="error-text" *ngIf="isFieldInvalid(personalInfoForm, 'birthDate')">
+              {{ getFieldError(personalInfoForm, 'birthDate') }}
+            </div>
+            
+            <!-- Overlay du date picker (caché par défaut) -->
+            <div class="date-picker-overlay" *ngIf="showDatePickerOverlay" (click)="closeDatePicker($event)">
+              <div class="date-picker-container" (click)="$event.stopPropagation()">
+                <div class="date-picker-header">
+                  <h3>Sélectionnez votre date de naissance</h3>
+                  <button class="close-picker" (click)="closeDatePicker()">
+                    <ion-icon name="close"></ion-icon>
+                  </button>
+                </div>
+                
+                <div class="date-picker-body">
+                  <!-- Sélecteurs d'année, mois, jour -->
+                  <div class="date-selectors">
+                    <div class="date-selector">
+                      <label>Jour</label>
+                      <select #daySelect (change)="updateSelectedDate()">
+                        <option value="">JJ</option>
+                        <option *ngFor="let day of days" [value]="day" [selected]="day === selectedDay">
+                          {{ day }}
+                        </option>
+                      </select>
+                    </div>
+                    
+                    <div class="date-selector">
+                      <label>Mois</label>
+                      <select #monthSelect (change)="updateSelectedDate()">
+                        <option value="">MM</option>
+                        <option *ngFor="let month of months; let i = index" 
+                                [value]="i + 1" 
+                                [selected]="(i + 1) === selectedMonth">
+                          {{ month }}
+                        </option>
+                      </select>
+                    </div>
+                    
+                    <div class="date-selector">
+                      <label>Année</label>
+                      <select #yearSelect (change)="updateSelectedDate()">
+                        <option value="">AAAA</option>
+                        <option *ngFor="let year of years" 
+                                [value]="year" 
+                                [selected]="year === selectedYear">
+                          {{ year }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <div class="selected-date-preview" *ngIf="selectedDay && selectedMonth && selectedYear">
+                    <p>Date sélectionnée : <strong>{{ selectedDay }}/{{ selectedMonth }}/{{ selectedYear }}</strong></p>
+                    <p class="age-info">Âge : {{ calculateAge() }} ans</p>
+                  </div>
+                </div>
+                
+                <div class="date-picker-footer">
+                  <button class="btn-cancel" (click)="closeDatePicker()">Annuler</button>
+                  <button class="btn-confirm" 
+                          [disabled]="!selectedDay || !selectedMonth || !selectedYear"
+                          (click)="confirmDate()">
+                    Confirmer
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
 
         <!-- NOUVEAU: Champs mot de passe -->
         <div class="form-group">
@@ -203,7 +347,7 @@
 
         <div class="terms-section">
           <div class="checkbox-item">
-            <ion-checkbox [(ngModel)]="userData.acceptTerms" class="custom-checkbox">
+            <ion-checkbox formControlName="acceptTerms" class="custom-checkbox">
             </ion-checkbox>
             <label class="checkbox-label">
               Je souhaite recevoir des offres et promotions provenant de MySchool
@@ -211,37 +355,43 @@
           </div>
 
           <div class="checkbox-item">
-            <ion-checkbox [(ngModel)]="userData.acceptPrivacy" color="primary" class="custom-checkbox">
+            <ion-checkbox formControlName="acceptPrivacy" color="primary" class="custom-checkbox">
             </ion-checkbox>
             <label class="checkbox-label">
               J'ai lu et accepté les
-              <a href="#" class="link">Conditions d'utilisation</a> et les
-              <a href="#" class="link">Politiques de Confidentialité</a>
+              <a (click)="openTerms()" class="link">Conditions d'utilisation</a> et les
+              <a (click)="openTerms()" class="link">Politiques de Confidentialité</a>
             </label>
+          </div>
+          
+          <!-- Ajoutez cette div pour afficher l'erreur -->
+          <div class="error-text" *ngIf="personalInfoForm.get('acceptPrivacy')?.invalid && personalInfoForm.get('acceptPrivacy')?.touched">
+            ⚠️ Vous devez accepter les conditions pour continuer
           </div>
         </div>
       </form>
     </div>
 
-    <!-- Step 3: User Info -->
+    <!-- Step 2: User Info -->
     <div *ngIf="currentStep === 2" class="step-content active">
       <form [formGroup]="userInfoForm" class="form-container">
-        <div class="form-group">
-          <ion-item class="custom-item" [class.item-error]="isFieldInvalid(userInfoForm, 'country')">
+      <div class="form-group">
+          <ion-item class="custom-item">
             <ion-label position="stacked">Pays / Ville</ion-label>
-            <ion-select formControlName="country" placeholder="Sélectionnez votre pays" class="custom-select">
-
-              <ion-select-option *ngFor="let item of countries" [value]="item.country">
-                <img [src]="item.flag" alt="{{ item.country }}" width="20" height="14" style="margin-right:8px;">
-                {{ item.country }}
+            <ion-select 
+              formControlName="country" 
+              placeholder="Sélectionnez votre pays" 
+              class="custom-select"
+              [disabled]="true">
+              
+              <ion-select-option value="Senegal" selected>
+                <img src="assets/flags/senegal.svg" alt="Sénégal" width="20" height="14" style="margin-right:8px;">
+                Sénégal
               </ion-select-option>
 
             </ion-select>
           </ion-item>
-          <div class="error-text" *ngIf="isFieldInvalid(userInfoForm, 'country')">
-            {{ getFieldError(userInfoForm, 'country') }}
-          </div>
-        </div>
+      </div>
 
         <div class="form-group">
           <ion-item class="custom-item" [class.item-error]="isFieldInvalid(userInfoForm, 'address')">
@@ -254,6 +404,7 @@
             {{ getFieldError(userInfoForm, 'address') }}
           </div>
         </div>
+        <!--
         <div class="form-group">
           <ion-item class="custom-item" [class.item-error]="isFieldInvalid(userInfoForm, 'profession')">
             <ion-label position="stacked">Profession</ion-label>
@@ -267,7 +418,50 @@
           <div class="error-text" *ngIf="isFieldInvalid(userInfoForm, 'profession')">
             {{ getFieldError(userInfoForm, 'profession') }}
           </div>
-        </div>
+        </div> -->
+
+              <!-- NOUVEAU: Niveau d'étude -->
+          <div class="form-group">
+            <ion-item class="custom-item" [class.item-error]="isFieldInvalid(userInfoForm, 'niveauEtude')">
+              <ion-label position="stacked">Niveau d'étude</ion-label>
+              <ion-select 
+                formControlName="niveauScolaire" 
+                placeholder="Sélectionnez votre niveau" 
+                class="custom-select"
+                (ionChange)="onNiveauEtudeChange($event.detail.value)">
+                <ion-icon name="school" slot="start"></ion-icon>
+                <ion-select-option *ngFor="let niveau of niveauxEtude" [value]="niveau.value">
+                  {{ niveau.label }}
+                </ion-select-option>
+              </ion-select>
+            </ion-item>
+            <div class="error-text" *ngIf="isFieldInvalid(userInfoForm, 'niveauScolaire')">
+              {{ getFieldError(userInfoForm, 'niveauScolaire') }}
+            </div>
+          </div>
+
+      <!-- NOUVEAU: Classe -->
+          <div class="form-group">
+            <ion-item class="custom-item" [class.item-error]="isFieldInvalid(userInfoForm, 'classe')">
+              <ion-label position="stacked">Classe</ion-label>
+              <ion-select 
+                formControlName="classe" 
+                placeholder="Sélectionnez votre classe" 
+                class="custom-select"
+                [disabled]="!classesDisponibles.length">
+                <ion-icon name="school" slot="start"></ion-icon>
+                <ion-select-option *ngFor="let classe of classesDisponibles" [value]="classe">
+                  {{ classe }}
+                </ion-select-option>
+              </ion-select>
+            </ion-item>
+            <div class="error-text" *ngIf="isFieldInvalid(userInfoForm, 'classe')">
+              {{ getFieldError(userInfoForm, 'classe') }}
+            </div>
+            <div *ngIf="!classesDisponibles.length && userInfoForm.get('niveauEtude')?.value" class="info-text">
+              Veuillez d'abord sélectionner un niveau d'étude
+            </div>
+          </div>
 
         <div class="form-group">
           <ion-item class="custom-item">
@@ -281,7 +475,7 @@
       </form>
     </div>
 
-    <!-- Step 4: Objectives -->
+    <!-- Step 3: Objectives -->
     <div *ngIf="currentStep === 3" class="step-content active">
       <div class="objectives-container">
         <div class="objectives-grid">

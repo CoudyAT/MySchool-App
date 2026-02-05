@@ -30,15 +30,16 @@
       <p class="instructor-title">{{ instructor.title }}</p>
 
       <div class="stats-row">
+<!-- INFOS 
         <div class="stat-item">
           <div class="rating-container">
             <ion-icon *ngFor="let s of getStars(instructor.rating)" name="star"></ion-icon>
             <ion-icon *ngIf="getHalfStar(instructor.rating)" name="star-half"></ion-icon>
             <span class="rating-number">{{ instructor.rating | number:'1.1-1' }}</span>
           </div>
-        </div>
+        </div> 
 
-        <div class="stat-divider"></div>
+        <div class="stat-divider"></div> -->
 
         <div class="stat-item" (click)="openCoursesModal()" style="cursor: pointer;">
           <ion-icon name="book-outline"></ion-icon>

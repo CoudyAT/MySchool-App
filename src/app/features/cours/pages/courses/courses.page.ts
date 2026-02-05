@@ -361,8 +361,7 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
 
     this.courseService.getAllCourses().subscribe({
       next: (courses) => {
-        // On limite l’affichage (ex: 6 cours)
-        this.allCourses = courses.slice(0, 6);
+        this.allCourses = courses.filter((c) => c.type === 'En ligne');;
         this.isCoursesLoading = false;
       },
       error: (err) => {
@@ -371,4 +370,18 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
       },
     });
   }
+
+  // loadAllCoursesPreview() {
+  //   const sub = this.courseService.getAllCourses().subscribe({
+  //     next: (courses) => {
+  //       // ✅ Filtrer uniquement les cours de type "video"
+  //       this.allCourses = courses.filter((c) => c.type === 'En ligne');
+  //       console.log('Cours vidéo trouvés :', this.allCourses.length);
+  //     },
+  //     error: (err) => {
+  //       console.error('Erreur chargement cours:', err);
+  //       this.isLoading = false;
+  //     },
+  //   });
+  // }
 }

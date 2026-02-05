@@ -29,6 +29,8 @@ body{
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
 
 
   // Header Section
@@ -117,6 +119,9 @@ body{
     margin: 0 auto;
     width: 100%;
     background-color: white;
+    overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 100px; // Espace p
 
     .titles-section {
       text-align: center;
@@ -314,7 +319,13 @@ body{
   // Button Section
   .button-section {
     padding: 20px;
-    background: white;
+   background: white;
+     position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.1);
    
     .action-button {
       --color : white;
@@ -409,6 +420,30 @@ body{
     transform: rotate(360deg);
   }
 }
+
+// .native-date-input {
+//   position: absolute;
+//   opacity: 0;
+//   pointer-events: none;
+//   width: 0;
+//   height: 0;
+// }
+
+.native-date-input {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 5;
+}
+
+.date-wrapper {
+  position: relative;
+}
+
+
 
 // Responsive Design
 @media (max-width: 480px) {
@@ -543,6 +578,7 @@ body{
 
     .button-section {
       background: white;
+      margin-top: -17px;
     }
   }
 }
@@ -1018,3 +1054,338 @@ body{
     text-decoration: underline;
   }
 }
+
+/* Styles pour le date picker personnalisé */
+.date-picker-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.date-picker-container {
+  background: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  animation: slideUp 0.3s ease;
+}
+
+.date-picker-header {
+  padding: 20px;
+  background: linear-gradient(135deg, #005ADD 0%, #1D4354 100%);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  
+  .close-picker {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    transition: background-color 0.3s;
+    
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+.date-picker-body {
+  padding: 20px;
+}
+
+.date-selectors {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  
+  .date-selector {
+    flex: 1;
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 16px;
+      color: #2c3e50;
+      background-color: white;
+      cursor: pointer;
+      transition: border-color 0.3s;
+      
+      &:focus {
+        outline: none;
+        border-color: #005ADD;
+      }
+      
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+.selected-date-preview {
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin-top: 20px;
+  
+  p {
+    margin: 0 0 8px 0;
+    color: #2c3e50;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    strong {
+      color: #005ADD;
+    }
+  }
+  
+  .age-info {
+    font-size: 14px;
+    color: #7f8c8d;
+  }
+}
+
+.date-picker-footer {
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  
+  button {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
+    
+    &.btn-cancel {
+      background-color: #e0e0e0;
+      color: #2c3e50;
+      
+      &:hover {
+        background-color: #d0d0d0;
+      }
+    }
+    
+    &.btn-confirm {
+      background-color: #005ADD;
+      color: white;
+      
+      &:hover:not(:disabled) {
+        background-color: #0047b3;
+      }
+      
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// Styles pour le champ date
+.date-field {
+  position: relative;
+  cursor: pointer;
+  
+  .custom-item {
+    &::part(native) {
+      cursor: pointer;
+    }
+  }
+  
+  .clear-date {
+    color: #95a5a6;
+    font-size: 20px;
+    cursor: pointer;
+    transition: color 0.3s;
+    
+    &:hover {
+      color: #e74c3c;
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 480px) {
+  .date-picker-container {
+    width: 95%;
+  }
+  
+  .date-selectors {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .date-picker-footer {
+    flex-direction: column;
+    
+    button {
+      width: 100%;
+    }
+  }
+}
+
+// Mode sombre
+@media (prefers-color-scheme: dark) {
+  .date-picker-container {
+    background: #2c3e50;
+    color: white;
+  }
+  
+  .date-selectors {
+    .date-selector {
+      label {
+        color: white;
+      }
+      
+      select {
+        background-color: #34495e;
+        color: white;
+        border-color: #4a6572;
+      }
+    }
+  }
+  
+  .selected-date-preview {
+    background-color: #34495e;
+    color: white;
+    
+    p {
+      color: white;
+    }
+    
+    .age-info {
+      color: #b0b0b0;
+    }
+  }
+  
+  .date-picker-footer {
+    background-color: #34495e;
+    border-color: #4a6572;
+    
+    .btn-cancel {
+      background-color: #4a6572;
+      color: white;
+    }
+  }
+}
+
+// Responsive Design - MODIFIER cette section
+@media (max-width: 480px) {
+  .signup-container {
+    .header-section {
+      padding: 16px;
+      padding-top: env(safe-area-inset-top, 16px); // Pour les iPhones avec notch
+
+      .logo-container .logo {
+        padding: 12px 20px;
+      }
+    }
+
+    .main-content {
+      padding: 20px 16px;
+      padding-bottom: 120px; // PLUS D'ESPACE pour le bouton
+      padding-top: env(safe-area-inset-top, 20px); // Safe area pour iOS
+      
+      .titles-section {
+        .main-title {
+          font-size: 24px;
+        }
+
+        .subtitle {
+          font-size: 14px;
+        }
+      }
+
+      .form-container .form-group .custom-item {
+        --padding-start: 16px;
+        --padding-end: 16px;
+        --min-height: 56px;
+      }
+    }
+
+    .button-section {
+      padding: 16px;
+      padding-bottom: calc(16px + env(safe-area-inset-bottom, 0)); // Safe area pour iOS
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      
+      .action-button {
+        height: 52px; // Un peu plus petit sur mobile
+        font-size: 15px;
+        color: white;
+        max-width: calc(100% - 32px); // S'adapte à l'écran
+        margin: 0 auto;
+      }
+    }
+  }
+}
+
+
+

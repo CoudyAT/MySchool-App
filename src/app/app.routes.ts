@@ -234,7 +234,7 @@ export const routes: Routes = [
   },
   {
     path: 'conditions',
-    loadComponent: () => import('./features/auth/conditions/conditions.page').then( m => m.ConditionsPage)
+    loadComponent: () => import('./features/auth/pages/conditions/conditions.page').then( m => m.ConditionsPage)
   },
 
 ];

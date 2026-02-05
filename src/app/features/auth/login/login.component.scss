@@ -663,3 +663,194 @@
     }
   }
 }
+
+
+// Ajoutez ces styles après les styles existants
+
+/* Styles pour le champ OTP simplifié */
+.single-otp-container {
+  position: relative;
+  margin-bottom: 16px;
+  
+  .single-otp-input {
+    --background: #ffffff;
+    --color: #1a1a1a;
+    --placeholder-color: #999999;
+    --padding-start: 16px;
+    --padding-end: 70px; // Espace pour l'indicateur
+    --padding-top: 16px;
+    --padding-bottom: 16px;
+    --border-radius: 16px;
+    --border-width: 2px;
+    --border-color: #e0e0e0;
+    --border-style: solid;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 8px;
+    text-align: center;
+    height: 64px;
+    
+    &:focus {
+      --border-color: #005ADD;
+      box-shadow: 0 0 0 4px rgba(0, 90, 221, 0.15);
+    }
+    
+    &.has-error {
+      --border-color: #e74c3c;
+      
+      &:focus {
+        box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.15);
+      }
+    }
+    
+    &::part(native) {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 8px;
+      text-align: center;
+      
+      // Pour masquer le texte (mode password)
+      &[type="password"] {
+        font-family: monospace;
+        letter-spacing: 12px;
+      }
+    }
+    
+    ion-icon[slot="start"] {
+      color: #005ADD;
+      font-size: 24px;
+      margin-right: 12px;
+    }
+  }
+  
+  .length-indicator {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #f8f9fa;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #7f8c8d;
+    border: 1px solid #e0e0e0;
+    
+    .length-text {
+      font-family: monospace;
+    }
+  }
+}
+
+.toggle-visibility {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+  margin-bottom: 16px;
+  
+  .visibility-btn {
+    --color: #666666;
+    --background: transparent;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0;
+    --padding-start: 0;
+    --padding-end: 0;
+    
+    &:hover {
+      --color: #005ADD;
+    }
+    
+    ion-icon {
+      font-size: 16px;
+      margin-right: 6px;
+    }
+  }
+}
+
+.auto-verify-option {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  
+  ion-checkbox {
+    --size: 20px;
+    --checkbox-background-checked: #005ADD;
+    --border-color-checked: #005ADD;
+    margin-right: 12px;
+  }
+  
+  .auto-verify-label {
+    font-size: 14px;
+    color: #666666;
+    line-height: 1.4;
+  }
+}
+
+.code-instruction {
+  font-size: 14px;
+  color: #7f8c8d;
+  margin-top: 8px;
+  font-style: italic;
+}
+
+// Animation pour le champ OTP
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.single-otp-input.has-error {
+  animation: shake 0.5s ease-in-out;
+}
+
+// Responsive
+@media (max-width: 480px) {
+  .single-otp-container {
+    .single-otp-input {
+      --padding-start: 12px;
+      --padding-end: 60px;
+      height: 56px;
+      font-size: 18px;
+      
+      &::part(native) {
+        font-size: 18px;
+        letter-spacing: 6px;
+      }
+    }
+    
+    .length-indicator {
+      right: 12px;
+      padding: 3px 10px;
+      font-size: 12px;
+    }
+  }
+  
+  .auto-verify-option {
+    padding: 12px;
+    
+    .auto-verify-label {
+      font-size: 13px;
+    }
+  }
+}
+
+// Pour les très petits écrans
+@media (max-width: 360px) {
+  .single-otp-container {
+    .single-otp-input {
+      height: 52px;
+      font-size: 16px;
+      
+      &::part(native) {
+        font-size: 16px;
+        letter-spacing: 4px;
+      }
+    }
+  }
+}

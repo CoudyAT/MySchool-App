@@ -62,9 +62,12 @@ export class MesCoursPage implements OnInit {
   private subscription = new Subscription();
 
   isLoading = true;
-  selectedSegment: 'cours' | 'cours-en-ligne' = 'cours';
+  selectedSegment: 'cours' | 'cours-en-ligne' | 'tutoriel' = 'cours';
 
-  constructor(private router: Router, private courseService: CourseService) {
+  constructor(
+    private router: Router,
+    private courseService: CourseService,
+  ) {
     addIcons({
       searchOutline,
       personCircleOutline,
@@ -104,9 +107,9 @@ export class MesCoursPage implements OnInit {
               .map((c) => c.category)
               .filter(
                 (cat): cat is string =>
-                  typeof cat === 'string' && cat.trim() !== ''
-              )
-          )
+                  typeof cat === 'string' && cat.trim() !== '',
+              ),
+          ),
         );
 
         console.log('Cours chargés :', this.courses.length);
@@ -128,29 +131,72 @@ export class MesCoursPage implements OnInit {
     this.filterCoursesBySegment();
   }
 
+  // filterCoursesBySegment() {
+  //   if (this.selectedSegment === 'cours') {
+  //     // Filtrer pour afficher les cours qui ne sont PAS "En ligne"
+  //     this.filteredCourses = this.courses.filter((c) => c.type !== 'En ligne');
+  //   } else {
+  //     // Filtrer pour afficher uniquement les cours "En ligne"
+  //     this.filteredCourses = this.courses.filter((c) => c.type === 'En ligne');
+  //   }
+  // }
+
   filterCoursesBySegment() {
-    if (this.selectedSegment === 'cours') {
-      // Filtrer pour afficher les cours qui ne sont PAS "En ligne"
-      this.filteredCourses = this.courses.filter((c) => c.type !== 'En ligne');
-    } else {
-      // Filtrer pour afficher uniquement les cours "En ligne"
-      this.filteredCourses = this.courses.filter((c) => c.type === 'En ligne');
+    switch (this.selectedSegment) {
+      case 'cours':
+        // Filtrer pour afficher les cours qui ne sont PAS "En ligne" ni "Tuto"
+        this.filteredCourses = this.courses.filter(
+          (c) => c.type === 'Présentiel',
+        );
+        break;
+
+      case 'cours-en-ligne':
+        // Filtrer pour afficher uniquement les cours "En ligne"
+        this.filteredCourses = this.courses.filter(
+          (c) => c.type === 'En ligne',
+        );
+        break;
+
+      case 'tutoriel':
+        // Filtrer pour afficher uniquement les cours de type "Tuto"
+        this.filteredCourses = this.courses.filter((c) => c.type === 'Tuto');
+        break;
+
+      default:
+        this.filteredCourses = this.courses;
     }
+
+    console.log(
+      `Segment actif: ${this.selectedSegment}, Cours affichés: ${this.filteredCourses.length}`,
+    );
   }
 
   searchCourse(event: any) {
     const term = event.target.value?.toLowerCase().trim() ?? '';
 
     // Appliquer le filtre de recherche sur les cours déjà filtrés par segment
-    const baseCourses =
-      this.selectedSegment === 'cours'
-        ? this.courses.filter((c) => !c.isOnline)
-        : this.courses.filter((c) => c.isOnline);
+    let baseCourses: Course[] = [];
+
+    switch (this.selectedSegment) {
+      case 'cours':
+        baseCourses = this.courses.filter(
+          (c) => c.type !== 'En ligne' && c.type !== 'Tuto',
+        );
+        break;
+      case 'cours-en-ligne':
+        baseCourses = this.courses.filter((c) => c.type === 'En ligne');
+        break;
+      case 'tutoriel':
+        baseCourses = this.courses.filter((c) => c.type === 'Tuto');
+        break;
+      default:
+        baseCourses = this.courses;
+    }
 
     this.filteredCourses = baseCourses.filter(
       (c) =>
         c.title.toLowerCase().includes(term) ||
-        c.category.toLowerCase().includes(term)
+        c.category.toLowerCase().includes(term),
     );
   }
 
@@ -174,7 +220,7 @@ export class MesCoursPage implements OnInit {
       ...new Set(
         this.filteredCourses
           .map((c) => c.category)
-          .filter((x) => x && x.trim() !== '')
+          .filter((x) => x && x.trim() !== ''),
       ),
     ];
   }

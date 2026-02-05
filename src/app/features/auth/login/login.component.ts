@@ -5,12 +5,14 @@ import {
   ElementRef,
   ViewChild,
   OnInit,
+  AfterViewInit,
 } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
   Validators,
   ReactiveFormsModule,
+  FormsModule,
 } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
@@ -34,6 +36,8 @@ import {
   IonIcon,
   IonProgressBar,
   ToastController,
+  IonCheckbox,
+  IonLabel,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -42,6 +46,9 @@ import {
   sendOutline,
   checkmarkOutline,
   pencilOutline,
+  keyOutline,
+  eyeOutline,
+  eyeOffOutline,
 } from 'ionicons/icons';
 
 @Component({
@@ -52,15 +59,21 @@ import {
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     IonContent,
     IonButton,
     IonInput,
     IonIcon,
     IonProgressBar,
+    IonCheckbox,
+    IonLabel,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, AfterViewInit {
+  @ViewChild('phoneInput') phoneInput!: ElementRef<HTMLIonInputElement>;
+  @ViewChild('otpInput') otpInput!: ElementRef<HTMLIonInputElement>;
+
   phoneForm: FormGroup;
   otpForm: FormGroup;
   otpSent = false;
@@ -70,11 +83,11 @@ export class LoginComponent implements OnInit {
   displayedPhone = '';
   countdown = 0;
   countdownInterval: any;
+  showOtpText = false;
+  autoVerify = true; // Vérification automatique par défaut
 
   recaptchaVerifier!: RecaptchaVerifier;
   confirmationResult!: ConfirmationResult;
-
-  @ViewChild('phoneInput') phoneInput!: ElementRef<HTMLIonInputElement>;
 
   constructor(
     private fb: FormBuilder,
@@ -90,6 +103,9 @@ export class LoginComponent implements OnInit {
       sendOutline,
       checkmarkOutline,
       pencilOutline,
+      keyOutline,
+      eyeOutline,
+      eyeOffOutline,
     });
 
     // Initialiser avec +221 par défaut
@@ -100,14 +116,17 @@ export class LoginComponent implements OnInit {
       ],
     });
 
-    // Formulaire OTP avec 6 champs individuels
+    // Formulaire OTP SIMPLIFIÉ - un seul champ
     this.otpForm = this.fb.group({
-      digit0: ['', Validators.required],
-      digit1: ['', Validators.required],
-      digit2: ['', Validators.required],
-      digit3: ['', Validators.required],
-      digit4: ['', Validators.required],
-      digit5: ['', Validators.required],
+      otpCode: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(6),
+          Validators.maxLength(6),
+          Validators.pattern(/^\d+$/),
+        ],
+      ],
     });
   }
 
@@ -127,6 +146,12 @@ export class LoginComponent implements OnInit {
     const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
       this.router.navigate(['/courses'], { replaceUrl: true });
+    }
+
+    // Charger la préférence de vérification automatique
+    const savedAutoVerify = localStorage.getItem('autoVerifyOtp');
+    if (savedAutoVerify !== null) {
+      this.autoVerify = savedAutoVerify === 'true';
     }
   }
 
@@ -225,72 +250,6 @@ export class LoginComponent implements OnInit {
   }
 
   // Envoyer OTP
-  // async sendOtp() {
-  //   if (!this.phoneForm.valid || this.loading) {
-  //     return;
-  //   }
-
-  //   this.loading = true;
-  //   this.otpError = '';
-
-  //   try {
-  //     let phone = this.phoneForm.value.phone;
-
-  //     // Normaliser le numéro
-  //     phone = this.normalizePhone(phone);
-
-  //     // Vérifier la longueur minimale
-  //     if (phone.length < 13) {
-  //       // +221 + 9 chiffres
-  //       this.otpError = 'Numéro de téléphone incomplet';
-  //       await this.showToast('Veuillez entrer un numéro complet', 'warning');
-  //       return;
-  //     }
-
-  //     this.displayedPhone = this.formatPhoneDisplay(phone);
-
-  //     // Envoyer le code OTP
-  //     this.confirmationResult = await signInWithPhoneNumber(
-  //       this.auth,
-  //       phone,
-  //       this.recaptchaVerifier
-  //     );
-
-  //     // Succès
-  //     this.otpSent = true;
-  //     this.startCountdown();
-
-  //     await this.showToast('Code envoyé par SMS', 'success');
-
-  //     // Stocker temporairement le numéro
-  //     localStorage.setItem('pendingPhone', this.formatPhoneForSearch(phone));
-
-  //     // Mettre le focus sur le premier champ OTP
-  //     setTimeout(() => {
-  //       const firstOtpInput = document.querySelector(
-  //         '.otp-input'
-  //       ) as HTMLInputElement;
-  //       if (firstOtpInput) {
-  //         firstOtpInput.focus();
-  //       }
-  //     }, 100);
-  //   } catch (error: any) {
-  //     console.error('Erreur envoi OTP:', error);
-
-  //     if (error.code === 'auth/invalid-phone-number') {
-  //       this.otpError = 'Numéro de téléphone invalide';
-  //     } else if (error.code === 'auth/too-many-requests') {
-  //       this.otpError = 'Trop de tentatives. Veuillez réessayer plus tard.';
-  //     } else {
-  //       this.otpError = "Erreur lors de l'envoi du code";
-  //     }
-
-  //     await this.showToast(this.otpError, 'danger');
-  //   } finally {
-  //     this.loading = false;
-  //   }
-  // }
-
   async sendOtp() {
     // Vérifier que le formulaire est valide
     if (!this.phoneForm.valid) {
@@ -336,13 +295,10 @@ export class LoginComponent implements OnInit {
 
       await this.showToast('Code envoyé par SMS avec succès', 'success');
 
-      // Focus sur le premier champ OTP
+      // Focus sur le champ OTP
       setTimeout(() => {
-        const firstOtpInput = document.querySelector(
-          '.otp-input',
-        ) as HTMLInputElement;
-        if (firstOtpInput) {
-          firstOtpInput.focus();
+        if (this.otpInput) {
+          this.otpInput.nativeElement.setFocus();
         }
       }, 300);
     } catch (error: any) {
@@ -366,6 +322,129 @@ export class LoginComponent implements OnInit {
     }
   }
 
+  // Gestion de la saisie OTP simplifiée
+  onSingleOtpInput(event: any) {
+    const input = event.target;
+    let value = input.value || '';
+
+    // Nettoyer : ne garder que les chiffres
+    value = value.replace(/\D/g, '');
+
+    // Limiter à 6 chiffres
+    if (value.length > 6) {
+      value = value.substring(0, 6);
+    }
+
+    // Mettre à jour la valeur du formulaire
+    this.otpForm.patchValue({ otpCode: value });
+
+    // Effacer les erreurs
+    this.otpError = '';
+
+    // Vérification automatique si activée
+    if (this.autoVerify && value.length === 6) {
+      // Petit délai pour laisser le temps à l'utilisateur de voir le code
+      setTimeout(() => {
+        this.verifyOtp();
+      }, 500);
+    }
+  }
+
+  onOtpKeyDown(event: KeyboardEvent) {
+    // Permettre seulement les chiffres, backspace, delete, tab, flèches
+    const allowedKeys = [
+      '0',
+      '1',
+      '2',
+      '3',
+      '4',
+      '5',
+      '6',
+      '7',
+      '8',
+      '9',
+      'Backspace',
+      'Delete',
+      'Tab',
+      'ArrowLeft',
+      'ArrowRight',
+      'Home',
+      'End',
+    ];
+
+    if (!allowedKeys.includes(event.key) && !event.ctrlKey && !event.metaKey) {
+      event.preventDefault();
+    }
+  }
+
+  onOtpPaste(event: ClipboardEvent) {
+    event.preventDefault();
+
+    const pastedData = event.clipboardData?.getData('text') || '';
+    const digits = pastedData.replace(/\D/g, '').slice(0, 6);
+
+    if (digits) {
+      this.otpForm.patchValue({ otpCode: digits });
+
+      // Focus à la fin du texte
+      setTimeout(() => {
+        if (this.otpInput) {
+          this.otpInput.nativeElement.setFocus();
+          // Positionner le curseur à la fin
+          const inputEl = this.otpInput.nativeElement;
+          inputEl.getInputElement().then((nativeInput: HTMLInputElement) => {
+            nativeInput.setSelectionRange(digits.length, digits.length);
+          });
+        }
+      }, 10);
+
+      // Effacer les erreurs
+      this.otpError = '';
+
+      // Vérification automatique si activée
+      if (this.autoVerify && digits.length === 6) {
+        setTimeout(() => {
+          this.verifyOtp();
+        }, 500);
+      }
+    }
+  }
+
+  validateOtpLength() {
+    const otpValue = this.otpForm.get('otpCode')?.value || '';
+    if (otpValue.length > 0 && otpValue.length < 6) {
+      this.otpError = 'Le code doit contenir 6 chiffres';
+    } else {
+      this.otpError = '';
+    }
+  }
+
+  toggleOtpVisibility() {
+    this.showOtpText = !this.showOtpText;
+
+    // Changer le type d'input
+    setTimeout(() => {
+      if (this.otpInput) {
+        const inputEl = this.otpInput.nativeElement;
+        inputEl.getInputElement().then((nativeInput: HTMLInputElement) => {
+          nativeInput.type = this.showOtpText ? 'text' : 'password';
+        });
+      }
+    }, 10);
+  }
+
+  onAutoVerifyChange() {
+    // Sauvegarder la préférence dans localStorage
+    localStorage.setItem('autoVerifyOtp', this.autoVerify.toString());
+
+    if (this.autoVerify && this.isOtpComplete()) {
+      // Si l'utilisateur active l'auto-verification et que le code est déjà complet
+      setTimeout(() => {
+        this.verifyOtp();
+      }, 300);
+    }
+  }
+
   // Vérifier OTP
   async verifyOtp() {
     if (!this.isOtpComplete() || this.verifying) {
@@ -375,28 +454,16 @@ export class LoginComponent implements OnInit {
     this.verifying = true;
     this.otpError = '';
 
-    // Afficher un loader
-    await this.showToast('Vérification du code...', 'primary');
-
     try {
-      // Récupérer le code OTP complet
       const otpCode = this.getOtpCode();
-
-      // Vérifier le code OTP avec Firebase
       const result = await this.confirmationResult.confirm(otpCode);
-
-      // Code OTP valide
       const phone = result.user.phoneNumber;
       const cleanPhone = this.formatPhoneForSearch(phone || '');
-
-      // Vérifier si l'utilisateur existe dans Firestore
       const userExists = await this.checkUserExists(cleanPhone);
 
       if (userExists) {
-        // Utilisateur existant → connexion
         await this.handleExistingUser(cleanPhone);
       } else {
-        // Nouvel utilisateur → inscription
         await this.handleNewUser(cleanPhone);
       }
     } catch (error: any) {
@@ -414,73 +481,30 @@ export class LoginComponent implements OnInit {
 
       await this.showToast(this.otpError, 'danger');
 
-      // Réinitialiser les champs OTP en cas d'erreur
-      this.resetOtpFields();
+      // Effacer le champ OTP en cas d'erreur
+      this.otpForm.patchValue({ otpCode: '' });
+
+      // Remettre le focus sur le champ OTP
+      setTimeout(() => {
+        if (this.otpInput) {
+          this.otpInput.nativeElement.setFocus();
+        }
+      }, 100);
     } finally {
       this.verifying = false;
     }
   }
 
-  // Méthode handleExistingUser corrigée
-  // async handleExistingUser(phone: string) {
-  //   try {
-  //     const usersCollection = collection(this.firestore, 'utilisateur');
-  //     const phoneQuery = query(usersCollection, where('phone', '==', phone));
-  //     const snapshot = await getDocs(phoneQuery);
+  // Vérifier si l'OTP est complet
+  isOtpComplete(): boolean {
+    const otpValue = this.otpForm.get('otpCode')?.value || '';
+    return otpValue.length === 6 && /^\d+$/.test(otpValue);
+  }
 
-  //     if (!snapshot.empty) {
-  //       const userDoc = snapshot.docs[0];
-  //       const userData = userDoc.data();
-
-  //       // Stocker les données utilisateur
-  //       localStorage.setItem(
-  //         'currentUser',
-  //         JSON.stringify({
-  //           ...userData,
-  //           id: userDoc.id,
-  //         })
-  //       );
-  //       localStorage.setItem('userPhone', phone);
-
-  //       // Connexion Firebase anonyme
-  //       if (!this.auth.currentUser) {
-  //         await signInAnonymously(this.auth);
-  //       }
-
-  //       // Toast de bienvenue
-  //       const firstName = userData['firstName'] || '';
-  //       await this.showToast(
-  //         firstName ? `Bienvenue ${firstName} !` : 'Connexion réussie !',
-  //         'success'
-  //       );
-
-  //       // IMPORTANT: Redirection vers /courses
-  //       console.log('Redirection vers /courses...');
-
-  //       // Utiliser router.navigate avec replaceUrl
-  //       setTimeout(() => {
-  //         this.router
-  //           .navigate(['/courses'], {
-  //             replaceUrl: true,
-  //           })
-  //           .then(() => {
-  //             console.log('Navigation réussie vers /courses');
-  //           })
-  //           .catch((err) => {
-  //             console.error('Erreur navigation:', err);
-  //             // Fallback: redirection via window.location
-  //             window.location.href = '/courses';
-  //           });
-  //       }, 1000);
-  //     } else {
-  //       await this.showToast('Utilisateur non trouvé', 'danger');
-  //     }
-  //   } catch (error) {
-  //     console.error('Erreur connexion utilisateur:', error);
-  //     await this.showToast('Erreur lors de la connexion', 'danger');
-  //     throw error;
-  //   }
-  // }
+  // Récupérer le code OTP complet
+  getOtpCode(): string {
+    return this.otpForm.get('otpCode')?.value || '';
+  }
 
   async handleExistingUser(phone: string) {
     try {
@@ -515,7 +539,7 @@ export class LoginComponent implements OnInit {
         );
 
         // 🔹 Redirection selon le rôle
-        const roleObj = userData['role']; 
+        const roleObj = userData['role'];
         const role = roleObj?.libelle?.toString().toLowerCase() || 'user';
         if (role.toLowerCase() === 'admin') {
           // Redirection vers l'admin
@@ -538,7 +562,6 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  // Méthode handleNewUser corrigée
   async handleNewUser(phone: string) {
     try {
       await this.showToast('Numéro vérifié avec succès', 'success');
@@ -576,7 +599,6 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  // Méthode checkUserExists améliorée
   async checkUserExists(phone: string): Promise<boolean> {
     try {
       console.log('Vérification utilisateur pour le numéro:', phone);
@@ -598,86 +620,13 @@ export class LoginComponent implements OnInit {
   // Méthode utilitaire pour réinitialiser les champs OTP
   resetOtpFields() {
     this.otpForm.reset();
-    // Focus sur le premier champ OTP
+    // Focus sur le champ OTP
     setTimeout(() => {
-      const firstOtpInput = document.querySelector(
-        '.otp-input',
-      ) as HTMLInputElement;
-      if (firstOtpInput) {
-        firstOtpInput.focus();
+      if (this.otpInput) {
+        this.otpInput.nativeElement.setFocus();
       }
     }, 100);
   }
-  // Vérifier si l'utilisateur existe
-  // async checkUserExists(phone: string): Promise<boolean> {
-  //   try {
-  //     const usersCollection = collection(this.firestore, 'utilisateur');
-  //     const phoneQuery = query(usersCollection, where('phone', '==', phone));
-  //     const snapshot = await getDocs(phoneQuery);
-  //     return !snapshot.empty;
-  //   } catch (error) {
-  //     console.error('Erreur vérification utilisateur:', error);
-  //     return false;
-  //   }
-  // }
-
-  // // Gérer utilisateur existant
-  // async handleExistingUser(phone: string) {
-  //   try {
-  //     const usersCollection = collection(this.firestore, 'utilisateur');
-  //     const phoneQuery = query(usersCollection, where('phone', '==', phone));
-  //     const snapshot = await getDocs(phoneQuery);
-
-  //     if (!snapshot.empty) {
-  //       const userDoc = snapshot.docs[0];
-  //       const userData = userDoc.data();
-
-  //       // Stocker les données utilisateur
-  //       localStorage.setItem(
-  //         'currentUser',
-  //         JSON.stringify({
-  //           ...userData,
-  //           id: userDoc.id,
-  //         })
-  //       );
-  //       localStorage.setItem('userPhone', phone);
-
-  //       // Connexion Firebase anonyme
-  //       if (!this.auth.currentUser) {
-  //         await signInAnonymously(this.auth);
-  //       }
-
-  //       // Toast de bienvenue
-  //       const firstName = userData['firstName'] || '';
-  //       await this.showToast(
-  //         firstName ? `Bienvenue ${firstName} !` : 'Connexion réussie !',
-  //         'success'
-  //       );
-
-  //       // Redirection vers la page d'accueil
-  //       setTimeout(() => {
-  //         window.location.href = '/courses';
-  //       }, 1000);
-  //     }
-  //   } catch (error) {
-  //     console.error('Erreur connexion utilisateur:', error);
-  //     throw error;
-  //   }
-  // }
-
-  // // Gérer nouvel utilisateur
-  // async handleNewUser(phone: string) {
-  //   await this.showToast('Numéro vérifié avec succès', 'success');
-
-  //   // Rediriger vers le flux d'inscription
-  //   this.router.navigate(['/signup-flow'], {
-  //     queryParams: { phone },
-  //     state: {
-  //       verified: true,
-  //       phoneNumber: phone,
-  //     },
-  //   });
-  // }
 
   // Renvoyer OTP
   async resendOtp() {
@@ -692,6 +641,7 @@ export class LoginComponent implements OnInit {
     this.otpForm.reset();
     this.clearCountdown();
     this.otpError = '';
+    this.showOtpText = false;
 
     // Remettre le focus sur le champ téléphone
     setTimeout(() => {
@@ -699,95 +649,6 @@ export class LoginComponent implements OnInit {
         this.phoneInput.nativeElement.setFocus();
       }
     }, 100);
-  }
-
-  // Gestion de l'OTP
-  onOtpInput(event: any, index: number) {
-    const input = event.target;
-    const value = input.value;
-
-    // Ne garder que les chiffres
-    if (!/^\d*$/.test(value)) {
-      input.value = '';
-      this.otpForm.get('digit' + index)?.setValue('');
-      return;
-    }
-
-    // Si un chiffre est entré, passer au champ suivant
-    if (value && index < 5) {
-      const nextInput = document.querySelector(
-        `[formcontrolname="digit${index + 1}"]`,
-      ) as HTMLInputElement;
-      if (nextInput) {
-        nextInput.focus();
-      }
-    }
-
-    // Vérifier si l'OTP est complet
-    if (this.isOtpComplete()) {
-      // Auto-soumettre après un délai court
-      setTimeout(() => {
-        this.verifyOtp();
-      }, 500);
-    }
-  }
-
-  onOtpBackspace(event: any, index: number) {
-    if (
-      event.key === 'Backspace' &&
-      !this.otpForm.get('digit' + index)?.value &&
-      index > 0
-    ) {
-      const prevInput = document.querySelector(
-        `[formcontrolname="digit${index - 1}"]`,
-      ) as HTMLInputElement;
-      if (prevInput) {
-        prevInput.focus();
-      }
-    }
-  }
-
-  onOtpKeyDown(event: any, index: number) {
-    // Permettre seulement les chiffres, backspace, tab, flèches
-    if (!/[0-9]|Backspace|Tab|ArrowLeft|ArrowRight/.test(event.key)) {
-      event.preventDefault();
-    }
-
-    // Navigation avec les flèches
-    if (event.key === 'ArrowLeft' && index > 0) {
-      const prevInput = document.querySelector(
-        `[formcontrolname="digit${index - 1}"]`,
-      ) as HTMLInputElement;
-      if (prevInput) prevInput.focus();
-      event.preventDefault();
-    }
-
-    if (event.key === 'ArrowRight' && index < 5) {
-      const nextInput = document.querySelector(
-        `[formcontrolname="digit${index + 1}"]`,
-      ) as HTMLInputElement;
-      if (nextInput) nextInput.focus();
-      event.preventDefault();
-    }
-  }
-
-  // Récupérer le code OTP complet
-  getOtpCode(): string {
-    let code = '';
-    for (let i = 0; i < 6; i++) {
-      code += this.otpForm.get('digit' + i)?.value || '';
-    }
-    return code;
-  }
-
-  // Vérifier si l'OTP est complet
-  isOtpComplete(): boolean {
-    for (let i = 0; i < 6; i++) {
-      if (!this.otpForm.get('digit' + i)?.value) {
-        return false;
-      }
-    }
-    return true;
   }
 
   // Gestion du compte à rebours
