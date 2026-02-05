@@ -1198,7 +1198,7 @@ export class SignupFlowComponent implements OnInit {
   }
 
   openTerms() {
-    window.open('/terms', '_blank');
+    this.router.navigate(['/terms']);
   }
 
   onNiveauEtudeChange(niveau: string) {
