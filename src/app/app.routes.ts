@@ -29,6 +29,7 @@ import { InstructorsPage } from './Admin/pages/instructors/instructors.page';
 import { EditCoursPage } from './Admin/pages/cours/pages/edit-cours/edit-cours.page';
 import { UserEditPage } from './Admin/pages/user-edit/user-edit.page';
 import { EnrollmentsPage } from './Admin/pages/enrollments/enrollments.page';
+import { ReferralsPage } from './Admin/pages/referrals/referrals.page';
 
 export const routes: Routes = [
   {
@@ -141,6 +142,11 @@ export const routes: Routes = [
       {
         path: 'enrollments', component: EnrollmentsPage
       },
+      {
+        path: 'referrals',
+        component: ReferralsPage
+      },
+
 
     ],
   },
@@ -162,5 +168,6 @@ export const routes: Routes = [
     path: 'instructor-details',
     loadComponent: () => import('./Admin/pages/instructor-details/instructor-details.page').then(m => m.InstructorDetailsPage)
   },
+
 
 ];

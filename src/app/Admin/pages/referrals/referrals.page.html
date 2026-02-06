@@ -1,0 +1,217 @@
+<div class="p-6 bg-gray-100 min-h-screen">
+  <div class="content">
+
+    <!-- Loader -->
+    <div *ngIf="isLoading" class="loader-container">
+      <div class="spinner"></div>
+      <p class="loader-text">Chargement des parrainages...</p>
+    </div>
+
+    <div *ngIf="!isLoading">
+
+      <!-- Header -->
+      <div class="header-section">
+        <div class="header">
+          <div>
+            <h1 class="title">Parrainages</h1>
+            <p class="subtitle">Suivi et gestion des codes de parrainage</p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="stats-grid">
+        <div class="stat-card stat-card-total">
+          <div class="stat-card-content">
+            <div class="stat-card-left">
+              <div class="stat-badge">
+                <div class="status-dot dot-blue"></div>
+                <p class="stat-label">TOTAL</p>
+              </div>
+              <p class="stat-number">{{ referralStats?.totalReferrals || 0 }}</p>
+              <p class="stat-description text-blue">Parrainages créés</p>
+            </div>
+            <div class="stat-icon bg-blue">
+              <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card stat-card-progress">
+          <div class="stat-card-content">
+            <div class="stat-card-left">
+              <div class="stat-badge">
+                <div class="status-dot dot-green animate-pulse"></div>
+                <p class="stat-label">COMPLÉTÉS</p>
+              </div>
+              <p class="stat-number">{{ referralStats?.completedReferrals || 0 }}</p>
+              <p class="stat-description text-green">Parrainages validés</p>
+            </div>
+            <div class="stat-icon bg-green">
+              <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card stat-card-pending">
+          <div class="stat-card-content">
+            <div class="stat-card-left">
+              <div class="stat-badge">
+                <div class="status-dot dot-amber"></div>
+                <p class="stat-label">EN ATTENTE</p>
+              </div>
+              <p class="stat-number">{{ referralStats?.activeReferrals || 0 }}</p>
+              <p class="stat-description text-amber">En attente de validation</p>
+            </div>
+            <div class="stat-icon bg-amber">
+              <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card stat-card-fall">
+          <div class="stat-card-content">
+            <div class="stat-card-left">
+              <div class="stat-badge">
+                <div class="status-dot dot-red"></div>
+                <p class="stat-label">EXPIRÉS / ANNULÉS</p>
+              </div>
+              <p class="stat-number">{{ (referralStats?.expiredReferrals || 0) + (referralStats?.cancelledReferrals ||
+                0) }}</p>
+              <p class="stat-description text-red">Non aboutis</p>
+            </div>
+            <div class="stat-icon bg-red">
+              <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filtres -->
+      <div class="filters-section">
+        <div class="search-wrapper">
+          <div class="search-container">
+            <svg class="search-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input type="text" placeholder="Rechercher par code, parrain, filleul..." class="search-input"
+              [(ngModel)]="searchText" (input)="applyFilters()">
+            <button *ngIf="searchText" (click)="clearSearch()" class="clear-button">✕</button>
+          </div>
+        </div>
+
+        <div class="filter-container">
+          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h18M3 12h18M3 20h18" />
+          </svg>
+          <select class="select" [(ngModel)]="selectedStatus" (change)="applyFilters()">
+            <option value="">Tous les statuts</option>
+            <option value="PENDING">En attente</option>
+            <option value="COMPLETED">Complété</option>
+            <option value="EXPIRED">Expiré</option>
+            <option value="CANCELLED">Annulé</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Tableau -->
+      <div *ngIf="filteredReferrals.length > 0; else emptyState" class="users-list">
+        <div class="users-list-header">
+          <span>Code</span>
+          <span>Parrain</span>
+          <span>Filleul</span>
+          <span>Statut</span>
+          <span>Clics / Conversions</span>
+          <span>Bonus</span>
+          <span>Date</span>
+          <span>Actions</span>
+        </div>
+
+        <div *ngFor="let ref of paginatedReferrals" class="user-row">
+          <div class="user-cell font-medium">{{ ref.referralCode }}</div>
+          <div class="user-cell">{{ ref.referrerId | slice:0:8 }}...</div>
+          <div class="user-cell">{{ ref.referredUserId ? (ref.referredUserId | slice:0:8) + '...' :
+            '-' }}</div>
+
+          <div class="user-cell">
+            <span class="status" [class.active]="ref.status === 'COMPLETED'" [class.pending]="ref.status === 'PENDING'"
+              [class.inactive]="ref.status === 'EXPIRED' || ref.status === 'CANCELLED'">
+              {{ ref.status }}
+            </span>
+          </div>
+
+          <div class="user-cell">{{ ref.clicks }} / {{ ref.conversions }}</div>
+          <div class="user-cell">
+            <span class="badge" [class.badge-success]="ref.status === 'COMPLETED'">
+              {{ ref.bonusAmount | number:'1.0-0' }} {{ ref.bonusType === 'POINTS' ? 'pts' : 'FCFA' }}
+            </span>
+          </div>
+
+          <div class="user-cell">{{ ref.createdAt | date:'dd MMM yyyy' }}</div>
+
+          <div class="user-actions">
+            <button class="action-button" title="Copier code" (click)="copyCode(ref.referralCode)">
+              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+            </button>
+            <button class="action-button delete" title="Annuler" *ngIf="ref.status === 'PENDING'"
+              (click)="cancelReferral(ref.id)">
+              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- État vide -->
+      <ng-template #emptyState>
+        <div class="empty-state">
+          <div class="empty-icon">
+            <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+          </div>
+          <h2 class="empty-title">Aucun parrainage trouvé</h2>
+          <p class="empty-text">Aucun code ne correspond à vos filtres pour le moment.</p>
+        </div>
+      </ng-template>
+
+      <!-- Pagination -->
+      <div *ngIf="filteredReferrals.length > 0 && totalPages > 1" class="pagination">
+        <button (click)="previousPage()" [disabled]="currentPage === 1" class="page-button"
+          [class.page-button-disabled]="currentPage === 1">
+          Précédent
+        </button>
+
+        <div class="page-numbers">
+          <button *ngFor="let page of getPageNumbers()" (click)="goToPage(page)"
+            [class.page-number-active]="currentPage === page" [class.page-number-ellipsis]="page === -1"
+            class="page-number">
+            {{ page === -1 ? '...' : page }}
+          </button>
+        </div>
+
+        <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="page-button"
+          [class.page-button-disabled]="currentPage === totalPages">
+          Suivant
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

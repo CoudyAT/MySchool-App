@@ -25,7 +25,7 @@ export class BaseLayoutAdminComponent {
       projects: '/admin-login/enrollments',
       faq: '/admin-login/faq',
       intructors: '/admin-login/instructors',
-      chat: '/admin-login/chat',
+      referrals: '/admin-login/referrals',
     };
 
     this.activePage = page;
