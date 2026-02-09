@@ -745,8 +745,8 @@ export class SignupFlowComponent implements OnInit {
       const firebaseUser = result.user;
 
       // Numéro vérifié avec succès
-      const verifiedPhone = firebaseUser.phoneNumber;
-      const cleanPhone = this.formatPhoneForSearch(verifiedPhone || '');
+       const verifiedPhone = firebaseUser.phoneNumber;
+       const cleanPhone = this.formatPhoneForSearch(verifiedPhone || '');
 
       // 🔍 Vérifier si l'utilisateur existe déjà
       const usersRef = collection(this.firestore, 'utilisateur');

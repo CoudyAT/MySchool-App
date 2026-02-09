@@ -1,38 +1,5 @@
 <form [formGroup]="courseForm" class="course-form" (ngSubmit)="submitForm()">
   <div class="form-grid">
-
-    <!-- Type de cours -->
-    <div class="form-group">
-      <label for="type" class="form-label">Type du cours</label>
-      <select id="type" formControlName="type" class="form-input">
-        <option value="">Sélectionnez un type</option>
-        <option value="En ligne">En ligne</option>
-        <option value="Présentiel">Présentiel</option>
-        <option value="Video">Video</option>
-        <option value="Tuto">Tuto</option>
-      </select>
-    </div>
-    <!-- Prix -->
-    <div class="form-group">
-      <label for="price" class="form-label">Prix (FCFA)</label>
-      <input id="price" type="number" formControlName="price" class="form-input" placeholder="0" min="0" />
-    </div>
-    <!-- Upload de l'image de couverture -->
-    <div class="form-group full-width">
-      <label class="form-label">Image de couverture</label>
-
-      <div class="image-upload-container" (click)="fileInput.click()">
-        <img *ngIf="imagePreview" [src]="imagePreview" alt="Prévisualisation de l'image de couverture"
-          class="image-preview" />
-        <div *ngIf="!imagePreview" class="upload-placeholder">
-          <ion-icon name="image-outline" size="large"></ion-icon>
-          <p class="upload-text">Cliquez pour ajouter une image de couverture</p>
-          <span class="upload-hint">Recommandé : 1200x600px (JPG, PNG)</span>
-        </div>
-      </div>
-
-      <input #fileInput type="file" accept="image/*" (change)="onFileSelected($event)" hidden />
-    </div>
     <!-- Titre du cours -->
     <div class="form-group">
       <label for="title" class="form-label">Titre du cours <span class="required">*</span></label>
@@ -42,8 +9,7 @@
         Le titre est requis
       </div>
     </div>
-
-    <!-- Professeur / Formateur -->
+       <!-- Professeur / Formateur -->
     <div class="form-group">
       <label for="instructor" class="form-label">
         Professeur <span class="required">*</span>
@@ -86,65 +52,77 @@
         La catégorie est requise
       </div>
     </div>
-
-
-
-    <!-- Description -->
+    <!-- Type de cours -->
+    <div class="form-group">
+      <label for="type" class="form-label">Type du cours</label>
+      <select id="type" formControlName="type" class="form-input">
+        <option value="">Sélectionnez un type</option>
+        <option value="En ligne">En ligne</option>
+        <option value="Présentiel">Présentiel</option>
+        <option value="Video">Video</option>
+        <option value="Tuto">Tuto</option>
+      </select>
+    </div>
+        <!-- Description -->
     <div class="form-group full-width">
       <label for="description" class="form-label">Description</label>
       <textarea id="description" formControlName="description" class="form-textarea"
         placeholder="Décrivez le contenu et les objectifs du cours..." rows="5"></textarea>
     </div>
-
+    <!-- Exercices 
+    <div class="form-group">
+      <label for="exercises" class="form-label">Nombre d'exercices</label>
+      <input id="exercises" type="number" formControlName="exercises" class="form-input" placeholder="Ex: 25" min="0" />
+    </div> -->
+    <!-- Niveau -->
+    <div class="form-group">
+      <label for="niveauScolaire" class="form-label">Niveau</label>
+      <select id="niveauScolaire" formControlName="niveauScolaire" class="form-input" 
+      (change)="onNiveauEtudeChange($any($event.target).value)">
+        <option value="">Sélectionnez un niveau</option>
+        <option *ngFor="let niveau of niveauxEtude" [value]="niveau.value">{{ niveau.label }}</option>
+      </select>
+    </div>
+     <!-- Classe -->
+    <div class="form-group">
+      <label for="classe" class="form-label">Classe</label>
+      <select id="classe" formControlName="classe" class="form-input" >
+        <option value="">Sélectionnez une classe</option>
+        <option  *ngFor="let classe of classesDisponibles" [value]="classe">{{ classe }}</option>
+      </select>
+    </div>
     <!-- Sessions -->
     <div class="form-group">
       <label for="sessions" class="form-label">Lien video</label>
       <input id="sessions" type="text" formControlName="sessions" class="form-input"  />
     </div>
-
-    <!-- Exercices -->
-    <div class="form-group">
-      <label for="exercises" class="form-label">Nombre d'exercices</label>
-      <input id="exercises" type="number" formControlName="exercises" class="form-input" placeholder="Ex: 25" min="0" />
-    </div>
-
-    <!-- Niveau -->
-    <div class="form-group">
-      <label for="level" class="form-label">Niveau</label>
-      <select id="level" formControlName="level" class="form-input">
-        <option value="">Sélectionnez un niveau</option>
-        <option value="CM2">CM2</option>
-        <option value="6iem">6iem</option>
-        <option value="5iem">5iem</option>
-        <option value="4iem">4iem</option>
-        <option value="3iem">3iem</option>
-        <option value="2ndS">2ndS</option>
-        <option value="1ER-S2">1ER-S2</option>
-        <option value="BAC-L'">BAC-L'</option>
-        <option value="BAC-L1">BAC-L1</option>
-        <option value="BAC-L2">BAC-L2</option>
-        <option value="BAC-S1">BAC-S1</option>
-        <option value="BAC-S2">BAC-S2</option>
-        <option value="BAC-G">BAC-G</option>
-        <option value="BAC-TECHNIQUE">BAC-TECHNIQUE</option>
-        <option value="BAC-STEG">BAC-STEG</option>
-        <option value="LICENCE-1">LICENCE-1</option>
-        <option value="LICENCE-2">LICENCE-2</option>
-        <option value="LICENCE-3">LICENCE-3</option>
-        <option value="MASTER-1">MASTER-1</option>
-        <option value="MASTER-2">MASTER-2</option>
-        <option value="BUREAUTIQUE-INITIATION">BUREAUTIQUE-INITIATION</option>
-        <option value="BUREAUTIQUE-INTERMEDIAIRE">BUREAUTIQUE-INTERMEDIAIRE</option>
-        <option value="BUREAUTIQUE-EXPERIMENTE">BUREAUTIQUE-EXPERIMENTE</option>
-      </select>
-    </div>
-
-
     <!-- Durée -->
     <div class="form-group">
       <label for="duration" class="form-label">Durée (heures)</label>
       <input id="duration" type="number" formControlName="duration" class="form-input" placeholder="Ex: 40" min="0" />
     </div>
+    <!-- Prix 
+    <div class="form-group">
+      <label for="price" class="form-label">Prix (FCFA)</label>
+      <input id="price" type="number" formControlName="price" class="form-input" placeholder="0" min="0" />
+    </div> -->
+    <!-- Upload de l'image de couverture -->
+    <div class="form-group full-width">
+      <label class="form-label">Image de couverture</label>
+
+      <div class="image-upload-container" (click)="fileInput.click()">
+        <img *ngIf="imagePreview" [src]="imagePreview" alt="Prévisualisation de l'image de couverture"
+          class="image-preview" />
+        <div *ngIf="!imagePreview" class="upload-placeholder">
+          <ion-icon name="image-outline" size="large"></ion-icon>
+          <p class="upload-text">Cliquez pour ajouter une image de couverture</p>
+          <span class="upload-hint">Recommandé : 1200x600px (JPG, PNG)</span>
+        </div>
+      </div>
+
+      <input #fileInput type="file" accept="image/*" (change)="onFileSelected($event)" hidden />
+    </div>
+
 
     <!-- Support de cours
     <div class="form-group">

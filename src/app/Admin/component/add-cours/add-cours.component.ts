@@ -23,6 +23,21 @@ export class AddCoursComponent implements OnInit {
   @Output() formSubmit = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();
 
+  niveauxEtude = [
+    { value: 'ELEMENTAIRE', label: 'Élémentaire' },
+    { value: 'MOYEN', label: 'Moyen (Collège)' },
+    { value: 'SECONDAIRE', label: 'Secondaire (Lycée)' },
+    { value: 'UNIVERSITAIRE', label: 'Universitaire' },
+  ];
+
+  classesParNiveau: { [key: string]: string[] } = {
+    ELEMENTAIRE: ['CI', 'CP', 'CE1', 'CE2', 'CM1', 'CM2'],
+    MOYEN: ['6ème', '5ème', '4ème', '3ème'],
+    SECONDAIRE: ['Seconde', 'Première', 'Terminale'],
+    UNIVERSITAIRE: ['Licence1', 'Licence2', 'Licence3', 'Master1', 'Master2'],
+  };
+  classesDisponibles: string[] = [];
+
   courseForm: FormGroup;
   instructors: Instructor[] = [];
   categories: string[] = [];
@@ -297,5 +312,18 @@ export class AddCoursComponent implements OnInit {
     Object.keys(this.courseForm.controls).forEach((key) => {
       this.courseForm.get(key)?.markAsTouched();
     });
+  }
+
+  onNiveauEtudeChange(niveau: string) {
+    if (niveau && this.classesParNiveau[niveau]) {
+      this.classesDisponibles = this.classesParNiveau[niveau];
+      // Réinitialiser la classe sélectionnée si elle n'est plus dans la liste
+      const currentClasse = this.courseForm.get('classe')?.value;
+      if (currentClasse && !this.classesDisponibles.includes(currentClasse)) {
+        this.courseForm.patchValue({ classe: '' });
+      }
+    } else {
+      this.classesDisponibles = [];
+    }
   }
 }
