@@ -42,6 +42,8 @@ export class PaymentMethodPage implements OnInit {
   selectedPlan: any;
   isPremiumSubscription = false;
   selectedCategory: string | null = null;
+  userInfo: any = null;
+  selectedMatieres: any[] = [];
 
   course: any = null;
   courseId = '';
@@ -65,7 +67,7 @@ export class PaymentMethodPage implements OnInit {
     private router: Router,
     private location: Location,
     private paymentService: PaymentService,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
   ) {
     addIcons({
       'chevron-back-outline': chevronBackOutline,
@@ -81,7 +83,9 @@ export class PaymentMethodPage implements OnInit {
       this.selectedPlan = state['plan'];
       this.isPremiumSubscription = state['isPremiumSubscription'] ?? false;
       this.selectedCategory = state['selectedCategory'] || null;
-
+      this.userInfo = state['userInfo'] || null;
+      this.selectedMatieres = state['matieres'] || [];
+      
       if (!this.isPremiumSubscription) {
         this.course = state['course'] ?? null;
 
@@ -156,7 +160,7 @@ export class PaymentMethodPage implements OnInit {
     }
 
     const formattedPhone = this.paymentService.formatSenegalPhone(
-      this.customerPhone
+      this.customerPhone,
     );
 
     localStorage.setItem(
@@ -165,7 +169,7 @@ export class PaymentMethodPage implements OnInit {
         name: this.customerName,
         email: this.customerEmail,
         phone: formattedPhone,
-      })
+      }),
     );
 
     this.proceedToVerification({
@@ -184,12 +188,15 @@ export class PaymentMethodPage implements OnInit {
 
   private proceedToVerification(method: any) {
     if (this.isPremiumSubscription) {
+      console.log("hhh",this.userInfo);
       this.router.navigate(['/payment-verify'], {
         state: {
           method,
           plan: this.selectedPlan,
           isPremiumSubscription: true,
           selectedCategory: this.selectedCategory,
+          userInfo: this.userInfo,
+          selectedMatieres: this.selectedMatieres,
         },
       });
     } else {
@@ -201,6 +208,7 @@ export class PaymentMethodPage implements OnInit {
           courseId: this.courseId, // ✅ GARANTI
           courseTitle: this.courseTitle,
           courseImage: this.courseImage,
+         
         },
       });
     }

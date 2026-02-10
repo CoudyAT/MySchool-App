@@ -361,7 +361,7 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
 
     this.courseService.getAllCourses().subscribe({
       next: (courses) => {
-        this.allCourses = courses.filter((c) => c.type === 'En ligne');;
+        this.allCourses = courses.filter((c) => c.type === 'En ligne');
         this.isCoursesLoading = false;
       },
       error: (err) => {

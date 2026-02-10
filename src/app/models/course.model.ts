@@ -86,6 +86,8 @@ export interface Course {
   support?: string;
   isOnline?: boolean;
   onlineExtras?: OnlineCourseExtras;
+  niveauScolaire?: string;
+  classe?: string;
 }
 
 export interface OnlineCourseExtras {

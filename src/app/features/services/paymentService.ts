@@ -58,10 +58,10 @@ export class PaymentService {
    * Récupère les paiements d'une inscription
    */
   getEnrollmentPayments(
-    enrollmentId: string
+    enrollmentId: string,
   ): Observable<ApiResponse<Payment[]>> {
     return this.api.get<ApiResponse<Payment[]>>(
-      `/payments/enrollment/${enrollmentId}`
+      `/payments/enrollment/${enrollmentId}`,
     );
   }
 
@@ -69,7 +69,7 @@ export class PaymentService {
    * Filtre les paiements par statut
    */
   getPaymentsByStatus(
-    status: PaymentStatus
+    status: PaymentStatus,
   ): Observable<ApiResponse<Payment[]>> {
     return this.api.get<ApiResponse<Payment[]>>(`/payments/status/${status}`);
   }
@@ -78,10 +78,10 @@ export class PaymentService {
    * Recherche un paiement par référence de commande
    */
   getPaymentByOrderReference(
-    orderReference: string
+    orderReference: string,
   ): Observable<ApiResponse<Payment>> {
     return this.api.get<ApiResponse<Payment>>(
-      `/payments/order/${orderReference}`
+      `/payments/order/${orderReference}`,
     );
   }
 
@@ -98,7 +98,7 @@ export class PaymentService {
   cancelPayment(paymentId: string): Observable<ApiResponse<Payment>> {
     return this.api.post<ApiResponse<Payment>>(
       `/payments/${paymentId}/cancel`,
-      {}
+      {},
     );
   }
 
@@ -166,11 +166,14 @@ export class PaymentService {
     return cleanPhone;
   }
 
-  createSubscriptionPayment(plan: string, userId: string, category: string) {
+  createSubscriptionPayment(plan: string, userId: string, classe: string, niveauScolaire: string,typeAbonnement: string, matieres?: any[] ): Observable<any> {
     return this.api.post<any>('/subscriptions/create-payment', {
       plan,
       userId,
-      category,
+      classe,
+      niveauScolaire,
+      typeAbonnement,
+      matieres
     });
   }
 }
