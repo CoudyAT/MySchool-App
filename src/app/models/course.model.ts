@@ -55,6 +55,19 @@ export interface Video {
   createdAt: Date;
 }
 
+export interface Matiere {
+  id: string;
+  nom: string;
+  classe: string;
+  niveauScolaire: 'PRIMAIRE' | 'MOYEN' | 'SECONDAIRE' | 'SUPERIEUR';
+  icon: string;
+  color: string;
+  ordre: number;
+  createdAt: Date;
+  updatedAt: Date;
+
+}
+
 export interface Course {
   id: string;
   title: string;
@@ -96,6 +109,7 @@ export interface OnlineCourseExtras {
   instructor?: string;
   meetingLink?: string;
 }
+
 
 
 export type CourseKind = 'CLASSIC' | 'ONLINE';

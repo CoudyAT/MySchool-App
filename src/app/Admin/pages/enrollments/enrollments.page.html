@@ -11,7 +11,7 @@
 
 <ion-content [fullscreen]="true" class="content-custom">
   <div class="content-wrapper">
-    
+
     <!-- En-tête avec statistiques -->
     <div class="stats-header" *ngIf="enrollments.length > 0">
       <div class="stat-card">
@@ -39,13 +39,8 @@
 
     <!-- Liste des inscriptions -->
     <ion-list *ngIf="paginatedEnrollments.length > 0; else emptyState" class="enrollments-list">
-      <ion-item 
-        *ngFor="let enrollment of paginatedEnrollments" 
-        lines="none"
-        class="enrollment-card"
-        button
-        detail="false"
-      >
+      <ion-item *ngFor="let enrollment of paginatedEnrollments" lines="none" class="enrollment-card" button
+        detail="false">
         <!-- Image du cours -->
         <ion-thumbnail slot="start" class="course-thumbnail">
           <img [src]="enrollment.courseImage" alt="Course image" />
@@ -58,14 +53,12 @@
         <ion-label class="enrollment-label">
           <h2 class="course-title">{{ enrollment.courseTitle }}</h2>
 
+
           <!-- Barre de progression -->
           <div class="progress-container">
             <div class="progress-bar">
-              <div 
-                class="progress-fill" 
-                [style.width.%]="enrollment.progress"
-                [class.completed]="enrollment.progress === 100"
-              ></div>
+              <div class="progress-fill" [style.width.%]="enrollment.progress"
+                [class.completed]="enrollment.progress === 100"></div>
             </div>
             <span class="progress-text">{{ enrollment.progress }}%</span>
           </div>
@@ -86,25 +79,17 @@
           </div>
 
           <!-- Certificat -->
-          <ion-badge
-            class="certificate-badge"
-            color="success"
-            *ngIf="enrollment.courseDetails?.certificateAvailable"
-          >
+          <ion-badge class="certificate-badge" color="success" *ngIf="enrollment.courseDetails?.certificateAvailable">
             <ion-icon name="ribbon-outline"></ion-icon>
             Certificat disponible
           </ion-badge>
         </ion-label>
 
         <!-- Statut -->
-        <ion-badge
-          slot="end"
-          class="status-badge"
-          [class.status-active]="enrollment.status === 'active'"
+        <ion-badge slot="end" class="status-badge" [class.status-active]="enrollment.status === 'active'"
           [class.status-completed]="enrollment.status === 'completed'"
           [class.status-pending]="enrollment.status === 'pending'"
-          [class.status-failed]="enrollment.status === 'failed'"
-        >
+          [class.status-failed]="enrollment.status === 'failed'">
           {{ getStatusLabel(enrollment.status) }}
         </ion-badge>
       </ion-item>
@@ -112,34 +97,18 @@
 
     <!-- Pagination -->
     <div class="pagination-container" *ngIf="totalPages > 1">
-      <ion-button 
-        fill="clear" 
-        [disabled]="currentPage === 1"
-        (click)="previousPage()"
-        class="pagination-btn"
-      >
+      <ion-button fill="clear" [disabled]="currentPage === 1" (click)="previousPage()" class="pagination-btn">
         <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
       </ion-button>
 
       <div class="page-numbers">
-        <button 
-          *ngFor="let page of getPageNumbers()" 
-          class="page-number"
-          [class.active]="page === currentPage"
-          [class.ellipsis]="page === '...'"
-          [disabled]="page === '...'"
-          (click)="goToPage(page)"
-        >
+        <button *ngFor="let page of getPageNumbers()" class="page-number" [class.active]="page === currentPage"
+          [class.ellipsis]="page === '...'" [disabled]="page === '...'" (click)="goToPage(page)">
           {{ page }}
         </button>
       </div>
 
-      <ion-button 
-        fill="clear" 
-        [disabled]="currentPage === totalPages"
-        (click)="nextPage()"
-        class="pagination-btn"
-      >
+      <ion-button fill="clear" [disabled]="currentPage === totalPages" (click)="nextPage()" class="pagination-btn">
         <ion-icon slot="icon-only" name="chevron-forward-outline"></ion-icon>
       </ion-button>
     </div>

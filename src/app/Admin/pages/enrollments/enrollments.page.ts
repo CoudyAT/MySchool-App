@@ -69,24 +69,12 @@ export class EnrollmentsPage implements OnInit {
     private paymentService: PaymentService
   ) {
     // Enregistrer les icônes
-    addIcons({
-      'school-outline': schoolOutline,
-      'book-outline': bookOutline,
-      'checkmark-circle-outline': checkmarkCircleOutline,
-      'time-outline': timeOutline,
-      'card-outline': cardOutline,
-      'cash-outline': cashOutline,
-      'calendar-outline': calendarOutline,
-      'ribbon-outline': ribbonOutline,
-      'chevron-back-outline': chevronBackOutline,
-      'chevron-forward-outline': chevronForwardOutline,
-      'search-outline': searchOutline,
-      'checkmark-circle': checkmarkCircle,
-    });
+    addIcons({ schoolOutline, bookOutline, checkmarkCircleOutline, timeOutline, checkmarkCircle, cardOutline, cashOutline, calendarOutline, ribbonOutline, chevronBackOutline, chevronForwardOutline, searchOutline });
   }
 
   ngOnInit() {
     this.loadEnrollment();
+
     this.loadPayment();
   }
 
