@@ -11,6 +11,7 @@ import { Firestore, collection, addDoc, Timestamp } from '@angular/fire/firestor
 import { IonIcon, IonSpinner } from "@ionic/angular/standalone";
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 import { updateDoc } from 'firebase/firestore';
+import { MatiereService } from '../../services/matiereService';
 
 @Component({
   selector: 'app-add-cours',
@@ -53,29 +54,34 @@ export class AddCoursComponent implements OnInit {
   selectedCategoryBeforeAdd: string = '';
 
   selectedPdf: File | null = null;
+  matieres: any[] = [];
 
   constructor(
     private fb: FormBuilder,
     private instructorService: InstructorService,
     private courseService: CourseService,
+    private matiereService: MatiereService,
     private firestore: Firestore,
   ) {
     this.courseForm = this.fb.group({
       title: ['', Validators.required],
       category: ['', Validators.required],
       selectedCategoryOption: [''],
-      newCategoryName: [''],
       instructorId: ['', Validators.required],
       description: [''],
       price: [0],
       sessions: [''],
       exercises: [0],
+      matiereId: ['', Validators.required],
       certificateAvailable: [false],
       duration: [0],
       level: ['DEBUTANT', Validators.required],
       type: ['En ligne', Validators.required],
       isPublished: [false],
       support: [null],
+      niveauScolaire: ['',Validators.required],
+      classe: ['',Validators.required],
+      newCategoryName: [''],
     });
 
     this.courseForm
@@ -88,6 +94,7 @@ export class AddCoursComponent implements OnInit {
   ngOnInit(): void {
     this.loadInstructors();
     this.loadCategories();
+    this.loadMatieres();
   }
 
   // ==================== GESTION IMAGE ====================
@@ -227,47 +234,14 @@ export class AddCoursComponent implements OnInit {
     });
   }
 
+  private loadMatieres() {
+    this.matiereService.getMatieres().subscribe({
+      next: (data) => (this.matieres = data),
+      error: (err) => console.error('Erreur matières', err),
+    });
+  }
+
   // ==================== SOUMISSION ====================
-  // async submitForm() {
-  //   if (this.courseForm.invalid) {
-  //     this.markAllAsTouched();
-  //     return;
-  //   }
-
-  //   this.isSaving = true;
-
-  //   try {
-  //     // Création du cours
-  //     const docRef = await addDoc(collection(this.firestore, 'courses'), {
-  //       ...this.courseForm.value,
-  //       image: this.imageBase64 || null,
-  //       support: null,
-  //       createdAt: Timestamp.now(),
-  //       updatedAt: Timestamp.now(),
-  //     });
-
-  //     // Upload du PDF
-  //     // const pdfUrl = await this.uploadPdf(docRef.id);
-
-  //     // Mise à jour avec l’URL
-  //     // if (pdfUrl) {
-  //     //   await updateDoc(docRef, {
-  //     //     support: pdfUrl,
-  //     //     updatedAt: Timestamp.now(),
-  //     //   });
-  //     // }
-
-  //     alert('Cours créé avec succès !');
-  //     this.formSubmit.emit();
-
-  //   } catch (error: any) {
-  //     console.error(error);
-  //     alert(error.message);
-  //   } finally {
-  //     this.isSaving = false;
-  //   }
-  // }
-
   async submitForm() {
     if (this.courseForm.invalid) {
       this.markAllAsTouched();
@@ -277,29 +251,29 @@ export class AddCoursComponent implements OnInit {
     this.isSaving = true;
 
     try {
-      const selectedInstructor = this.instructors.find(
-        (prof) => prof.id === this.courseForm.value.instructorId,
-      );
-
-      const courseData = {
+      // Création du cours
+      const docRef = await addDoc(collection(this.firestore, 'courses'), {
         ...this.courseForm.value,
-
-        instructorId: selectedInstructor?.id || null,
-        instructorName: selectedInstructor?.name || null,
-
         image: this.imageBase64 || null,
         support: null,
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
-      };
+      });
 
-      const docRef = await addDoc(
-        collection(this.firestore, 'courses'),
-        courseData,
-      );
+      // Upload du PDF
+      // const pdfUrl = await this.uploadPdf(docRef.id);
+
+      // Mise à jour avec l’URL
+      // if (pdfUrl) {
+      //   await updateDoc(docRef, {
+      //     support: pdfUrl,
+      //     updatedAt: Timestamp.now(),
+      //   });
+      // }
 
       alert('Cours créé avec succès !');
       this.formSubmit.emit();
+
     } catch (error: any) {
       console.error(error);
       alert(error.message);
@@ -307,6 +281,46 @@ export class AddCoursComponent implements OnInit {
       this.isSaving = false;
     }
   }
+
+  // async submitForm() {
+  //   if (this.courseForm.invalid) {
+  //     this.markAllAsTouched();
+  //     return;
+  //   }
+
+  //   this.isSaving = true;
+
+  //   try {
+  //     const selectedInstructor = this.instructors.find(
+  //       (prof) => prof.id === this.courseForm.value.instructorId,
+  //     );
+
+  //     const courseData = {
+  //       ...this.courseForm.value,
+
+  //       instructorId: selectedInstructor?.id || null,
+  //       instructorName: selectedInstructor?.name || null,
+
+  //       image: this.imageBase64 || null,
+  //       support: null,
+  //       createdAt: Timestamp.now(),
+  //       updatedAt: Timestamp.now(),
+  //     };
+
+  //     const docRef = await addDoc(
+  //       collection(this.firestore, 'courses'),
+  //       courseData,
+  //     );
+
+  //     alert('Cours créé avec succès !');
+  //     this.formSubmit.emit();
+  //   } catch (error: any) {
+  //     console.error(error);
+  //     alert(error.message);
+  //   } finally {
+  //     this.isSaving = false;
+  //   }
+  // }
 
   private markAllAsTouched() {
     Object.keys(this.courseForm.controls).forEach((key) => {
