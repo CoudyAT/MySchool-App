@@ -65,6 +65,8 @@ import { UserService } from 'src/app/features/auth/services/user.service';
 import { FcmService } from 'src/app/features/services/fcm.service';
 import { DesktopHeaderComponent } from 'src/app/shared/components/desktop-header/desktop-header.component';
 import { FooterComponent } from 'src/app/shared/components/footer/footer.component';
+import { FiltreNiveauService } from 'src/app/features/services/filtre-niveau.service';
+import { User } from 'src/app/models/user.model';
 
 @Component({
   selector: 'app-courses',
@@ -120,6 +122,7 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
     private instructorService: InstructorService,
     private fcmService: FcmService,
     private courseService: CourseService,
+    private filtreNiveauService: FiltreNiveauService,
   ) {
     addIcons({
       searchOutline,
@@ -359,13 +362,66 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
   loadAllCoursesPreview() {
     this.isCoursesLoading = true;
 
-    this.courseService.getAllCourses().subscribe({
+    // Récupérer le profil utilisateur
+    const localUser: User = JSON.parse(localStorage.getItem('currentUser') || 'null');
+
+    // Si l'utilisateur est connecté avec un niveau et une classe, filtrer côté serveur
+    if (localUser?.niveauScolaire && localUser?.classe) {
+      console.log('🎓 Chargement des cours pour:', localUser.niveauScolaire, localUser.classe);
+
+      // Appeler l'API spécifique par classe (plus précis)
+      this.courseService.getCoursesByClasse(localUser.classe).subscribe({
+        next: (courses) => {
+          // Filtrer uniquement les cours "En ligne"
+          this.allCourses = courses.filter((c) => c.type === 'En ligne');
+          console.log('✅ Cours récupérés par classe:', this.allCourses.length);
+          this.isCoursesLoading = false;
+        },
+        error: (err) => {
+          console.error('Erreur chargement cours par classe:', err);
+          // Fallback: essayer par niveau scolaire
+          this.loadCoursesByNiveau(localUser.niveauScolaire);
+        },
+      });
+    } else if (localUser?.niveauScolaire) {
+      // Si uniquement le niveau est disponible
+      console.log('🎓 Chargement des cours pour niveau:', localUser.niveauScolaire);
+      this.loadCoursesByNiveau(localUser.niveauScolaire);
+    } else {
+      // Sinon, charger tous les cours
+      this.loadAllCourses();
+    }
+  }
+
+  /**
+   * Charger les cours par niveau scolaire
+   */
+  private loadCoursesByNiveau(niveau: string) {
+    this.courseService.getCoursesByNiveau(niveau).subscribe({
       next: (courses) => {
-        this.allCourses = courses.filter((c) => c.type === 'En ligne');;
+        this.allCourses = courses.filter((c) => c.type === 'En ligne');
+        console.log('✅ Cours récupérés par niveau:', this.allCourses.length);
         this.isCoursesLoading = false;
       },
       error: (err) => {
-        console.error('Erreur chargement cours:', err);
+        console.error('Erreur chargement cours par niveau:', err);
+        this.loadAllCourses();
+      },
+    });
+  }
+
+  /**
+   * Charger tous les cours (fallback)
+   */
+  private loadAllCourses() {
+    this.courseService.getAllCourses().subscribe({
+      next: (courses) => {
+        this.allCourses = courses.filter((c) => c.type === 'En ligne');
+        console.log('✅ Tous les cours récupérés:', this.allCourses.length);
+        this.isCoursesLoading = false;
+      },
+      error: (err) => {
+        console.error('Erreur chargement tous les cours:', err);
         this.isCoursesLoading = false;
       },
     });

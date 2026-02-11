@@ -207,6 +207,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'selection-matieres',
+    loadComponent: () =>
+      import('./features/abonnement/selection-matieres/selection-matieres.page').then(
+        (m) => m.SelectionMatieresPage,
+      ),
+  },
+  {
     path: 'login-admin',
     loadComponent: () =>
       import('./features/auth/login-admin/login-admin.page').then(

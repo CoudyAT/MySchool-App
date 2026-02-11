@@ -1,0 +1,165 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/courses"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Choisir mes matières</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Chargement des matières...</p>
+  </div>
+
+  <!-- Contenu principal -->
+  <div *ngIf="!isLoading" class="content-container">
+    <!-- En-tête informative -->
+    <ion-card class="info-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="school-outline"></ion-icon>
+          {{ currentUser?.niveauScolaire }}
+          <span *ngIf="currentUser?.classe"> - {{ currentUser?.classe }}</span>
+        </ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <p class="description">{{ getDescriptionAbonnement() }}</p>
+
+        <div class="info-row">
+          <div class="info-item">
+            <ion-icon name="book-outline"></ion-icon>
+            <div>
+              <strong>{{ typeAbonnement === 'CLASSE' ? 'Toutes les matières' : nombreMatieresRequises + ' matières' }}</strong>
+              <p>à sélectionner</p>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <ion-icon name="ribbon-outline"></ion-icon>
+            <div>
+              <strong>{{ prixAbonnement.toLocaleString() }} FCFA</strong>
+              <p>par an</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Compteur de sélection -->
+        <div *ngIf="typeAbonnement === 'MATIERE'" class="selection-counter">
+          <ion-badge [color]="isSelectionValide() ? 'success' : 'warning'">
+            {{ selectedMatiereNoms.length }} / {{ nombreMatieresRequises }}
+          </ion-badge>
+          <span>matières sélectionnées</span>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Message pour abonnement CLASSE -->
+    <ion-card *ngIf="typeAbonnement === 'CLASSE'" class="classe-card">
+      <ion-card-content>
+        <ion-icon name="checkmark-circle" color="success"></ion-icon>
+        <div>
+          <h3>Abonnement complet</h3>
+          <p>Vous aurez accès à toutes les matières de votre classe {{ currentUser?.classe }}</p>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Liste des matières (uniquement pour MATIERE) -->
+    <div *ngIf="typeAbonnement === 'MATIERE'" class="matieres-container">
+      <h2 class="section-title">Matières disponibles</h2>
+
+      <!-- Message si aucune matière -->
+      <ion-card *ngIf="matieres.length === 0" class="empty-card">
+        <ion-card-content>
+          <ion-icon name="alert-circle" color="warning"></ion-icon>
+          <p>Aucune matière disponible pour votre niveau</p>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Grille de matières -->
+      <div class="matieres-grid" *ngIf="matieres.length > 0">
+        <ion-card
+          *ngFor="let matiere of matieres"
+          class="matiere-card"
+          [class.selected]="isMatiereSelected(matiere.nom)"
+          (click)="toggleMatiere(matiere.nom)"
+          button>
+
+          <ion-card-content>
+            <!-- Icône de sélection -->
+            <div class="selection-indicator">
+              <ion-icon
+                [name]="isMatiereSelected(matiere.nom) ? 'checkmark-circle' : 'checkmark-circle-outline'"
+                [color]="isMatiereSelected(matiere.nom) ? 'success' : 'medium'">
+              </ion-icon>
+            </div>
+
+            <!-- Icône de la matière -->
+            <div
+              class="matiere-icon"
+              [style.background-color]="matiere.color || '#3880ff'">
+              <ion-icon [name]="matiere.icon || 'book-outline'"></ion-icon>
+            </div>
+
+            <!-- Nom de la matière -->
+            <h3 class="matiere-nom">{{ matiere.nom }}</h3>
+
+            <!-- Description si disponible -->
+            <p *ngIf="matiere.description" class="matiere-description">
+              {{ matiere.description }}
+            </p>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
+
+    <!-- Récapitulatif des matières sélectionnées -->
+    <ion-card
+      *ngIf="typeAbonnement === 'MATIERE' && selectedMatiereNoms.length > 0"
+      class="summary-card">
+      <ion-card-header>
+        <ion-card-title>Matières sélectionnées</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-list>
+          <ion-item *ngFor="let matiere of getSelectedMatieres(); let i = index" lines="none">
+            <ion-icon
+              slot="start"
+              [name]="matiere.icon || 'book-outline'"
+              [color]="matiere.color"></ion-icon>
+            <ion-label>
+              <h3>{{ matiere.nom }}</h3>
+              <p *ngIf="matiere.description">{{ matiere.description }}</p>
+            </ion-label>
+            <ion-badge slot="end" color="primary">{{ i + 1 }}</ion-badge>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Bouton de validation -->
+    <div class="validation-section">
+      <ion-button
+        expand="block"
+        size="large"
+        [disabled]="!isSelectionValide() || isSaving"
+        (click)="validerSelection()">
+        <ion-spinner *ngIf="isSaving" name="crescent"></ion-spinner>
+        <span *ngIf="!isSaving">{{ getButtonText() }}</span>
+      </ion-button>
+
+      <p class="help-text">
+        <ion-icon name="information-circle-outline"></ion-icon>
+        {{ typeAbonnement === 'CLASSE'
+          ? 'Accès illimité à toutes les matières de votre classe'
+          : 'Accès illimité aux ' + nombreMatieresRequises + ' matières sélectionnées'
+        }} pendant 1 an
+      </p>
+    </div>
+  </div>
+</ion-content>

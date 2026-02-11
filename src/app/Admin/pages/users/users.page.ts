@@ -14,7 +14,7 @@ import { send, sparkles, trash, pencilOutline } from 'ionicons/icons';
   templateUrl: './users.page.html',
   styleUrls: ['./users.page.scss'],
   standalone: true,
-  imports: [IonIcon, CommonModule, FormsModule]
+  imports: [CommonModule, FormsModule]
 })
 export class UsersPage implements OnInit {
   allUsers: User[] = [];

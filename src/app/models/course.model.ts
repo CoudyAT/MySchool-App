@@ -58,14 +58,15 @@ export interface Video {
 export interface Matiere {
   id: string;
   nom: string;
-  classe: string;
-  niveauScolaire: 'PRIMAIRE' | 'MOYEN' | 'SECONDAIRE' | 'SUPERIEUR';
+  classe?: string;
+  niveauScolaire: 'ELEMENTAIRE' | 'MOYEN' | 'SECONDAIRE' | 'UNIVERSITAIRE';
   icon: string;
   color: string;
   ordre: number;
+  description?: string;
+  isActive?: boolean;
   createdAt: Date;
   updatedAt: Date;
-
 }
 
 export interface Course {

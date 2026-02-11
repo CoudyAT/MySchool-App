@@ -1,6 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   logoFacebook,
@@ -27,7 +26,7 @@ interface SocialLink {
   standalone: true,
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss'],
-  imports: [CommonModule, IonIcon],
+  imports: [CommonModule],
 })
 export class FooterComponent implements OnInit {
   @Input() footerLinks: FooterLink[] = [

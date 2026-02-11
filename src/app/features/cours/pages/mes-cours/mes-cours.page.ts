@@ -4,6 +4,8 @@ import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { Course } from 'src/app/models/course.model';
 import { CourseService } from 'src/app/features/services/courseService';
+import { FiltreNiveauService } from 'src/app/features/services/filtre-niveau.service';
+import { User } from 'src/app/models/user.model';
 import {
   IonContent,
   IonSearchbar,
@@ -40,7 +42,6 @@ import { DesktopHeaderComponent } from 'src/app/shared/components/desktop-header
   imports: [
     IonToolbar,
     IonHeader,
-    IonSpinner,
     IonSegmentButton,
     IonLabel,
     IonSegment,
@@ -67,6 +68,7 @@ export class MesCoursPage implements OnInit {
   constructor(
     private router: Router,
     private courseService: CourseService,
+    private filtreNiveauService: FiltreNiveauService,
   ) {
     addIcons({
       searchOutline,
@@ -95,35 +97,95 @@ export class MesCoursPage implements OnInit {
   loadCourses() {
     this.isLoading = true;
 
+    // Récupérer le profil utilisateur
+    const localUser: User = JSON.parse(localStorage.getItem('currentUser') || 'null');
+
+    // Si l'utilisateur est connecté avec un niveau et une classe, filtrer côté serveur
+    if (localUser?.niveauScolaire && localUser?.classe) {
+      console.log('🎓 Chargement des cours pour:', localUser.niveauScolaire, localUser.classe);
+
+      // Appeler l'API spécifique par classe (plus précis)
+      const sub = this.courseService.getCoursesByClasse(localUser.classe).subscribe({
+        next: (courses) => {
+          this.courses = courses;
+          console.log('✅ Cours récupérés par classe:', this.courses.length);
+          this.processCourses();
+        },
+        error: (err) => {
+          console.error('Erreur chargement cours par classe:', err);
+          // Fallback: essayer par niveau scolaire
+          this.loadCoursesByNiveau(localUser.niveauScolaire!);
+        },
+      });
+      this.subscription.add(sub);
+    } else if (localUser?.niveauScolaire) {
+      // Si uniquement le niveau est disponible
+      console.log('🎓 Chargement des cours pour niveau:', localUser.niveauScolaire);
+      this.loadCoursesByNiveau(localUser.niveauScolaire);
+    } else {
+      // Sinon, charger tous les cours
+      this.loadAllCourses();
+    }
+  }
+
+  /**
+   * Charger les cours par niveau scolaire
+   */
+  private loadCoursesByNiveau(niveau: string) {
+    const sub = this.courseService.getCoursesByNiveau(niveau).subscribe({
+      next: (courses) => {
+        this.courses = courses;
+        console.log('✅ Cours récupérés par niveau:', this.courses.length);
+        this.processCourses();
+      },
+      error: (err) => {
+        console.error('Erreur chargement cours par niveau:', err);
+        this.loadAllCourses();
+      },
+    });
+    this.subscription.add(sub);
+  }
+
+  /**
+   * Charger tous les cours (fallback)
+   */
+  private loadAllCourses() {
     const sub = this.courseService.getAllCourses().subscribe({
       next: (courses) => {
         this.courses = courses;
-        this.filterCoursesBySegment();
-
-        // Extract unique non-empty category strings from the loaded courses
-        this.categories = Array.from(
-          new Set<string>(
-            this.courses
-              .map((c) => c.category)
-              .filter(
-                (cat): cat is string =>
-                  typeof cat === 'string' && cat.trim() !== '',
-              ),
-          ),
-        );
-
-        console.log('Cours chargés :', this.courses.length);
-        console.log('Catégories chargées :', this.categories);
-
-        this.isLoading = false;
+        console.log('✅ Tous les cours récupérés:', this.courses.length);
+        this.processCourses();
       },
       error: (err) => {
-        console.error('Erreur chargement cours:', err);
+        console.error('Erreur chargement tous les cours:', err);
         this.isLoading = false;
       },
     });
-
     this.subscription.add(sub);
+  }
+
+  /**
+   * Traiter les cours après chargement
+   */
+  private processCourses() {
+    this.filterCoursesBySegment();
+
+    // Extract unique non-empty category strings from the loaded courses
+    this.categories = Array.from(
+      new Set<string>(
+        this.courses
+          .map((c) => c.category)
+          .filter(
+            (cat): cat is string =>
+              typeof cat === 'string' && cat.trim() !== '',
+          ),
+      ),
+    );
+
+    console.log('Cours chargés :', this.courses.length);
+    console.log('Catégories chargées :', this.categories);
+
+    this.isLoading = false;
   }
 
   onSegmentChange(event: any) {

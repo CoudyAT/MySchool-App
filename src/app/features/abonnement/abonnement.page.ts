@@ -1,17 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe, LowerCasePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
   IonContent,
   IonHeader,
   IonTitle,
   IonToolbar,
-  IonList,
-  IonItem,
-  IonLabel,
   IonIcon,
   IonButton,
-  IonCard,
 } from '@ionic/angular/standalone';
 import { SubscriptionService } from '../services/subscription.service';
 import { Router } from '@angular/router';
@@ -23,18 +19,16 @@ import { DesktopHeaderComponent } from 'src/app/shared/components/desktop-header
   styleUrls: ['./abonnement.page.scss'],
   standalone: true,
   imports: [
-    IonCard,
     IonButton,
     IonIcon,
-    IonLabel,
-    IonItem,
-    IonList,
     IonContent,
     IonHeader,
     IonTitle,
     IonToolbar,
     CommonModule,
     FormsModule,
+    DatePipe,
+    LowerCasePipe,
     DesktopHeaderComponent,
   ],
 })
@@ -44,11 +38,21 @@ export class AbonnementPage implements OnInit {
   currentUser: any;
   searchText: string = '';
   selectedStatus: string = '';
+  selectedNiveau: string = '';
+  selectedClasse: string = '';
   isLoading: boolean = true;
 
+  // Classes disponibles selon le niveau
+  classesParNiveau: Record<string, string[]> = {
+    'ELEMENTAIRE': ['CI', 'CP', 'CE1', 'CE2', 'CM1', 'CM2'],
+    'MOYEN': ['6ème', '5ème', '4ème', '3ème'],
+    'SECONDAIRE': ['Seconde', 'Première', 'Terminale'],
+    'UNIVERSITAIRE': ['Licence 1', 'Licence 2', 'Licence 3', 'Master 1', 'Master 2']
+  };
+
   constructor(
-    private subscriptionService: SubscriptionService,
-    private router: Router
+    private readonly subscriptionService: SubscriptionService,
+    private readonly router: Router
   ) {}
 
   ngOnInit() {
@@ -157,11 +161,29 @@ export class AbonnementPage implements OnInit {
     const diffTime = end.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    return diffDays > 0 ? diffDays : 0;
+    return Math.max(0, diffDays);
   }
 
   /**
-   * Filtrer les abonnements selon la recherche et le statut
+   * Obtenir les classes disponibles selon le niveau sélectionné
+   */
+  getClassesDisponibles(): string[] {
+    if (!this.selectedNiveau) {
+      return [];
+    }
+    return this.classesParNiveau[this.selectedNiveau] || [];
+  }
+
+  /**
+   * Gérer le changement de niveau (réinitialiser la classe)
+   */
+  onNiveauChange() {
+    this.selectedClasse = '';
+    this.filterSubscriptions();
+  }
+
+  /**
+   * Filtrer les abonnements selon la recherche, le statut, le niveau et la classe
    */
   filterSubscriptions() {
     this.filteredSubscriptions = this.subscriptions.filter((sub) => {
@@ -178,7 +200,17 @@ export class AbonnementPage implements OnInit {
         ? sub.status === this.selectedStatus
         : true;
 
-      return matchesSearch && matchesStatus;
+      // Filtre par niveau scolaire
+      const matchesNiveau = this.selectedNiveau
+        ? sub.niveauScolaire === this.selectedNiveau
+        : true;
+
+      // Filtre par classe
+      const matchesClasse = this.selectedClasse
+        ? sub.classe === this.selectedClasse
+        : true;
+
+      return matchesSearch && matchesStatus && matchesNiveau && matchesClasse;
     });
   }
 

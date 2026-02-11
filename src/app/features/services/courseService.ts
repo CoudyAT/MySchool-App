@@ -34,6 +34,20 @@ export class CourseService {
     return this.api.get<Course[]>(`/courses/category/${category}`);
   }
 
+  // Récupérer les cours par niveau scolaire (ELEMENTAIRE, MOYEN, SECONDAIRE, UNIVERSITAIRE)
+  getCoursesByNiveau(niveau: string): Observable<Course[]> {
+    return this.api
+      .get<any>(`/courses/niveau/${niveau}`)
+      .pipe(map((res) => res?.data ?? []));
+  }
+
+  // Récupérer les cours par classe précise
+  getCoursesByClasse(classe: string): Observable<Course[]> {
+    return this.api
+      .get<any>(`/courses/classe/${encodeURIComponent(classe)}`)
+      .pipe(map((res) => res?.data ?? []));
+  }
+
   // Récupérer les cours par niveau
   getCoursesByLevel(level: string): Observable<Course[]> {
     return this.api.get<Course[]>(`/courses/level/${level}`);
