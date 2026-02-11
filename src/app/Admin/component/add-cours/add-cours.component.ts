@@ -18,7 +18,7 @@ import { MatiereService } from '../../services/matiereService';
   templateUrl: './add-cours.component.html',
   styleUrls: ['./add-cours.component.scss'],
   standalone: true,
-  imports: [IonIcon, CommonModule, ReactiveFormsModule],
+  imports: [IonSpinner, IonIcon, CommonModule, ReactiveFormsModule],
 })
 export class AddCoursComponent implements OnInit {
   @Output() formSubmit = new EventEmitter<void>();

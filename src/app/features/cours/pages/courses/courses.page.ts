@@ -33,7 +33,6 @@ import {
   logOutOutline,
   arrowForwardOutline,
   ribbonOutline,
-  play,
   playCircleOutline,
   shieldCheckmark,
   checkmarkCircle,
@@ -66,9 +65,6 @@ import { UserService } from 'src/app/features/auth/services/user.service';
 import { FcmService } from 'src/app/features/services/fcm.service';
 import { DesktopHeaderComponent } from 'src/app/shared/components/desktop-header/desktop-header.component';
 import { FooterComponent } from 'src/app/shared/components/footer/footer.component';
-import { FiltreNiveauService } from 'src/app/features/services/filtre-niveau.service';
-import { CourseAccessService } from 'src/app/features/services/course-access.service';
-import { User } from 'src/app/models/user.model';
 
 @Component({
   selector: 'app-courses',
@@ -100,8 +96,6 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
   private enrollmentSubscription: Subscription = new Subscription();
   allCourses: Course[] = [];
   isCoursesLoading = true;
-  hasActiveSubscription = false;
-  accessibleCourseIds = new Set<string>();
 
   slideOpts = {
     slidesPerView: 1,
@@ -126,16 +120,37 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
     private instructorService: InstructorService,
     private fcmService: FcmService,
     private courseService: CourseService,
-    private filtreNiveauService: FiltreNiveauService,
-    private courseAccessService: CourseAccessService,
   ) {
-    addIcons({searchOutline,personCircleOutline,starOutline,play,checkmarkCircle,addOutline,shieldCheckmark,personOutline,chevronDownOutline,closeOutline,notificationsOutline,chevronForwardOutline,shieldCheckmarkOutline,bookOutline,optionsOutline,lockOpenOutline,trendingUpOutline,bulbOutline,calculatorOutline,logOutOutline,ribbonOutline,cardOutline,arrowForwardOutline,playCircleOutline,});
+    addIcons({
+      searchOutline,
+      personCircleOutline,
+      starOutline,
+      addOutline,
+      shieldCheckmark,
+      personOutline,
+      chevronDownOutline,
+      closeOutline,
+      notificationsOutline,
+      chevronForwardOutline,
+      shieldCheckmarkOutline,
+      bookOutline,
+      optionsOutline,
+      lockOpenOutline,
+      trendingUpOutline,
+      bulbOutline,
+      calculatorOutline,
+      logOutOutline,
+      ribbonOutline,
+      checkmarkCircle,
+      cardOutline,
+      arrowForwardOutline,
+      playCircleOutline,
+    });
   }
 
   ngOnInit() {
     this.loadEnrolledCourses();
     this.loadAllCoursesPreview();
-    this.checkSubscriptionStatus();
     this.instructorService.getInstructors().subscribe((data) => {
       this.instructors = data;
     });
@@ -341,110 +356,16 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
     this.router.navigate(['/instructor-profile', id]);
   }
 
-  /**
-   * Vérifier le statut d'abonnement et marquer les cours accessibles
-   */
-  checkSubscriptionStatus() {
-    const localUser: User = JSON.parse(localStorage.getItem('currentUser') || 'null');
-    if (!localUser?.uid) return;
-
-    this.courseAccessService.hasActiveSubscription(localUser.uid).subscribe({
-      next: (hasSubscription) => {
-        this.hasActiveSubscription = hasSubscription;
-        if (hasSubscription) {
-          this.markAccessibleCourses(localUser);
-        }
-      },
-      error: (err) => console.error('Erreur vérification abonnement:', err),
-    });
-  }
-
-  /**
-   * Marquer les cours accessibles via l'abonnement
-   */
-  private markAccessibleCourses(user: User) {
-    this.allCourses.forEach((course) => {
-      this.courseAccessService.checkCourseAccess(course, user).subscribe({
-        next: (result) => {
-          if (result.hasAccess) {
-            this.accessibleCourseIds.add(course.id);
-          }
-        },
-      });
-    });
-  }
-
-  /**
-   * Vérifier si un cours est accessible via l'abonnement
-   */
-  isCourseAccessible(courseId: string): boolean {
-    return this.accessibleCourseIds.has(courseId);
-  }
-
   loadAllCoursesPreview() {
     this.isCoursesLoading = true;
 
-    // Récupérer le profil utilisateur
-    const localUser: User = JSON.parse(localStorage.getItem('currentUser') || 'null');
-
-    // Si l'utilisateur est connecté avec un niveau et une classe, filtrer côté serveur
-    if (localUser?.niveauScolaire && localUser?.classe) {
-      console.log('🎓 Chargement des cours pour:', localUser.niveauScolaire, localUser.classe);
-
-      // Appeler l'API spécifique par classe (plus précis)
-      this.courseService.getCoursesByClasse(localUser.classe).subscribe({
-        next: (courses) => {
-          // Filtrer uniquement les cours "En ligne"
-          this.allCourses = courses.filter((c) => c.type === 'En ligne');
-          console.log('✅ Cours récupérés par classe:', this.allCourses.length);
-          this.isCoursesLoading = false;
-          this.markAccessibleCourses(localUser);
-        },
-        error: (err) => {
-          console.error('Erreur chargement cours par classe:', err);
-          // Fallback: essayer par niveau scolaire
-          this.loadCoursesByNiveau(localUser.niveauScolaire!);
-        },
-      });
-    } else if (localUser?.niveauScolaire) {
-      // Si uniquement le niveau est disponible
-      console.log('🎓 Chargement des cours pour niveau:', localUser.niveauScolaire);
-      this.loadCoursesByNiveau(localUser.niveauScolaire);
-    } else {
-      // Sinon, charger tous les cours
-      this.loadAllCourses();
-    }
-  }
-
-  /**
-   * Charger les cours par niveau scolaire
-   */
-  private loadCoursesByNiveau(niveau: string) {
-    this.courseService.getCoursesByNiveau(niveau).subscribe({
-      next: (courses) => {
-        this.allCourses = courses.filter((c) => c.type === 'En ligne');
-        console.log('✅ Cours récupérés par niveau:', this.allCourses.length);
-        this.isCoursesLoading = false;
-      },
-      error: (err) => {
-        console.error('Erreur chargement cours par niveau:', err);
-        this.loadAllCourses();
-      },
-    });
-  }
-
-  /**
-   * Charger tous les cours (fallback)
-   */
-  private loadAllCourses() {
     this.courseService.getAllCourses().subscribe({
       next: (courses) => {
         this.allCourses = courses.filter((c) => c.type === 'En ligne');
-        console.log('✅ Tous les cours récupérés:', this.allCourses.length);
         this.isCoursesLoading = false;
       },
       error: (err) => {
-        console.error('Erreur chargement tous les cours:', err);
+        console.error('Erreur chargement cours:', err);
         this.isCoursesLoading = false;
       },
     });

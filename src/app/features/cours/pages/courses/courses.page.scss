@@ -10,22 +10,22 @@
 //   justify-content: space-between;
 //   align-items: center;
 //   padding: 10px 16px;
-
+  
 //   .logo {
 //     height: 40px;
 //     width: auto;
 //   }
-
+  
 //   .profile-button {
 //     --padding-start: 8px;
 //     --padding-end: 8px;
 //     --color: #5B5B5B;
 //     margin: 0;
-
+    
 //     .profile {
 //       font-size: 30px;
 //     }
-
+    
 //     &:active {
 //       --color: #0066FF;
 //     }
@@ -40,11 +40,11 @@
 //     --padding-top: 8px;
 //     height: 48px;
 //    // width: 100px;
-//     margin-top: -1px;
+//     margin-top: -1px;  
 //   ion-icon {
 //     font-size: 16px;
 //   }
-
+  
 //   &:active {
 //     --background: #005ADD;
 //   }
@@ -73,7 +73,7 @@
 //   .hero-swiper {
 //     width: 100%;
 //     height: 100%;
-
+    
 //     swiper-slide {
 //       width: 100%;
 //       height: 100%;
@@ -87,14 +87,14 @@
 //     display: flex;
 //     align-items: center;
 //     justify-content: center;
-
+    
 //     .slide-image {
 //       width: 100%;
 //       height: 100%;
 //       object-fit: cover; // ✅ Remplit tout l'espace
 //       object-position: center;
 //     }
-
+    
 //     .slide-overlay {
 //       position: absolute;
 //       top: 0;
@@ -141,14 +141,14 @@
 // // Section Mes cours
 // .courses-section {
 //   padding: 0 24px 32px 24px;
-
+  
 //   .section-title {
 //     font-size: 28px;
 //     font-weight: 700;
 //     color: #000000;
 //     margin: 0 0 16px 0;
 //   }
-
+  
 //   .section-description {
 //     font-size: 15px;
 //     color: #666666;
@@ -156,14 +156,14 @@
 //     margin: 0 0 32px 0;
 //     text-align: center;
 //   }
-
+  
 //   .add-button-container {
 //     display: flex;
 //     justify-content: center;
 //     margin: 0 0 32px 0;
 //    // margin-bottom: 24px;
-
-
+    
+    
 //     .circular-progress {
 //       width: 80px;
 //       height: 80px;
@@ -176,23 +176,23 @@
 //       box-shadow: 0 4px 12px rgba(0, 102, 255, 0.2);
 //       cursor: pointer;
 //       transition: all 0.3s ease;
-
+      
 //       .add-icon {
 //         font-size: 40px;
 //         color: #0066FF;
 //       }
-
+      
 //       &:hover {
 //         transform: scale(1.05);
 //         box-shadow: 0 6px 16px rgba(0, 102, 255, 0.3);
 //       }
-
+      
 //       &:active {
 //         transform: scale(0.95);
 //       }
 //     }
 //   }
-
+  
 // .suivant-button {
 //   --background: #0066FF;
 //   --border-radius: 12px;
@@ -204,7 +204,7 @@
 //   margin-top: 8px;
 //   height: 50px;
 //   --color: #FFFFFF; // ✅ CORRECTION : Utilisez --color au lieu de color
-
+  
 //   &:active {
 //     --background: #0052cc;
 //   }
@@ -214,19 +214,19 @@
 // // Section Instructeurs
 // .instructors-section {
 //   padding: 0 24px 24px 24px;
-
+  
 //   .section-title {
 //     font-size: 24px;
 //     font-weight: 700;
 //     color: #000000;
 //     margin: 0 0 20px 0;
 //   }
-
+  
 //   .instructors-grid {
 //     display: grid;
 //   //  grid-template-columns: repeat(3, 1fr);
 //     gap: 12px;
-
+    
 //     .instructor-card {
 //       border-radius: 12px;
 //       overflow: hidden;
@@ -235,18 +235,18 @@
 //       cursor: pointer;
 //       transition: transform 0.3s ease;
 //       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-
+      
 //       &:active {
 //         transform: translateY(-4px);
 //       }
-
+      
 //       .instructor-image {
 //         width: 100%;
 //         height: 100%;
 //         object-fit: cover;
 //         display: block; // Important pour éviter l'espace réservé
 //       }
-
+      
 //       .instructor-name {
 //         position: absolute;
 //         bottom: 8px;
@@ -258,7 +258,7 @@
 //         letter-spacing: 0.5px;
 //         z-index: 2;
 //       }
-
+      
 //       // Overlay pour améliorer la lisibilité du texte
 //       &::after {
 //         content: '';
@@ -281,30 +281,30 @@
 //     margin: 0 12px 20px 12px;
 //     padding: 16px;
 //   }
-
+  
 //   .courses-section {
 //     padding: 0 20px 24px 20px;
-
+    
 //     .section-title {
 //       font-size: 24px;
 //     }
-
+    
 //     .add-button-container .circular-progress {
 //       width: 70px;
 //       height: 70px;
-
+      
 //       .add-icon {
 //         font-size: 35px;
 //       }
 //     }
 //   }
-
+  
 //   .instructors-section {
 //     padding: 0 20px 20px 20px;
-
+    
 //     .instructors-grid {
 //       gap: 8px;
-
+      
 //       .instructor-card .instructor-name {
 //         font-size: 11px;
 //         bottom: 6px;
@@ -698,32 +698,32 @@
 //     margin: 0 12px 20px 12px;
 //     padding: 16px;
 //   }
-
+  
 //   .courses-section {
 //     padding: 0 20px 24px 20px;
 //   }
-
+  
 //   .courses-section .section-title {
 //     font-size: 24px;
 //   }
-
+  
 //   .courses-section .add-button-container .circular-progress {
 //     width: 70px;
 //     height: 70px;
 //   }
-
+  
 //   .courses-section .add-button-container .circular-progress .add-icon {
 //     font-size: 35px;
 //   }
-
+  
 //   .instructors-section {
 //     padding: 0 20px 20px 20px;
 //   }
-
+  
 //   .instructors-section .instructors-grid {
 //     gap: 8px;
 //   }
-
+  
 //   .instructors-section .instructors-grid .instructor-card .instructor-name {
 //     font-size: 11px;
 //     bottom: 6px;
@@ -737,12 +737,12 @@
 
 // .quick-access-section {
 //   padding: 24px 24px 32px 24px;
-
+  
 //   .quick-access-grid {
 //     display: grid;
 //     grid-template-columns: repeat(4, 1fr);
 //     gap: 16px;
-
+    
 //     .quick-access-item {
 //       display: flex;
 //       flex-direction: column;
@@ -750,11 +750,11 @@
 //       gap: 8px;
 //       cursor: pointer;
 //       transition: transform 0.2s ease;
-
+      
 //       &:active {
 //         transform: scale(0.95);
 //       }
-
+      
 //       .icon-container {
 //         width: 56px;
 //         height: 56px;
@@ -764,19 +764,19 @@
 //         justify-content: center;
 //         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 //         transition: all 0.3s ease;
-
+        
 //         .quick-icon {
 //           width: 32px;
 //           height: 32px;
 //           object-fit: contain;
 //         }
-
+        
 //         &:hover {
 //           transform: translateY(-2px);
 //           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 //         }
 //       }
-
+      
 //       .item-label {
 //         font-size: 13px;
 //         font-weight: 500;
@@ -790,21 +790,21 @@
 // @media (max-width: 375px) {
 //   .quick-access-section {
 //     padding: 20px 16px 24px 16px;
-
+    
 //     .quick-access-grid {
 //       gap: 12px;
-
+      
 //       .quick-access-item {
 //         .icon-container {
 //           width: 50px;
 //           height: 50px;
-
+          
 //           .quick-icon {
 //             width: 28px;
 //             height: 28px;
 //           }
 //         }
-
+        
 //         .item-label {
 //           font-size: 12px;
 //         }
@@ -1198,7 +1198,7 @@ ion-header ion-toolbar {
   .hero-swiper {
     width: 100%;
     height: 100%;
-
+    
     swiper-slide {
       width: 100%;
       height: 100%;
@@ -1212,14 +1212,14 @@ ion-header ion-toolbar {
     display: flex;
     align-items: center;
     justify-content: center;
-
+    
     .slide-image {
       width: 100%;
       height: 100%;
      // object-fit:none; // ✅ Remplit tout l'espace
       object-position: center;
     }
-
+    
     .slide-overlay {
       position: absolute;
       top: 0;
@@ -1369,28 +1369,6 @@ ion-header ion-toolbar {
   object-fit: cover;
 }
 
-// Badge accès abonnement sur la carte
-.access-badge {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  background: rgba(16, 185, 129, 0.95);
-  color: white;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 600;
-  z-index: 2;
-  backdrop-filter: blur(4px);
-
-  ion-icon {
-    font-size: 14px;
-  }
-}
-
 .course-title {
   font-size: 16px;
   font-weight: 700;
@@ -1409,19 +1387,19 @@ ion-header ion-toolbar {
 // Section Instructeurs
 .instructors-section {
   padding: 0 24px 24px 24px;
-
+  
   .section-title {
     font-size: 24px;
     font-weight: 700;
     color: #000000;
     margin: 0 0 20px 0;
   }
-
+  
   .instructors-grid {
     display: grid;
   //  grid-template-columns: repeat(3, 1fr);
     gap: 12px;
-
+    
     .instructor-card {
       border-radius: 12px;
       overflow: hidden;
@@ -1430,18 +1408,18 @@ ion-header ion-toolbar {
       cursor: pointer;
       transition: transform 0.3s ease;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-
+      
       &:active {
         transform: translateY(-4px);
       }
-
+      
       .instructor-image {
         width: 100%;
         height: 100%;
         object-fit: cover;
         display: block; // Important pour éviter l'espace réservé
       }
-
+      
       .instructor-name {
         position: absolute;
         bottom: 8px;
@@ -1453,7 +1431,7 @@ ion-header ion-toolbar {
         letter-spacing: 0.5px;
         z-index: 2;
       }
-
+      
       // Overlay pour améliorer la lisibilité du texte
       &::after {
         content: '';
@@ -1666,17 +1644,17 @@ ion-header ion-toolbar {
       box-shadow: 0 4px 12px rgba(0, 102, 255, 0.2);
       cursor: pointer;
       transition: all 0.3s ease;
-
+      
       .add-icon {
         font-size: 40px;
         color: #0066FF;
       }
-
+      
       &:hover {
         transform: scale(1.05);
         box-shadow: 0 6px 16px rgba(0, 102, 255, 0.3);
       }
-
+      
       &:active {
         transform: scale(0.95);
       }
@@ -1711,3 +1689,4 @@ ion-header ion-toolbar {
 .courses-section .add-button-container .circular-progress:active {
   transform: scale(0.95);
 }
+  

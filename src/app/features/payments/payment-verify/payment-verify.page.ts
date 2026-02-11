@@ -62,6 +62,8 @@ export class PaymentVerifyPage implements OnInit {
   selectedMethod: any;
   selectedPaymentOption = '';
   selectedCategory: string | null = null;
+  userInfo: any = null;
+  selectedMatieres: any[] = [];
 
   isPremiumSubscription = false;
 
@@ -137,6 +139,12 @@ export class PaymentVerifyPage implements OnInit {
     this.selectedMethod = state?.method;
     this.selectedCategory = state?.selectedCategory || null;
     this.isPremiumSubscription = state?.isPremiumSubscription || false;
+    this.userInfo = state['userInfo'] || null;
+    console.log("user",this.userInfo);
+    
+    this.selectedMatieres = state['selectedMatieres'] || [];
+    console.log("matire",this.selectedMatieres);
+    
 
     this.course = state?.course || {};
     this.courseId = state?.courseId || this.course?.id || '';
@@ -321,36 +329,54 @@ export class PaymentVerifyPage implements OnInit {
       /** ===============================
        *  ⭐ ABONNEMENT PREMIUM
        *  =============================== */
-      if (this.isPremium) {
-        
-        
-        await this.showLoader('Redirection vers le paiement Premium...');
-        console.log('PREMINNUM', this.selectedPlan.type);
-        if (this.selectedPlan.type) {
-          console.log('PREMINNUM', this.selectedPlan.type);
-          const planType = this.mapPlanTypeToBackend(this.selectedPlan.type);
+        if (this.isPremium) {
+          await this.showLoader('Redirection vers le paiement Premium...');
+          console.log('PREMIUM', this.selectedPlan.type);
 
-          if (!this.userId || !planType || !this.selectedCategory) {
-            throw new Error('Infos abonnement manquantes');
+          if (this.selectedPlan.type) {
+            const planType = this.mapPlanTypeToBackend(this.selectedPlan.type);
+
+            if (!this.userId || !planType) {
+              throw new Error('Infos abonnement manquantes');
+            }
+
+            let response;
+
+            // ✅ CAS ÉLÉMENTAIRE
+            if (this.userInfo?.niveau === 'ELEMENTAIRE') {
+              response = await firstValueFrom(
+                this.paymentService.createSubscriptionPayment(
+                  planType,
+                  this.userId,
+                  this.userInfo?.classe || '',
+                  this.userInfo?.niveau || '',
+                  'CLASSE', // 👈 type envoyé au backend
+                ),
+              );
+            }
+            // ✅ AUTRES NIVEAUX
+            else {
+              response = await firstValueFrom(
+                this.paymentService.createSubscriptionPayment(
+                  planType,
+                  this.userId,
+                  this.userInfo?.classe || '',
+                  this.userInfo?.niveau || '',
+                  'MATIERE',
+                  this.selectedMatieres,
+                ),
+              );
+            }
+
+            if (response?.success && response?.data?.paymentUrl) {
+              await this.hideLoader(); // 🔴 IMPORTANT
+              window.location.href = response.data.paymentUrl;
+              return;
+            }
+
+            throw new Error('URL de paiement introuvable');
           }
-
-          const response = await firstValueFrom(
-            this.paymentService.createSubscriptionPayment(
-              planType,
-              this.userId,
-              this.selectedCategory,
-            ),
-          );
-
-          if (response?.success && response?.data?.paymentUrl) {
-            await this.hideLoader(); // 🔴 IMPORTANT
-            window.location.href = response.data.paymentUrl;
-            return;
-          }
-
-          throw new Error('URL de paiement introuvable');
         }
-      }
 
       /** ===============================
        *  📘 COURS INDIVIDUEL
@@ -371,6 +397,7 @@ export class PaymentVerifyPage implements OnInit {
 
       const paymentData: PaymentData = {
         plan: this.selectedPlan,
+        
         method,
         amount: this.summary.total,
         courseId: this.courseId,

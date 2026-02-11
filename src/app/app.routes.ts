@@ -30,12 +30,11 @@ import { EditCoursPage } from './Admin/pages/cours/pages/edit-cours/edit-cours.p
 import { UserEditPage } from './Admin/pages/user-edit/user-edit.page';
 import { EnrollmentsPage } from './Admin/pages/enrollments/enrollments.page';
 import { SecurityPage } from './features/auth/security/security.page';
+import { PdfListPage } from './features/pdf/pdf-list/pdf-list.page';
 import { ForgotPasswordPage } from './features/auth/forgot-password/forgot-password.page';
 import { PaymentOptionComponent } from './features/payments/payment-option/payment-option.component';
 import { VideoDetailPage } from './features/cours/pages/video-detail/video-detail.page';
 import { VideoPlayerPage } from './features/cours/pages/video-player/video-player.page';
-import { PdfListPage } from './features/pdf/pdf-list/pdf-list.page';
-import { MatieresPage } from './Admin/pages/matieres/matieres.page';
 
 export const routes: Routes = [
   {
@@ -172,10 +171,6 @@ export const routes: Routes = [
         path: 'enrollments',
         component: EnrollmentsPage,
       },
-      {
-        path: 'matieres',
-        component: MatieresPage,
-      },
     ],
   },
   {
@@ -204,13 +199,6 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/abonnement/abonnement.page').then(
         (m) => m.AbonnementPage,
-      ),
-  },
-  {
-    path: 'selection-matieres',
-    loadComponent: () =>
-      import('./features/abonnement/selection-matieres/selection-matieres.page').then(
-        (m) => m.SelectionMatieresPage,
       ),
   },
   {
@@ -246,8 +234,7 @@ export const routes: Routes = [
   },
   {
     path: 'conditions',
-    loadComponent: () => import('./features/auth/pages/conditions/conditions.page').then(m => m.ConditionsPage)
+    loadComponent: () => import('./features/auth/pages/conditions/conditions.page').then( m => m.ConditionsPage)
   },
-
 
 ];

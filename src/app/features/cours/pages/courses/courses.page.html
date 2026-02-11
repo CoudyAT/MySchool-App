@@ -11,8 +11,8 @@
       >
         <br/>
       <ion-icon (click)="openHelp()" name="search-outline"></ion-icon>
-      </ion-button>
-
+      </ion-button> 
+      
       <ion-button
           fill="clear"
           (click)="goToProfile()"
@@ -27,7 +27,7 @@
   </ion-button>
 </div>
   </ion-toolbar>
-</ion-header>
+</ion-header> 
 <ion-content>
   <div class="content-wrapper">
 
@@ -129,12 +129,6 @@
             <div class="play-icon">
               <ion-icon name="play"></ion-icon>
             </div>
-
-            <!-- Badge abonnement actif -->
-            <div class="access-badge" *ngIf="isCourseAccessible(course.id)">
-              <ion-icon name="checkmark-circle"></ion-icon>
-              <span>Inclus</span>
-            </div>
           </div>
 
           <ion-card-content>
@@ -147,7 +141,7 @@
             </div>
 
             <div class="course-level">
-              Niveau : {{ course.level || 'Débutant' }}
+              Niveau : {{ course.niveauScolaire || 'Débutant' }}
             </div>
           </ion-card-content>
         </ion-card>
@@ -196,7 +190,7 @@
               [src]="course.courseDetails?.image || 'assets/algo.svg'"
               alt="Image du cours"
               class="course-image"
-            />
+            />           
              <!-- Badge Certificat disponible -->
             <div class="certificate-badge" *ngIf="course?.courseDetails?.certificateAvailable">
                 <ion-icon name="shield-checkmark"></ion-icon>
@@ -240,7 +234,7 @@
              [src]="instructor.image"
               [alt]="instructor.name"
             class="instructor-image"
-          />
+          /> 
         <!--   <div class="instructor-name">{{ instructor.name }}</div> -->
         </div>
       </div>

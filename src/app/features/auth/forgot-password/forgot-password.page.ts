@@ -44,6 +44,7 @@ import {
     ReactiveFormsModule,
     IonContent,
     IonItem,
+    IonLabel,
     IonInput,
     IonButton,
     IonCard,

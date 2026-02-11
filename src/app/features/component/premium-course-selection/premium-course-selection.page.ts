@@ -2,11 +2,13 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
-import { Course } from 'src/app/models/course.model';
-import { CourseService } from 'src/app/features/services/courseService';
+import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 
 import {
   IonContent,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
   IonCard,
   IonCardContent,
   IonButton,
@@ -15,17 +17,11 @@ import {
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
-import {
-  checkmarkCircle,
-  bookOutline,
-  schoolOutline,
-  folderOutline,
-  timeOutline,
-  layersOutline,
-  searchOutline,
-  arrowForwardOutline,
-} from 'ionicons/icons';
+import { checkmarkCircle, arrowForwardOutline } from 'ionicons/icons';
+
 import { DesktopHeaderComponent } from 'src/app/shared/components/desktop-header/desktop-header.component';
+import { MatiereService } from 'src/app/features/services/matiere.service';
+import { UserService } from '../../auth/services/user.service';
 
 @Component({
   selector: 'app-premium-course-selection',
@@ -34,6 +30,9 @@ import { DesktopHeaderComponent } from 'src/app/shared/components/desktop-header
   standalone: true,
   imports: [
     CommonModule,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
     IonContent,
     IonCard,
     IonCardContent,
@@ -44,123 +43,164 @@ import { DesktopHeaderComponent } from 'src/app/shared/components/desktop-header
   ],
 })
 export class PremiumCourseSelectionPage implements OnInit, OnDestroy {
-  courses: Course[] = [];
-  categories: string[] = [];
-  filteredCourses: Course[] = [];
+  matieres: any[] = [];
+  selectedMatieres: any[] = [];
+  currentUser: any = null;
+  userClasse!: any;
+  userNiveau!: string;
 
-  selectedCategory: string | null = null;
-  selectedCourses: Course[] = [];
-
-  MAX_SELECTION = 3;
+  readonly MAX_SELECTION = 3;
   isLoading = true;
 
   private sub = new Subscription();
 
   constructor(
-    private courseService: CourseService,
+    private matiereService: MatiereService,
+    private userService: UserService,
     private router: Router,
+    private firestore: Firestore,
   ) {
     addIcons({
-      schoolOutline,
-      folderOutline,
-      bookOutline,
       checkmarkCircle,
-      timeOutline,
-      layersOutline,
-      searchOutline,
       arrowForwardOutline,
     });
   }
 
   ngOnInit() {
-    this.loadCourses();
+    this.loadUserData();
+    this.loadUserAndMatieres();
   }
 
   ngOnDestroy() {
     this.sub.unsubscribe();
   }
 
-  loadCourses() {
-    const s = this.courseService.getAllCourses().subscribe({
-      next: (courses) => {
-        this.courses = courses;
+  async loadUserData() {
+    try {
+      const localUser = JSON.parse(
+        localStorage.getItem('currentUser') || 'null',
+      );
+      if (localUser && localUser.uid) {
+        // Charger d'abord depuis localStorage
+        this.currentUser = localUser;
 
-        this.categories = [
-          ...new Set(
-            courses.map((c) => c.category).filter((c) => c && c.trim() !== ''),
-          ),
-        ];
+        // Ensuite charger depuis Firestore pour avoir les données à jour
+        await this.loadFromFirestore(localUser.uid);
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des données:', error);
+    }
+  }
 
-        this.isLoading = false;
+  private async loadFromFirestore(userId: string): Promise<void> {
+    try {
+      const userRef = doc(this.firestore, 'utilisateur', userId);
+      const userDoc = await getDoc(userRef);
+
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        // console.log('📄 Données Firestore chargées:', userData);
+
+        // Fusionner avec les données existantes
+        if (userData?.['firstName'])
+          this.currentUser.firstName = userData['firstName'];
+        if (userData?.['lastName'])
+          this.currentUser.lastName = userData['lastName'];
+        if (userData?.['phone']) this.currentUser.phone = userData['phone'];
+        if (userData?.['email']) this.currentUser.email = userData['email'];
+
+        // Gérer l'image - priorité à profileImageBase64
+        if (userData?.['profileImageBase64']) {
+          this.currentUser.photoURL = userData['profileImageBase64'];
+        } else if (userData?.['photoURL']) {
+          this.currentUser.photoURL = userData['photoURL'];
+        }
+
+        // Mettre à jour localStorage
+        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement Firestore:', error);
+    }
+  }
+
+  loadUserAndMatieres() {
+    const s = this.userService.getCurrentUser().subscribe({
+      next: (user) => {
+        this.userClasse = this.currentUser.classe || user.classe;
+        console.log('dddd', this.userClasse);
+        this.userNiveau =
+          this.currentUser.niveauScolaire || user.niveauScolaire;
+        this.loadMatieres();
       },
-      error: (err) => {
-        console.error(err);
-        this.isLoading = false;
-      },
+      error: () => (this.isLoading = false),
     });
 
     this.sub.add(s);
   }
 
-  selectCategory(category: string) {
-    this.selectedCategory = category;
-    this.filteredCourses = this.courses.filter((c) => c.category === category);
+  loadMatieres() {
+    console.log('dddd', this.userClasse);
+    const s = this.matiereService
+      .getMatieresByClasse(this.userClasse)
+      .subscribe({
+        next: (data) => {
+          this.matieres = data;
+          this.isLoading = false;
+        },
+        error: () => (this.isLoading = false),
+      });
 
-    this.selectedCourses = [];
+    this.sub.add(s);
   }
 
-  toggleCourse(course: Course) {
-    const exists = this.selectedCourses.find((c) => c.id === course.id);
+  toggleMatiere(matiere: any) {
+    const exists = this.selectedMatieres.some((m) => m.id === matiere.id);
 
     if (exists) {
-      this.selectedCourses = this.selectedCourses.filter(
-        (c) => c.id !== course.id,
+      this.selectedMatieres = this.selectedMatieres.filter(
+        (m) => m.id !== matiere.id,
       );
     } else {
-      if (this.selectedCourses.length >= this.MAX_SELECTION) {
-        alert('Vous pouvez sélectionner seulement 3 cours');
+      if (this.selectedMatieres.length >= this.MAX_SELECTION) {
+        alert('Vous pouvez sélectionner au maximum 3 matières');
         return;
       }
-      this.selectedCourses.push(course);
+      this.selectedMatieres.push(matiere);
     }
   }
 
-  isSelected(course: Course) {
-    return this.selectedCourses.some((c) => c.id === course.id);
+  isSelected(matiere: any): boolean {
+    return this.selectedMatieres.some((m) => m.id === matiere.id);
   }
 
   continue() {
-    console.log('🚀 Redirection vers la page de paiement Premium...');
-    // Rediriger vers la page de méthode de paiement avec les infos Premium
+    if (this.selectedMatieres.length !== this.MAX_SELECTION) {
+      alert('Veuillez sélectionner exactement 3 matières');
+      return;
+    }
+
     this.router.navigate(['/payment-method'], {
       state: {
+        isPremiumSubscription: true,
+
+        // 🔥 DONNÉES UTILISATEUR
+        userInfo: {
+          classe: this.userClasse,
+          niveau: this.userNiveau,
+        },
+
+        // 🔥 MATIÈRES SÉLECTIONNÉES
+        matieres: this.selectedMatieres.map((m) => m.nom || m.name),
+
+        // 🔥 PLAN
         plan: {
-          type: 'MONTHLY',
+          type: 'ANNUAL',
           name: 'Abonnement Premium',
           price: 5000,
-          description: 'Accès illimité à tous les cours',
-          features: [
-            'Tous les cours disponibles',
-            'Contenus exclusifs',
-            'Téléchargement hors ligne',
-            'Certificats Premium',
-            'Support prioritaire',
-          ],
+          currency: 'XOF',
         },
-        isPremiumSubscription: true,
-        selectedCategory: this.selectedCategory,
       },
     });
   }
-
-  // continue() {
-  //   if (this.selectedCourses.length !== 3) return;
-
-  //   this.router.navigate(['/subscription-plans'], {
-  //     state: {
-  //       isPremiumSubscription: true,
-  //       selectedCourses: this.selectedCourses,
-  //     },
-  //   });
-  // }
 }

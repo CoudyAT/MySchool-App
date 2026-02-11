@@ -9,6 +9,8 @@ import {
   IonIcon,
   IonButtons,
   IonButton,
+  IonCard,
+  IonCardContent,
 } from '@ionic/angular/standalone';
 
 import {
@@ -33,6 +35,7 @@ import { Firestore, doc, updateDoc } from '@angular/fire/firestore';
   styleUrls: ['./video-player.page.scss'],
   standalone: true,
   imports: [
+    IonCardContent,
     IonButton,
     IonButtons,
     IonIcon,
@@ -42,6 +45,7 @@ import { Firestore, doc, updateDoc } from '@angular/fire/firestore';
     IonToolbar,
     CommonModule,
     FormsModule,
+    IonCard,
   ],
 })
 export class VideoPlayerPage implements OnInit {

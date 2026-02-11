@@ -2,9 +2,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { Firestore, doc, getDoc, setDoc } from '@angular/fire/firestore';
+import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { Subscription } from 'rxjs';
-import { ModalController } from '@ionic/angular/standalone';
+import { ModalController } from '@ionic/angular/standalone'; 
 import { PreminumModalComponent } from 'src/app/features/component/preminum-modal/preminum-modal.component';
 import { ToastController } from '@ionic/angular';
 
@@ -48,10 +48,8 @@ import {
 import { addIcons } from 'ionicons';
 import { CourseService } from 'src/app/features/services/courseService';
 import { Chapter, Course } from 'src/app/models/course.model';
-import { EnrollmentService } from 'src/app/features/services/enrollmentService';
+import { EnrollmentService } from 'src/app/features/services/enrollmentService'; // Ajouter cet import
 import { ChapterService } from 'src/app/features/services/chapter.service';
-import { CourseAccessService, CourseAccessResult } from 'src/app/features/services/course-access.service';
-import { User } from 'src/app/models/user.model';
 import { DesktopHeaderComponent } from 'src/app/shared/components/desktop-header/desktop-header.component';
 
 @Component({
@@ -84,11 +82,6 @@ export class CoursDetailPage implements OnInit, OnDestroy {
   chapter!: Chapter;
   heroActiveTab: 'chapters' | 'documents' = 'chapters';
 
-  // Accès abonné
-  hasSubscriptionAccess = false;
-  accessResult: CourseAccessResult | null = null;
-  currentUser: User | null = null;
-
   chapters: Chapter[] = [];
   private courseSubscription: Subscription = new Subscription();
   private enrollmentSubscription: Subscription = new Subscription();
@@ -103,7 +96,6 @@ export class CoursDetailPage implements OnInit, OnDestroy {
     private firestore: Firestore,
     private modalCtrl: ModalController,
     private toastCtrl: ToastController,
-    private courseAccessService: CourseAccessService,
   ) {
     addIcons({
       chevronBackOutline,
@@ -132,37 +124,7 @@ export class CoursDetailPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.loadCurrentUser();
     this.loadCourseDetails();
-  }
-
-  /**
-   * Charger l'utilisateur courant
-   */
-  loadCurrentUser() {
-    const userData = localStorage.getItem('currentUser');
-    if (userData) {
-      this.currentUser = JSON.parse(userData);
-    }
-  }
-
-  /**
-   * Vérifier l'accès au cours via l'abonnement
-   */
-  checkSubscriptionAccess() {
-    if (!this.course || !this.currentUser) return;
-
-    this.courseAccessService.checkCourseAccess(this.course, this.currentUser).subscribe({
-      next: (result) => {
-        this.accessResult = result;
-        this.hasSubscriptionAccess = result.hasAccess;
-        console.log('🔐 Accès cours:', result.hasAccess, '- Raison:', result.reason);
-      },
-      error: (err) => {
-        console.error('Erreur vérification accès:', err);
-        this.hasSubscriptionAccess = false;
-      },
-    });
   }
 
   ngOnDestroy() {
@@ -251,7 +213,6 @@ export class CoursDetailPage implements OnInit, OnDestroy {
         // Charger autres données
         this.loadChapters(courseId);
         this.checkUserEnrollment(courseId);
-        this.checkSubscriptionAccess();
 
         this.isLoading = false;
       },
@@ -351,12 +312,6 @@ export class CoursDetailPage implements OnInit, OnDestroy {
   handleEnroll() {
     if (!this.course) return;
 
-    // ✅ Si l'utilisateur a un accès via abonnement → auto-inscription
-    if (this.hasSubscriptionAccess) {
-      this.autoEnrollWithSubscription();
-      return;
-    }
-
     // 🔴 CAS 1 : COURS PAYANT → payer CE COURS
     if (this.course.price && this.course.price > 0) {
       const plan = {
@@ -380,6 +335,7 @@ export class CoursDetailPage implements OnInit, OnDestroy {
     }
 
     // 🔵 CAS 2 : COURS GRATUIT → abonnement
+
     this.router.navigate(['/subscription-plans'], {
       state: {
         isPremiumSubscription: true,
@@ -392,12 +348,6 @@ export class CoursDetailPage implements OnInit, OnDestroy {
   }
 
   async handleEnrollClick() {
-    // ✅ Si accès abonnement actif → auto-inscription directe
-    if (this.hasSubscriptionAccess && !this.isUserEnrolled) {
-      this.autoEnrollWithSubscription();
-      return;
-    }
-
     if ((this.course?.price ?? 0) > 0) {
       // Cours payant
       this.handleEnroll();
@@ -414,8 +364,7 @@ export class CoursDetailPage implements OnInit, OnDestroy {
       const { data } = await modal.onWillDismiss();
 
       if (data?.subscribed) {
-        // L'utilisateur a souscrit → refresh accès
-        this.checkSubscriptionAccess();
+        // L'utilisateur a souscrit
         const toast = await this.toastCtrl.create({
           message: 'Bienvenue dans Premium ! 🌟',
           duration: 2000,
@@ -423,50 +372,6 @@ export class CoursDetailPage implements OnInit, OnDestroy {
         });
         await toast.present();
       }
-    }
-  }
-
-  /**
-   * Auto-inscription au cours pour les utilisateurs avec abonnement actif
-   */
-  async autoEnrollWithSubscription() {
-    if (!this.course || !this.currentUser) return;
-
-    try {
-      const courseId = this.course.id;
-      const userId = this.currentUser.uid;
-
-      // Créer l'inscription dans Firestore
-      const enrollmentRef = doc(this.firestore, 'enrollments', `${userId}_${courseId}`);
-      await setDoc(enrollmentRef, {
-        userId,
-        courseId,
-        enrolledAt: new Date().toISOString(),
-        progress: 0,
-        source: 'subscription',
-        subscriptionType: this.accessResult?.subscription?.type || 'CLASSE',
-      });
-
-      this.isUserEnrolled = true;
-      this.enrollmentProgress = 0;
-      this.currentEnrollment = { userId, courseId, progress: 0 };
-
-      const toast = await this.toastCtrl.create({
-        message: 'Cours activé via votre abonnement ! 🎉',
-        duration: 2000,
-        color: 'success',
-      });
-      await toast.present();
-
-      console.log('✅ Auto-inscription via abonnement:', courseId);
-    } catch (error) {
-      console.error('Erreur auto-inscription:', error);
-      const toast = await this.toastCtrl.create({
-        message: 'Erreur lors de l\'activation du cours',
-        duration: 2000,
-        color: 'danger',
-      });
-      await toast.present();
     }
   }
 
