@@ -36,48 +36,48 @@
         <div class="summary-row promo-section">
           <div class="promo-header">
             <span class="label">Code promo</span>
-            <button 
-              *ngIf="!appliedPromoCode" 
-              class="add-promo-btn" 
+            <button
+              *ngIf="!appliedPromoCode"
+              class="add-promo-btn"
               (click)="togglePromoInput()"
             >
               {{ showPromoInput ? 'Annuler' : '+ Ajouter un code' }}
             </button>
-            <button 
-              *ngIf="appliedPromoCode" 
-              class="remove-promo-btn" 
+            <button
+              *ngIf="appliedPromoCode"
+              class="remove-promo-btn"
               (click)="removePromoCode()"
             >
               Retirer
             </button>
           </div>
-          
+
           <!-- Input pour code promo -->
           <div *ngIf="showPromoInput" class="promo-input-container">
             <div class="promo-input-wrapper">
-              <input 
-                type="text" 
+              <input
+                type="text"
                 [(ngModel)]="promoCodeInput"
                 placeholder="Entrez votre code promo"
                 class="promo-input"
                 (keyup.enter)="applyPromoCode()"
               />
-              <button 
-                class="apply-promo-btn" 
+              <button
+                class="apply-promo-btn"
                 (click)="applyPromoCode()"
                 [disabled]="!promoCodeInput.trim()"
               >
                 Appliquer
               </button>
             </div>
-            
+
           </div>
 
           <div *ngIf="appliedPromoCode" class="applied-promo">
             <span class="promo-code">{{ appliedPromoCode }} (-{{ discountPercentage }}%)</span>
             <span class="value negative">-{{ summary.promoCode }} FCFA</span>
           </div>
-          
+
           <!-- Valeur par défaut si aucun code promo -->
           <div *ngIf="!appliedPromoCode && !showPromoInput" class="value">
             {{ summary.promoCode }} FCFA
@@ -177,10 +177,10 @@
     </div>
 
     <!-- Bouton final -->
-    <ion-button expand="block" 
+    <ion-button expand="block"
       (click)="proceedToPayment()"
       class="proceed-button">
-      {{ isPremium ? 'Activer Premium' : 'Payer le cours' }}
+      {{ isClasseSubscription ? 'Souscrire à l\'abonnement' : (isPremium ? 'Activer Premium' : 'Payer le cours') }}
     </ion-button>
   </div>
 </ion-content>

@@ -166,14 +166,26 @@ export class PaymentService {
     return cleanPhone;
   }
 
-  createSubscriptionPayment(plan: string, userId: string, classe: string, niveauScolaire: string,typeAbonnement: string, matieres?: any[] ): Observable<any> {
-    return this.api.post<any>('/subscriptions/create-payment', {
-      plan,
+  createSubscriptionPayment(
+    userId: string,
+    classe: string,
+    niveauScolaire: string,
+    typeAbonnement: string,
+    matieres?: any[]
+  ): Observable<any> {
+    const body: any = {
       userId,
       classe,
       niveauScolaire,
       typeAbonnement,
-      matieres
-    });
+    };
+
+    // Ajouter les matières uniquement pour les abonnements MATIERE
+    if (typeAbonnement === 'MATIERE' && matieres) {
+      body.matieres = matieres;
+    }
+
+    console.log('📡 API POST /subscriptions/create-payment', body);
+    return this.api.post<any>('/subscriptions/create-payment', body);
   }
 }

@@ -11,8 +11,8 @@
       >
         <br/>
       <ion-icon (click)="openHelp()" name="search-outline"></ion-icon>
-      </ion-button> 
-      
+      </ion-button>
+
       <ion-button
           fill="clear"
           (click)="goToProfile()"
@@ -27,7 +27,7 @@
   </ion-button>
 </div>
   </ion-toolbar>
-</ion-header> 
+</ion-header>
 <ion-content>
   <div class="content-wrapper">
 
@@ -108,6 +108,51 @@
         <!-- Section Tous les cours -->
     <div class="courses-section">
        <h1 class="section-title">Liste des cours</h1>
+
+      <!-- Bandeau pour ELEMENTAIRE avec classe définie -->
+      <div *ngIf="isElementaire && hasClasse" class="classe-banner">
+        <div class="banner-content">
+          <ion-icon name="school-outline" class="banner-icon"></ion-icon>
+          <div class="banner-text">
+            <h3>Classe {{ userClasse }}</h3>
+            <p>Vous consultez les cours de {{ userClasse }}</p>
+          </div>
+          <ion-button fill="solid" color="primary" (click)="subscribeToClasse()">
+            <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+            S'abonner à {{ userClasse }}
+          </ion-button>
+        </div>
+      </div>
+
+      <!-- Sélecteur de classe pour ELEMENTAIRE sans classe -->
+      <div *ngIf="isElementaire && !hasClasse" class="classe-selector">
+        <div class="selector-header">
+          <ion-icon name="school-outline" class="selector-icon"></ion-icon>
+          <h3>Choisissez votre classe</h3>
+          <p>Sélectionnez une classe pour voir ses cours et vous abonner</p>
+        </div>
+
+        <div class="classes-grid">
+          <div
+            *ngFor="let classe of availableClasses"
+            class="classe-card"
+            [class.selected]="selectedClasse === classe"
+            (click)="selectClasse(classe)"
+          >
+            <ion-icon name="book-outline" class="classe-icon"></ion-icon>
+            <h4>{{ classe }}</h4>
+            <p *ngIf="selectedClasse === classe" class="selected-badge">Sélectionné</p>
+          </div>
+        </div>
+
+        <div *ngIf="selectedClasse && !isCoursesLoading" class="subscribe-action">
+          <ion-button expand="block" size="large" (click)="subscribeToClasse()">
+            <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+            S'abonner à {{ selectedClasse }}
+          </ion-button>
+        </div>
+      </div>
+
       <div *ngIf="isCoursesLoading" class="loading-courses">
         <ion-spinner></ion-spinner>
         <p>Chargement des cours...</p>
@@ -128,6 +173,11 @@
 
             <div class="play-icon">
               <ion-icon name="play"></ion-icon>
+            </div>
+
+            <!-- Badge "Classe" pour ELEMENTAIRE -->
+            <div *ngIf="isElementaire" class="classe-badge">
+              {{ course.classe }}
             </div>
           </div>
 
@@ -190,7 +240,7 @@
               [src]="course.courseDetails?.image || 'assets/algo.svg'"
               alt="Image du cours"
               class="course-image"
-            />           
+            />
              <!-- Badge Certificat disponible -->
             <div class="certificate-badge" *ngIf="course?.courseDetails?.certificateAvailable">
                 <ion-icon name="shield-checkmark"></ion-icon>
@@ -234,7 +284,7 @@
              [src]="instructor.image"
               [alt]="instructor.name"
             class="instructor-image"
-          /> 
+          />
         <!--   <div class="instructor-name">{{ instructor.name }}</div> -->
         </div>
       </div>

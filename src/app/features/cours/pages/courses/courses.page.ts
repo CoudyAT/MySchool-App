@@ -34,6 +34,7 @@ import {
   arrowForwardOutline,
   ribbonOutline,
   playCircleOutline,
+  play,
   shieldCheckmark,
   checkmarkCircle,
   cardOutline,
@@ -51,8 +52,7 @@ import {
   chevronForwardOutline,
   closeOutline,
   chevronDownOutline,
-  personOutline,
-} from 'ionicons/icons';
+  personOutline, schoolOutline, checkmarkCircleOutline } from 'ionicons/icons';
 import { Router } from '@angular/router';
 
 import { Subscription } from 'rxjs';
@@ -96,6 +96,15 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
   private enrollmentSubscription: Subscription = new Subscription();
   allCourses: Course[] = [];
   isCoursesLoading = true;
+  userNiveauScolaire: string | null = null;
+  userClasse: string | null = null;
+
+  // Gestion des classes pour ELEMENTAIRE
+  isElementaire = false;
+  hasClasse = false;
+  availableClasses = ['CP', 'CE1', 'CE2', 'CM1', 'CM2'];
+  selectedClasse: string | null = null;
+  isSubscribedToClasse = false;
 
   slideOpts = {
     slidesPerView: 1,
@@ -121,31 +130,7 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
     private fcmService: FcmService,
     private courseService: CourseService,
   ) {
-    addIcons({
-      searchOutline,
-      personCircleOutline,
-      starOutline,
-      addOutline,
-      shieldCheckmark,
-      personOutline,
-      chevronDownOutline,
-      closeOutline,
-      notificationsOutline,
-      chevronForwardOutline,
-      shieldCheckmarkOutline,
-      bookOutline,
-      optionsOutline,
-      lockOpenOutline,
-      trendingUpOutline,
-      bulbOutline,
-      calculatorOutline,
-      logOutOutline,
-      ribbonOutline,
-      checkmarkCircle,
-      cardOutline,
-      arrowForwardOutline,
-      playCircleOutline,
-    });
+    addIcons({searchOutline,personCircleOutline,starOutline,schoolOutline,checkmarkCircleOutline,bookOutline,play,addOutline,shieldCheckmark,personOutline,chevronDownOutline,closeOutline,notificationsOutline,chevronForwardOutline,shieldCheckmarkOutline,optionsOutline,lockOpenOutline,trendingUpOutline,bulbOutline,calculatorOutline,logOutOutline,ribbonOutline,checkmarkCircle,cardOutline,arrowForwardOutline,playCircleOutline,});
   }
 
   ngOnInit() {
@@ -183,12 +168,31 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
       localUser?.lastName,
     );
     console.log('🔑 UID:', localUser?.uid);
+    console.log('🎓 Niveau scolaire:', localUser?.niveauScolaire);
+    console.log('📚 Classe:', localUser?.classe);
 
     if (!localUser || !localUser.uid) {
       console.error('❌ Aucun utilisateur connecté trouvé');
       this.isLoading = false;
       return;
     }
+
+    // Stocker le niveau scolaire et la classe de l'utilisateur
+    this.userNiveauScolaire = localUser?.niveauScolaire || null;
+    this.userClasse = localUser?.classe || null;
+    console.log('💾 Niveau stocké:', this.userNiveauScolaire);
+    console.log('💾 Classe stockée:', this.userClasse);
+
+    // Détecter si c'est un élève ELEMENTAIRE
+    this.isElementaire = this.userNiveauScolaire === 'ELEMENTAIRE';
+    this.hasClasse = !!this.userClasse;
+    this.selectedClasse = this.userClasse;
+
+    console.log('🎯 Est ELEMENTAIRE:', this.isElementaire);
+    console.log('🎯 A une classe:', this.hasClasse);
+
+    // TODO: Vérifier si l'utilisateur est abonné à sa classe
+    // this.checkClasseSubscription();
 
     this.enrollmentSubscription = this.enrollmentService
       .getUserEnrollmentsWithCourseDetails() // Utiliser la nouvelle méthode
@@ -361,27 +365,127 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
 
     this.courseService.getAllCourses().subscribe({
       next: (courses) => {
-        this.allCourses = courses.filter((c) => c.type === 'En ligne');
+        console.log('🌐 Total cours reçus de l\'API:', courses.length);
+
+        // Filtrer d'abord par type "En ligne"
+        let filteredCourses = courses.filter((c) => c.type === 'En ligne');
+        console.log('📹 Cours "En ligne":', filteredCourses.length);
+
+        // Filtrer par niveau scolaire si disponible
+        if (this.userNiveauScolaire) {
+          filteredCourses = filteredCourses.filter(
+            (c) => c.niveauScolaire === this.userNiveauScolaire
+          );
+          console.log(`🎓 Cours pour niveau "${this.userNiveauScolaire}":`, filteredCourses.length);
+
+          // Si l'utilisateur a une classe spécifique (ex: CM2), filtrer aussi par classe
+          if (this.userClasse) {
+            const beforeClassFilter = filteredCourses.length;
+            filteredCourses = filteredCourses.filter(
+              (c) => c.classe === this.userClasse
+            );
+            console.log(`📚 Filtrage pour classe "${this.userClasse}":`);
+            console.log(`   Avant: ${beforeClassFilter} cours`);
+            console.log(`   Après: ${filteredCourses.length} cours`);
+
+            // Log des cours filtrés
+            if (filteredCourses.length > 0) {
+              console.log('✅ Cours filtrés pour', this.userClasse + ':');
+              filteredCourses.forEach(c => {
+                console.log(`   - ${c.title} (classe: ${c.classe})`);
+              });
+            } else {
+              console.warn('⚠️ Aucun cours trouvé pour la classe', this.userClasse);
+            }
+          }
+        } else {
+          console.warn('⚠️ Aucun niveau scolaire défini pour l\'utilisateur');
+        }
+
+        this.allCourses = filteredCourses;
+        console.log('✅ Total cours affichés:', this.allCourses.length);
         this.isCoursesLoading = false;
       },
       error: (err) => {
-        console.error('Erreur chargement cours:', err);
+        console.error('❌ Erreur chargement cours:', err);
         this.isCoursesLoading = false;
       },
     });
   }
 
-  // loadAllCoursesPreview() {
-  //   const sub = this.courseService.getAllCourses().subscribe({
-  //     next: (courses) => {
-  //       // ✅ Filtrer uniquement les cours de type "video"
-  //       this.allCourses = courses.filter((c) => c.type === 'En ligne');
-  //       console.log('Cours vidéo trouvés :', this.allCourses.length);
-  //     },
-  //     error: (err) => {
-  //       console.error('Erreur chargement cours:', err);
-  //       this.isLoading = false;
-  //     },
-  //   });
-  // }
+  /**
+   * Sélectionner une classe (pour ELEMENTAIRE sans classe)
+   */
+  selectClasse(classe: string) {
+    console.log('🎯 Classe sélectionnée:', classe);
+    this.selectedClasse = classe;
+    this.loadCoursesForClasse(classe);
+  }
+
+  /**
+   * Charger les cours d'une classe spécifique
+   */
+  loadCoursesForClasse(classe: string) {
+    this.isCoursesLoading = true;
+    console.log('🔍 Chargement des cours pour la classe:', classe);
+
+    this.courseService.getAllCourses().subscribe({
+      next: (courses) => {
+        const filteredCourses = courses.filter(
+          (c) =>
+            c.type === 'En ligne' &&
+            c.niveauScolaire === 'ELEMENTAIRE' &&
+            c.classe === classe
+        );
+
+        console.log(`✅ ${filteredCourses.length} cours trouvés pour ${classe}`);
+        this.allCourses = filteredCourses;
+        this.isCoursesLoading = false;
+      },
+      error: (err) => {
+        console.error('❌ Erreur chargement cours:', err);
+        this.isCoursesLoading = false;
+      },
+    });
+  }
+
+  /**
+   * S'abonner à une classe (ELEMENTAIRE uniquement)
+   */
+  async subscribeToClasse() {
+    if (!this.selectedClasse) {
+      const toast = await this.toastCtrl.create({
+        message: '⚠️ Veuillez sélectionner une classe',
+        duration: 2000,
+        color: 'warning',
+      });
+      await toast.present();
+      return;
+    }
+
+    console.log('📝 Abonnement à la classe:', this.selectedClasse);
+
+    // Compter le nombre de cours pour cette classe
+    const totalCourses = this.allCourses.length;
+    console.log('📊 Nombre de cours dans la classe:', totalCourses);
+
+    // Navigation vers la page de paiement mobile money
+    this.router.navigate(['/payment-method'], {
+      state: {
+        type: 'classe',
+        classe: this.selectedClasse,
+        niveauScolaire: this.userNiveauScolaire,
+        totalCourses: totalCourses,
+        isClasseSubscription: true,
+      },
+    });
+  }
+
+  /**
+   * Voir les cours d'une classe (navigation ou modal)
+   */
+  viewClasseCourses(classe: string) {
+    console.log('👀 Voir les cours de:', classe);
+    this.selectClasse(classe);
+  }
 }
