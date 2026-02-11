@@ -14,6 +14,9 @@
       <button class="btn-primary" (click)="openAddChapterModal()">
         + Ajouter un chapitre
       </button>
+      <button class="btn-outline" (click)="openLinkMatiere()" [disabled]="isSubmitting">
+        <span>Lier une matière</span>
+      </button>
       <button class="btn-secondary" (click)="editCourse(course)">
         Modifier le cours
       </button>
@@ -401,5 +404,45 @@
         </button>
       </div>
     </form>
+  </div>
+</div>
+
+<div *ngIf="isLinkingMatiere" class="modal-overlay" (click)="closeLinkMatiere()">
+  <div class="modal-content small-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">Lier une matière</h2>
+      <button class="modal-close" (click)="closeLinkMatiere()">
+        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="form-group">
+        <label for="matiereSelect">Matière</label>
+        <select id="matiereSelect" class="form-input" [(ngModel)]="selectedMatiereId"
+          [disabled]="isSubmitting || matieres.length === 0">
+          <option [value]="null">— Choisir une matière —</option>
+          <option *ngFor="let mat of matieres" [value]="mat.id">
+            {{ mat.nom || 'Matière sans nom' }}
+          </option>
+        </select>
+      </div>
+
+      <div *ngIf="matieres.length === 0 && !isSubmitting" class="info-empty">
+        Aucune matière disponible
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn-secondary" (click)="closeLinkMatiere()" [disabled]="isSubmitting">
+        Annuler
+      </button>
+      <button type="button" class="btn-primary" (click)="saveMatiereLink()"
+        [disabled]="isSubmitting || !selectedMatiereId">
+        {{ isSubmitting ? 'Enregistrement...' : 'Lier la matière' }}
+      </button>
+    </div>
   </div>
 </div>
