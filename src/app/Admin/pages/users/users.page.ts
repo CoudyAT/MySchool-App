@@ -200,7 +200,7 @@ export class UsersPage implements OnInit {
         (u.firstName?.toLowerCase().includes(lowerSearch) || false) ||
         (u.lastName?.toLowerCase().includes(lowerSearch) || false) ||
         (u.email?.toLowerCase().includes(lowerSearch) || false) ||
-        (u.role?.libelle.toLowerCase().includes(lowerSearch) || false) ||
+        (u.role?.libelle?.toLowerCase().includes(lowerSearch) || false) ||
         (u.phone?.toLowerCase().includes(lowerSearch) || false)
       );
     }

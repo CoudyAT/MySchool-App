@@ -1,75 +1,183 @@
-<div class="p-6 bg-gray-100 min-h-screen">
+<div class="dashboard-container">
   <div class="content">
-    <div class="header-section">
-      <div class="header">
+
+    <!-- En-tête -->
+    <header class="header-section">
+      <div class="header-flex">
         <div>
-          <h1 class="title">Tableau de Bord</h1>
-          <p class="subtitle">Gérez les utilisateurs, les cours et les instructeurs.</p>
+          <h1 class="page-title">Tableau de Bord</h1>
+          <p class="page-subtitle">Vue d'ensemble</p>
         </div>
       </div>
-    </div>
+    </header>
 
-    <!-- Stats Cards -->
+    <!-- Statistiques principales -->
     <div class="stats-grid">
-      <!-- Total -->
-      <div class="stat-card stat-card-total">
-        <div class="stat-card-content">
-          <div class="stat-card-left">
-            <div class="stat-badge">
-              <div class="status-dot dot-blue"></div>
-              <p class="stat-label">TOTAL</p>
-            </div>
-            <p class="stat-number">test</p>
-            <p class="stat-description text-blue">Utilisateurs inscrits</p>
+      <div class="stat-card stat-total">
+        <div class="stat-icon-container">
+          <div class="stat-icon stat-icon-blue">
+            <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
           </div>
-          <div class="stat-icon bg-blue">
-            <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        </div>
+        <div class="stat-content">
+          <p class="stat-label">Utilisateurs totaux</p>
+          <p class="stat-value">{{ totalUsers | number:'1.0-0' }}</p>
+        </div>
+      </div>
+
+      <div class="stat-card stat-active">
+        <div class="stat-icon-container">
+          <div class="stat-icon stat-icon-emerald">
+            <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+        <div class="stat-content">
+          <p class="stat-label">Actifs (30j)</p>
+          <p class="stat-value">{{ activeUsers | number:'1.0-0' }}</p>
+        </div>
+      </div>
+
+      <div class="stat-card stat-revenue">
+        <div class="stat-icon-container">
+          <div class="stat-icon stat-icon-amber">
+            <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+        <div class="stat-content">
+          <p class="stat-label">Revenus ce mois</p>
+          <p class="stat-value">{{ monthlyRevenue | currency:'FCFA':'symbol-narrow':'1.0-0' }}</p>
+        </div>
+      </div>
+
+      <div class="stat-card stat-enroll">
+        <div class="stat-icon-container">
+          <div class="stat-icon stat-icon-purple">
+            <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
             </svg>
           </div>
         </div>
-      </div>
-
-      <!-- Actifs -->
-      <div class="stat-card stat-card-progress">
-        <div class="stat-card-content">
-          <div class="stat-card-left">
-            <div class="stat-badge">
-              <div class="status-dot dot-amber animate-pulse"></div>
-              <p class="stat-label">ACTIFS</p>
-            </div>
-            <p class="stat-number">test</p>
-            <p class="stat-description text-amber">Utilisateurs actifs</p>
-          </div>
-          <div class="stat-icon bg-amber">
-            <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
-          </div>
-        </div>
-      </div>
-
-      <!-- Inactifs -->
-      <div class="stat-card stat-card-fall">
-        <div class="stat-card-content">
-          <div class="stat-card-left">
-            <div class="stat-badge">
-              <div class="status-dot dot-red"></div>
-              <p class="stat-label">INACTIFS</p>
-            </div>
-            <p class="stat-number">test</p>
-            <p class="stat-description text-red">Utilisateurs inactifs/suspendus</p>
-          </div>
-          <div class="stat-icon bg-red">
-            <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-            </svg>
-          </div>
+        <div class="stat-content">
+          <p class="stat-label">Nouvelles inscriptions</p>
+          <p class="stat-value">{{ recentEnrollments }}</p>
         </div>
       </div>
     </div>
+
+    <!-- Sections récentes -->
+    <div class="recent-grid">
+      <!-- Colonne 1 -->
+      <div class="recent-column">
+
+        <!-- Nouveaux utilisateurs -->
+        <div class="recent-card">
+          <div class="recent-header">
+            <h3>Nouveaux utilisateurs</h3>
+            <a href="#" class="view-all">Voir tous</a>
+          </div>
+          <div class="recent-list">
+            <div *ngFor="let user of recentUsers" class="recent-item">
+              <div class="avatar">
+                {{ user.name.charAt(0) }}
+              </div>
+              <div class="item-info">
+                <p class="item-name">{{ user.name }}</p>
+                <p class="item-meta">
+                  <span class="role-tag">{{ user.role }}</span>
+                  <span class="separator">•</span>
+                  {{ user.date | date:'dd MMM yyyy' }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nouveaux professeurs -->
+        <div class="recent-card">
+          <div class="recent-header">
+            <h3>Nouveaux professeurs</h3>
+            <a href="#" class="view-all">Voir tous</a>
+          </div>
+          <div class="recent-list">
+            <div *ngFor="let prof of recentProfessors" class="recent-item">
+              <div class="avatar avatar-prof">
+                {{ prof.name.charAt(0) }}
+              </div>
+              <div class="item-info">
+                <p class="item-name">{{ prof.name }}</p>
+                <p class="item-meta">
+                  {{ prof.specialty }}
+                  <span class="separator">•</span>
+                  {{ prof.date | date:'dd MMM yyyy' }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Colonne 2 -->
+      <div class="recent-column">
+
+        <!-- Derniers cours créés -->
+        <div class="recent-card">
+          <div class="recent-header">
+            <h3>Derniers cours créés</h3>
+            <a href="#" class="view-all">Voir tous</a>
+          </div>
+          <div class="recent-list">
+            <div *ngFor="let course of recentCourses" class="recent-item">
+              <div class="avatar avatar-course">
+                {{ course.title.charAt(0) }}
+              </div>
+              <div class="item-info">
+                <p class="item-name">{{ course.title }}</p>
+                <p class="item-meta">
+                  {{ course.professor }}
+                  <span class="separator">•</span>
+                  {{ course.date | date:'dd MMM yyyy' }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nouvelles matières -->
+        <div class="recent-card">
+          <div class="recent-header">
+            <h3>Nouvelles matières</h3>
+            <a href="#" class="view-all">Voir tous</a>
+          </div>
+          <div class="recent-list">
+            <div *ngFor="let subject of recentSubjects" class="recent-item">
+              <div class="avatar avatar-subject">
+                {{ subject.name.charAt(0) }}
+              </div>
+              <div class="item-info">
+                <p class="item-name">{{ subject.name }}</p>
+                <p class="item-meta">
+                  {{ subject.level }}
+                  <span class="separator">•</span>
+                  {{ subject.date | date:'dd MMM yyyy' }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
   </div>
 </div>
