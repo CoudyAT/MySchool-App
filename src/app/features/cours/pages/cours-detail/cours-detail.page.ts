@@ -4,9 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { Subscription } from 'rxjs';
-import { ModalController } from '@ionic/angular/standalone'; 
+import { ModalController } from '@ionic/angular/standalone';
 import { PreminumModalComponent } from 'src/app/features/component/preminum-modal/preminum-modal.component';
-import { ToastController } from '@ionic/angular';
+import { ToastController, AlertController } from '@ionic/angular';
 
 import {
   IonContent,
@@ -96,6 +96,7 @@ export class CoursDetailPage implements OnInit, OnDestroy {
     private firestore: Firestore,
     private modalCtrl: ModalController,
     private toastCtrl: ToastController,
+    private alertCtrl: AlertController,
   ) {
     addIcons({
       chevronBackOutline,
@@ -417,5 +418,92 @@ export class CoursDetailPage implements OnInit, OnDestroy {
         this.chapters = [];
       },
     });
+  }
+
+  /**
+   * Ouvrir un chapitre :
+   * - Si inscrit → naviguer vers le contenu du chapitre
+   * - Si non inscrit → proposer l'abonnement selon le niveau du cours
+   */
+  async openChapter(chapter: Chapter, index: number) {
+    if (this.isUserEnrolled) {
+      // L'utilisateur est abonné → ouvrir le contenu
+      const courseId = this.route.snapshot.paramMap.get('id');
+      this.router.navigate(['/course-video', courseId], {
+        state: {
+          enrollment: this.currentEnrollment,
+          course: this.course,
+          progress: this.enrollmentProgress,
+          chapterIndex: index,
+          chapter: chapter,
+        },
+      });
+      return;
+    }
+
+    // Non inscrit → demander l'abonnement
+    const niveau = this.course?.niveauScolaire || '';
+    const classe = this.course?.classe || '';
+
+    // Niveaux qui utilisent l'abonnement par matière
+    const niveauxMatiere = ['MOYEN', 'SECONDAIRE', 'UNIVERSITAIRE'];
+
+    if (niveauxMatiere.includes(niveau.toUpperCase())) {
+      // MOYEN / SECONDAIRE / UNIVERSITAIRE → rediriger vers la page courses pour sélectionner les matières
+      const alert = await this.alertCtrl.create({
+        header: 'Abonnement requis',
+        message: `Pour accéder à ce chapitre, vous devez vous abonner. Choisissez 3 matières pour votre niveau ${niveau}.`,
+        buttons: [
+          { text: 'Annuler', role: 'cancel' },
+          {
+            text: 'Choisir mes matières',
+            handler: () => {
+              this.router.navigate(['/courses'], {
+                state: { openMatiereSelection: true, niveau, classe },
+              });
+            },
+          },
+        ],
+      });
+      await alert.present();
+    } else if (niveau.toUpperCase() === 'ELEMENTAIRE') {
+      // ELEMENTAIRE → abonnement par classe
+      const alert = await this.alertCtrl.create({
+        header: 'Abonnement requis',
+        message: `Pour accéder à ce chapitre, vous devez vous abonner à la classe ${classe || 'de ce cours'}.`,
+        buttons: [
+          { text: 'Annuler', role: 'cancel' },
+          {
+            text: "S'abonner",
+            handler: () => {
+              this.router.navigate(['/courses'], {
+                state: { openClasseSubscription: true, classe },
+              });
+            },
+          },
+        ],
+      });
+      await alert.present();
+    } else {
+      // Autre cas (cours payant ou premium) → modal premium
+      const modal = await this.modalCtrl.create({
+        component: PreminumModalComponent,
+        cssClass: 'premium-modal',
+        breakpoints: [0, 0.5, 0.8, 1],
+        initialBreakpoint: 0.8,
+      });
+
+      await modal.present();
+
+      const { data } = await modal.onWillDismiss();
+      if (data?.subscribed) {
+        const toast = await this.toastCtrl.create({
+          message: 'Bienvenue dans Premium ! 🌟',
+          duration: 2000,
+          color: 'success',
+        });
+        await toast.present();
+      }
+    }
   }
 }

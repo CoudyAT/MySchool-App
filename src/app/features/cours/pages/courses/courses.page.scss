@@ -1895,3 +1895,248 @@ ion-header ion-toolbar {
     }
   }
 }
+
+// ================================================
+// MOYEN / SECONDAIRE / UNIVERSITAIRE - Niveau banner
+// ================================================
+.niveau-banner {
+  background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%) !important;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25) !important;
+
+  .banner-content {
+    ion-button {
+      --color: #0ea5e9 !important;
+    }
+  }
+}
+
+.niveau-selector {
+  .selector-header {
+    .selector-icon {
+      color: #0ea5e9 !important;
+    }
+  }
+
+  .classes-grid {
+    .classe-card {
+      .classe-icon {
+        color: #0ea5e9;
+      }
+
+      &:hover {
+        border-color: #0ea5e9;
+        box-shadow: 0 8px 16px rgba(14, 165, 233, 0.15);
+      }
+
+      &.selected {
+        border-color: #0ea5e9;
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+
+        h4 {
+          color: #0ea5e9;
+        }
+      }
+    }
+  }
+}
+
+// ================================================
+// Sélection de matières
+// ================================================
+.matiere-selection {
+  margin-bottom: 32px;
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+
+  .matiere-header {
+    margin-bottom: 20px;
+
+    .matiere-header-top {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 8px;
+
+      .matiere-icon {
+        font-size: 48px;
+        color: #0ea5e9;
+      }
+
+      h3 {
+        font-size: 22px;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0 0 4px 0;
+      }
+
+      p {
+        font-size: 14px;
+        color: #64748b;
+        margin: 0;
+
+        strong {
+          color: #0ea5e9;
+        }
+      }
+    }
+
+    ion-button {
+      --color: #64748b;
+      text-transform: none;
+      font-size: 13px;
+    }
+  }
+
+  .matieres-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+
+    .matiere-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      background: white;
+
+      .matiere-check {
+        ion-icon {
+          font-size: 24px;
+          color: #cbd5e1;
+          transition: all 0.25s ease;
+        }
+      }
+
+      .matiere-name {
+        font-size: 15px;
+        font-weight: 600;
+        color: #334155;
+        flex: 1;
+      }
+
+      &:hover:not(.disabled) {
+        border-color: #0ea5e9;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(14, 165, 233, 0.1);
+      }
+
+      &.selected {
+        border-color: #0ea5e9;
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+
+        .matiere-check ion-icon {
+          color: #0ea5e9;
+        }
+
+        .matiere-name {
+          color: #0369a1;
+        }
+      }
+
+      &.disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+        pointer-events: none;
+      }
+    }
+  }
+
+  .selected-matieres-summary {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+
+    p {
+      font-size: 13px;
+      color: #64748b;
+      margin: 0 0 10px 0;
+      font-weight: 600;
+    }
+
+    .matieres-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+
+      .matiere-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+        color: white;
+        padding: 8px 14px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+
+        ion-icon {
+          font-size: 16px;
+          cursor: pointer;
+          opacity: 0.8;
+
+          &:hover {
+            opacity: 1;
+          }
+        }
+      }
+    }
+  }
+
+  .matieres-remaining {
+    text-align: center;
+    padding: 12px 16px;
+    margin: 8px 0;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 12px;
+
+    p {
+      margin: 0;
+      color: #c2410c;
+      font-size: 14px;
+      font-weight: 500;
+    }
+  }
+
+  .matiere-subscribe {
+    max-width: 100%;
+
+    ion-button {
+      --background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%) !important;
+      --border-radius: 14px;
+      height: 56px;
+      font-size: 16px;
+      font-weight: 600;
+      text-transform: none;
+      letter-spacing: 0;
+
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+  }
+}
+
+// Responsive matières
+@media (max-width: 576px) {
+  .matiere-selection {
+    padding: 16px;
+
+    .matieres-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .matiere-header .matiere-header-top {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+}

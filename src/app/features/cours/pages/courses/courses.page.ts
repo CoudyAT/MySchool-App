@@ -52,7 +52,7 @@ import {
   chevronForwardOutline,
   closeOutline,
   chevronDownOutline,
-  personOutline, schoolOutline, checkmarkCircleOutline } from 'ionicons/icons';
+  personOutline, schoolOutline, checkmarkCircleOutline, chevronBackOutline, ellipseOutline } from 'ionicons/icons';
 import { Router } from '@angular/router';
 
 import { Subscription } from 'rxjs';
@@ -102,9 +102,25 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
   // Gestion des classes pour ELEMENTAIRE
   isElementaire = false;
   hasClasse = false;
-  availableClasses = ['CP', 'CE1', 'CE2', 'CM1', 'CM2'];
+  availableClasses: string[] = ['CP', 'CE1', 'CE2', 'CM1', 'CM2'];
   selectedClasse: string | null = null;
   isSubscribedToClasse = false;
+
+  // Gestion MOYEN / SECONDAIRE / UNIVERSITAIRE
+  isMoyenSecondaireUniv = false;
+  availableClassesForLevel: string[] = [];
+  showMatiereSelection = false;
+  availableMatieres: string[] = [];
+  selectedMatieres: string[] = [];
+  maxMatieres = 3;
+  isMatiereLoading = false;
+
+  // Classes par niveau
+  classesByNiveau: Record<string, string[]> = {
+    MOYEN: ['6ème', '5ème', '4ème', '3ème (BFEM)'],
+    SECONDAIRE: ['Seconde S', 'Seconde L', 'Première S', 'Première L', 'Terminale S', 'Terminale L'],
+    UNIVERSITAIRE: ['Licence 1', 'Licence 2', 'Licence 3', 'Master 1', 'Master 2'],
+  };
 
   slideOpts = {
     slidesPerView: 1,
@@ -130,7 +146,7 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
     private fcmService: FcmService,
     private courseService: CourseService,
   ) {
-    addIcons({searchOutline,personCircleOutline,starOutline,schoolOutline,checkmarkCircleOutline,bookOutline,play,addOutline,shieldCheckmark,personOutline,chevronDownOutline,closeOutline,notificationsOutline,chevronForwardOutline,shieldCheckmarkOutline,optionsOutline,lockOpenOutline,trendingUpOutline,bulbOutline,calculatorOutline,logOutOutline,ribbonOutline,checkmarkCircle,cardOutline,arrowForwardOutline,playCircleOutline,});
+    addIcons({searchOutline,personCircleOutline,starOutline,schoolOutline,checkmarkCircleOutline,bookOutline,chevronBackOutline,closeOutline,ellipseOutline,play,addOutline,shieldCheckmark,personOutline,chevronDownOutline,notificationsOutline,chevronForwardOutline,shieldCheckmarkOutline,optionsOutline,lockOpenOutline,trendingUpOutline,bulbOutline,calculatorOutline,logOutOutline,ribbonOutline,checkmarkCircle,cardOutline,arrowForwardOutline,playCircleOutline,});
   }
 
   ngOnInit() {
@@ -188,11 +204,18 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
     this.hasClasse = !!this.userClasse;
     this.selectedClasse = this.userClasse;
 
-    console.log('🎯 Est ELEMENTAIRE:', this.isElementaire);
-    console.log('🎯 A une classe:', this.hasClasse);
+    // Détecter MOYEN / SECONDAIRE / UNIVERSITAIRE
+    this.isMoyenSecondaireUniv = ['MOYEN', 'SECONDAIRE', 'UNIVERSITAIRE'].includes(this.userNiveauScolaire || '');
+    if (this.isMoyenSecondaireUniv && this.userNiveauScolaire) {
+      this.availableClassesForLevel = this.classesByNiveau[this.userNiveauScolaire] || [];
+      if (this.hasClasse) {
+        this.selectedClasse = this.userClasse;
+      }
+    }
 
-    // TODO: Vérifier si l'utilisateur est abonné à sa classe
-    // this.checkClasseSubscription();
+    console.log('🎯 Est ELEMENTAIRE:', this.isElementaire);
+    console.log('🎯 Est MOYEN/SECONDAIRE/UNIV:', this.isMoyenSecondaireUniv);
+    console.log('🎯 A une classe:', this.hasClasse);
 
     this.enrollmentSubscription = this.enrollmentService
       .getUserEnrollmentsWithCourseDetails() // Utiliser la nouvelle méthode
@@ -367,9 +390,9 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
       next: (courses) => {
         console.log('🌐 Total cours reçus de l\'API:', courses.length);
 
-        // Filtrer d'abord par type "En ligne"
-        let filteredCourses = courses.filter((c) => c.type === 'En ligne');
-        console.log('📹 Cours "En ligne":', filteredCourses.length);
+        // Filtrer par type (En ligne ou VIDEO)
+        let filteredCourses = courses.filter((c) => c.type === 'En ligne' || c.type === 'VIDEO');
+        console.log('📹 Cours "En ligne" + "VIDEO":', filteredCourses.length);
 
         // Filtrer par niveau scolaire si disponible
         if (this.userNiveauScolaire) {
@@ -433,8 +456,8 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
       next: (courses) => {
         const filteredCourses = courses.filter(
           (c) =>
-            c.type === 'En ligne' &&
-            c.niveauScolaire === 'ELEMENTAIRE' &&
+            (c.type === 'En ligne' || c.type === 'VIDEO') &&
+            c.niveauScolaire === (this.userNiveauScolaire || 'ELEMENTAIRE') &&
             c.classe === classe
         );
 
@@ -465,11 +488,8 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
 
     console.log('📝 Abonnement à la classe:', this.selectedClasse);
 
-    // Compter le nombre de cours pour cette classe
     const totalCourses = this.allCourses.length;
-    console.log('📊 Nombre de cours dans la classe:', totalCourses);
 
-    // Navigation vers la page de paiement mobile money
     this.router.navigate(['/payment-method'], {
       state: {
         type: 'classe',
@@ -482,7 +502,148 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
-   * Voir les cours d'une classe (navigation ou modal)
+   * Sélectionner une classe pour MOYEN/SECONDAIRE/UNIVERSITAIRE
+   */
+  selectClasseForLevel(classe: string) {
+    console.log('🎯 Classe sélectionnée (niveau):', classe);
+    this.selectedClasse = classe;
+    this.showMatiereSelection = false;
+    this.selectedMatieres = [];
+    this.availableMatieres = [];
+    this.loadCoursesForClasse(classe);
+    this.loadMatieresForClasse(classe);
+  }
+
+  /**
+   * Charger les matières disponibles pour une classe
+   */
+  loadMatieresForClasse(classe: string) {
+    this.isMatiereLoading = true;
+    console.log('🔍 Chargement des matières pour:', classe);
+
+    this.courseService.getMatieresByClasse(classe).subscribe({
+      next: (res) => {
+        console.log('📦 Réponse brute API matières:', JSON.stringify(res?.data?.[0]));
+        if (res?.success && res?.data) {
+          this.availableMatieres = res.data.map((m: any) =>
+            typeof m === 'string' ? m : (m.matiereName || m.name || m.matiere || m.title || m.nom || m.label || JSON.stringify(m))
+          );
+          console.log('✅ Matières disponibles:', this.availableMatieres);
+        } else {
+          // Fallback: extraire les matières des cours
+          this.extractMatieresFromCourses(classe);
+        }
+        this.showMatiereSelection = true;
+        this.isMatiereLoading = false;
+      },
+      error: () => {
+        console.warn('⚠️ API matières indisponible, extraction depuis les cours');
+        this.extractMatieresFromCourses(classe);
+        this.showMatiereSelection = true;
+        this.isMatiereLoading = false;
+      },
+    });
+  }
+
+  /**
+   * Extraire les matières uniques depuis les cours filtrés
+   */
+  extractMatieresFromCourses(classe: string) {
+    this.courseService.getAllCourses().subscribe({
+      next: (courses) => {
+        const classeCourses = courses.filter(
+          (c) =>
+            (c.type === 'En ligne' || c.type === 'VIDEO') &&
+            c.niveauScolaire === this.userNiveauScolaire &&
+            c.classe === classe
+        );
+        const matieres = [...new Set(classeCourses.map((c) => c.category).filter(Boolean))];
+        this.availableMatieres = matieres;
+        console.log('📋 Matières extraites des cours:', matieres);
+      },
+    });
+  }
+
+  /**
+   * Toggle sélection d'une matière (max 3)
+   */
+  toggleMatiere(matiere: string) {
+    const index = this.selectedMatieres.indexOf(matiere);
+    if (index > -1) {
+      this.selectedMatieres.splice(index, 1);
+    } else {
+      if (this.selectedMatieres.length >= this.maxMatieres) {
+        this.showMaxMatieresToast();
+        return;
+      }
+      this.selectedMatieres.push(matiere);
+    }
+    console.log('📚 Matières sélectionnées:', this.selectedMatieres);
+  }
+
+  /**
+   * Vérifie si une matière est sélectionnée
+   */
+  isMatiereSelected(matiere: string): boolean {
+    return this.selectedMatieres.includes(matiere);
+  }
+
+  /**
+   * Toast max matières
+   */
+  async showMaxMatieresToast() {
+    const toast = await this.toastCtrl.create({
+      message: `⚠️ Vous ne pouvez sélectionner que ${this.maxMatieres} matières maximum`,
+      duration: 2000,
+      color: 'warning',
+    });
+    await toast.present();
+  }
+
+  /**
+   * S'abonner avec les matières sélectionnées (MOYEN/SECONDAIRE/UNIVERSITAIRE)
+   */
+  async subscribeWithMatieres() {
+    if (!this.selectedClasse) {
+      const toast = await this.toastCtrl.create({
+        message: '⚠️ Veuillez sélectionner une classe',
+        duration: 2000,
+        color: 'warning',
+      });
+      await toast.present();
+      return;
+    }
+
+    if (this.selectedMatieres.length !== this.maxMatieres) {
+      const toast = await this.toastCtrl.create({
+        message: `⚠️ Vous devez sélectionner exactement ${this.maxMatieres} matières`,
+        duration: 2000,
+        color: 'warning',
+      });
+      await toast.present();
+      return;
+    }
+
+    console.log('📝 Abonnement matières:', {
+      classe: this.selectedClasse,
+      niveauScolaire: this.userNiveauScolaire,
+      matieres: this.selectedMatieres,
+    });
+
+    this.router.navigate(['/payment-method'], {
+      state: {
+        type: 'matiere',
+        classe: this.selectedClasse,
+        niveauScolaire: this.userNiveauScolaire,
+        matieres: this.selectedMatieres,
+        totalCourses: this.allCourses.length,
+        isMatiereSubscription: true,
+      },
+    });
+  }
+
+  /**
+   * Voir les cours d'une classe
    */
   viewClasseCourses(classe: string) {
     console.log('👀 Voir les cours de:', classe);

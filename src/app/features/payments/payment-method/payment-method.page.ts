@@ -51,6 +51,10 @@ export class PaymentMethodPage implements OnInit {
   niveauScolaire: string = '';
   totalCourses: number = 0;
 
+  // Abonnement par matière (MOYEN/SECONDAIRE/UNIVERSITAIRE)
+  isMatiereSubscription = false;
+  selectedMatieresList: string[] = [];
+
   course: any = null;
   courseId = '';
   courseTitle = '';
@@ -92,8 +96,11 @@ export class PaymentMethodPage implements OnInit {
       this.userInfo = state['userInfo'] || null;
       this.selectedMatieres = state['matieres'] || [];
 
-      // 🎯 Nouvelle logique : Abonnement par classe (ELEMENTAIRE)
+      // 🎯 Abonnement par classe (ELEMENTAIRE)
       this.isClasseSubscription = state['isClasseSubscription'] ?? false;
+      // 🎯 Abonnement par matière (MOYEN/SECONDAIRE/UNIVERSITAIRE)
+      this.isMatiereSubscription = state['isMatiereSubscription'] ?? false;
+
       if (this.isClasseSubscription) {
         this.classe = state['classe'] || '';
         this.niveauScolaire = state['niveauScolaire'] || '';
@@ -102,7 +109,16 @@ export class PaymentMethodPage implements OnInit {
         console.log('🎯 Abonnement par classe détecté');
         console.log('   Classe:', this.classe);
         console.log('   Niveau:', this.niveauScolaire);
-        console.log('   Total cours:', this.totalCourses);
+      } else if (this.isMatiereSubscription) {
+        this.classe = state['classe'] || '';
+        this.niveauScolaire = state['niveauScolaire'] || '';
+        this.selectedMatieresList = state['matieres'] || [];
+        this.totalCourses = state['totalCourses'] || 0;
+
+        console.log('🎯 Abonnement par matière détecté');
+        console.log('   Classe:', this.classe);
+        console.log('   Niveau:', this.niveauScolaire);
+        console.log('   Matières:', this.selectedMatieresList);
       } else if (!this.isPremiumSubscription) {
         this.course = state['course'] ?? null;
 
@@ -214,6 +230,18 @@ export class PaymentMethodPage implements OnInit {
           isClasseSubscription: true,
           classe: this.classe,
           niveauScolaire: this.niveauScolaire,
+          totalCourses: this.totalCourses,
+        },
+      });
+    } else if (this.isMatiereSubscription) {
+      // Abonnement par matière (MOYEN/SECONDAIRE/UNIVERSITAIRE)
+      this.router.navigate(['/payment-verify'], {
+        state: {
+          selectedMethod: method,
+          isMatiereSubscription: true,
+          classe: this.classe,
+          niveauScolaire: this.niveauScolaire,
+          matieres: this.selectedMatieresList,
           totalCourses: this.totalCourses,
         },
       });

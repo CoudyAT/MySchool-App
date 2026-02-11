@@ -180,7 +180,7 @@ export class PaymentService {
       typeAbonnement,
     };
 
-    // Ajouter les matières uniquement pour les abonnements MATIERE
+    // Ajouter les matières pour les abonnements MATIERE
     if (typeAbonnement === 'MATIERE' && matieres) {
       body.matieres = matieres;
     }

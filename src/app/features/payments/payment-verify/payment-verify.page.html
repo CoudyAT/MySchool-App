@@ -176,11 +176,28 @@
       </div>
     </div>
 
+    <!-- Infos abonnement matière -->
+    <div *ngIf="isMatiereSubscription" class="course-info matiere-info">
+      <h3>Abonnement — {{ classe }} ({{ niveauScolaire }})</h3>
+      <div class="matiere-list">
+        <div *ngFor="let m of subscriptionMatieres" class="matiere-item">
+          <ion-icon name="checkmark-circle" style="color: #0ea5e9;"></ion-icon>
+          <span>{{ m }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Infos abonnement classe -->
+    <div *ngIf="isClasseSubscription" class="course-info">
+      <h3>Abonnement classe {{ classe }}</h3>
+      <p style="color: #64748b; margin: 4px 0 0;">Niveau {{ niveauScolaire }} — Accès à tous les cours de {{ classe }}</p>
+    </div>
+
     <!-- Bouton final -->
     <ion-button expand="block"
       (click)="proceedToPayment()"
       class="proceed-button">
-      {{ isClasseSubscription ? 'Souscrire à l\'abonnement' : (isPremium ? 'Activer Premium' : 'Payer le cours') }}
+      {{ (isClasseSubscription || isMatiereSubscription) ? 'Souscrire à l\'abonnement' : (isPremium ? 'Activer Premium' : 'Payer le cours') }}
     </ion-button>
   </div>
 </ion-content>

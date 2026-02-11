@@ -73,6 +73,10 @@ export class PaymentVerifyPage implements OnInit {
   niveauScolaire: string = '';
   totalCourses: number = 0;
 
+  // Abonnement par matière (MOYEN/SECONDAIRE/UNIVERSITAIRE)
+  isMatiereSubscription = false;
+  subscriptionMatieres: string[] = [];
+
   course: any = {};
   courseId = '';
   courseTitle = '';
@@ -151,20 +155,29 @@ export class PaymentVerifyPage implements OnInit {
     this.selectedMatieres = state['selectedMatieres'] || [];
     console.log("matire",this.selectedMatieres);
 
-    // 🎯 Nouvelle logique : Abonnement par classe
+    // 🎯 Abonnement par classe
     this.isClasseSubscription = state?.isClasseSubscription || false;
+    // 🎯 Abonnement par matière
+    this.isMatiereSubscription = state?.isMatiereSubscription || false;
+
     if (this.isClasseSubscription) {
       this.classe = state?.classe || '';
       this.niveauScolaire = state?.niveauScolaire || '';
       this.totalCourses = state?.totalCourses || 0;
+      this.courseTitle = `Abonnement classe ${this.classe}`;
 
-      console.log('🎯 Abonnement par classe détecté dans PaymentVerify');
+      console.log('🎯 Abonnement par classe détecté');
+    } else if (this.isMatiereSubscription) {
+      this.classe = state?.classe || '';
+      this.niveauScolaire = state?.niveauScolaire || '';
+      this.subscriptionMatieres = state?.matieres || [];
+      this.totalCourses = state?.totalCourses || 0;
+      this.courseTitle = `Abonnement ${this.subscriptionMatieres.length} matières - ${this.classe}`;
+
+      console.log('🎯 Abonnement par matière détecté');
       console.log('   Classe:', this.classe);
       console.log('   Niveau:', this.niveauScolaire);
-      console.log('   Total cours:', this.totalCourses);
-
-      // Définir un titre par défaut pour l'abonnement
-      this.courseTitle = `Abonnement classe ${this.classe}`;
+      console.log('   Matières:', this.subscriptionMatieres);
     }
 
 
@@ -190,9 +203,9 @@ export class PaymentVerifyPage implements OnInit {
       }
     }
 
-    // Validation : il faut soit un courseId, soit une souscription Premium, soit un abonnement classe
-    if (!this.isPremiumSubscription && !this.isClasseSubscription && !this.courseId) {
-      console.error('❌ Aucun courseId reçu et ce n\'est ni Premium ni abonnement classe');
+    // Validation : il faut soit un courseId, soit une souscription Premium, soit un abonnement classe/matière
+    if (!this.isPremiumSubscription && !this.isClasseSubscription && !this.isMatiereSubscription && !this.courseId) {
+      console.error('❌ Aucun courseId reçu et ce n\'est ni Premium ni abonnement classe/matière');
       this.router.navigate(['/courses']);
       return;
     }
@@ -201,14 +214,20 @@ export class PaymentVerifyPage implements OnInit {
      *  SUMMARY
      *  =============================== */
     if (this.isClasseSubscription) {
-      // Résumé pour abonnement par classe
+      // Résumé pour abonnement par classe (ELEMENTAIRE)
       this.summary.formula = `Abonnement classe ${this.classe}`;
-      this.summary.price = 10000; // Prix fixe 10 000 FCFA pour l'abonnement classe
+      this.summary.price = 5000;
+      this.calculateTotal();
+    } else if (this.isMatiereSubscription) {
+      // Résumé pour abonnement par matière (MOYEN/SECONDAIRE/UNIVERSITAIRE)
+      this.summary.formula = `Abonnement ${this.subscriptionMatieres.length} matières — ${this.classe}`;
+      this.summary.price = 5000;
       this.calculateTotal();
 
-      console.log('📊 Résumé abonnement classe:', {
+      console.log('📊 Résumé abonnement matière:', {
         classe: this.classe,
-        totalCourses: this.totalCourses,
+        niveauScolaire: this.niveauScolaire,
+        matieres: this.subscriptionMatieres,
         price: this.summary.price,
       });
     } else if (this.selectedPlan) {
@@ -394,6 +413,44 @@ export class PaymentVerifyPage implements OnInit {
         }
 
         throw new Error('URL de paiement introuvable pour l\'abonnement classe');
+      }
+
+      /** ===============================
+       *  📚 ABONNEMENT PAR MATIÈRE (MOYEN/SECONDAIRE/UNIVERSITAIRE)
+       *  =============================== */
+      if (this.isMatiereSubscription) {
+        await this.showLoader('Création de l\'abonnement matières...');
+        console.log('📚 Traitement abonnement matière:', {
+          classe: this.classe,
+          niveauScolaire: this.niveauScolaire,
+          matieres: this.subscriptionMatieres,
+          userId: this.userId,
+        });
+
+        if (!this.userId || this.subscriptionMatieres.length === 0) {
+          throw new Error('Informations d\'abonnement manquantes');
+        }
+
+        // Pour MOYEN/SECONDAIRE/UNIVERSITAIRE, classe pas obligatoire
+        // La classe est déterminée par les matières sélectionnées
+        const response = await firstValueFrom(
+          this.paymentService.createSubscriptionPayment(
+            this.userId,
+            this.classe || '',
+            this.niveauScolaire,
+            'MATIERE',
+            this.subscriptionMatieres,
+          ),
+        );
+
+        if (response?.success && response?.data?.paymentUrl) {
+          await this.hideLoader();
+          console.log('✅ URL de paiement reçue:', response.data.paymentUrl);
+          window.location.href = response.data.paymentUrl;
+          return;
+        }
+
+        throw new Error('URL de paiement introuvable pour l\'abonnement matière');
       }
 
       /** ===============================

@@ -2,13 +2,13 @@ ion-header {
   ion-toolbar {
     --background: #fff;
     --border-width: 0;
-    
+
     ion-title {
       font-size: 16px;
       font-weight: 500;
       color: #000;
     }
-    
+
     ion-button {
       --color: #000;
     }
@@ -60,17 +60,17 @@ ion-content {
   align-items: center;
   padding-bottom: 16px;
   border-bottom: 1px solid #f0f0f0;
-  
+
   &:last-child {
     border-bottom: none;
     padding-bottom: 0;
   }
-  
+
   .label {
     font-size: 15px;
     color: #666;
   }
-  
+
   .value {
     font-size: 15px;
     color: #000;
@@ -102,11 +102,11 @@ ion-content {
   cursor: pointer;
   padding: 4px 8px;
   transition: opacity 0.2s;
-  
+
   &:hover {
     opacity: 0.8;
   }
-  
+
   &:active {
     opacity: 0.6;
   }
@@ -137,14 +137,14 @@ ion-content {
   background: #fafafa;
   transition: all 0.2s;
   color:#000;
-  
+
   &:focus {
     outline: none;
     border-color: #007AFF;
     background: #fff;
     box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
   }
-  
+
   &::placeholder {
     color: #999;
   }
@@ -161,15 +161,15 @@ ion-content {
   cursor: pointer;
   transition: all 0.2s;
   min-width: 80px;
-  
+
   &:hover:not(:disabled) {
     background-color: #0056cc;
   }
-  
+
   &:active:not(:disabled) {
     transform: scale(0.98);
   }
-  
+
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -204,7 +204,7 @@ ion-content {
   display: flex;
   align-items: center;
   gap: 8px;
-  
+
   &:before {
     content: "✓";
     font-weight: bold;
@@ -232,13 +232,13 @@ ion-content {
   margin-top: 8px;
   padding-top: 16px;
   border-top: 2px solid #f0f0f0;
-  
+
   .label-total {
     font-size: 16px;
     color: #000;
     font-weight: 700;
   }
-  
+
   .value-total {
     font-size: 18px;
     color: #000;
@@ -260,7 +260,7 @@ ion-content {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
-  
+
   .card-icon {
     font-size: 24px;
     color: #000;
@@ -271,7 +271,7 @@ ion-content {
 .payment-option {
   padding: 16px 0;
   border-bottom: 1px solid #f0f0f0;
-  
+
   &:last-child {
     border-bottom: none;
   }
@@ -279,7 +279,7 @@ ion-content {
 
 .option-header {
   margin-bottom: 12px;
-  
+
   .option-type {
     font-size: 12px;
     color: #999;
@@ -299,7 +299,7 @@ ion-content {
   display: flex;
   align-items: center;
   gap: 12px;
-  
+
   .option-name {
     font-size: 15px;
     color: #000;
@@ -310,14 +310,14 @@ ion-content {
 .custom-radio {
   --color: #000;
   --color-checked: #000;
-  
+
   &::part(container) {
     width: 20px;
     height: 20px;
     border: 2px solid #000;
     border-radius: 50%;
   }
-  
+
   &::part(mark) {
     background: #000;
     width: 10px;
@@ -363,7 +363,7 @@ ion-content {
   cursor: pointer;
   padding: 0;
   margin-top: 8px;
-  
+
   &:active {
     opacity: 0.7;
   }
@@ -383,7 +383,7 @@ ion-content {
   --border-radius: 12px;
   --box-shadow: none;
   color: #fff;
-  
+
   height: 52px;
   font-size: 16px;
   font-weight: 600;
@@ -405,22 +405,22 @@ ion-radio-group {
   margin: 16px 0;
   color: #000;
   border: 2px solid #ffc400;
-  
+
   .premium-icon {
     font-size: 24px;
     margin-right: 12px;
     color: #000;
   }
-  
+
   .premium-text {
     display: flex;
     flex-direction: column;
-    
+
     strong {
       font-weight: 600;
       margin-bottom: 4px;
     }
-    
+
     span {
       font-size: 14px;
       opacity: 0.8;
@@ -435,18 +435,18 @@ ion-radio-group {
   margin: 16px 0;
   border-left: 4px solid #ffd700;
   color: #000;
-  
+
   .benefits-title {
     margin: 0 0 12px 0;
     font-size: 16px;
     font-weight: 600;
     color: #1a1a1a;
   }
-  
+
   .benefits-list {
     margin: 0;
     padding-left: 20px;
-    
+
     li {
       margin-bottom: 8px;
       font-size: 14px;
@@ -462,41 +462,73 @@ ion-radio-group {
   border-radius: 12px;
   margin: 16px 0;
   color: #000;
-  
+
   .course-info-title {
     margin: 0 0 12px 0;
     font-size: 16px;
     font-weight: 600;
     color: #1a1a1a;
   }
-  
+
   .course-details {
     display: flex;
     gap: 12px;
     align-items: flex-start;
-    
+
     .course-thumbnail {
       width: 60px;
       height: 60px;
       border-radius: 8px;
       object-fit: cover;
     }
-    
+
     .course-text {
       flex: 1;
-      
+
       h4 {
         margin: 0 0 4px 0;
         font-size: 14px;
         font-weight: 600;
         color: #1a1a1a;
       }
-      
+
       p {
         margin: 0;
         font-size: 12px;
         color: #666;
         line-height: 1.4;
+      }
+    }
+  }
+
+  &.matiere-info {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border: 1px solid #bae6fd;
+
+    h3 {
+      color: #0369a1;
+      font-size: 16px;
+      font-weight: 700;
+      margin: 0 0 12px 0;
+    }
+
+    .matiere-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      .matiere-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #334155;
+
+        ion-icon {
+          font-size: 20px;
+          flex-shrink: 0;
+        }
       }
     }
   }
@@ -506,7 +538,7 @@ ion-radio-group {
   display: flex;
   align-items: center;
   justify-content: center;
-  
+
   .card-icon-small {
     font-size: 20px;
     color: #666;
@@ -520,7 +552,7 @@ ion-radio-group {
   height: 50px;
   font-weight: 600;
   font-size: 16px;
-  
+
   &[disabled] {
     opacity: 0.6;
   }
@@ -538,33 +570,33 @@ ion-radio-group {
   .page-container {
     padding: 0 12px 80px 12px;
   }
-  
+
   .page-title {
     font-size: 22px;
     margin: 20px 0 24px 0;
   }
-  
+
   .summary-card,
   .payment-options-card {
     padding: 20px;
   }
-  
+
   .promo-input-wrapper {
     flex-direction: column;
   }
-  
+
   .apply-promo-btn {
     width: 100%;
     min-width: auto;
     padding: 12px;
   }
-  
+
   .option-content {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
   }
-  
+
   .option-right {
     width: 100%;
     justify-content: flex-end;
