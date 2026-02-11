@@ -9,9 +9,6 @@ import {
   IonButtons,
   IonIcon,
   IonButton,
-  IonInput,
-  IonItem,
-  IonLabel,
   ToastController,
 } from '@ionic/angular/standalone';import { PaymentService } from '../../services/paymentService';
 import { cardOutline, chevronBackOutline } from 'ionicons/icons';
@@ -22,9 +19,6 @@ import { addIcons } from 'ionicons';
   templateUrl: './payment-option.component.html',
   styleUrls: ['./payment-option.component.scss'],
   imports: [
-    IonInput,
-    IonLabel,
-    IonItem,
     IonContent,
     IonTitle,
     IonIcon,

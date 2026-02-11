@@ -33,6 +33,7 @@ import {
   logOutOutline,
   arrowForwardOutline,
   ribbonOutline,
+  play,
   playCircleOutline,
   shieldCheckmark,
   checkmarkCircle,
@@ -66,6 +67,7 @@ import { FcmService } from 'src/app/features/services/fcm.service';
 import { DesktopHeaderComponent } from 'src/app/shared/components/desktop-header/desktop-header.component';
 import { FooterComponent } from 'src/app/shared/components/footer/footer.component';
 import { FiltreNiveauService } from 'src/app/features/services/filtre-niveau.service';
+import { CourseAccessService } from 'src/app/features/services/course-access.service';
 import { User } from 'src/app/models/user.model';
 
 @Component({
@@ -98,6 +100,8 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
   private enrollmentSubscription: Subscription = new Subscription();
   allCourses: Course[] = [];
   isCoursesLoading = true;
+  hasActiveSubscription = false;
+  accessibleCourseIds = new Set<string>();
 
   slideOpts = {
     slidesPerView: 1,
@@ -123,37 +127,15 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
     private fcmService: FcmService,
     private courseService: CourseService,
     private filtreNiveauService: FiltreNiveauService,
+    private courseAccessService: CourseAccessService,
   ) {
-    addIcons({
-      searchOutline,
-      personCircleOutline,
-      starOutline,
-      addOutline,
-      shieldCheckmark,
-      personOutline,
-      chevronDownOutline,
-      closeOutline,
-      notificationsOutline,
-      chevronForwardOutline,
-      shieldCheckmarkOutline,
-      bookOutline,
-      optionsOutline,
-      lockOpenOutline,
-      trendingUpOutline,
-      bulbOutline,
-      calculatorOutline,
-      logOutOutline,
-      ribbonOutline,
-      checkmarkCircle,
-      cardOutline,
-      arrowForwardOutline,
-      playCircleOutline,
-    });
+    addIcons({searchOutline,personCircleOutline,starOutline,play,checkmarkCircle,addOutline,shieldCheckmark,personOutline,chevronDownOutline,closeOutline,notificationsOutline,chevronForwardOutline,shieldCheckmarkOutline,bookOutline,optionsOutline,lockOpenOutline,trendingUpOutline,bulbOutline,calculatorOutline,logOutOutline,ribbonOutline,cardOutline,arrowForwardOutline,playCircleOutline,});
   }
 
   ngOnInit() {
     this.loadEnrolledCourses();
     this.loadAllCoursesPreview();
+    this.checkSubscriptionStatus();
     this.instructorService.getInstructors().subscribe((data) => {
       this.instructors = data;
     });
@@ -359,6 +341,46 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
     this.router.navigate(['/instructor-profile', id]);
   }
 
+  /**
+   * Vérifier le statut d'abonnement et marquer les cours accessibles
+   */
+  checkSubscriptionStatus() {
+    const localUser: User = JSON.parse(localStorage.getItem('currentUser') || 'null');
+    if (!localUser?.uid) return;
+
+    this.courseAccessService.hasActiveSubscription(localUser.uid).subscribe({
+      next: (hasSubscription) => {
+        this.hasActiveSubscription = hasSubscription;
+        if (hasSubscription) {
+          this.markAccessibleCourses(localUser);
+        }
+      },
+      error: (err) => console.error('Erreur vérification abonnement:', err),
+    });
+  }
+
+  /**
+   * Marquer les cours accessibles via l'abonnement
+   */
+  private markAccessibleCourses(user: User) {
+    this.allCourses.forEach((course) => {
+      this.courseAccessService.checkCourseAccess(course, user).subscribe({
+        next: (result) => {
+          if (result.hasAccess) {
+            this.accessibleCourseIds.add(course.id);
+          }
+        },
+      });
+    });
+  }
+
+  /**
+   * Vérifier si un cours est accessible via l'abonnement
+   */
+  isCourseAccessible(courseId: string): boolean {
+    return this.accessibleCourseIds.has(courseId);
+  }
+
   loadAllCoursesPreview() {
     this.isCoursesLoading = true;
 
@@ -376,11 +398,12 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
           this.allCourses = courses.filter((c) => c.type === 'En ligne');
           console.log('✅ Cours récupérés par classe:', this.allCourses.length);
           this.isCoursesLoading = false;
+          this.markAccessibleCourses(localUser);
         },
         error: (err) => {
           console.error('Erreur chargement cours par classe:', err);
           // Fallback: essayer par niveau scolaire
-          this.loadCoursesByNiveau(localUser.niveauScolaire);
+          this.loadCoursesByNiveau(localUser.niveauScolaire!);
         },
       });
     } else if (localUser?.niveauScolaire) {

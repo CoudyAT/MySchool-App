@@ -7,9 +7,6 @@ import { CourseService } from 'src/app/features/services/courseService';
 
 import {
   IonContent,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonCard,
   IonCardContent,
   IonButton,
@@ -37,9 +34,6 @@ import { DesktopHeaderComponent } from 'src/app/shared/components/desktop-header
   standalone: true,
   imports: [
     CommonModule,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
     IonContent,
     IonCard,
     IonCardContent,

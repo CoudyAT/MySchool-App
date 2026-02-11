@@ -57,18 +57,46 @@
       </ion-card-content>
     </ion-card>
 
-    <!-- Message pour abonnement CLASSE -->
+    <!-- Message pour abonnement CLASSE (ELEMENTAIRE) -->
     <ion-card *ngIf="typeAbonnement === 'CLASSE'" class="classe-card">
       <ion-card-content>
         <ion-icon name="checkmark-circle" color="success"></ion-icon>
         <div>
-          <h3>Abonnement complet</h3>
-          <p>Vous aurez accès à toutes les matières de votre classe {{ currentUser?.classe }}</p>
+          <h3>Abonnement complet - {{ currentUser?.classe }}</h3>
+          <p>Vous aurez accès à <strong>tous les cours et matières</strong> de votre classe {{ currentUser?.classe }}</p>
         </div>
       </ion-card-content>
     </ion-card>
 
-    <!-- Liste des matières (uniquement pour MATIERE) -->
+    <!-- Liste des matières incluses pour ELEMENTAIRE (lecture seule) -->
+    <div *ngIf="typeAbonnement === 'CLASSE' && matieres.length > 0" class="matieres-container">
+      <h2 class="section-title">Matières incluses dans votre abonnement</h2>
+
+      <div class="matieres-grid">
+        <ion-card
+          *ngFor="let matiere of matieres"
+          class="matiere-card selected">
+
+          <ion-card-content>
+            <!-- Icône de sélection (toujours cochée) -->
+            <div class="selection-indicator">
+              <ion-icon name="checkmark-circle" color="success"></ion-icon>
+            </div>
+
+            <!-- Icône de la matière -->
+            <div class="matiere-icon" style="background-color: #4caf50">
+              <span class="matiere-emoji">{{ matiere.icone || '📚' }}</span>
+            </div>
+
+            <!-- Nom de la matière -->
+            <h3 class="matiere-nom">{{ matiere.nom }}</h3>
+            <p class="matiere-description included-label">✅ Incluse</p>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
+
+    <!-- Liste des matières (uniquement pour MATIERE - selection interactive) -->
     <div *ngIf="typeAbonnement === 'MATIERE'" class="matieres-container">
       <h2 class="section-title">Matières disponibles</h2>
 
@@ -156,7 +184,7 @@
       <p class="help-text">
         <ion-icon name="information-circle-outline"></ion-icon>
         {{ typeAbonnement === 'CLASSE'
-          ? 'Accès illimité à toutes les matières de votre classe'
+          ? 'Accès illimité à tous les cours et matières de ' + currentUser?.classe
           : 'Accès illimité aux ' + nombreMatieresRequises + ' matières sélectionnées'
         }} pendant 1 an
       </p>

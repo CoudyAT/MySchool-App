@@ -61,6 +61,7 @@ export interface Matiere {
   classe?: string;
   niveauScolaire: 'ELEMENTAIRE' | 'MOYEN' | 'SECONDAIRE' | 'UNIVERSITAIRE';
   icon: string;
+  icone?: string; // Alias utilisé par le backend (emoji)
   color: string;
   ordre: number;
   description?: string;
@@ -88,6 +89,13 @@ export interface Course {
   chaptersIds?: string[]; // Relation avec les chapitres
   createdAt: Date;
   updatedAt: Date;
+
+  // Champs liés au système d'abonnement
+  niveauScolaire?: 'ELEMENTAIRE' | 'MOYEN' | 'SECONDAIRE' | 'UNIVERSITAIRE';
+  classe?: string;
+  matiereId?: string;
+  matiere?: string; // Nom de la matière
+
   levels?: Array<{
     icon: string;
     completed: boolean;

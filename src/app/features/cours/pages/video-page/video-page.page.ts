@@ -11,10 +11,6 @@ import {
   IonCardContent,
   IonIcon,
   IonButton,
-  IonSpinner,
-  IonSegment,
-  IonLabel,
-  IonSegmentButton,
   IonHeader,
   IonToolbar,
 } from '@ionic/angular/standalone';
@@ -41,10 +37,6 @@ import { DesktopHeaderComponent } from 'src/app/shared/components/desktop-header
   imports: [
     IonToolbar,
     IonHeader,
-    IonSpinner,
-    IonSegmentButton,
-    IonLabel,
-    IonSegment,
     CommonModule,
     RouterModule,
     IonButton,

@@ -6,11 +6,6 @@ import { PdfFile } from 'src/app/models/pdf.model';
 import {
     IonContent,
     IonSearchbar,
-    IonCard,
-    IonCardHeader,
-    IonCardTitle,
-    IonCardSubtitle,
-    IonCardContent,
     IonIcon,
     IonButton,
     IonItem,
@@ -23,7 +18,6 @@ import {
     IonHeader,
     IonTitle,
     IonButtons,
-    IonBackButton,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -52,15 +46,9 @@ import { PdfService } from '../../services/pdf.service';
         IonHeader,
         IonToolbar,
         IonButtons,
-        IonBackButton,
         CommonModule,
         IonContent,
         IonSearchbar,
-        IonCard,
-        IonCardHeader,
-        IonCardTitle,
-        IonCardSubtitle,
-        IonCardContent,
         IonIcon,
         IonButton,
         IonItem,

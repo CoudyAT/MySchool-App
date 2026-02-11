@@ -43,6 +43,8 @@
       <!-- Texte Call-to-Action -->
       <div class="cta-text">
         <p>Ce cours en libre accès vous intéresse ?</p>
+
+        <!-- Déjà inscrit → Continuer -->
         <ion-button
           *ngIf="isUserEnrolled"
           expand="block"
@@ -56,9 +58,23 @@
             >
           </div>
         </ion-button>
-        <!-- Bouton d'inscription (desktop) -->
+
+        <!-- Abonnement actif mais pas encore inscrit → Commencer -->
         <ion-button
-          *ngIf="!isUserEnrolled"
+          *ngIf="!isUserEnrolled && hasSubscriptionAccess"
+          expand="block"
+          class="enroll-button-mobile subscription-access"
+          (click)="autoEnrollWithSubscription()"
+        >
+          <div class="button-content">
+            <span class="button-main-text">Commencer le cours</span>
+            <span class="button-subtitle">Inclus dans votre abonnement ✅</span>
+          </div>
+        </ion-button>
+
+        <!-- Pas d'accès → S'abonner -->
+        <ion-button
+          *ngIf="!isUserEnrolled && !hasSubscriptionAccess"
           expand="block"
           class="enroll-button-mobile"
           (click)="handleEnrollClick()">
@@ -73,16 +89,16 @@
       <div class="hero-tabs-container">
         <!-- En-tête des onglets -->
         <div class="hero-tabs-header">
-          <button 
-            class="hero-tab-button" 
+          <button
+            class="hero-tab-button"
             [class.active]="heroActiveTab === 'chapters'"
             (click)="heroActiveTab = 'chapters'"
           >
             <ion-icon name="list-outline"></ion-icon>
             Chapitres
           </button>
-          <button 
-            class="hero-tab-button" 
+          <button
+            class="hero-tab-button"
             [class.active]="heroActiveTab === 'documents'"
             (click)="heroActiveTab = 'documents'"
           >
@@ -232,9 +248,9 @@
               </div>
 
               <div class="chapter-right">
-                <ion-icon name="lock-open-outline" class="unlock-icon" *ngIf="isUserEnrolled">
+                <ion-icon name="lock-open-outline" class="unlock-icon" *ngIf="isUserEnrolled || hasSubscriptionAccess">
                 </ion-icon>
-                <ion-icon name="lock-closed-outline" class="lock-icon" *ngIf="!isUserEnrolled">
+                <ion-icon name="lock-closed-outline" class="lock-icon" *ngIf="!isUserEnrolled && !hasSubscriptionAccess">
                 </ion-icon>
                 <ion-icon name="chevron-forward-outline" class="arrow-icon"></ion-icon>
               </div>
@@ -265,7 +281,14 @@
       <!-- Bouton d'inscription ou accès au cours -->
       <ion-card class="enroll-card">
         <ion-card-content class="enroll-card-content">
-          <!-- Si l'utilisateur est déjà inscrit -->
+
+          <!-- Badge abonnement actif -->
+          <div class="subscription-badge" *ngIf="hasSubscriptionAccess && !isUserEnrolled">
+            <ion-icon name="checkmark-circle"></ion-icon>
+            <span>Cours inclus dans votre abonnement</span>
+          </div>
+
+          <!-- Déjà inscrit → Continuer -->
           <ion-button
             *ngIf="isUserEnrolled"
             expand="block"
@@ -280,8 +303,22 @@
             </div>
           </ion-button>
 
+          <!-- Abonnement actif mais pas encore inscrit → Commencer -->
           <ion-button
-            *ngIf="!isUserEnrolled"
+            *ngIf="!isUserEnrolled && hasSubscriptionAccess"
+            expand="block"
+            class="enroll-button subscription-access"
+            (click)="autoEnrollWithSubscription()"
+          >
+            <div class="button-content">
+              <span class="button-main-text">Commencer le cours</span>
+              <span class="button-subtitle">Accès via votre abonnement ✅</span>
+            </div>
+          </ion-button>
+
+          <!-- Pas d'accès → S'abonner ou Payer -->
+          <ion-button
+            *ngIf="!isUserEnrolled && !hasSubscriptionAccess"
             expand="block"
             class="enroll-button"
             (click)="handleEnrollClick()"

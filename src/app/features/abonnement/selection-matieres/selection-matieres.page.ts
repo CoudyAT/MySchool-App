@@ -130,6 +130,7 @@ export class SelectionMatieresPage implements OnInit {
       return;
     }
 
+    // Pour ELEMENTAIRE (CLASSE), charger aussi les matières pour les montrer
     this.abonnementService
       .getMatieresDisponibles(
         this.currentUser.niveauScolaire,
@@ -195,7 +196,8 @@ export class SelectionMatieresPage implements OnInit {
    * Valider et créer l'abonnement
    */
   async validerSelection() {
-    if (!this.currentUser?.id || !this.currentUser.niveauScolaire || !this.currentUser.classe) {
+    const userId = this.currentUser?.id || this.currentUser?.uid;
+    if (!userId || !this.currentUser?.niveauScolaire || !this.currentUser?.classe) {
       this.showToast('Utilisateur non connecté ou profil incomplet', 'danger');
       return;
     }
@@ -211,7 +213,7 @@ export class SelectionMatieresPage implements OnInit {
     this.isSaving = true;
 
     const abonnementData: CreateSubscriptionDTO = {
-      userId: this.currentUser.id,
+      userId: userId,
       niveauScolaire: this.currentUser.niveauScolaire,
       classe: this.currentUser.classe,
       typeAbonnement: this.typeAbonnement,
