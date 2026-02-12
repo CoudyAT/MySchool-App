@@ -182,13 +182,11 @@ export class PremiumCourseSelectionPage implements OnInit, OnDestroy {
 
     this.router.navigate(['/payment-method'], {
       state: {
-        isPremiumSubscription: true,
+        isMatiereSubscription: true,
 
         // 🔥 DONNÉES UTILISATEUR
-        userInfo: {
-          classe: this.userClasse,
-          niveau: this.userNiveau,
-        },
+        classe: this.userClasse,
+        niveauScolaire: this.userNiveau,
 
         // 🔥 MATIÈRES SÉLECTIONNÉES
         matieres: this.selectedMatieres.map((m) => m.nom || m.name),
@@ -196,7 +194,7 @@ export class PremiumCourseSelectionPage implements OnInit, OnDestroy {
         // 🔥 PLAN
         plan: {
           type: 'ANNUAL',
-          name: 'Abonnement Premium',
+          name: `Abonnement ${this.userClasse}`,
           price: 5000,
           currency: 'XOF',
         },

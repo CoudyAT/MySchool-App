@@ -58,10 +58,8 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Enrollment } from 'src/app/models/payment.model';
 import { EnrollmentService } from 'src/app/features/services/enrollmentService';
-import { PreminumModalComponent } from 'src/app/features/component/preminum-modal/preminum-modal.component';
 import { InstructorService } from 'src/app/features/services/instructorService';
 import { Instructor } from 'src/app/models/instructor.model';
-import { UserService } from 'src/app/features/auth/services/user.service';
 import { FcmService } from 'src/app/features/services/fcm.service';
 import { DesktopHeaderComponent } from 'src/app/shared/components/desktop-header/desktop-header.component';
 import { FooterComponent } from 'src/app/shared/components/footer/footer.component';
@@ -345,26 +343,39 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async openPremiumModal() {
-    const modal = await this.modalCtrl.create({
-      component: PreminumModalComponent,
-      cssClass: 'premium-modal',
-      breakpoints: [0, 0.5, 0.8, 1],
-      initialBreakpoint: 0.8,
-    });
+    // Récupérer les données utilisateur
+    const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
 
-    await modal.present();
-
-    const { data } = await modal.onWillDismiss();
-
-    if (data?.subscribed) {
-      // L'utilisateur a souscrit
-      const toast = await this.toastCtrl.create({
-        message: 'Bienvenue dans Premium ! 🌟',
-        duration: 2000,
-        color: 'success',
+    // Cas ÉLÉMENTAIRE → redirection directe vers payment-method (abonnement classe)
+    if (localUser?.niveauScolaire === 'ELEMENTAIRE') {
+      this.router.navigate(['/payment-method'], {
+        state: {
+          isPremiumFlow: true,
+          method: 'premium',
+          plan: {
+            type: 'ANNUAL',
+            name: `Abonnement ${localUser.classe}`,
+            price: 5000,
+            currency: 'XOF',
+          },
+          isClasseSubscription: true,
+          classe: localUser.classe,
+          niveauScolaire: localUser.niveauScolaire,
+          userInfo: {
+            classe: localUser.classe,
+            niveau: localUser.niveauScolaire,
+          },
+        },
       });
-      await toast.present();
+      return;
     }
+
+    // Autres niveaux → sélection des cours premium
+    this.router.navigate(['/premium-course-selection'], {
+      state: {
+        isPremiumFlow: true,
+      },
+    });
   }
 
   private async showPremiumSuccessToast() {
@@ -376,9 +387,25 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
     });
     await toast.present();
   }
+
+  get subscriptionButtonText(): string {
+    if (this.userNiveauScolaire === 'ELEMENTAIRE' && this.userClasse) {
+      return `Souscrire à l'abonnement ${this.userClasse}`;
+    }
+    if (['MOYEN', 'SECONDAIRE', 'UNIVERSITAIRE'].includes(this.userNiveauScolaire || '') && this.userClasse) {
+      return `Souscrire à l'abonnement ${this.userClasse}`;
+    }
+    return "Souscrire à l'abonnement";
+  }
+
   goToProfile() {
     this.router.navigate(['/profile']);
   }
+
+  goHome() {
+    this.router.navigate(['/courses']);
+  }
+
   goToInstructorProfile(id: string) {
     this.router.navigate(['/instructor-profile', id]);
   }

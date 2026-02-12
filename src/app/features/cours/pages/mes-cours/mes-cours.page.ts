@@ -92,6 +92,10 @@ export class MesCoursPage implements OnInit {
     this.router.navigate(['/profile']);
   }
 
+  goHome() {
+    this.router.navigate(['/courses']);
+  }
+
   loadCourses() {
     this.isLoading = true;
 

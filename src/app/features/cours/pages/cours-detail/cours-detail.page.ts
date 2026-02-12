@@ -86,6 +86,10 @@ export class CoursDetailPage implements OnInit, OnDestroy {
   private courseSubscription: Subscription = new Subscription();
   private enrollmentSubscription: Subscription = new Subscription();
 
+  // Données utilisateur pour l'abonnement
+  userNiveauScolaire: string = '';
+  userClasse: string = '';
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -125,7 +129,57 @@ export class CoursDetailPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.loadUserData();
     this.loadCourseDetails();
+  }
+
+  loadUserData() {
+    const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+    if (localUser) {
+      this.userClasse = localUser.classe || '';
+      this.userNiveauScolaire = localUser.niveauScolaire || '';
+    }
+  }
+
+  get subscriptionButtonText(): string {
+    if (this.userNiveauScolaire === 'ELEMENTAIRE' && this.userClasse) {
+      return `Souscrire à l'abonnement ${this.userClasse}`;
+    }
+    if (['MOYEN', 'SECONDAIRE', 'UNIVERSITAIRE'].includes(this.userNiveauScolaire) && this.userClasse) {
+      return `Souscrire à l'abonnement ${this.userClasse}`;
+    }
+    return "Souscrire à l'abonnement";
+  }
+
+  openSubscription() {
+    const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+
+    // Cas ÉLÉMENTAIRE → redirection directe vers payment-method (abonnement classe)
+    if (localUser?.niveauScolaire === 'ELEMENTAIRE') {
+      this.router.navigate(['/payment-method'], {
+        state: {
+          isPremiumFlow: true,
+          method: 'premium',
+          plan: {
+            type: 'ANNUAL',
+            name: `Abonnement ${localUser.classe}`,
+            price: 5000,
+            currency: 'XOF',
+          },
+          isClasseSubscription: true,
+          classe: localUser.classe,
+          niveauScolaire: localUser.niveauScolaire,
+        },
+      });
+      return;
+    }
+
+    // Autres niveaux → sélection des matières
+    this.router.navigate(['/premium-course-selection'], {
+      state: {
+        isPremiumFlow: true,
+      },
+    });
   }
 
   ngOnDestroy() {

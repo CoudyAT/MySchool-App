@@ -13,15 +13,6 @@
   <div class="page-container">
     <h1 class="page-title">Vérifiez vos informations</h1>
 
-    <!-- Premium -->
-    <div *ngIf="isPremiumSubscription" class="premium-notice">
-      <ion-icon name="star" class="premium-icon"></ion-icon>
-      <div class="premium-text">
-        <strong>Abonnement Premium</strong>
-        <span>Accès immédiat à tous les cours disponibles</span>
-      </div>
-    </div>
-
     <!-- Résumé -->
     <div class="summary-card">
       <h2 class="card-title">Résumé de la souscription</h2>
@@ -197,7 +188,7 @@
     <ion-button expand="block"
       (click)="proceedToPayment()"
       class="proceed-button">
-      {{ (isClasseSubscription || isMatiereSubscription) ? 'Souscrire à l\'abonnement' : (isPremium ? 'Activer Premium' : 'Payer le cours') }}
+      {{ (isClasseSubscription || isMatiereSubscription || isPremiumSubscription) ? 'Souscrire à l\'abonnement' : 'Payer le cours' }}
     </ion-button>
   </div>
 </ion-content>

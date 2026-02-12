@@ -1145,6 +1145,86 @@ ion-content {
   padding-bottom: 80px;
 }
 
+/* =========================
+   SUBSCRIPTION BUTTON
+========================= */
+
+.desktop-premium-bar {
+  display: flex;
+  justify-content: center;
+  padding: 6px 16px;
+  background: transparent;
+  
+  @media (min-width: 1024px) {
+    padding: 8px 24px;
+  }
+}
+
+.mobile-subscription-bar {
+  display: flex;
+  justify-content: center;
+  padding: 4px 16px 8px;
+  background: transparent;
+  
+  @media (min-width: 1024px) {
+    display: none;
+  }
+}
+
+.subscription-btn-mobile {
+  --background: #4F6EF7;
+  --background-hover: #3D5AE8;
+  --background-activated: #3D5AE8;
+  --border-radius: 20px;
+  --padding-start: 14px;
+  --padding-end: 14px;
+  color: white;
+  height: 32px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: none;
+  margin: 0;
+
+  ion-icon {
+    font-size: 14px;
+    margin-right: 4px;
+  }
+
+  &:active {
+    --background: #3D5AE8;
+  }
+}
+
+.subscription-btn {
+  --background: #4F6EF7;
+  --background-hover: #3D5AE8;
+  --background-activated: #3D5AE8;
+  color: white;
+  width: auto;
+  max-width: none;
+  height: 36px;
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: none;
+  --border-radius: 20px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  margin: 0 auto;
+
+  @media (min-width: 1024px) {
+    height: 44px;
+    font-size: 15px;
+    --padding-start: 24px;
+    --padding-end: 24px;
+    --border-radius: 12px;
+    width: 100%;
+  }
+
+  &:active {
+    --background: #3D5AE8;
+  }
+}
+
 
 /* =========================
    HEADER

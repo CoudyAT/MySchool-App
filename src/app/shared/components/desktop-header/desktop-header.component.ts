@@ -1,12 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Router } from '@angular/router';
-import { IonHeader, IonToolbar, IonIcon, IonButton } from "@ionic/angular/standalone";
-import { ModalController } from '@ionic/angular/standalone'; 
-import { ToastController } from '@ionic/angular';
-import { PreminumModalComponent } from 'src/app/features/component/preminum-modal/preminum-modal.component';
-import { NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
+import { IonHeader, IonToolbar, IonIcon, IonButton, ModalController } from "@ionic/angular/standalone";
+import { ToastController, PopoverController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
-import { PopoverController } from '@ionic/angular';
 import { ProfileMenuComponent } from 'src/app/features/auth/profile-menu/profile-menu.component';
 
 
@@ -21,6 +17,9 @@ import { ProfileMenuComponent } from 'src/app/features/auth/profile-menu/profile
 export class DesktopHeaderComponent implements OnInit {
   @Input() activePage: string | undefined;
   showPremiumBar: boolean = false;
+  userClasse: string = '';
+  userNiveauScolaire: string = '';
+
   constructor(
     private router: Router,
     private modalCtrl: ModalController,
@@ -29,6 +28,9 @@ export class DesktopHeaderComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    // Charger les données utilisateur
+    this.loadUserData();
+
     // Vérifie la route au chargement
     // Cas 1 : au chargement de la page
     this.updatePremiumBar(this.router.url);
@@ -39,6 +41,24 @@ export class DesktopHeaderComponent implements OnInit {
         this.updatePremiumBar(event.urlAfterRedirects);
       }
     });
+  }
+
+  loadUserData() {
+    const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+    if (localUser) {
+      this.userClasse = localUser.classe || '';
+      this.userNiveauScolaire = localUser.niveauScolaire || '';
+    }
+  }
+
+  get subscriptionButtonText(): string {
+    if (this.userNiveauScolaire === 'ELEMENTAIRE' && this.userClasse) {
+      return `Souscrire à l'abonnement ${this.userClasse}`;
+    }
+    if (['MOYEN', 'SECONDAIRE', 'UNIVERSITAIRE'].includes(this.userNiveauScolaire) && this.userClasse) {
+      return `Souscrire à l'abonnement ${this.userClasse}`;
+    }
+    return "Souscrire à l'abonnement";
   }
 
   updatePremiumBar(url: string) {
@@ -53,26 +73,39 @@ export class DesktopHeaderComponent implements OnInit {
   }
 
   async openPremiumModal() {
-    const modal = await this.modalCtrl.create({
-      component: PreminumModalComponent,
-      cssClass: 'premium-modal',
-      breakpoints: [0, 0.5, 0.8, 1],
-      initialBreakpoint: 0.8,
-    });
+    // Récupérer les données utilisateur
+    const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
 
-    await modal.present();
-
-    const { data } = await modal.onWillDismiss();
-
-    if (data?.subscribed) {
-      // L'utilisateur a souscrit
-      const toast = await this.toastCtrl.create({
-        message: 'Bienvenue dans Premium ! 🌟',
-        duration: 2000,
-        color: 'success',
+    // Cas ÉLÉMENTAIRE → redirection directe vers payment-method (abonnement classe)
+    if (localUser?.niveauScolaire === 'ELEMENTAIRE') {
+      this.router.navigate(['/payment-method'], {
+        state: {
+          isPremiumFlow: true,
+          method: 'premium',
+          plan: {
+            type: 'ANNUAL',
+            name: `Abonnement ${localUser.classe}`,
+            price: 5000,
+            currency: 'XOF',
+          },
+          isClasseSubscription: true,
+          classe: localUser.classe,
+          niveauScolaire: localUser.niveauScolaire,
+          userInfo: {
+            classe: localUser.classe,
+            niveau: localUser.niveauScolaire,
+          },
+        },
       });
-      await toast.present();
+      return;
     }
+
+    // Autres niveaux → sélection des cours premium
+    this.router.navigate(['/premium-course-selection'], {
+      state: {
+        isPremiumFlow: true,
+      },
+    });
   }
 
   navigateTo(page: string) {

@@ -2,7 +2,7 @@
 <ion-header class="ion-no-border mobile-header">
   <ion-toolbar>
     <div class="header-content">
-      <img src="assets/logo.svg" alt="MySchool Logo" class="logo" />
+      <img src="assets/logo.svg" alt="MySchool Logo" class="logo" (click)="goHome()" style="cursor: pointer;" />
       <!-- Hero Section - CARROUSEL SWIPER  -->
       <ion-button
         fill="outline"
@@ -20,13 +20,13 @@
           <ion-icon class="profile" name="person-circle-outline"></ion-icon>
         </ion-button>
     </div>
-    <div class="desktop-premium-bar">
-  <ion-button fill="solid" (click)="openPremiumModal()" class="preminum">
-    <ion-icon name="star-outline" slot="start"></ion-icon>
-    Abonnez-vous pour avoir accès à tous les cours
-  </ion-button>
-</div>
   </ion-toolbar>
+  <div class="mobile-subscription-bar">
+    <ion-button fill="solid" size="small" (click)="openPremiumModal()" class="subscription-btn-mobile">
+      <ion-icon name="lock-open-outline" slot="start"></ion-icon>
+      {{ subscriptionButtonText }}
+    </ion-button>
+  </div>
 </ion-header>
 <ion-content>
   <div class="content-wrapper">

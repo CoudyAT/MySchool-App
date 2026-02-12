@@ -28,16 +28,28 @@
       <p class="course-description">{{course?.description}}</p>
       <p class="course-description">Professeur :<strong>{{ course?.instructorName || 'Non défini' }}</strong></p>
 
-      <!-- Info sessions et exercices -->
-      <div class="course-meta">
-        <span class="meta-item">
-          <ion-icon name="bar-chart-outline"></ion-icon>
-          <strong>{{course?.niveauScolaire || 'Facile'}}</strong>
-        </span>
-        <span class="meta-item">
-          <ion-icon name="time-outline"></ion-icon>
-          <strong>{{course?.duration}} heure</strong>
-        </span>
+      <!-- Info sessions et exercices + Bouton abonnement -->
+      <div class="course-meta-row">
+        <div class="course-meta">
+          <span class="meta-item">
+            <ion-icon name="bar-chart-outline"></ion-icon>
+            <strong>{{course?.niveauScolaire || 'Facile'}}</strong>
+          </span>
+          <span class="meta-item">
+            <ion-icon name="time-outline"></ion-icon>
+            <strong>{{course?.duration}} heure</strong>
+          </span>
+        </div>
+
+        <!-- Bouton d'abonnement compact pour les non-inscrits -->
+        <ion-button
+          *ngIf="!isUserEnrolled"
+          class="subscription-btn-compact"
+          (click)="openSubscription()"
+        >
+          <ion-icon name="lock-open-outline" slot="start"></ion-icon>
+          {{ subscriptionButtonText }}
+        </ion-button>
       </div>
 
       <!-- Texte Call-to-Action -->
@@ -55,6 +67,7 @@
             >
           </div>
         </ion-button>
+
         <p *ngIf="!isUserEnrolled" class="free-access-text">Consultez les chapitres et exercices ci-dessous</p>
       </div>
 
@@ -268,6 +281,17 @@
           </ion-button>
         </ion-card-content>
       </ion-card>
+
+      <!-- Bouton d'abonnement compact (uniquement si non inscrit) -->
+      <div class="subscription-banner" *ngIf="!isUserEnrolled">
+        <ion-button
+          class="subscription-btn-mobile"
+          (click)="openSubscription()"
+        >
+          <ion-icon name="lock-open-outline" slot="start"></ion-icon>
+          {{ subscriptionButtonText }}
+        </ion-button>
+      </div>
     </div>
   </div>
 </ion-content>
