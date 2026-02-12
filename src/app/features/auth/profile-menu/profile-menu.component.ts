@@ -169,10 +169,12 @@ export class ProfileMenuComponent implements OnInit {
   }
 
   openPaymentOptions() {
+    this.popoverCtrl.dismiss();
     this.router.navigate(['/payments-history']);
   }
 
   openAbonnement() {
+    this.popoverCtrl.dismiss();
     this.router.navigate(['/abonnement']);
   }
 
