@@ -91,6 +91,13 @@ export const routes: Routes = [
     component: PaymentCallbackPage,
   },
   {
+    path: 'subscription/success',
+    loadComponent: () =>
+      import('./features/payments/subscription-success/subscription-success.page').then(
+        (m) => m.SubscriptionSuccessPage,
+      ),
+  },
+  {
     path: 'course-video/:id',
     component: CourseVideoPage,
   },

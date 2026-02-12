@@ -113,6 +113,9 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
   maxMatieres = 3;
   isMatiereLoading = false;
 
+  // Abonnement actif
+  hasActiveSubscription = false;
+
   // Classes par niveau
   classesByNiveau: Record<string, string[]> = {
     MOYEN: ['6ème', '5ème', '4ème', '3ème (BFEM)'],
@@ -194,8 +197,10 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
     // Stocker le niveau scolaire et la classe de l'utilisateur
     this.userNiveauScolaire = localUser?.niveauScolaire || null;
     this.userClasse = localUser?.classe || null;
+    this.hasActiveSubscription = localUser?.hasActiveSubscription || false;
     console.log('💾 Niveau stocké:', this.userNiveauScolaire);
     console.log('💾 Classe stockée:', this.userClasse);
+    console.log('💾 Abonnement actif:', this.hasActiveSubscription);
 
     // Détecter si c'est un élève ELEMENTAIRE
     this.isElementaire = this.userNiveauScolaire === 'ELEMENTAIRE';

@@ -21,7 +21,7 @@
         </ion-button>
     </div>
   </ion-toolbar>
-  <div class="mobile-subscription-bar">
+  <div class="mobile-subscription-bar" *ngIf="!hasActiveSubscription">
     <ion-button fill="solid" size="small" (click)="openPremiumModal()" class="subscription-btn-mobile">
       <ion-icon name="lock-open-outline" slot="start"></ion-icon>
       {{ subscriptionButtonText }}

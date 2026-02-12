@@ -24,7 +24,7 @@
           *ngFor="let matiere of matieres"
           (click)="toggleMatiere(matiere)"
           [class.selected]="isSelected(matiere)"
-          [class.disabled]="!isSelected(matiere) && selectedMatieres.length >= 3"
+          [class.disabled]="isMatiereDisabled(matiere) || (!isSelected(matiere) && selectedMatieres.length >= 3)"
           class="course-card"
         >
           <ion-card-content>
@@ -34,7 +34,6 @@
               <div class="course-icon">
                 <span class="matiere-emoji">{{ matiere.icone }}</span>
               </div>
-
               <div class="course-badge" *ngIf="isSelected(matiere)">
                 <ion-icon
                   name="checkmark-circle"
@@ -49,11 +48,14 @@
               <p class="course-description">
                 Classe : {{ matiere.classe }}
               </p>
-
               <div class="course-meta">
                 <span class="meta-item">
                   Niveau : {{ matiere.niveauScolaire }}
                 </span>
+              </div>
+              <div *ngIf="isMatiereDisabled(matiere)" class="matiere-disabled-text">
+                <ion-icon name="lock-closed-outline"></ion-icon>
+                Déjà souscrite
               </div>
             </div>
 

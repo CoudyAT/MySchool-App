@@ -280,6 +280,45 @@ export class CoursDetailPage implements OnInit, OnDestroy {
   }
 
   checkUserEnrollment(courseId: string) {
+    // D'abord vérifier si l'utilisateur a un abonnement actif
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const userId = currentUser.id || currentUser._id;
+
+    // Vérifier si l'utilisateur a un abonnement actif dans le localStorage
+    if (currentUser.hasActiveSubscription) {
+      console.log('✅ Utilisateur a un abonnement actif (localStorage)');
+      this.isUserEnrolled = true;
+      return;
+    }
+
+    // Vérifier l'abonnement via l'API
+    if (userId) {
+      this.enrollmentService.checkCourseAccess(userId).subscribe({
+        next: (response) => {
+          if (response.success && response.hasAccess) {
+            console.log('✅ Utilisateur a accès via abonnement');
+            this.isUserEnrolled = true;
+
+            // Mettre à jour le localStorage
+            currentUser.hasActiveSubscription = true;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            return;
+          }
+
+          // Sinon vérifier les enrollments individuels
+          this.checkIndividualEnrollment(courseId);
+        },
+        error: () => {
+          // En cas d'erreur API, vérifier les enrollments
+          this.checkIndividualEnrollment(courseId);
+        }
+      });
+    } else {
+      this.checkIndividualEnrollment(courseId);
+    }
+  }
+
+  private checkIndividualEnrollment(courseId: string) {
     this.enrollmentSubscription = this.enrollmentService
       .getUserEnrollments()
       .subscribe({

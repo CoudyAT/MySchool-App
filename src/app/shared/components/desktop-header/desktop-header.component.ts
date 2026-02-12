@@ -19,6 +19,7 @@ export class DesktopHeaderComponent implements OnInit {
   showPremiumBar: boolean = false;
   userClasse: string = '';
   userNiveauScolaire: string = '';
+  hasActiveSubscription: boolean = false;
 
   constructor(
     private router: Router,
@@ -48,6 +49,7 @@ export class DesktopHeaderComponent implements OnInit {
     if (localUser) {
       this.userClasse = localUser.classe || '';
       this.userNiveauScolaire = localUser.niveauScolaire || '';
+      this.hasActiveSubscription = localUser.hasActiveSubscription || false;
     }
   }
 

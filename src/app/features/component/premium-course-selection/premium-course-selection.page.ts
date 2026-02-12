@@ -17,11 +17,12 @@ import {
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
-import { checkmarkCircle, arrowForwardOutline } from 'ionicons/icons';
+import { checkmarkCircle, arrowForwardOutline, lockClosedOutline } from 'ionicons/icons';
 
 import { DesktopHeaderComponent } from 'src/app/shared/components/desktop-header/desktop-header.component';
 import { MatiereService } from 'src/app/features/services/matiere.service';
 import { UserService } from '../../auth/services/user.service';
+import { EnrollmentService } from 'src/app/features/services/enrollmentService';
 
 @Component({
   selector: 'app-premium-course-selection',
@@ -45,30 +46,28 @@ import { UserService } from '../../auth/services/user.service';
 export class PremiumCourseSelectionPage implements OnInit, OnDestroy {
   matieres: any[] = [];
   selectedMatieres: any[] = [];
+  alreadySubscribedMatieres: string[] = [];
   currentUser: any = null;
   userClasse!: any;
   userNiveau!: string;
-
   readonly MAX_SELECTION = 3;
   isLoading = true;
-
   private sub = new Subscription();
 
   constructor(
     private matiereService: MatiereService,
     private userService: UserService,
+    private enrollmentService: EnrollmentService,
     private router: Router,
     private firestore: Firestore,
   ) {
-    addIcons({
-      checkmarkCircle,
-      arrowForwardOutline,
-    });
+    addIcons({checkmarkCircle,lockClosedOutline,arrowForwardOutline,});
   }
 
   ngOnInit() {
     this.loadUserData();
     this.loadUserAndMatieres();
+    this.loadAlreadySubscribedMatieres();
   }
 
   ngOnDestroy() {
@@ -154,7 +153,29 @@ export class PremiumCourseSelectionPage implements OnInit, OnDestroy {
     this.sub.add(s);
   }
 
+  loadAlreadySubscribedMatieres() {
+    const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+    if (!localUser || !localUser.uid) return;
+    this.enrollmentService.getUserSubscriptions(localUser.uid).subscribe({
+      next: (res) => {
+        if (res.success && res.data) {
+          // On filtre les abonnements du même niveau/classe
+          const matieres = res.data
+            .filter((sub: any) => sub.niveauScolaire === this.userNiveau && sub.classe === this.userClasse)
+            .flatMap((sub: any) => sub.matieres || []);
+          this.alreadySubscribedMatieres = matieres;
+        }
+      },
+      error: () => {},
+    });
+  }
+
+  isMatiereDisabled(matiere: any): boolean {
+    return this.alreadySubscribedMatieres.includes(matiere.nom || matiere.name);
+  }
+
   toggleMatiere(matiere: any) {
+    if (this.isMatiereDisabled(matiere)) return;
     const exists = this.selectedMatieres.some((m) => m.id === matiere.id);
 
     if (exists) {

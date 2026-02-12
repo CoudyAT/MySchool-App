@@ -543,5 +543,53 @@ export class EnrollmentService {
       this.updateEnrollmentStatus(enrollmentId, 'cancelled')
     );
   }
+
+  /**
+   * Récupérer l'abonnement actif d'un utilisateur
+   */
+  getActiveSubscription(userId: string): Observable<{ success: boolean; data?: any }> {
+    return this.api.get<{ success: boolean; data?: any }>(`/subscriptions/active/${userId}`).pipe(
+      catchError(error => {
+        console.error('Erreur récupération abonnement actif:', error);
+        return of({ success: false, data: null });
+      })
+    );
+  }
+
+  /**
+   * Récupérer tous les abonnements d'un utilisateur
+   */
+  getUserSubscriptions(userId: string): Observable<{ success: boolean; data?: any[] }> {
+    return this.api.get<{ success: boolean; data?: any[] }>(`/subscriptions/user/${userId}`).pipe(
+      catchError(error => {
+        console.error('Erreur récupération abonnements:', error);
+        return of({ success: false, data: [] });
+      })
+    );
+  }
+
+  /**
+   * Vérifier l'accès aux cours d'un utilisateur
+   */
+  checkCourseAccess(userId: string): Observable<{ success: boolean; hasAccess?: boolean; data?: any }> {
+    return this.api.get<{ success: boolean; hasAccess?: boolean; data?: any }>(`/subscriptions/check-access/${userId}`).pipe(
+      catchError(error => {
+        console.error('Erreur vérification accès:', error);
+        return of({ success: false, hasAccess: false });
+      })
+    );
+  }
+
+  /**
+   * Annuler un abonnement
+   */
+  cancelSubscription(subscriptionId: string): Observable<{ success: boolean }> {
+    return this.api.post<{ success: boolean }>(`/subscriptions/${subscriptionId}/cancel`, {}).pipe(
+      catchError(error => {
+        console.error('Erreur annulation abonnement:', error);
+        return of({ success: false });
+      })
+    );
+  }
 }
 
