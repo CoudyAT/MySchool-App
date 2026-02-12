@@ -508,27 +508,22 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
    * S'abonner à une classe (ELEMENTAIRE uniquement)
    */
   async subscribeToClasse() {
-    if (!this.selectedClasse) {
-      const toast = await this.toastCtrl.create({
-        message: '⚠️ Veuillez sélectionner une classe',
-        duration: 2000,
-        color: 'warning',
-      });
-      await toast.present();
-      return;
-    }
-
-    console.log('📝 Abonnement à la classe:', this.selectedClasse);
-
-    const totalCourses = this.allCourses.length;
-
+    if (!this.userClasse || !this.userNiveauScolaire) return;
     this.router.navigate(['/payment-method'], {
       state: {
-        type: 'classe',
-        classe: this.selectedClasse,
-        niveauScolaire: this.userNiveauScolaire,
-        totalCourses: totalCourses,
         isClasseSubscription: true,
+        classe: this.userClasse,
+        niveauScolaire: this.userNiveauScolaire,
+        plan: {
+          type: 'ANNUAL',
+          name: `Abonnement ${this.userClasse}`,
+          price: 5000,
+          currency: 'XOF',
+        },
+        userInfo: {
+          classe: this.userClasse,
+          niveau: this.userNiveauScolaire,
+        },
       },
     });
   }

@@ -1,0 +1,14 @@
+<div class="payments-history-container">
+  <h2>Historique des paiements</h2>
+  <div *ngIf="isLoading">Chargement...</div>
+  <div *ngIf="!isLoading && payments.length === 0">Aucun paiement enregistré.</div>
+  <ul *ngIf="!isLoading && payments.length > 0">
+    <li *ngFor="let payment of payments">
+      <div>
+        <strong>{{ payment.amount }} XOF</strong> — {{ payment.method || 'Mobile Money' }}
+      </div>
+      <div>Date : {{ payment.date | date:'dd/MM/yyyy HH:mm' }}</div>
+      <div>Status : {{ payment.status }}</div>
+    </li>
+  </ul>
+</div>

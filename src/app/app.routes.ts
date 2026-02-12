@@ -35,6 +35,7 @@ import { ForgotPasswordPage } from './features/auth/forgot-password/forgot-passw
 import { PaymentOptionComponent } from './features/payments/payment-option/payment-option.component';
 import { VideoDetailPage } from './features/cours/pages/video-detail/video-detail.page';
 import { VideoPlayerPage } from './features/cours/pages/video-player/video-player.page';
+import { PaymentsHistoryPage } from './features/payments/payments-history.page';
 
 export const routes: Routes = [
   {
@@ -243,5 +244,8 @@ export const routes: Routes = [
     path: 'conditions',
     loadComponent: () => import('./features/auth/pages/conditions/conditions.page').then( m => m.ConditionsPage)
   },
-
+  {
+    path: 'payments-history',
+    loadComponent: () => import('./features/payments/payments-history.page').then(m => m.PaymentsHistoryPage),
+  },
 ];

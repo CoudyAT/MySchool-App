@@ -329,10 +329,10 @@ export class AbonnementPage implements OnInit {
    * S'abonner à une classe
    */
   subscribeToClasse(classe: ClasseInfo) {
-    // Naviguer vers la page de paiement avec les informations de la classe
-    this.router.navigate(['/payments'], {
-      queryParams: {
-        type: 'classe',
+    // Naviguer vers la page de sélection de méthode de paiement avec les informations de la classe
+    this.router.navigate(['/payment-method'], {
+      state: {
+        isClasseSubscription: true,
         classe: classe.classe,
         niveauScolaire: classe.niveauScolaire,
         totalCourses: classe.totalCourses,
@@ -395,12 +395,12 @@ export class AbonnementPage implements OnInit {
   subscribeToUserClasse() {
     if (!this.currentUser?.classe) return;
 
-    this.router.navigate(['/payments'], {
-      queryParams: {
-        type: 'classe',
+    this.router.navigate(['/payment-method'], {
+      state: {
+        isClasseSubscription: true,
         classe: this.currentUser.classe,
         niveauScolaire: this.currentUser.niveauScolaire,
-        totalMatieres: this.availableMatieres.length,
+        totalCourses: this.availableMatieres.length,
       },
     });
   }
