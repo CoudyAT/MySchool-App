@@ -36,6 +36,7 @@ import { VideoDetailPage } from './features/cours/pages/video-detail/video-detai
 import { VideoPlayerPage } from './features/cours/pages/video-player/video-player.page';
 import { PdfListPage } from './features/pdf/pdf-list/pdf-list.page';
 import { MatieresPage } from './Admin/pages/matieres/matieres.page';
+import { adminGuard } from './guard/admin-guard';
 
 export const routes: Routes = [
   {
@@ -145,6 +146,7 @@ export const routes: Routes = [
 
   {
     path: 'admin-login',
+    canActivateChild: [adminGuard],
     component: BaseLayoutAdminComponent,
     children: [
       { path: 'list-cours', component: ListCoursPage },
