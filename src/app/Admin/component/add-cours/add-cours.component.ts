@@ -13,6 +13,9 @@ import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 import { updateDoc } from 'firebase/firestore';
 import { MatiereService } from '../../services/matiereService';
 
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+
 @Component({
   selector: 'app-add-cours',
   templateUrl: './add-cours.component.html',
@@ -62,6 +65,8 @@ export class AddCoursComponent implements OnInit {
     private courseService: CourseService,
     private matiereService: MatiereService,
     private firestore: Firestore,
+    private http: HttpClient
+
   ) {
     this.courseForm = this.fb.group({
       title: ['', Validators.required],
@@ -79,8 +84,8 @@ export class AddCoursComponent implements OnInit {
       type: ['En ligne', Validators.required],
       isPublished: [false],
       support: [null],
-      niveauScolaire: ['',Validators.required],
-      classe: ['',Validators.required],
+      niveauScolaire: ['', Validators.required],
+      classe: ['', Validators.required],
       newCategoryName: [''],
     });
 
@@ -96,6 +101,141 @@ export class AddCoursComponent implements OnInit {
     this.loadCategories();
     this.loadMatieres();
   }
+
+  // async importCoursesFromJson() {
+  //   try {
+  //     const data = await firstValueFrom(this.http.get<any[]>('assets/csvtest.json'));
+  //     console.log(`📊 ${data.length} lignes à traiter`);
+
+  //     // 1️⃣ REGROUPER les données par cours (même Description)
+  //     const coursesMap = new Map<string, any[]>();
+
+  //     data.forEach(item => {
+  //       const courseTitle = item["Description"]?.trim();
+  //       if (!courseTitle) return;
+
+  //       if (!coursesMap.has(courseTitle)) {
+  //         coursesMap.set(courseTitle, []);
+  //       }
+  //       coursesMap.get(courseTitle)!.push(item);
+  //     });
+
+  //     console.log(`📚 ${coursesMap.size} cours uniques détectés`);
+
+  //     let success = 0;
+  //     let failed = 0;
+
+  //     // 2️⃣ CRÉER chaque cours avec ses chapitres
+  //     for (const [courseTitle, items] of coursesMap.entries()) {
+  //       try {
+  //         const firstItem = items[0]; // Données communes du cours
+
+  //         // Trouver l'instructeur
+  //         const instructor = this.instructors.find(
+  //           p => p.name?.toLowerCase().trim() === firstItem["Professeurs"]?.toLowerCase().trim()
+  //         );
+
+  //         // Trouver la matière
+  //         const matiere = this.matieres.find(
+  //           m => m.nom?.toLowerCase().trim() === firstItem["Matiéres"]?.toLowerCase().trim()
+  //         );
+
+  //         if (!instructor) {
+  //           console.warn('⚠️ Professeur introuvable:', firstItem["Professeurs"]);
+  //           failed++;
+  //           continue;
+  //         }
+
+  //         if (!matiere) {
+  //           console.warn('⚠️ Matière introuvable:', firstItem["Matiéres"]);
+  //           failed++;
+  //           continue;
+  //         }
+
+  //         // 3️⃣ CRÉER LE COURS d'abord
+  //         const courseData = {
+  //           title: courseTitle,
+  //           category: firstItem["Matiéres"] || "",
+  //           matiereId: matiere.id,
+  //           description: `Cours comprenant ${items.length} chapitre(s)`,
+  //           level: firstItem["Niveau"]?.toUpperCase() || "",
+  //           type: "En ligne",
+  //           duration: 0,
+  //           sessions: "",
+  //           exercises: 0,
+  //           image: instructor.image || null,
+  //           isPublished: true,
+  //           certificateAvailable: false,
+  //           price: 0,
+  //           instructorId: instructor.id,
+  //           instructorName: instructor.name,
+  //           niveauScolaire: firstItem["Niveau"]?.toUpperCase(),
+  //           classe: firstItem["Classe"],
+  //           chapters: [],
+  //           chaptersIds: []
+  //         };
+
+  //         const courseRef = await addDoc(collection(this.firestore, 'courses'), {
+  //           ...courseData,
+  //           createdAt: Timestamp.now(),
+  //           updatedAt: Timestamp.now()
+  //         });
+
+  //         console.log(`✅ Cours créé: ${courseTitle} (ID: ${courseRef.id})`);
+
+  //         // 4️⃣ CRÉER LES CHAPITRES pour ce cours
+  //         const chapterIds: string[] = [];
+
+  //         for (let i = 0; i < items.length; i++) {
+  //           const item = items[i];
+  //           const chapterTitle = item["Chapitres des cours"]?.trim() || `Chapitre ${i + 1}`;
+
+  //           const chapterData = {
+  //             courseId: courseRef.id,
+  //             title: chapterTitle,
+  //             order: i + 1,
+  //             description: item["Type de cours"] || "",
+  //             duration: "0h",
+  //             exercisesIds: [],
+  //             lessonsIds: [],
+  //             createdAt: Timestamp.now(),
+  //             updatedAt: Timestamp.now()
+  //           };
+
+  //           const chapterRef = await addDoc(
+  //             collection(this.firestore, 'chapters'),
+  //             chapterData
+  //           );
+
+  //           chapterIds.push(chapterRef.id);
+  //           console.log(`  📝 Chapitre ${i + 1}/${items.length}: ${chapterTitle}`);
+  //         }
+
+  //         // 5️⃣ METTRE À JOUR le cours avec les IDs des chapitres
+  //         await updateDoc(courseRef, {
+  //           chaptersIds: chapterIds,
+  //           updatedAt: Timestamp.now()
+  //         });
+
+  //         console.log(`  ✅ ${items.length} chapitres ajoutés au cours`);
+  //         success++;
+
+  //       } catch (err) {
+  //         console.error(`❌ Erreur pour le cours "${courseTitle}":`, err);
+  //         failed++;
+  //       }
+  //     }
+
+  //     alert(`🎉 Import terminé!\n\n✅ Cours créés: ${success}\n❌ Échecs: ${failed}`);
+
+  //     // Recharger les données
+  //     this.loadCategories();
+
+  //   } catch (err) {
+  //     console.error('💥 Erreur globale:', err);
+  //     alert('Erreur lors du chargement du fichier JSON');
+  //   }
+  // }
 
   // ==================== GESTION IMAGE ====================
   onFileSelected(event: Event) {
