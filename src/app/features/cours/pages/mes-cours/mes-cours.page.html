@@ -4,13 +4,10 @@
 <ion-header class="ion-no-border mobile-header">
   <ion-toolbar>
     <div class="header-content">
-      <img src="assets/logo.svg" alt="MySchool Logo" class="logo" (click)="goHome()" style="cursor: pointer;" />
-      <ion-button
-          fill="clear"
-          (click)="goToProfile()"
-          class="profile-button">
-          <ion-icon class="profile" name="person-circle-outline"></ion-icon>
-        </ion-button>
+      <img src="assets/logo.svg" alt="MySchool Logo" class="logo" />
+      <ion-button fill="clear" (click)="goToProfile()" class="profile-button">
+        <ion-icon class="profile" name="person-circle-outline"></ion-icon>
+      </ion-button>
     </div>
   </ion-toolbar>
 </ion-header>
@@ -21,9 +18,7 @@
     <h1 class="desktop-main-title">Les cours</h1>
 
     <div class="desktop-search-container">
-      <ion-searchbar
-        placeholder="Rechercher un cours"
-        (ionInput)="searchCourse($event)"
+      <ion-searchbar placeholder="Rechercher un cours" (ionInput)="searchCourse($event)"
         class="desktop-custom-searchbar">
       </ion-searchbar>
       <ion-button fill="clear" class="desktop-filter-button" (click)="openFilters()">
@@ -33,10 +28,7 @@
     </div>
 
     <!-- Segment pour les onglets - DESKTOP -->
-    <ion-segment
-      [value]="selectedSegment"
-      (ionChange)="onSegmentChange($event)"
-      class="desktop-custom-segment">
+    <ion-segment [value]="selectedSegment" (ionChange)="onSegmentChange($event)" class="desktop-custom-segment">
       <ion-segment-button value="cours-en-ligne">
         <ion-label>Cours video</ion-label>
       </ion-segment-button>
@@ -58,27 +50,21 @@
       <h1 class="main-title">Les cours</h1>
 
       <!-- Segment pour les onglets - MOBILE -->
-      <ion-segment
-        [value]="selectedSegment"
-        (ionChange)="onSegmentChange($event)"
-        class="custom-segment">
-      <ion-segment-button value="cours-en-ligne">
-        <ion-label>Cours video</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="cours">
-        <ion-label>Cours en ligne</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="tutoriel">
-        <ion-label>Tutoriel</ion-label>
-      </ion-segment-button>
+      <ion-segment [value]="selectedSegment" (ionChange)="onSegmentChange($event)" class="custom-segment">
+        <ion-segment-button value="cours-en-ligne">
+          <ion-label>Cours video</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="cours">
+          <ion-label>Cours en ligne</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="tutoriel">
+          <ion-label>Tutoriel</ion-label>
+        </ion-segment-button>
       </ion-segment>
 
       <!-- Barre de recherche et filtres - MOBILE -->
       <div class="search-filter-container">
-        <ion-searchbar
-          placeholder="Rechercher un cours"
-          (ionInput)="searchCourse($event)"
-          class="custom-searchbar">
+        <ion-searchbar placeholder="Rechercher un cours" (ionInput)="searchCourse($event)" class="custom-searchbar">
         </ion-searchbar>
         <ion-button fill="clear" class="filter-button" (click)="openFilters()">
           <ion-icon slot="start" name="options-outline"></ion-icon>
@@ -104,16 +90,10 @@
       <ng-container *ngFor="let category of getFilteredCategories()">
         <h2 class="category-title">{{ category }}</h2>
         <div class="courses-row">
-          <ion-card
-            *ngFor="let course of getCoursesByCategory(category)"
-            class="course-card"
+          <ion-card *ngFor="let course of getCoursesByCategory(category)" class="course-card"
             (click)="openCourse(course)">
             <div class="card-image">
-             <img
-              [src]="course?.image"
-              alt="Instructeur"
-              class="instructor-image"
-            />
+              <img [src]="course?.image" alt="Instructeur" class="instructor-image" />
               <div class="card-badge">
                 <ion-icon name="lock-open-outline"></ion-icon>
               </div>

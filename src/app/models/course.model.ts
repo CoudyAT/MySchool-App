@@ -81,6 +81,7 @@ export interface Course {
   sessions: string;
   exercises: number;
   image: string;
+  matiereId: string;
   isPublished: boolean;
   certificateAvailable?: boolean;
   price?: number;
@@ -108,6 +109,8 @@ export interface Course {
   support?: string;
   isOnline?: boolean;
   onlineExtras?: OnlineCourseExtras;
+  niveauScolaire?: string;
+  classe?: string;
 }
 
 export interface OnlineCourseExtras {

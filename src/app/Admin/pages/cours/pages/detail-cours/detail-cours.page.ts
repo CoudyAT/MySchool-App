@@ -3,13 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 import { IonicModule } from "@ionic/angular";
-import { Chapter, Course } from 'src/app/models/course.model';
+import { Chapter, Course, Matiere } from 'src/app/models/course.model';
 import { CourseService } from 'src/app/features/services/courseService';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastController, AlertController } from '@ionic/angular';
 import { ChapterService } from 'src/app/features/services/chapter.service';
 import { LessonService } from 'src/app/features/services/lesson.service';
 import { ExerciseService } from 'src/app/features/services/exercise.service';
+import { MatiereService } from 'src/app/features/services/matiere.service';
 
 @Component({
   selector: 'app-detail-cours',
@@ -24,10 +25,11 @@ export class DetailCoursPage implements OnInit {
     private route: ActivatedRoute,
     private toastCtrl: ToastController,
     private chapterService: ChapterService,
+    private matiereService: MatiereService,
     private lessonService: LessonService,
     private exerciseService: ExerciseService,
     private router: Router
-  ) {}
+  ) { }
   course!: Course;
   courseId: string = '';
   isAddChapterModalOpen = false;
@@ -35,6 +37,9 @@ export class DetailCoursPage implements OnInit {
   isAddExerciseModalOpen = false;
   isSubmitting = false;
   currentChapterId: string = '';
+  matieres: Matiere[] = [];
+  selectedMatiereId: string | null = null;
+  isLinkingMatiere = false;
 
   // Nouveau chapitre
   newChapter: any = {
@@ -76,6 +81,7 @@ export class DetailCoursPage implements OnInit {
   selectedExerciseId: string = '';
 
   ngOnInit(): void {
+    this.loadMatieres();
     this.courseId = this.route.snapshot.paramMap.get('id')!;
 
     if (!this.courseId) {
@@ -86,10 +92,55 @@ export class DetailCoursPage implements OnInit {
     this.courseService.getCourse(this.courseId).subscribe({
       next: (response: Course) => {
         this.course = response;
+
         console.log('Détails du cours chargés:', this.courseId);
         this.loadChapters();
       },
     });
+  }
+
+  private loadMatieres() {
+    this.matiereService.getMatieresActives().subscribe({
+      next: (matieres) => {
+        this.matieres = matieres;
+      },
+      error: (err) => {
+        console.error('Erreur chargement matières', err);
+        this.presentToast('Impossible de charger les matières', 'danger');
+      }
+    });
+  }
+
+  openLinkMatiere() {
+    this.isLinkingMatiere = true;
+  }
+
+  closeLinkMatiere() {
+    this.isLinkingMatiere = false;
+  }
+
+  saveMatiereLink() {
+    if (!this.selectedMatiereId) {
+      this.presentToast('Veuillez sélectionner une matière', 'warning');
+      return;
+    }
+
+    this.isSubmitting = true;
+
+    // this.courseService.updateCourse(this.course.id, {
+    //   matiereId: this.selectedMatiereId
+    // }).subscribe({
+    //   next: () => {
+    //     this.course.matiereId = this.selectedMatiereId!;
+    //     this.presentToast('Matière liée avec succès', 'success');
+    //     this.closeLinkMatiere();
+    //   },
+    //   error: (err) => {
+    //     console.error('Erreur liaison matière', err);
+    //     this.presentToast('Erreur lors de la liaison', 'danger');
+    //   },
+    //   complete: () => this.isSubmitting = false
+    // });
   }
 
   loadChapters() {
@@ -112,15 +163,13 @@ export class DetailCoursPage implements OnInit {
         next: async (response) => {
           this.course.isPublished = updatedStatus;
           console.log(
-            `Le cours a été ${
-              updatedStatus ? 'publié' : 'dépublié'
+            `Le cours a été ${updatedStatus ? 'publié' : 'dépublié'
             } avec succès.`
           );
           await this.toastCtrl
             .create({
-              message: `Le cours a été ${
-                updatedStatus ? 'publié' : 'dépublié'
-              } avec succès.`,
+              message: `Le cours a été ${updatedStatus ? 'publié' : 'dépublié'
+                } avec succès.`,
               duration: 2000,
               color: 'success',
             })
@@ -261,7 +310,7 @@ export class DetailCoursPage implements OnInit {
           this.chapterService
             .updateChapter(this.currentChapterId, { lessonsIds: lessonData })
             .subscribe({
-              next: () => {},
+              next: () => { },
               error: (err) => {
                 console.error(
                   'Erreur mise à jour chapitre après ajout leçon',
@@ -306,7 +355,7 @@ export class DetailCoursPage implements OnInit {
               exercisesIds: exerciseData,
             })
             .subscribe({
-              next: () => {},
+              next: () => { },
               error: (err) => {
                 console.error(
                   'Erreur mise à jour chapitre après ajout exercice',

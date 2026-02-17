@@ -32,6 +32,15 @@ import {
 } from 'ionicons/icons';
 import { DesktopHeaderComponent } from 'src/app/shared/components/desktop-header/desktop-header.component';
 
+interface AppUser {
+  firstName?: string;
+  lastName?: string;
+  level?: string;
+  classe?: string;
+  niveauScolaire?: string;
+  role?: { libelle: string };
+}
+
 @Component({
   selector: 'app-mes-cours',
   templateUrl: './mes-cours.page.html',
@@ -55,6 +64,7 @@ import { DesktopHeaderComponent } from 'src/app/shared/components/desktop-header
     DesktopHeaderComponent,
   ],
 })
+
 export class MesCoursPage implements OnInit {
   courses: Course[] = [];
   filteredCourses: Course[] = [];
@@ -64,6 +74,7 @@ export class MesCoursPage implements OnInit {
   isLoading = true;
   selectedSegment: 'cours' | 'cours-en-ligne' | 'tutoriel' = 'cours';
 
+  currentUser: AppUser | null = null;
   constructor(
     private router: Router,
     private courseService: CourseService,
@@ -88,6 +99,81 @@ export class MesCoursPage implements OnInit {
     this.subscription.unsubscribe();
   }
 
+  private loadCurrentUser() {
+    try {
+      const userStr = localStorage.getItem('currentUser');
+      if (userStr) {
+        this.currentUser = JSON.parse(userStr) as AppUser;
+        console.log('Utilisateur chargé depuis localStorage:', this.currentUser.classe, this.currentUser.level);
+      } else {
+        console.warn('Aucun utilisateur trouvé dans localStorage');
+        // Option : rediriger vers login ?
+        // this.router.navigate(['/login']);
+      }
+    } catch (err) {
+      console.error('Erreur lors de la lecture de currentUser', err);
+      this.currentUser = null;
+    }
+  }
+
+  private applyAllFilters() {
+    let temp = [...this.courses];
+
+    // 1. Filtre par type (segment)
+    temp = this.filterBySegment(temp);
+
+    // 2. Filtre par niveau / classe de l'utilisateur
+    if (this.currentUser) {
+      temp = temp.filter(course => {
+        // Adaptez selon les vrais noms de champs dans ton modèle Course
+        const matchLevel = !course.level || course.level === this.currentUser?.level;
+        const matchClasse = !course.classe || course.classe === this.currentUser?.classe;
+        // ou : course.niveauScolaire === this.currentUser?.niveauScolaire
+
+        return matchLevel && matchClasse;
+      });
+    }
+
+    this.filteredCourses = temp;
+  }
+
+  private filterBySegment(courses: Course[]): Course[] {
+    switch (this.selectedSegment) {
+      case 'cours':
+        return courses.filter(c => c.type === 'Présentiel');
+      case 'cours-en-ligne':
+        return courses.filter(c => c.type === 'En ligne');
+      case 'tutoriel':
+        return courses.filter(c => c.type === 'Tuto');
+      default:
+        return courses;
+    }
+  }
+
+  searchCourse(event: any) {
+    const term = (event.target.value || '').toLowerCase().trim();
+
+    let base = [...this.courses];
+    base = this.filterBySegment(base);
+
+    if (this.currentUser) {
+      base = base.filter(course => {
+        const matchLevel = !course.level || course.level === this.currentUser?.level;
+        const matchClasse = !course.classe || course.classe === this.currentUser?.classe;
+        return matchLevel && matchClasse;
+      });
+    }
+
+    if (term) {
+      this.filteredCourses = base.filter(c =>
+        c.title.toLowerCase().includes(term) ||
+        (c.category || '').toLowerCase().includes(term)
+      );
+    } else {
+      this.filteredCourses = base;
+    }
+  }
+
   goToProfile() {
     this.router.navigate(['/profile']);
   }
@@ -102,23 +188,7 @@ export class MesCoursPage implements OnInit {
     const sub = this.courseService.getAllCourses().subscribe({
       next: (courses) => {
         this.courses = courses;
-        this.filterCoursesBySegment();
-
-        // Extract unique non-empty category strings from the loaded courses
-        this.categories = Array.from(
-          new Set<string>(
-            this.courses
-              .map((c) => c.category)
-              .filter(
-                (cat): cat is string =>
-                  typeof cat === 'string' && cat.trim() !== '',
-              ),
-          ),
-        );
-
-        console.log('Cours chargés :', this.courses.length);
-        console.log('Catégories chargées :', this.categories);
-
+        this.applyAllFilters();
         this.isLoading = false;
       },
       error: (err) => {
@@ -175,34 +245,34 @@ export class MesCoursPage implements OnInit {
     );
   }
 
-  searchCourse(event: any) {
-    const term = event.target.value?.toLowerCase().trim() ?? '';
+  // searchCourse(event: any) {
+  //   const term = event.target.value?.toLowerCase().trim() ?? '';
 
-    // Appliquer le filtre de recherche sur les cours déjà filtrés par segment
-    let baseCourses: Course[] = [];
+  //   // Appliquer le filtre de recherche sur les cours déjà filtrés par segment
+  //   let baseCourses: Course[] = [];
 
-    switch (this.selectedSegment) {
-      case 'cours':
-        baseCourses = this.courses.filter(
-          (c) => c.type !== 'En ligne' && c.type !== 'Tuto',
-        );
-        break;
-      case 'cours-en-ligne':
-        baseCourses = this.courses.filter((c) => c.type === 'En ligne');
-        break;
-      case 'tutoriel':
-        baseCourses = this.courses.filter((c) => c.type === 'Tuto');
-        break;
-      default:
-        baseCourses = this.courses;
-    }
+  //   switch (this.selectedSegment) {
+  //     case 'cours':
+  //       baseCourses = this.courses.filter(
+  //         (c) => c.type !== 'En ligne' && c.type !== 'Tuto',
+  //       );
+  //       break;
+  //     case 'cours-en-ligne':
+  //       baseCourses = this.courses.filter((c) => c.type === 'En ligne');
+  //       break;
+  //     case 'tutoriel':
+  //       baseCourses = this.courses.filter((c) => c.type === 'Tuto');
+  //       break;
+  //     default:
+  //       baseCourses = this.courses;
+  //   }
 
-    this.filteredCourses = baseCourses.filter(
-      (c) =>
-        c.title.toLowerCase().includes(term) ||
-        c.category.toLowerCase().includes(term),
-    );
-  }
+  //   this.filteredCourses = baseCourses.filter(
+  //     (c) =>
+  //       c.title.toLowerCase().includes(term) ||
+  //       c.category.toLowerCase().includes(term),
+  //   );
+  // }
 
   openCourse(course: Course) {
     console.log('Ouvrir le cours:', course.id);

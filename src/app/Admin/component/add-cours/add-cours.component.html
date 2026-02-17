@@ -9,7 +9,7 @@
         Le titre est requis
       </div>
     </div>
-       <!-- Professeur / Formateur -->
+    <!-- Professeur / Formateur -->
     <div class="form-group">
       <label for="instructor" class="form-label">
         Professeur <span class="required">*</span>
@@ -63,7 +63,7 @@
         <option value="Tuto">Tuto</option>
       </select>
     </div>
-        <!-- Description -->
+    <!-- Description -->
     <div class="form-group full-width">
       <label for="description" class="form-label">Description</label>
       <textarea id="description" formControlName="description" class="form-textarea"
@@ -77,18 +77,18 @@
     <!-- Niveau -->
     <div class="form-group">
       <label for="niveauScolaire" class="form-label">Niveau</label>
-      <select id="niveauScolaire" formControlName="niveauScolaire" class="form-input" 
-      (change)="onNiveauEtudeChange($any($event.target).value)">
+      <select id="niveauScolaire" formControlName="niveauScolaire" class="form-input"
+        (change)="onNiveauEtudeChange($any($event.target).value)">
         <option value="">Sélectionnez un niveau</option>
         <option *ngFor="let niveau of niveauxEtude" [value]="niveau.value">{{ niveau.label }}</option>
       </select>
     </div>
-     <!-- Classe -->
+    <!-- Classe -->
     <div class="form-group">
       <label for="classe" class="form-label">Classe</label>
-      <select id="classe" formControlName="classe" class="form-input" >
+      <select id="classe" formControlName="classe" class="form-input">
         <option value="">Sélectionnez une classe</option>
-        <option  *ngFor="let classe of classesDisponibles" [value]="classe">{{ classe }}</option>
+        <option *ngFor="let classe of classesDisponibles" [value]="classe">{{ classe }}</option>
       </select>
     </div>
     <!-- Matière -->
@@ -97,24 +97,17 @@
         Matière <span class="required">*</span>
       </label>
 
-      <select
-        id="matiere"
-        formControlName="matiereId"
-        class="form-input"
-      >
+      <select id="matiere" formControlName="matiereId" class="form-input">
         <option value="">Sélectionnez une matière</option>
         <option *ngFor="let matiere of matieres" [value]="matiere.id">
           {{ matiere.nom }} {{ matiere.classe }}
         </option>
       </select>
 
-      <div
-        *ngIf="
+      <div *ngIf="
           courseForm.get('matiereId')?.invalid &&
           courseForm.get('matiereId')?.touched
-        "
-        class="error-message"
-      >
+        " class="error-message">
         Veuillez sélectionner une matière
       </div>
     </div>
@@ -122,7 +115,7 @@
     <!-- Sessions -->
     <div class="form-group">
       <label for="sessions" class="form-label">Lien video</label>
-      <input id="sessions" type="text" formControlName="sessions" class="form-input"  />
+      <input id="sessions" type="text" formControlName="sessions" class="form-input" />
     </div>
     <!-- Durée -->
     <div class="form-group">
@@ -133,7 +126,7 @@
     <div class="form-group">
       <label for="price" class="form-label">Prix (FCFA)</label>
       <input id="price" type="number" formControlName="price" class="form-input" placeholder="0" min="0" />
-    </div> 
+    </div>
     <!-- Upload de l'image de couverture -->
     <div class="form-group full-width">
       <label class="form-label">Image de couverture</label>
@@ -174,5 +167,8 @@
     <button type="submit" [disabled]="courseForm.invalid" class="btn-primary">
       Créer le cours
     </button>
+    <!-- <button type="button" (click)="importCoursesFromJson()">
+      Importer depuis JSON
+    </button> -->
   </div>
 </form>
