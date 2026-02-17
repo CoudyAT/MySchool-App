@@ -58,6 +58,60 @@ export class CourseService {
     return this.api.get<Course[]>(`/courses/type/${type}`);
   }
 
+  // Récupérer les cours par niveau scolaire
+  getCoursesByNiveauScolaire(niveauScolaire: string): Observable<any> {
+    console.log('\n🌐 === API CALL: getCoursesByNiveauScolaire ===');
+    console.log('📍 URL:', `/courses/niveau/${niveauScolaire}`);
+    console.log('📊 Paramètre:', niveauScolaire);
+
+    return this.api.get<any>(`/courses/niveau/${niveauScolaire}`).pipe(
+      map((response) => {
+        console.log('✅ Réponse de l\'API getCoursesByNiveauScolaire:');
+        console.log('   - success:', response?.success);
+        console.log('   - Nombre de cours:', response?.data?.length || 0);
+        if (response?.data?.length > 0) {
+          console.log('   - Premier cours:', response.data[0]);
+        }
+        console.log('🌐 === FIN API CALL ===\n');
+        return response;
+      })
+    );
+  }
+
+  // Récupérer les matières par niveau scolaire
+  getMatieresByNiveau(niveau: string): Observable<any> {
+    console.log('\n🌐 === API CALL: getMatieresByNiveau ===');
+    console.log('📍 URL:', `/matieres/niveau/${niveau}`);
+    console.log('📊 Paramètre:', niveau);
+
+    return this.api.get<any>(`/matieres/niveau/${niveau}`).pipe(
+      map((response) => {
+        console.log('✅ Réponse de l\'API getMatieresByNiveau:');
+        console.log('   - success:', response?.success);
+        console.log('   - Nombre de matières:', response?.data?.length || 0);
+        console.log('🌐 === FIN API CALL ===\n');
+        return response;
+      })
+    );
+  }
+
+  // Récupérer les matières par classe précise
+  getMatieresByClasse(classe: string): Observable<any> {
+    console.log('\n🌐 === API CALL: getMatieresByClasse ===');
+    console.log('📍 URL:', `/matieres/classe/${classe}`);
+    console.log('📊 Paramètre:', classe);
+
+    return this.api.get<any>(`/matieres/classe/${classe}`).pipe(
+      map((response) => {
+        console.log('✅ Réponse de l\'API getMatieresByClasse:');
+        console.log('   - success:', response?.success);
+        console.log('   - Nombre de matières:', response?.data?.length || 0);
+        console.log('🌐 === FIN API CALL ===\n');
+        return response;
+      })
+    );
+  }
+
   // Récupérer toutes les catégories uniques
   getCategories(): Observable<string[]> {
     return this.getCourses().pipe(
@@ -99,97 +153,3 @@ export class CourseService {
     return this.api.get<any[]>(`/enrollments/course/${courseId}`);
   }
 }
-
-// import { Injectable, inject } from '@angular/core';
-// import { Observable, map } from 'rxjs';
-// import { Course } from 'src/app/models/course.model';
-// import { ApiService } from 'src/app/core/services/api.service';
-
-// @Injectable({
-//   providedIn: 'root',
-// })
-// export class CourseService {
-//   private readonly api = inject(ApiService);
-
-//   // GET ALL COURSES (RAW → NORMALIZED)
-//   getAllCourses(): Observable<Course[]> {
-//     return this.api.get<any>('/courses').pipe(
-//       map((res) => {
-//         if (!res?.success || !Array.isArray(res.data)) return [];
-
-//         return res.data.map((raw: any) => this.normalizeCourse(raw));
-//       })
-//     );
-//   }
-
-//   // Normalisation complète
-//   private normalizeCourse(raw: any): Course {
-//     return {
-//       id: raw.id,
-//       title: this.fixEncoding(raw.title),
-//       description: this.fixEncoding(raw.description),
-//       category: this.fixEncoding(raw.category),
-//       type: raw.type,
-//       level: this.normalizeLevel(raw.level),
-//       duration: this.normalizeDuration(raw.duration),
-
-//       sessions: raw.sessions ?? 0,
-//       exercises: raw.exercises ?? 0,
-//       image: raw.image,
-//       isPublished: raw.isPublished,
-//       certificateAvailable: raw.certificateAvailable,
-
-//       price: raw.price ?? 0,
-//       rating: raw.rating ?? 0,
-
-//       chapters: raw.chapters ?? [],
-//       chaptersIds: raw.chaptersIds ?? [],
-
-//       createdAt: this.firebaseDate(raw.createdAt),
-//       updatedAt: this.firebaseDate(raw.updatedAt),
-
-//       enrolled: false,
-//       maxRating: 5,
-//       levels: [],
-//     };
-//   }
-
-//   // Répare JSON mal encodé (� → é, è, ê…)
-//   private fixEncoding(text: string): string {
-//     if (!text) return '';
-
-//     try {
-//       return decodeURIComponent(escape(text));
-//     } catch {
-//       return text;
-//     }
-//   }
-
-//   private normalizeLevel(
-//     level: string
-//   ): 'DEBUTANT' | 'INTERMEDIAIRE' | 'AVANCE' {
-//     const map: any = {
-//       beginner: 'DEBUTANT',
-//       Beginner: 'DEBUTANT',
-//       DEBUTANT: 'DEBUTANT',
-//       INTERMEDIAIRE: 'INTERMEDIAIRE',
-//       INTERMEDIATE: 'INTERMEDIAIRE',
-//       AVANCE: 'AVANCE',
-//       advanced: 'AVANCE',
-//     };
-
-//     return map[level] ?? 'DEBUTANT';
-//   }
-
-//   private normalizeDuration(value: any): number {
-//     if (typeof value === 'number') return value;
-//     if (typeof value === 'string')
-//       return parseInt(value.replace(/\D/g, ''), 10);
-//     return 0;
-//   }
-
-//   private firebaseDate(ts: any): Date {
-//     if (!ts?._seconds) return new Date();
-//     return new Date(ts._seconds * 1000);
-//   }
-// }

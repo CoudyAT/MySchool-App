@@ -2,12 +2,266 @@
 <app-desktop-header></app-desktop-header>
 <ion-header [translucent]="true" class="subscriptions-header">
   <ion-toolbar>
-    <ion-title>Mes abonnements</ion-title>
+    <ion-title>
+      <ng-container *ngIf="isElementaireLevel && hasSpecificClasse">
+        Matières - {{ currentUser?.classe }}
+      </ng-container>
+      <ng-container *ngIf="isElementaireLevel && !hasSpecificClasse">
+        {{ showClasseSelection ? 'Choisir une classe' : 'Matières et cours' }}
+      </ng-container>
+      <ng-container *ngIf="!isElementaireLevel">
+        Matières disponibles
+      </ng-container>
+    </ion-title>
+    <ion-button
+      slot="start"
+      fill="clear"
+      *ngIf="showMatieres && !showMatieresOnly"
+      (click)="backToClasseSelection()">
+      <ion-icon name="arrow-back-outline"></ion-icon>
+    </ion-button>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="subscriptions-content">
-  
+
+  <!-- Chargement -->
+  <div *ngIf="isLoading" class="loading-state">
+    <ion-icon name="hourglass-outline"></ion-icon>
+    <p>Chargement...</p>
+  </div>
+
+  <!-- Sélection des classes -->
+  <div *ngIf="showClasseSelection && !isLoading" class="classes-container">
+
+    <!-- Aucune classe disponible -->
+    <div *ngIf="availableClasses.length === 0 && isElementaireLevel" class="empty-state">
+      <div class="empty-icon">
+        <ion-icon name="school-outline"></ion-icon>
+      </div>
+      <h2>Aucune classe disponible</h2>
+      <p *ngIf="!currentUser?.niveauScolaire">
+        Veuillez définir votre niveau scolaire dans votre profil
+      </p>
+      <p *ngIf="currentUser?.niveauScolaire">
+        Aucune classe n'est disponible pour le niveau {{ currentUser?.niveauScolaire }}
+      </p>
+      <ion-button
+        fill="solid"
+        routerLink="/profile"
+        class="empty-action-button">
+        <ion-icon slot="start" name="person-outline"></ion-icon>
+        Modifier mon profil
+      </ion-button>
+    </div>
+
+    <!-- Liste des classes -->
+    <div class="classes-grid" *ngIf="availableClasses.length > 0 && isElementaireLevel">
+      <ion-card
+        *ngFor="let classe of availableClasses"
+        class="classe-card"
+        (click)="selectClasse(classe)">
+        <ion-card-header>
+          <div class="classe-header">
+            <ion-icon name="school" class="classe-icon"></ion-icon>
+            <ion-card-title>{{ classe.classe }}</ion-card-title>
+          </div>
+          <ion-badge color="primary">{{ classe.niveauScolaire }}</ion-badge>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="classe-stats">
+            <div class="stat-item">
+              <ion-icon name="book-outline"></ion-icon>
+              <span>{{ classe.matieres.length }} matière(s)</span>
+            </div>
+            <div class="stat-item">
+              <ion-icon name="play-circle-outline"></ion-icon>
+              <span>{{ classe.totalCourses }} cours</span>
+            </div>
+          </div>
+          <ion-button
+            expand="block"
+            fill="solid"
+            (click)="subscribeToClasse(classe); $event.stopPropagation()">
+            <ion-icon slot="start" name="card-outline"></ion-icon>
+            S'abonner
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+
+<!-- Affichage des matières uniquement (SECONDAIRE, MOYEN, UNIVERSITAIRE ou ELEMENTAIRE avec classe) -->
+  <div *ngIf="showMatieresOnly && !isLoading" class="matieres-only-container">
+
+    <!-- En-tête -->
+    <div class="matieres-header">
+      <div class="header-content">
+        <!-- Si l'utilisateur a une classe spécifique (ELEMENTAIRE avec classe définie) -->
+        <ng-container *ngIf="hasSpecificClasse">
+          <h2>Matières de {{ currentUser?.classe }}</h2>
+          <ion-badge color="primary">{{ currentUser?.niveauScolaire }}</ion-badge>
+          <p>{{ availableMatieres.length }} matière(s) disponible(s) pour votre classe</p>
+          <p class="info-text">
+            <ion-icon name="information-circle-outline"></ion-icon>
+            Explorez les cours de chaque matière et abonnez-vous pour y accéder
+          </p>
+        </ng-container>
+
+        <!-- Si pas de classe spécifique (SECONDAIRE, MOYEN, UNIVERSITAIRE) -->
+        <ng-container *ngIf="!hasSpecificClasse">
+          <h2>Matières disponibles</h2>
+          <ion-badge color="primary">{{ currentUser?.niveauScolaire }}</ion-badge>
+          <p>{{ availableMatieres.length }} matière(s) disponible(s)</p>
+          <p class="info-text">
+            <ion-icon name="information-circle-outline"></ion-icon>
+            Sélectionnez 3 matières pour votre abonnement
+          </p>
+        </ng-container>
+      </div>
+
+      <!-- Bouton d'abonnement adapté selon le cas -->
+      <ion-button
+        expand="block"
+        fill="solid"
+        size="large"
+        *ngIf="hasSpecificClasse"
+        (click)="subscribeToUserClasse()">
+        <ion-icon slot="start" name="card-outline"></ion-icon>
+        S'abonner à ma classe
+      </ion-button>
+
+      <ion-button
+        expand="block"
+        fill="solid"
+        size="large"
+        *ngIf="!hasSpecificClasse"
+        (click)="goToMatiereSelection()">
+        <ion-icon slot="start" name="card-outline"></ion-icon>
+        Choisir mes 3 matières
+      </ion-button>
+    </div>
+
+    <!-- Aucune matière disponible -->
+    <div *ngIf="availableMatieres.length === 0" class="empty-state">
+      <div class="empty-icon">
+        <ion-icon name="book-outline"></ion-icon>
+      </div>
+      <h2>Aucune matière disponible</h2>
+      <p *ngIf="currentUser?.niveauScolaire && !hasSpecificClasse">
+        Aucune matière n'est disponible pour le niveau {{ currentUser?.niveauScolaire }}
+      </p>
+      <p *ngIf="hasSpecificClasse">
+        Aucune matière n'est disponible pour la classe {{ currentUser?.classe }}
+      </p>
+    </div>
+
+    <!-- Accordion des matières -->
+    <ion-accordion-group *ngIf="availableMatieres.length > 0">
+      <ion-accordion *ngFor="let matiere of availableMatieres" [value]="matiere.matiereId">
+        <ion-item slot="header" color="light">
+          <ion-icon name="book" slot="start"></ion-icon>
+          <ion-label>
+            <h2>{{ matiere.matiereName }}</h2>
+            <p>{{ matiere.courses.length }} cours - {{ matiere.totalDuration }} min</p>
+          </ion-label>
+        </ion-item>
+
+        <div class="matiere-courses" slot="content">
+          <ion-card
+            *ngFor="let course of matiere.courses"
+            class="course-card"
+            (click)="viewCourseDetail(course)">
+            <ion-card-header>
+              <ion-card-title>{{ course.title }}</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <p class="course-description">{{ course.description }}</p>
+              <div class="course-meta">
+                <ion-badge color="secondary">{{ course.level }}</ion-badge>
+                <ion-badge color="tertiary">{{ course.type }}</ion-badge>
+                <span class="course-duration">
+                  <ion-icon name="time-outline"></ion-icon>
+                  {{ course.duration }} min
+                </span>
+                <span class="course-sessions">
+                  <ion-icon name="calendar-outline"></ion-icon>
+                  {{ course.sessions }} sessions
+                </span>
+              </div>
+              <div class="course-rating" *ngIf="course.rating">
+                <ion-icon name="star"></ion-icon>
+                <span>{{ course.rating }} / 5</span>
+              </div>
+            </ion-card-content>
+          </ion-card>
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
+  </div>
+
+  <!-- Affichage des matières et cours d'une classe -->
+  <div *ngIf="showMatieres && selectedClasse" class="matieres-container">
+
+    <!-- En-tête de la classe -->
+    <div class="classe-info-header">
+      <h2>{{ selectedClasse.classe }}</h2>
+      <ion-badge color="primary">{{ selectedClasse.niveauScolaire }}</ion-badge>
+      <p>{{ selectedClasse.totalCourses }} cours dans {{ selectedClasse.matieres.length }} matière(s)</p>
+      <ion-button
+        expand="block"
+        fill="solid"
+        (click)="subscribeToClasse(selectedClasse)">
+        <ion-icon slot="start" name="card-outline"></ion-icon>
+        S'abonner à cette classe
+      </ion-button>
+    </div>
+
+    <!-- Accordion pour les matières -->
+    <ion-accordion-group>
+      <ion-accordion *ngFor="let matiere of selectedClasse.matieres" [value]="matiere.matiereId">
+        <ion-item slot="header" color="light">
+          <ion-icon name="book" slot="start"></ion-icon>
+          <ion-label>
+            <h2>{{ matiere.matiereName }}</h2>
+            <p>{{ matiere.courses.length }} cours - {{ matiere.totalDuration }} min</p>
+          </ion-label>
+        </ion-item>
+
+        <div class="matiere-courses" slot="content">
+          <ion-card
+            *ngFor="let course of matiere.courses"
+            class="course-card"
+            (click)="viewCourseDetail(course)">
+            <ion-card-header>
+              <ion-card-title>{{ course.title }}</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <p class="course-description">{{ course.description }}</p>
+              <div class="course-meta">
+                <ion-badge color="secondary">{{ course.level }}</ion-badge>
+                <ion-badge color="tertiary">{{ course.type }}</ion-badge>
+                <span class="course-duration">
+                  <ion-icon name="time-outline"></ion-icon>
+                  {{ course.duration }} min
+                </span>
+                <span class="course-sessions">
+                  <ion-icon name="calendar-outline"></ion-icon>
+                  {{ course.sessions }} sessions
+                </span>
+              </div>
+              <div class="course-rating" *ngIf="course.rating">
+                <ion-icon name="star"></ion-icon>
+                <span>{{ course.rating }} / 5</span>
+              </div>
+            </ion-card-content>
+          </ion-card>
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
+  </div>
+
+  <!-- Mes abonnements (section existante) -->
   <!-- Aucun abonnement -->
   <div *ngIf="subscriptions.length === 0" class="empty-state">
     <div class="empty-icon">
@@ -15,8 +269,8 @@
     </div>
     <h2>Aucun abonnement</h2>
     <p>Vous n'avez actuellement aucun abonnement actif</p>
-    <ion-button 
-      fill="solid" 
+    <ion-button
+      fill="solid"
       (click)="goToCourses()"
       class="empty-action-button">
       <ion-icon slot="start" name="school-outline"></ion-icon>
@@ -26,13 +280,13 @@
 
   <!-- Table des abonnements -->
   <div class="table-container" *ngIf="subscriptions.length > 0">
-    
+
     <!-- Header avec recherche et filtres -->
     <div class="table-header">
       <div class="search-box">
         <ion-icon name="search-outline" class="search-icon"></ion-icon>
-        <input 
-          type="text" 
+        <input
+          type="text"
           placeholder="Rechercher un abonnement..."
           [(ngModel)]="searchText"
           (keyup)="filterSubscriptions()"
@@ -41,7 +295,7 @@
 
       <div class="filter-select">
         <ion-icon name="funnel-outline" class="filter-icon"></ion-icon>
-        <select 
+        <select
           [(ngModel)]="selectedStatus"
           (change)="filterSubscriptions()"
           class="status-select">
@@ -66,13 +320,13 @@
           </tr>
         </thead>
         <tbody>
-          <tr 
+          <tr
             *ngFor="let sub of filteredSubscriptions; let i = index"
             class="table-row"
             [class.active]="sub.status === 'ACTIVE'"
             [class.pending]="sub.status === 'PENDING'"
             [class.expired]="sub.status === 'EXPIRED'">
-            
+
             <!-- Plan -->
             <td class="col-user">
               <div class="user-cell">

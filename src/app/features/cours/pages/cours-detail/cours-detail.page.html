@@ -28,21 +28,32 @@
       <p class="course-description">{{course?.description}}</p>
       <p class="course-description">Professeur :<strong>{{ course?.instructorName || 'Non défini' }}</strong></p>
 
-      <!-- Info sessions et exercices -->
-      <div class="course-meta">
-        <span class="meta-item">
-          <ion-icon name="bar-chart-outline"></ion-icon>
-          <strong>{{course?.niveauScolaire || 'Facile'}}</strong>
-        </span>
-        <span class="meta-item">
-          <ion-icon name="time-outline"></ion-icon>
-          <strong>{{course?.duration}} heure</strong>
-        </span>
+      <!-- Info sessions et exercices + Bouton abonnement -->
+      <div class="course-meta-row">
+        <div class="course-meta">
+          <span class="meta-item">
+            <ion-icon name="bar-chart-outline"></ion-icon>
+            <strong>{{course?.niveauScolaire || 'Facile'}}</strong>
+          </span>
+          <span class="meta-item">
+            <ion-icon name="time-outline"></ion-icon>
+            <strong>{{course?.duration}} heure</strong>
+          </span>
+        </div>
+
+        <!-- Bouton d'abonnement compact pour les non-inscrits -->
+        <ion-button
+          *ngIf="!isUserEnrolled"
+          class="subscription-btn-compact"
+          (click)="openSubscription()"
+        >
+          <ion-icon name="lock-open-outline" slot="start"></ion-icon>
+          {{ subscriptionButtonText }}
+        </ion-button>
       </div>
 
       <!-- Texte Call-to-Action -->
       <div class="cta-text">
-        <p>Ce cours en libre accès vous intéresse ?</p>
         <ion-button
           *ngIf="isUserEnrolled"
           expand="block"
@@ -56,33 +67,24 @@
             >
           </div>
         </ion-button>
-        <!-- Bouton d'inscription (desktop) -->
-        <ion-button
-          *ngIf="!isUserEnrolled"
-          expand="block"
-          class="enroll-button-mobile"
-          (click)="handleEnrollClick()">
-          <div class="button-content">
-            <span class="button-main-text">{{ (course?.price ?? 0) > 0 ? 'Payer le cours' : "S'abonner" }}</span>
-          </div>
-        </ion-button>
 
+        <p *ngIf="!isUserEnrolled" class="free-access-text">Consultez les chapitres et exercices ci-dessous</p>
       </div>
 
       <!-- ========== ONGLETS CHAPITRES ET DOCUMENTS ========== -->
       <div class="hero-tabs-container">
         <!-- En-tête des onglets -->
         <div class="hero-tabs-header">
-          <button 
-            class="hero-tab-button" 
+          <button
+            class="hero-tab-button"
             [class.active]="heroActiveTab === 'chapters'"
             (click)="heroActiveTab = 'chapters'"
           >
             <ion-icon name="list-outline"></ion-icon>
             Chapitres
           </button>
-          <button 
-            class="hero-tab-button" 
+          <button
+            class="hero-tab-button"
             [class.active]="heroActiveTab === 'documents'"
             (click)="heroActiveTab = 'documents'"
           >
@@ -94,7 +96,7 @@
         <!-- Contenu Chapitres -->
         <div class="hero-tab-content" *ngIf="heroActiveTab === 'chapters'">
           <div class="hero-chapters-list" *ngIf="chapters.length > 0">
-            <div class="hero-chapter-item" *ngFor="let chapter of chapters.slice(0, 3); let i = index">
+            <div class="hero-chapter-item" *ngFor="let chapter of chapters; let i = index" (click)="openChapter(chapter, i)" style="cursor: pointer;">
               <div class="hero-chapter-number">{{ i + 1 }}</div>
               <div class="hero-chapter-info">
                 <h4 class="hero-chapter-title">{{ chapter.title }}</h4>
@@ -103,9 +105,9 @@
                   {{ chapter.duration }} min
                 </p>
               </div>
-            </div>
-            <div class="hero-see-more" *ngIf="chapters.length > 3">
-              <p>+{{ chapters.length - 3 }} chapitres supplémentaires</p>
+              <div class="hero-chapter-lock" *ngIf="!isUserEnrolled">
+                <ion-icon name="lock-closed-outline"></ion-icon>
+              </div>
             </div>
           </div>
           <div class="hero-empty-state" *ngIf="chapters.length === 0">
@@ -216,7 +218,7 @@
         </h2>
 
         <div class="chapters-list">
-          <ion-card *ngFor="let chapter of chapters; let i = index" class="chapter-card">
+          <ion-card *ngFor="let chapter of chapters; let i = index" class="chapter-card" (click)="openChapter(chapter, i)">
             <ion-card-content class="chapter-card-content">
               <div class="chapter-left">
                 <div class="chapter-number">
@@ -262,12 +264,10 @@
         </ion-card>
       </div>
 
-      <!-- Bouton d'inscription ou accès au cours -->
-      <ion-card class="enroll-card">
+      <!-- Bouton continuer (uniquement si inscrit) -->
+      <ion-card class="enroll-card" *ngIf="isUserEnrolled">
         <ion-card-content class="enroll-card-content">
-          <!-- Si l'utilisateur est déjà inscrit -->
           <ion-button
-            *ngIf="isUserEnrolled"
             expand="block"
             class="continue-button"
             (click)="continueCourse()"
@@ -279,24 +279,19 @@
               >
             </div>
           </ion-button>
-
-          <ion-button
-            *ngIf="!isUserEnrolled"
-            expand="block"
-            class="enroll-button"
-            (click)="handleEnrollClick()"
-          >
-            <div class="button-content">
-              <span class="button-main-text">
-                {{ (course?.price ?? 0) > 0 ? 'Payer le cours' : "S'abonner" }}
-              </span>
-              <span class="button-subtitle">
-                {{ (course?.price ?? 0) > 0 ? ((course?.price ?? 0) + ' FCFA') : 'Accès à tous les cours' }}
-              </span>
-            </div>
-          </ion-button>
         </ion-card-content>
       </ion-card>
+
+      <!-- Bouton d'abonnement compact (uniquement si non inscrit) -->
+      <div class="subscription-banner" *ngIf="!isUserEnrolled">
+        <ion-button
+          class="subscription-btn-mobile"
+          (click)="openSubscription()"
+        >
+          <ion-icon name="lock-open-outline" slot="start"></ion-icon>
+          {{ subscriptionButtonText }}
+        </ion-button>
+      </div>
     </div>
   </div>
 </ion-content>

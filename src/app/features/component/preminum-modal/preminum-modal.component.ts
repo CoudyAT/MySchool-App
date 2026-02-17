@@ -176,9 +176,9 @@ export class PreminumModalComponent implements OnInit {
   subscribeToPremium() {
     // Fermer le modal
     this.modalCtrl.dismiss();
-console.log('eee', this.currentUser?.niveauScolaire);
+    console.log('eee', this.currentUser?.niveauScolaire);
 
-    // Cas ÉLÉMENTAIRE → redirection directe vers payment-verify
+    // Cas ÉLÉMENTAIRE → redirection directe vers payment-method (abonnement classe)
     if (this.currentUser?.niveauScolaire === 'ELEMENTAIRE') {
       this.router.navigate(['/payment-method'], {
         state: {
@@ -186,21 +186,19 @@ console.log('eee', this.currentUser?.niveauScolaire);
           method: 'premium',
           plan: {
             type: 'ANNUAL',
-            name: 'Abonnement Premium',
+            name: `Abonnement ${this.currentUser.classe}`,
             price: 5000,
             currency: 'XOF',
           },
-          isPremiumSubscription: true,
-          userInfo: {
-            classe: this.currentUser.classe,
-            niveau: this.currentUser.niveauScolaire,
-          },
+          isClasseSubscription: true,
+          classe: this.currentUser.classe,
+          niveauScolaire: this.currentUser.niveauScolaire,
         },
       });
       return;
     }
 
-    // Autres niveaux → sélection des cours premium
+    // Autres niveaux → sélection des matières
     this.router.navigate(['/premium-course-selection'], {
       state: {
         isPremiumFlow: true,

@@ -8,21 +8,21 @@ ion-header {
       left: 0;
       right: 0;
       z-index: 10;
-      
+
       .back-button {
         --background: rgba(255, 255, 255, 0.9);
         --border-radius: 8px;
         margin-left: 16px;
         width: 36px;
         height: 36px;
-        
+
         .back-icon {
           color: #4CAF50;
           font-size: 24px;
           font-weight: bold;
         }
       }
-      
+
       .header-title {
         color: white;
         font-size: 16px;
@@ -48,13 +48,13 @@ ion-content {
   height: 350px;
   width: 100%;
   overflow: hidden;
-  
+
   .cover-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
-  
+
   .image-overlay {
     position: absolute;
     bottom: 0;
@@ -287,12 +287,12 @@ ion-content {
   padding: 8px 14px;
   border-radius: 20px;
   margin-bottom: 16px;
-  
+
   .cert-icon {
     color: #2650BB;
     font-size: 18px;
   }
-  
+
   span {
     color: #2650BB;
     font-size: 12px;
@@ -330,7 +330,7 @@ ion-content {
   gap: 8px;
   margin-bottom: 20px;
   flex-wrap: wrap;
-  
+
   .sessions {
     font-size: 14px;
     font-weight: 600;
@@ -342,12 +342,12 @@ ion-content {
       color: #2650BB;
     }
   }
-  
+
   .separator {
     color: #ccc;
     font-size: 14px;
   }
-  
+
   .exercises {
     font-size: 14px;
     font-weight: 600;
@@ -365,24 +365,24 @@ ion-content {
   gap: 8px;
   margin-bottom: 16px;
   flex-wrap: wrap;
-  
+
   .info-item {
     display: flex;
     align-items: center;
     gap: 6px;
     font-size: 14px;
     color: #666;
-    
+
     .info-icon {
       color: #2650BB;
       font-size: 18px;
     }
-    
+
     strong {
       color: #2650BB;
       font-weight: 600;
     }
-    
+
     .instructor-name {
       color: #2650BB;
     }
@@ -400,21 +400,21 @@ ion-content {
   align-items: center;
   gap: 8px;
   margin-bottom: 24px;
-  
+
   .stars {
     display: flex;
     gap: 2px;
-    
+
     .star-icon {
       font-size: 20px;
       color: #ddd;
-      
+
       &.filled {
         color: #FF9800;
       }
     }
   }
-  
+
   .rating-text {
     font-size: 14px;
     font-weight: 600;
@@ -430,13 +430,13 @@ ion-content {
   margin-bottom: 32px;
   padding: 0 10px;
   gap: 8px;
-  
+
   .level-item {
     display: flex;
     align-items: center;
     flex: 1;
     min-width: 0;
-    
+
     .level-icon-wrapper {
       width: 40px;
       height: 40px;
@@ -446,33 +446,33 @@ ion-content {
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      
+
       &.completed {
         background: #4CAF50;
-        
+
         .level-icon {
           color: white;
         }
       }
-      
+
       .level-icon {
         font-size: 20px;
         color: #999;
       }
     }
-    
+
     .level-connector {
       flex: 1;
       height: 2px;
       background: #E0E0E0;
       margin: 0 8px;
       min-width: 20px;
-      
+
       &.completed {
         background: #4CAF50;
       }
     }
-    
+
     &:last-child .level-connector {
       display: none;
     }
@@ -486,7 +486,7 @@ ion-content {
 
 .description-section {
   margin-bottom: 40px;
-  
+
   .section-title {
     font-size: 18px;
     font-weight: 700;
@@ -498,7 +498,7 @@ ion-content {
       margin-bottom: 16px;
     }
   }
-  
+
   .description-text {
     font-size: 14px;
     line-height: 1.6;
@@ -803,6 +803,91 @@ ion-content {
   --background-hover: linear-gradient(135deg, #28ba62 0%, #2dd36f 100%);
 }
 
+.subscription-btn {
+  --background: #4F6EF7;
+  --background-hover: #3D5AE8;
+  --background-activated: #3D5AE8;
+  --border-radius: 12px;
+  color: white;
+  height: 56px;
+  font-size: 16px;
+  font-weight: 500;
+  text-transform: none;
+  width: 100%;
+  margin: 0;
+
+  &:active {
+    --background: #3D5AE8;
+  }
+}
+
+.course-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.subscription-btn-compact {
+  --background: #4F6EF7;
+  --background-hover: #3D5AE8;
+  --background-activated: #3D5AE8;
+  --border-radius: 8px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  color: white;
+  height: 40px;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: none;
+  margin: 0;
+  white-space: nowrap;
+
+  ion-icon {
+    font-size: 16px;
+    margin-right: 6px;
+  }
+
+  &:active {
+    --background: #3D5AE8;
+  }
+}
+
+.subscription-banner {
+  display: flex;
+  justify-content: center;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, rgba(79, 110, 247, 0.1) 0%, rgba(79, 110, 247, 0.05) 100%);
+  border-radius: 12px;
+  margin: 0 16px 16px;
+}
+
+.subscription-btn-mobile {
+  --background: #4F6EF7;
+  --background-hover: #3D5AE8;
+  --background-activated: #3D5AE8;
+  --border-radius: 10px;
+  --padding-start: 20px;
+  --padding-end: 20px;
+  color: white;
+  height: 44px;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: none;
+  margin: 0;
+
+  ion-icon {
+    font-size: 18px;
+    margin-right: 8px;
+  }
+
+  &:active {
+    --background: #3D5AE8;
+  }
+}
+
 .button-content {
   display: flex;
   flex-direction: column;
@@ -827,7 +912,7 @@ ion-content {
       font-size: 15px;
     }
   }
-  
+
   .button-subtitle {
     font-size: 12px;
     font-weight: 400;
@@ -849,13 +934,13 @@ ion-content {
 @media (min-width: 1024px) {
   ion-header {
     background: #ffffff !important;
-    
+
     &.transparent-header {
       ion-toolbar {
         padding: 20px 60px;
         background: #ffffff !important;
         --background: #ffffff !important;
-        
+
         .header-title {
           display: none;
         }

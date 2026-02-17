@@ -20,6 +20,8 @@ export interface User {
     libelle: 'student' | 'instructor' | 'admin';
   };
   level?: string;
+  niveauScolaire?: 'ELEMENTAIRE' | 'MOYEN' | 'SECONDAIRE' | 'UNIVERSITAIRE' | 'SUPERIEUR';
+  classe?: string; // Ex: CM2, 3ème, 6ème, etc.
   login?: string;
   password?: string;
   birthDate?: string;
