@@ -37,6 +37,7 @@ import { VideoPlayerPage } from './features/cours/pages/video-player/video-playe
 import { PdfListPage } from './features/pdf/pdf-list/pdf-list.page';
 import { MatieresPage } from './Admin/pages/matieres/matieres.page';
 import { adminGuard } from './guard/admin-guard';
+import { ReferralsPage } from './Admin/pages/referrals/referrals.page';
 
 export const routes: Routes = [
   {
@@ -178,6 +179,11 @@ export const routes: Routes = [
         path: 'matieres',
         component: MatieresPage,
       },
+      {
+        path: 'referrals',
+        component: ReferralsPage
+      },
+
     ],
   },
   {
@@ -243,6 +249,5 @@ export const routes: Routes = [
     path: 'conditions',
     loadComponent: () => import('./features/auth/pages/conditions/conditions.page').then(m => m.ConditionsPage)
   },
-
 
 ];

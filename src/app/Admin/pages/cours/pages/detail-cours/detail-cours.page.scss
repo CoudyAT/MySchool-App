@@ -96,6 +96,27 @@ h1 {
   margin: 0 auto;
 }
 
+.course-video {
+  width: 100%;
+  max-height: 400px;
+  border-radius: 12px;
+  background: #000;
+  display: block;
+}
+
+.video-label {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: #666;
+  text-align: center;
+}
+
+.video-section {
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
 section {
   margin-bottom: 2.5rem;
 }

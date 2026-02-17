@@ -1,0 +1,154 @@
+<div class="container">
+  <div class="content">
+
+    <!-- Loader -->
+    <div *ngIf="isLoading" class="loader-container">
+      <div class="spinner"></div>
+      <p class="loader-text">Chargement des parrainages...</p>
+    </div>
+
+    <div *ngIf="!isLoading">
+
+      <!-- Statistiques globales -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value">{{ stats.totalReferrals || totalReferrals || 0 }}</div>
+          <div class="stat-label">Codes générés</div>
+        </div>
+        <div class="stat-card success">
+          <div class="stat-value">{{ stats.completedReferrals || 0 }}</div>
+          <div class="stat-label">Conversions réussies</div>
+        </div>
+        <div class="stat-card pending">
+          <div class="stat-value">{{ stats.pendingBonus | currency:'XOF':'symbol' }}</div>
+          <div class="stat-label">Bonus en attente</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">{{ stats.totalEarnings | currency:'XOF':'symbol' }}</div>
+          <div class="stat-label">Bonus distribués</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">{{ conversionRate }}%</div>
+          <div class="stat-label">Taux de conversion global</div>
+        </div>
+      </div>
+
+      <!-- Filtres -->
+      <div class="filters-section">
+        <div class="search-wrapper">
+          <div class="search-container">
+            <ion-icon name="search-outline" class="search-icon"></ion-icon>
+            <input type="text" placeholder="Rechercher code, parrain, filleul..." class="search-input"
+              [(ngModel)]="searchText" (input)="applyFilters()">
+          </div>
+
+
+        </div>
+      </div>
+
+      <!-- Liste des parrainages -->
+      <div class="header-section">
+        <div class="header">
+          <div>
+            <h1 class="title">Tous les codes de parrainage</h1>
+            <p class="subtitle">{{ filteredReferrals.length }} parrainage(s) trouvé(s)</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="users-list" *ngIf="filteredReferrals.length > 0; else emptyState">
+
+        <!-- Header -->
+        <div class="users-list-header">
+          <span>Code</span>
+          <span>Parrain</span>
+          <span>Filleul</span>
+          <span>Date création</span>
+          <span>Statut</span>
+          <span>Clics</span>
+          <span>Conversions</span>
+          <span>Bonus</span>
+          <span>Actions</span>
+        </div>
+
+        <!-- Lignes -->
+        <div *ngFor="let ref of paginatedReferrals" class="user-row">
+          <div class="user-cell code-cell">
+            <strong>{{ ref.referralCode }}</strong>
+          </div>
+
+          <div class="user-cell">
+            {{ ref.referrerId || '—' }}
+          </div>
+
+          <div class="user-cell">
+            {{ ref.referredUserId || '—' }}
+          </div>
+
+          <div class="user-cell">
+            {{ ref.createdAt | date:'dd/MM/yyyy HH:mm' }}
+          </div>
+
+          <div class="user-cell">
+            <span class="status-badge" [ngClass]="{
+                'status-completed': ref.status === 'COMPLETED',
+                'status-pending':  ref.status === 'PENDING',
+                'status-expired':  ref.status === 'EXPIRED',
+                'status-cancelled': ref.status === 'CANCELLED'
+              }">
+              {{ ref.status | titlecase }}
+            </span>
+          </div>
+
+          <div class="user-cell">
+            {{ ref.clicks || 0 }}
+          </div>
+
+          <div class="user-cell">
+            {{ ref.conversions || 0 }}
+          </div>
+
+          <div class="user-cell bonus">
+            {{ ref.bonusAmount | number:'1.0-0' }} FCFA
+          </div>
+
+          <div class="user-actions">
+            <button class="action-button" title="Détails" (click)="viewDetails(ref)">
+              <ion-icon name="eye-outline"></ion-icon>
+            </button>
+            <button *ngIf="ref.status === 'PENDING'" class="action-button warning" title="Annuler"
+              (click)="cancelReferral(ref.id!)">
+              <ion-icon name="close-circle-outline"></ion-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- État vide -->
+      <ng-template #emptyState>
+        <div class="empty-state">
+          <ion-icon name="git-network-outline" size="large"></ion-icon>
+          <h2>Aucun parrainage trouvé</h2>
+          <p>Aucun code de parrainage n'a été généré ou ne correspond aux filtres.</p>
+        </div>
+      </ng-template>
+
+      <!-- Pagination (copie de votre page instructeurs) -->
+      <div *ngIf="filteredReferrals.length > 0 && totalPages > 1" class="pagination">
+        <button (click)="previousPage()" [disabled]="currentPage === 1" class="page-button"
+          [class.disabled]="currentPage === 1">
+          Précédent
+        </button>
+        <button *ngFor="let page of getPageNumbers()" (click)="goToPage(page)" [class.active]="currentPage === page"
+          [class.ellipsis]="page === -1" class="page-number">
+          {{ page === -1 ? '...' : page }}
+        </button>
+        <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="page-button"
+          [class.disabled]="currentPage === totalPages">
+          Suivant
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

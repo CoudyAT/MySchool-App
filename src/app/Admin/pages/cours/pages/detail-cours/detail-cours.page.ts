@@ -90,8 +90,10 @@ export class DetailCoursPage implements OnInit {
     }
 
     this.courseService.getCourse(this.courseId).subscribe({
-      next: (response: Course) => {
-        this.course = response;
+      next: (response: any) => {
+        this.course = response.data || response;
+
+        console.log('videoUrl reçu:', this.course.videoUrl);
 
         console.log('Détails du cours chargés:', this.courseId);
         this.loadChapters();

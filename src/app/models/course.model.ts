@@ -102,6 +102,10 @@ export interface Course {
   onlineExtras?: OnlineCourseExtras;
   niveauScolaire?: string;
   classe?: string;
+  videoUrl?: string;
+  videoPath?: string;
+  videoDuration?: number;
+  videoName?: string;
 }
 
 export interface OnlineCourseExtras {
