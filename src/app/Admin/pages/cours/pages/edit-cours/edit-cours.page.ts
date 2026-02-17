@@ -334,7 +334,7 @@ export class EditCoursPage implements OnInit {
         price: Number(formValue.price) || 0,
         description: formValue.description || '',
         duration: Number(formValue.duration) || 0,
-        sessions: Number(formValue.sessions) || 0,
+        sessions: formValue.videoUrl || null,
         exercises: Number(formValue.exercises) || 0,
         certificateAvailable: !!formValue.certificateAvailable,
         category: formValue.category,
