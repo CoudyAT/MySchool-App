@@ -55,6 +55,21 @@ export interface Video {
   createdAt: Date;
 }
 
+export interface Matiere {
+  id: string;
+  nom: string;
+  classe?: string;
+  niveauScolaire: 'ELEMENTAIRE' | 'MOYEN' | 'SECONDAIRE' | 'UNIVERSITAIRE';
+  icon: string;
+  icone?: string; // Alias utilisé par le backend (emoji)
+  color: string;
+  ordre: number;
+  description?: string;
+  isActive?: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface Course {
   id: string;
   title: string;
@@ -74,6 +89,13 @@ export interface Course {
   chaptersIds?: string[]; // Relation avec les chapitres
   createdAt: Date;
   updatedAt: Date;
+
+  // Champs liés au système d'abonnement
+  niveauScolaire?: 'ELEMENTAIRE' | 'MOYEN' | 'SECONDAIRE' | 'UNIVERSITAIRE';
+  classe?: string;
+  matiereId?: string;
+  matiere?: string; // Nom de la matière
+
   levels?: Array<{
     icon: string;
     completed: boolean;
@@ -98,6 +120,7 @@ export interface OnlineCourseExtras {
   instructor?: string;
   meetingLink?: string;
 }
+
 
 
 export type CourseKind = 'CLASSIC' | 'ONLINE';

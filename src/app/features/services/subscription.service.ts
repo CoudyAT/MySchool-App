@@ -11,7 +11,7 @@ import { SubscriptionApiResponse } from 'src/app/models/subscription.model';
 export class SubscriptionService {
   private readonly api = inject(ApiService);
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getPlans(): Observable<any> {
     return this.api.get<any>('/subscriptions/plans');
@@ -20,6 +20,12 @@ export class SubscriptionService {
   getUserSubscriptions(userId: number): Observable<SubscriptionApiResponse> {
     return this.api.get<SubscriptionApiResponse>(
       `/subscriptions/user/${userId}`
+    );
+  }
+
+  getSubscriptionActive(userId: number): Observable<SubscriptionApiResponse> {
+    return this.api.get<SubscriptionApiResponse>(
+      `/subscriptions/active/${userId}`
     );
   }
 }
