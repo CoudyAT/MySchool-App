@@ -32,8 +32,7 @@ export interface User {
   objectives?: string[];
 
   // Nouveaux champs pour le système d'abonnement
-  niveauScolaire?: NiveauScolaire;
-  classe?: Classe;
+ 
 
   isPremium?: boolean;
   premiumSince?: Date;
