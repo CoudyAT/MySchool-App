@@ -7,8 +7,16 @@ import { CourseService } from 'src/app/features/services/courseService';
 import { InstructorService } from 'src/app/features/services/instructorService';
 import { Course } from 'src/app/models/course.model';
 import { Instructor } from 'src/app/models/instructor.model';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { getStorage, ref, listAll, uploadBytes, getDownloadURL } from 'firebase/storage';
+
 import { updateDoc, doc, Firestore, Timestamp } from '@angular/fire/firestore';
+
+// Interface vidéo Storage
+interface StorageVideo {
+  name: string;
+  path: string;
+  url: string;
+}
 
 @Component({
   selector: 'app-edit-cours',
@@ -35,6 +43,12 @@ export class EditCoursPage implements OnInit {
   showNewCategoryInput = false;
   selectedCategoryBeforeAdd: string = '';
 
+  storageVideos: StorageVideo[] = [];
+  isVideoPickerOpen = false;
+  isLoadingVideos = false;
+  selectedVideo: StorageVideo | null = null;
+  currentVideoUrl: string | null = null;
+
   constructor(
     private fb: FormBuilder,
     private courseService: CourseService,
@@ -57,7 +71,10 @@ export class EditCoursPage implements OnInit {
       certificateAvailable: [false],
       selectedCategoryOption: [''],
       newCategoryName: [''],
-      category: ['']
+      category: [''],
+      videoUrl: [''],
+      videoPath: [''],
+      videoName: [''],
     });
   }
 
@@ -81,6 +98,17 @@ export class EditCoursPage implements OnInit {
         this.originalImageUrl = this.course.image || null;
         this.imagePreview = this.course.image || null;
 
+        const courseAny = this.course as any;
+        if (courseAny.videoUrl) {
+          this.currentVideoUrl = courseAny.videoUrl;
+          this.selectedVideo = {
+            url: courseAny.videoUrl,
+            path: courseAny.videoPath || '',
+            name: courseAny.videoName || 'Vidéo actuelle'
+          };
+        }
+
+
         this.editForm.patchValue({
           title: this.course.title || '',
           instructorId: this.course.instructorId || '',
@@ -93,7 +121,10 @@ export class EditCoursPage implements OnInit {
           exercises: this.course.exercises ?? 0,
           certificateAvailable: !!this.course.certificateAvailable,
           category: this.course.category || '',
-          selectedCategoryOption: this.course.category || ''
+          selectedCategoryOption: this.course.category || '',
+          videoUrl: courseAny.videoUrl || '',
+          videoPath: courseAny.videoPath || '',
+          videoName: courseAny.videoName || '',
         });
       },
       error: () => {
@@ -101,6 +132,67 @@ export class EditCoursPage implements OnInit {
       }
     });
   }
+
+  async openVideoPicker() {
+    this.isVideoPickerOpen = true;
+    this.isLoadingVideos = true;
+
+    try {
+      const storage = getStorage();
+
+      const folderRef = ref(storage, 'VIDEOS/');
+      const result = await listAll(folderRef);
+
+      this.storageVideos = await Promise.all(
+        result.items.map(async (item) => {
+          const url = await getDownloadURL(item);
+          return {
+            name: item.name,
+            path: item.fullPath,
+            url
+          };
+        })
+      );
+
+      console.log(` ${this.storageVideos.length} vidéos trouvées`);
+
+    } catch (err) {
+      console.error('Erreur chargement vidéos Storage:', err);
+      this.showToast('Erreur lors du chargement des vidéos', 'danger');
+    } finally {
+      this.isLoadingVideos = false;
+    }
+  }
+
+  selectVideo(video: StorageVideo) {
+    this.selectedVideo = video;
+    this.currentVideoUrl = video.url;
+
+    this.editForm.patchValue({
+      videoUrl: video.url,
+      videoPath: video.path,
+      videoName: video.name,
+    });
+
+    this.isVideoPickerOpen = false;
+    this.showToast(`Vidéo "${video.name}" sélectionnée`, 'success');
+  }
+
+  removeVideo() {
+    this.selectedVideo = null;
+    this.currentVideoUrl = null;
+
+    this.editForm.patchValue({
+      videoUrl: '',
+      videoPath: '',
+      videoName: '',
+    });
+  }
+
+  closeVideoPicker() {
+    this.isVideoPickerOpen = false;
+  }
+
 
   private loadInstructors() {
     this.instructorService.getInstructors().subscribe({
@@ -242,10 +334,13 @@ export class EditCoursPage implements OnInit {
         price: Number(formValue.price) || 0,
         description: formValue.description || '',
         duration: Number(formValue.duration) || 0,
-        sessions: Number(formValue.sessions) || 0,
+        sessions: formValue.videoUrl || null,
         exercises: Number(formValue.exercises) || 0,
         certificateAvailable: !!formValue.certificateAvailable,
         category: formValue.category,
+        videoUrl: formValue.videoUrl || null,
+        videoPath: formValue.videoPath || null,
+        videoName: formValue.videoName || null,
         updatedAt: Timestamp.now()
       };
 

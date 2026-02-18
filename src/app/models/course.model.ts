@@ -108,6 +108,10 @@ export interface Course {
   support?: string;
   isOnline?: boolean;
   onlineExtras?: OnlineCourseExtras;
+  videoUrl?: string;
+  videoPath?: string;
+  videoDuration?: number;
+  videoName?: string;
 }
 
 export interface OnlineCourseExtras {

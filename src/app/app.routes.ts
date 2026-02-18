@@ -36,7 +36,9 @@ import { PaymentOptionComponent } from './features/payments/payment-option/payme
 import { VideoDetailPage } from './features/cours/pages/video-detail/video-detail.page';
 import { VideoPlayerPage } from './features/cours/pages/video-player/video-player.page';
 import { adminGuard } from './guard/admin-guard';
+import { ReferralsPage } from './Admin/pages/referrals/referrals.page';
 import { CodePromoPage } from './Admin/pages/code-promo/code-promo.page';
+import { MatieresPage } from './Admin/pages/matieres/matieres.page';
 
 export const routes: Routes = [
   {
@@ -185,6 +187,15 @@ export const routes: Routes = [
         path: 'enrollments',
         component: EnrollmentsPage,
       },
+      {
+        path: 'matieres',
+        component: MatieresPage,
+      },
+      {
+        path: 'referrals',
+        component: ReferralsPage
+      },
+
     ],
   },
   {

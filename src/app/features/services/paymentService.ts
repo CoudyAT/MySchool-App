@@ -85,6 +85,13 @@ export class PaymentService {
     );
   }
 
+    validatePromoCode(payload: {
+    code: string;
+    userId: string;
+  }): Observable<any> {
+    return this.api.post<any>('/codes-promo/validate', payload);
+  }
+
   /**
    * Vérifie le statut d'un paiement auprès d'Orange Money
    */
@@ -149,6 +156,8 @@ export class PaymentService {
     return regex.test(cleanPhone);
   }
 
+
+
   /**
    * Formate un numéro de téléphone sénégalais
    */
@@ -171,7 +180,7 @@ export class PaymentService {
     classe: string,
     niveauScolaire: string,
     typeAbonnement: string,
-    matieres?: any[]
+    matieres?: any[],
   ): Observable<any> {
     const body: any = {
       userId,

@@ -90,6 +90,25 @@
       </div>
     </section>
 
+    <section>
+      <h2>Vidéo du cours</h2>
+
+      <!-- Vidéo disponible -->
+      <div *ngIf="course.sessions" class="video-section">
+        <video [src]="course.sessions" controls class="course-video" preload="metadata" poster="{{ course.image }}">
+          Votre navigateur ne supporte pas la lecture vidéo.
+        </video>
+        <p class="video-label">{{ course.videoName || 'Vidéo du cours' }}</p>
+      </div>
+
+      <!-- Pas de vidéo -->
+      <div *ngIf="!course.sessions" class="empty-state">
+        <div class="empty-icon">🎬</div>
+        <p>Aucune vidéo liée à ce cours.</p>
+        <small>Modifiez le cours pour ajouter une vidéo.</small>
+      </div>
+    </section>
+
     <!-- Chapitres du cours -->
     <section *ngIf="course.chapters && course.chapters.length > 0">
       <h2>Chapitres du cours</h2>

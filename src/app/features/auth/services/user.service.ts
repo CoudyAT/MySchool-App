@@ -4,7 +4,7 @@ import { User } from 'src/app/models/user.model';
 import { ApiService } from 'src/app/core/services/api.service';
 import { Firestore, doc, docData } from '@angular/fire/firestore';
 import { Auth, authState } from '@angular/fire/auth';
-import { switchMap, filter } from 'rxjs/operators';
+import { switchMap, filter, map } from 'rxjs/operators';
 
 export interface AppUser {
   niveauScolaire: string;
@@ -80,10 +80,19 @@ export class UserService {
   }
 
   // Récupérer les utilisateurs par rôle
-  getUsersByRole(role: 'student' | 'instructor' | 'admin'): Observable<User[]> {
-    return this.api.get<User[]>(`/users/role/${role}`);
+  getUsersByRole(
+    role: 'student' | 'instructor' | 'admin' | 'influenceur',
+  ): Observable<User[]> {
+    return this.api
+      .get<{
+        success: boolean;
+        data: User[];
+        count: number;
+      }>(`/users/role/${role}`)
+      .pipe(
+        map((res) => res.data), // <-- on renvoie directement "data"
+      );
   }
-
   // Récupérer les utilisateurs par statut
   getUsersByStatus(
     status: 'active' | 'inactive' | 'suspended',
