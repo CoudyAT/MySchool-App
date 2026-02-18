@@ -35,9 +35,8 @@ import { ForgotPasswordPage } from './features/auth/forgot-password/forgot-passw
 import { PaymentOptionComponent } from './features/payments/payment-option/payment-option.component';
 import { VideoDetailPage } from './features/cours/pages/video-detail/video-detail.page';
 import { VideoPlayerPage } from './features/cours/pages/video-player/video-player.page';
-import { PdfListPage } from './features/pdf/pdf-list/pdf-list.page';
-import { MatieresPage } from './Admin/pages/matieres/matieres.page';
 import { adminGuard } from './guard/admin-guard';
+import { CodePromoPage } from './Admin/pages/code-promo/code-promo.page';
 
 export const routes: Routes = [
   {
@@ -167,6 +166,10 @@ export const routes: Routes = [
         component: UserDetailsPage,
       },
       {
+        path: 'code-promo',
+        component: CodePromoPage,
+      },
+      {
         path: 'user-edit/:id',
         component: UserEditPage,
       },
@@ -245,10 +248,17 @@ export const routes: Routes = [
   },
   {
     path: 'conditions',
-    loadComponent: () => import('./features/auth/pages/conditions/conditions.page').then( m => m.ConditionsPage)
+    loadComponent: () =>
+      import('./features/auth/pages/conditions/conditions.page').then(
+        (m) => m.ConditionsPage,
+      ),
   },
   {
     path: 'payments-history',
-    loadComponent: () => import('./features/payments/payments-history.page').then(m => m.PaymentsHistoryPage),
+    loadComponent: () =>
+      import('./features/payments/payments-history.page').then(
+        (m) => m.PaymentsHistoryPage,
+      ),
   },
+
 ];

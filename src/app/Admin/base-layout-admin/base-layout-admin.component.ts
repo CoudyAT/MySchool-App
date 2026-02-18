@@ -43,6 +43,9 @@ export class BaseLayoutAdminComponent {
       faq: '/admin-login/faq',
       intructors: '/admin-login/instructors',
       chat: '/admin-login/chat',
+      matiere: '/admin-login/matiere',
+      referrals: '/admin-login/referrals',
+      'code-promo': '/admin-login/code-promo',
     };
 
     this.activePage = page;

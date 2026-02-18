@@ -33,13 +33,13 @@
 
     <!-- Hero Section - CARROUSEL SWIPER -->
     <div class="hero-section">
-      <swiper-container
+    <!--   <swiper-container
         class="hero-swiper"
         [config]="slideOpts"
         (swiperslidechange)="onSlideChange($event)"
         (swiperinit)="onSwiperInit($event)"
       >
-        <!-- Slide 1 -->
+        <!-- Slide 1 
         <swiper-slide>
           <div class="slide-container">
             <img src="assets/masterclass.png" alt="Formation 1" class="slide-image" />
@@ -47,7 +47,7 @@
           </div>
         </swiper-slide>
 
-        <!-- Slide 2 -->
+        <!-- Slide 2
         <swiper-slide>
           <div class="slide-container">
             <img src="assets/renforcement.png" alt="Formation 2" class="slide-image" />
@@ -55,13 +55,86 @@
           </div>
         </swiper-slide>
 
-        <!-- Slide 3 -->
+        <!-- Slide 3 
         <swiper-slide>
           <div class="slide-container">
             <img src="assets/slide1.svg" alt="Formation 3" class="slide-image" />
             <div class="slide-overlay"></div>
           </div>
         </swiper-slide>
+      </swiper-container>  -->
+      <swiper-container
+        class="hero-swiper"
+        [config]="slideOpts"
+        (swiperslidechange)="onSlideChange($event)"
+        (swiperinit)="onSwiperInit($event)"
+      >
+        <swiper-slide>
+          <a routerLink="/formations/masterclass">          
+            <div class="slide-container">
+            <picture>
+              <source media="(min-width: 1024px)" srcset="https://firebasestorage.googleapis.com/v0/b/myschool-f862b.firebasestorage.app/o/SLIDERS%2Fslider1.jpg?alt=media&token=60d46885-2548-49d8-b3b3-b5d1e3a27ee4">
+              <img src="https://firebasestorage.googleapis.com/v0/b/myschool-f862b.firebasestorage.app/o/SLIDERS%2Fslider1-mob.jpg?alt=media&token=d1ce1a4f-2c17-4fa5-aa56-6361c23149ef"
+                   alt="Formation 2"
+                   class="slide-image" />
+            </picture>
+            <div class="slide-overlay"></div>
+          </div>
+          </a>
+        </swiper-slide>
+         <!-- Slide 2 -->
+        <swiper-slide>
+          <a routerLink="/formations/masterclass">          
+            <div class="slide-container">
+            <picture>
+              <source media="(min-width: 1024px)" srcset="https://firebasestorage.googleapis.com/v0/b/myschool-f862b.firebasestorage.app/o/SLIDERS%2Fslider2.jpg?alt=media&token=60d46885-2548-49d8-b3b3-b5d1e3a27ee4">
+              <img src="https://firebasestorage.googleapis.com/v0/b/myschool-f862b.firebasestorage.app/o/SLIDERS%2Fslider2-mob.jpg?alt=media&token=d1ce1a4f-2c17-4fa5-aa56-6361c23149ef"
+                   alt="Formation 2"
+                   class="slide-image" />
+            </picture>
+            <div class="slide-overlay"></div>
+          </div>
+          </a>
+        </swiper-slide>
+        <!-- Slide 3 -->
+        <swiper-slide>
+          <a routerLink="/formations/masterclass">          
+            <div class="slide-container">
+            <picture>
+              <source media="(min-width: 1024px)" srcset="https://firebasestorage.googleapis.com/v0/b/myschool-f862b.firebasestorage.app/o/SLIDERS%2Fslider3.jpg?alt=media&token=60d46885-2548-49d8-b3b3-b5d1e3a27ee4">
+              <img src="https://firebasestorage.googleapis.com/v0/b/myschool-f862b.firebasestorage.app/o/SLIDERS%2Fslider3-mob.jpg?alt=media&token=d1ce1a4f-2c17-4fa5-aa56-6361c23149ef"
+                   alt="Formation 2"
+                   class="slide-image" />
+            </picture>
+            <div class="slide-overlay"></div>
+          </div>
+          </a>
+        </swiper-slide>
+
+        <!-- Slide 2 
+        <swiper-slide>
+          <div class="slide-container">
+            <picture>
+              <source media="(min-width: 1024px)" srcset="assets/Masterclass.jpg">
+              <img src="assets/masterclass.png"
+                   alt="Formation 2"
+                   class="slide-image" />
+            </picture>
+            <div class="slide-overlay"></div>
+          </div>
+        </swiper-slide> -->
+        <!-- Slide 3 
+        <swiper-slide>
+          <div class="slide-container">
+            <picture>
+              <source media="(min-width: 1024px)" srcset="assets/Masterclass.jpg">
+              <img src="assets/masterclass.png"
+                   alt="Formation 2"
+                   class="slide-image" />
+            </picture>
+            <div class="slide-overlay"></div>
+          </div>
+        </swiper-slide> -->
       </swiper-container>
 
       <!-- Pagination -->
