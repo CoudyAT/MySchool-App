@@ -30,7 +30,7 @@ export class ProfileMenuComponent implements OnInit {
     private popoverCtrl: PopoverController,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
-    private referralService: ReferralService
+    private referralService: ReferralService,
   ) {}
 
   ngOnInit() {
@@ -178,4 +178,11 @@ export class ProfileMenuComponent implements OnInit {
     this.router.navigate(['/abonnement']);
   }
 
+  openSecurity() {
+    this.router.navigate(['/security']);
+  }
+
+    openNotifications() {
+      this.router.navigate(['/notifications']);
+    }
 }
