@@ -113,6 +113,31 @@ export class PaymentVerifyPage implements OnInit {
     },
   ];
 
+  private initializePaymentMethods(userPhone: string) {
+    this.allPaymentMethods = [
+      {
+        id: 'wave',
+        name: 'Wave',
+        type: 'Paiement mobile',
+        displayNumber: userPhone || 'Numéro non disponible',
+      },
+      {
+        id: 'orange-money',
+        name: 'Orange Money',
+        type: 'Paiement mobile',
+        displayNumber: userPhone || 'Numéro non disponible',
+      },
+      {
+        id: 'card',
+        name: 'Carte bancaire',
+        type: 'Carte bancaire',
+        displayNumber: '**** **** **** 3345',
+      },
+    ];
+
+    this.setupDisplayedMethods();
+  }
+
   displayedPaymentMethods: PaymentMethod[] = [];
 
   // Propriétés pour le code promo
@@ -196,6 +221,8 @@ export class PaymentVerifyPage implements OnInit {
         console.log(user);
 
         this.userId = user.id || user._id;
+        const userPhone = user.phone || '';
+        this.initializePaymentMethods(userPhone);
         console.log(this.userId);
       } catch (e) {
         console.error('Erreur parsing user', e);

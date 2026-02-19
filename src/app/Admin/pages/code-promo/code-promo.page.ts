@@ -19,11 +19,6 @@ import { UserService } from 'src/app/features/auth/services/user.service';
   styleUrls: ['./code-promo.page.scss'],
   standalone: true,
   imports: [
-    IonIcon,
-    IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
     CommonModule,
     FormsModule,
   ],
