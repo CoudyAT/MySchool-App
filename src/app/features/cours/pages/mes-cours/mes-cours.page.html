@@ -45,6 +45,148 @@
 <!-- CONTENU PRINCIPAL -->
 <ion-content class="ion-padding">
   <div class="content-wrapper">
+          <!-- Bandeau pour ELEMENTAIRE avec classe définie -->
+      <div *ngIf="isElementaire && hasClasse" class="classe-banner">
+        <div class="banner-content">
+          <ion-icon name="school-outline" class="banner-icon"></ion-icon>
+          <div class="banner-text">
+            <h3>Classe {{ userClasse }}</h3>
+            <p>Vous consultez les cours de {{ userClasse }}</p>
+          </div>
+          <ion-button fill="solid" color="primary" (click)="subscribeToClasse()">
+            <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+            S'abonner à {{ userClasse }}
+          </ion-button>
+        </div>
+      </div>
+
+      <!-- Sélecteur de classe pour ELEMENTAIRE sans classe -->
+      <div *ngIf="isElementaire && !hasClasse" class="classe-selector">
+        <div class="selector-header">
+          <ion-icon name="school-outline" class="selector-icon"></ion-icon>
+          <h3>Choisissez votre classe</h3>
+          <p>Sélectionnez une classe pour voir ses cours et vous abonner</p>
+        </div>
+
+        <div class="classes-grid">
+          <div
+            *ngFor="let classe of availableClasses"
+            class="classe-card"
+            [class.selected]="selectedClasse === classe"
+            (click)="selectClasse(classe)"
+          >
+            <ion-icon name="book-outline" class="classe-icon"></ion-icon>
+            <h4>{{ classe }}</h4>
+            <p *ngIf="selectedClasse === classe" class="selected-badge">Sélectionné</p>
+          </div>
+        </div>
+
+        <div *ngIf="selectedClasse && !isCoursesLoading" class="subscribe-action">
+          <ion-button expand="block" size="large" (click)="subscribeToClasse()">
+            <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+            S'abonner à {{ selectedClasse }}
+          </ion-button>
+        </div>
+      </div>
+
+      <!-- ================================================ -->
+      <!-- MOYEN / SECONDAIRE / UNIVERSITAIRE               -->
+      <!-- ================================================ -->
+
+      <!-- Bandeau pour MOYEN/SECONDAIRE/UNIV avec classe définie -->
+      <div *ngIf="isMoyenSecondaireUniv && hasClasse && !showMatiereSelection" class="classe-banner niveau-banner">
+        <div class="banner-content">
+          <ion-icon name="school-outline" class="banner-icon"></ion-icon>
+          <div class="banner-text">
+            <h3>{{ userClasse }}</h3>
+            <p>Niveau {{ userNiveauScolaire }} — Sélectionnez 3 matières pour vous abonner</p>
+          </div>
+          <ion-button fill="solid" color="primary" (click)="loadMatieresForClasse(userClasse!)">
+            <ion-icon name="book-outline" slot="start"></ion-icon>
+            Choisir mes matières
+          </ion-button>
+        </div>
+      </div>
+
+      <!-- Sélecteur de classe pour MOYEN/SECONDAIRE/UNIV sans classe -->
+      <div *ngIf="isMoyenSecondaireUniv && !hasClasse && !showMatiereSelection" class="classe-selector niveau-selector">
+        <div class="selector-header">
+          <ion-icon name="school-outline" class="selector-icon"></ion-icon>
+          <h3>Choisissez votre classe</h3>
+          <p>Sélectionnez votre classe pour voir les cours et choisir 3 matières</p>
+        </div>
+
+        <div class="classes-grid">
+          <div
+            *ngFor="let classe of availableClassesForLevel"
+            class="classe-card"
+            [class.selected]="selectedClasse === classe"
+            (click)="selectClasseForLevel(classe)"
+          >
+            <ion-icon name="book-outline" class="classe-icon"></ion-icon>
+            <h4>{{ classe }}</h4>
+            <p *ngIf="selectedClasse === classe" class="selected-badge">Sélectionné</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sélection des matières (MOYEN/SECONDAIRE/UNIVERSITAIRE) -->
+      <div *ngIf="isMoyenSecondaireUniv && showMatiereSelection" class="matiere-selection">
+        <div class="matiere-header">
+          <div class="matiere-header-top">
+            <ion-icon name="book-outline" class="matiere-icon"></ion-icon>
+            <div>
+              <h3>Choisissez vos matières</h3>
+              <p>Classe : <strong>{{ selectedClasse }}</strong> — Sélectionnez {{ maxMatieres }} matières ({{ selectedMatieres.length }}/{{ maxMatieres }})</p>
+            </div>
+          </div>
+          <ion-button *ngIf="!hasClasse" fill="clear" size="small" (click)="showMatiereSelection = false; selectedMatieres = []">
+            <ion-icon name="chevron-back-outline" slot="start"></ion-icon>
+            Changer de classe
+          </ion-button>
+        </div>
+
+        <div *ngIf="isMatiereLoading" class="loading-courses">
+          <ion-spinner></ion-spinner>
+          <p>Chargement des matières...</p>
+        </div>
+
+        <div *ngIf="!isMatiereLoading" class="matieres-grid">
+          <div
+            *ngFor="let matiere of availableMatieres"
+            class="matiere-card"
+            [class.selected]="isMatiereSelected(matiere)"
+            [class.disabled]="!isMatiereSelected(matiere) && selectedMatieres.length >= maxMatieres"
+            (click)="toggleMatiere(matiere)"
+          >
+            <div class="matiere-check">
+              <ion-icon [name]="isMatiereSelected(matiere) ? 'checkmark-circle' : 'ellipse-outline'"></ion-icon>
+            </div>
+            <span class="matiere-name">{{ matiere }}</span>
+          </div>
+        </div>
+
+        <div *ngIf="selectedMatieres.length > 0" class="selected-matieres-summary">
+          <p>Matières choisies :</p>
+          <div class="matieres-tags">
+            <span *ngFor="let m of selectedMatieres" class="matiere-tag">
+              {{ m }}
+              <ion-icon name="close-outline" (click)="toggleMatiere(m); $event.stopPropagation()"></ion-icon>
+            </span>
+          </div>
+        </div>
+
+        <div *ngIf="selectedMatieres.length > 0 && selectedMatieres.length < maxMatieres" class="matieres-remaining">
+          <p>⚠️ Vous devez sélectionner {{ maxMatieres }} matières (encore {{ maxMatieres - selectedMatieres.length }} à choisir)</p>
+        </div>
+
+        <div *ngIf="selectedMatieres.length === maxMatieres" class="subscribe-action matiere-subscribe">
+          <ion-button expand="block" size="large" (click)="subscribeWithMatieres()">
+            <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+            S'abonner ({{ maxMatieres }} matières) — 5 000 FCFA/an
+          </ion-button>
+        </div>
+      </div>
     <!-- MOBILE: Titre et Segment -->
     <div class="mobile-header-section">
       <h1 class="main-title">Les cours</h1>
