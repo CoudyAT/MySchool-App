@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, ToastController } from '@ionic/angular';
 import { Referral, ReferralService, ReferralStats } from 'src/app/features/services/referral.service';
+import { UserService } from 'src/app/features/auth/services/user.service';
+import { User } from 'src/app/models/user.model';
 
 @Component({
   selector: 'app-referrals',
@@ -32,7 +34,8 @@ export class ReferralsPage implements OnInit {
 
   constructor(
     private referralService: ReferralService,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
+    private userService: UserService
   ) { }
 
   async ngOnInit() {
@@ -46,7 +49,9 @@ export class ReferralsPage implements OnInit {
       if (res?.success) {
         this.allReferrals = res.data || [];
         this.filteredReferrals = [...this.allReferrals];
+
         this.calculateGlobalStats();
+        this.applyFilters();
         this.updatePagination();
       }
     } catch (err) {
@@ -56,6 +61,8 @@ export class ReferralsPage implements OnInit {
       this.isLoading = false;
     }
   }
+
+
 
   calculateGlobalStats() {
     if (!this.allReferrals.length) return;

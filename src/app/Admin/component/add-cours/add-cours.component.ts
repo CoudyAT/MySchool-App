@@ -9,12 +9,18 @@ import { Instructor } from 'src/app/models/instructor.model';
 // Firestore
 import { Firestore, collection, addDoc, Timestamp } from '@angular/fire/firestore';
 import { IonIcon, IonSpinner } from "@ionic/angular/standalone";
-import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
+import { getDownloadURL, getStorage, listAll, ref, uploadBytes } from 'firebase/storage';
 import { updateDoc } from 'firebase/firestore';
 import { MatiereService } from '../../services/matiereService';
-
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+
+interface StorageVideo {
+  name: string;
+  path: string;
+  url: string;
+}
+
 
 @Component({
   selector: 'app-add-cours',
@@ -26,6 +32,11 @@ import { firstValueFrom } from 'rxjs';
 export class AddCoursComponent implements OnInit {
   @Output() formSubmit = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();
+
+  storageVideos: StorageVideo[] = [];
+  isVideoPickerOpen = false;
+  isLoadingVideos = false;
+  selectedVideo: StorageVideo | null = null;
 
   niveauxEtude = [
     { value: 'ELEMENTAIRE', label: 'Élémentaire' },
@@ -100,6 +111,53 @@ export class AddCoursComponent implements OnInit {
     this.loadInstructors();
     this.loadCategories();
     this.loadMatieres();
+  }
+
+  async openVideoPicker() {
+    this.isVideoPickerOpen = true;
+    this.isLoadingVideos = true;
+
+    try {
+      const storage = getStorage();
+      const folderRef = ref(storage, 'VIDEOS/');
+      const result = await listAll(folderRef);
+
+      this.storageVideos = await Promise.all(
+        result.items.map(async (item) => {
+          const url = await getDownloadURL(item);
+          return {
+            name: item.name,
+            path: item.fullPath,
+            url
+          };
+        })
+      );
+
+    } catch (err) {
+      console.error('Erreur chargement vidéos :', err);
+      alert('Impossible de charger les vidéos du stockage');
+    } finally {
+      this.isLoadingVideos = false;
+    }
+  }
+
+  selectVideo(video: StorageVideo) {
+    this.selectedVideo = video;
+
+    this.courseForm.patchValue({
+      sessions: video.url
+    });
+
+    this.isVideoPickerOpen = false;
+  }
+
+  removeVideo() {
+    this.selectedVideo = null;
+    this.courseForm.patchValue({ sessions: '' });
+  }
+
+  closeVideoPicker() {
+    this.isVideoPickerOpen = false;
   }
 
   // async importCoursesFromJson() {

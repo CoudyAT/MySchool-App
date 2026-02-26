@@ -1,8 +1,10 @@
 <div class="page">
 
   <div class="header">
-    <button class="back-btn" routerLink="/admin-login/courses">← Retour</button>
-    <h1>Modifier le cours</h1>
+    <button class="back-btn" (click)="goBack()">
+      ← Retour
+    </button>
+
   </div>
 
   <form [formGroup]="editForm" (ngSubmit)="saveCourse()" class="edit-form">
@@ -54,7 +56,9 @@
             <ion-select formControlName="type">
               <ion-select-option value="En ligne">En ligne</ion-select-option>
               <ion-select-option value="Présentiel">Présentiel</ion-select-option>
-              <ion-select-option value="Hybride">Hybride</ion-select-option>
+              <ion-select-option value="Tuto">Tuto</ion-select-option>
+              <ion-select-option value="Pdf">Document</ion-select-option>
+
             </ion-select>
           </div>
 

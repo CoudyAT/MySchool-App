@@ -20,7 +20,7 @@ import { InstructorService } from 'src/app/features/services/instructorService';
 export class ListCoursPage implements OnInit {
   @ViewChild(AddCoursComponent) addCoursComponent!: AddCoursComponent;
   searchText: string = '';
-  selectedCategory: string = 'all';
+  selectedType: string = 'all';
   currentPage: number = 1;
   itemsPerPage: number = 9;
   showAddCourseModal = false;
@@ -34,6 +34,7 @@ export class ListCoursPage implements OnInit {
   instructors: Instructor[] = [];
   categories: string[] = [];
   isLoading: boolean = false;
+  types: string[] = ['Vidéo', 'En ligne', 'Présentiel'];
 
 
   constructor(private router: Router, private courseService: CourseService,) { }
@@ -85,10 +86,10 @@ export class ListCoursPage implements OnInit {
     this.filteredCourses = this.allCourses.filter((course) => {
       const matchesSearch =
         course.title.toLowerCase().includes(this.searchText.toLowerCase()) ||
-        course.category.toLowerCase().includes(this.searchText.toLowerCase());
+        course.type.toLowerCase().includes(this.searchText.toLowerCase());
       const matchesCategory =
-        this.selectedCategory === 'all' ||
-        course.category === this.selectedCategory;
+        this.selectedType === 'all' ||
+        course.type === this.selectedType;
       return matchesSearch && matchesCategory;
     });
 
@@ -109,8 +110,8 @@ export class ListCoursPage implements OnInit {
     this.applyFilters();
   }
 
-  onCategoryChange(event: Event): void {
-    this.selectedCategory = (event.target as HTMLSelectElement).value;
+  onTypeChange(event: Event): void {
+    this.selectedType = (event.target as HTMLSelectElement).value;
     this.currentPage = 1;
     this.applyFilters();
   }

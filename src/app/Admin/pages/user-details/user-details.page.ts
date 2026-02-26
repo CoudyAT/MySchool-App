@@ -67,4 +67,8 @@ export class UserDetailsPage implements OnInit {
     this.router.navigate(['/admin-login/user-edit', user.uid]);
 
   }
+
+  goBack() {
+    this.router.navigate(['/admin-login/users']);
+  }
 }
