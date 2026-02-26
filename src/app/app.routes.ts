@@ -39,6 +39,7 @@ import { adminGuard } from './guard/admin-guard';
 import { ReferralsPage } from './Admin/pages/referrals/referrals.page';
 import { CodePromoPage } from './Admin/pages/code-promo/code-promo.page';
 import { MatieresPage } from './Admin/pages/matieres/matieres.page';
+import { PaymentsHistoryPage } from './features/payments/payments-history.page';
 
 export const routes: Routes = [
   {
@@ -193,9 +194,8 @@ export const routes: Routes = [
       },
       {
         path: 'referrals',
-        component: ReferralsPage
+        component: ReferralsPage,
       },
-
     ],
   },
   {
@@ -266,10 +266,15 @@ export const routes: Routes = [
   },
   {
     path: 'payments-history',
-    loadComponent: () =>
-      import('./features/payments/payments-history.page').then(
-        (m) => m.PaymentsHistoryPage,
-      ),
+    component: PaymentsHistoryPage,
   },
-
+  {
+    path: 'exo',
+    loadComponent: () =>
+      import('./features/exercice/exo/exo.page').then((m) => m.ExoPage),
+  },
+  {
+    path: 'tuto',
+    loadComponent: () => import('./features/tuto/tuto/tuto.page').then( m => m.TutoPage)
+  },
 ];

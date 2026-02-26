@@ -223,6 +223,7 @@ export class SignupFlowComponent implements OnInit {
     { value: 'MOYEN', label: 'Moyen (Collège)' },
     { value: 'SECONDAIRE', label: 'Secondaire (Lycée)' },
     { value: 'UNIVERSITAIRE', label: 'Universitaire' },
+    { value: 'PROFESSIONNEL', label: 'Professionnel' },
   ];
 
   classesParNiveau: { [key: string]: string[] } = {
@@ -269,6 +270,7 @@ export class SignupFlowComponent implements OnInit {
       lockClosedOutline,
       location,
       school,
+      businessOutline,
       checkmarkCircle,
       sync,
       business,
@@ -277,7 +279,6 @@ export class SignupFlowComponent implements OnInit {
       flagOutline,
       alertCircleOutline,
       locationOutline,
-      businessOutline,
       mapOutline,
       calendar,
       call,
@@ -745,28 +746,28 @@ export class SignupFlowComponent implements OnInit {
       const firebaseUser = result.user;
 
       // Numéro vérifié avec succès
-       const verifiedPhone = firebaseUser.phoneNumber;
-       const cleanPhone = this.formatPhoneForSearch(verifiedPhone || '');
+      const verifiedPhone = firebaseUser.phoneNumber;
+      const cleanPhone = this.formatPhoneForSearch(verifiedPhone || '');
 
       // 🔍 Vérifier si l'utilisateur existe déjà
-      const usersRef = collection(this.firestore, 'utilisateur');
-      const q = query(usersRef, where('phone', '==', cleanPhone));
-      const snapshot = await getDocs(q);
+      // const usersRef = collection(this.firestore, 'utilisateur');
+      // const q = query(usersRef, where('phone', '==', cleanPhone));
+      // const snapshot = await getDocs(q);
 
-      if (!snapshot.empty) {
-        // 🔐 Connexion d'un utilisateur existant
-        const userDoc = snapshot.docs[0];
-        localStorage.setItem(
-          'currentUser',
-          JSON.stringify({ ...userDoc.data(), id: userDoc.id }),
-        );
+      // if (!snapshot.empty) {
+      //   // 🔐 Connexion d'un utilisateur existant
+      //   const userDoc = snapshot.docs[0];
+      //   localStorage.setItem(
+      //     'currentUser',
+      //     JSON.stringify({ ...userDoc.data(), id: userDoc.id }),
+      //   );
 
-        await this.showToast('Connexion réussie', 'success');
-        setTimeout(() => {
-          window.location.href = '/courses';
-        }, 1000);
-        return;
-      }
+      //   await this.showToast('Connexion réussie', 'success');
+      //   setTimeout(() => {
+      //     window.location.href = '/courses';
+      //   }, 1000);
+      //   return;
+      // }
 
       // 🆕 Nouvel utilisateur - passer à l'étape 1
       this.userData.phone = cleanPhone;

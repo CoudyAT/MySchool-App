@@ -41,6 +41,13 @@ export class PaymentService {
   }
 
   /**
+   * Récupère tous les historiques de paiements (y compris les paiements annulés et expirés)
+   */
+  getPaymentsHistory(): Observable<ApiResponse<Payment[]>> {
+    return this.api.get<ApiResponse<Payment[]>>('/payments/history');
+  }
+
+  /**
    * Récupère un paiement par ID
    */
   getPaymentById(id: string): Observable<ApiResponse<Payment>> {
@@ -85,7 +92,7 @@ export class PaymentService {
     );
   }
 
-    validatePromoCode(payload: {
+  validatePromoCode(payload: {
     code: string;
     userId: string;
   }): Observable<any> {
@@ -155,8 +162,6 @@ export class PaymentService {
     const regex = /^(\+221|221)?[70|75|76|77|78]\d{7}$/;
     return regex.test(cleanPhone);
   }
-
-
 
   /**
    * Formate un numéro de téléphone sénégalais

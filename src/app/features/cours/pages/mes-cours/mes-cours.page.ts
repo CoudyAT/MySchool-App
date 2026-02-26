@@ -34,6 +34,7 @@ import {
   checkmarkCircleOutline,
   chevronBackOutline,
   closeOutline,
+  play,
 } from 'ionicons/icons';
 import { DesktopHeaderComponent } from 'src/app/shared/components/desktop-header/desktop-header.component';
 
@@ -74,6 +75,7 @@ export class MesCoursPage implements OnInit {
   filteredCourses: Course[] = [];
   categories: string[] = [];
   private subscription = new Subscription();
+  allCourses: Course[] = [];
 
   // Gestion des classes pour ELEMENTAIRE
   isElementaire = false;
@@ -95,22 +97,27 @@ export class MesCoursPage implements OnInit {
   userClasse: string | null = null;
 
   isLoading = true;
-  selectedSegment: 'cours' | 'cours-en-ligne' | 'tutoriel' = 'cours';
+
+  currentPage = 1;
+  itemsPerPage = 6;
+  totalPages = 1;
+  pagedCourses: Course[] = [];
 
   currentUser: AppUser | null = null;
   constructor(
     private router: Router,
     private courseService: CourseService,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
   ) {
     addIcons({
       personCircleOutline,
-      optionsOutline,
       schoolOutline,
       checkmarkCircleOutline,
       bookOutline,
       chevronBackOutline,
       closeOutline,
+      play,
+      optionsOutline,
       hourglassOutline,
       lockOpenOutline,
       checkmarkCircle,
@@ -122,7 +129,8 @@ export class MesCoursPage implements OnInit {
   ngOnInit() {
     this.loadCurrentUser();
     this.initializeUserLevel();
-    this.loadCourses();
+    this.loadAllCoursesPreview();
+    // this.loadCourses();
   }
 
   ngOnDestroy() {
@@ -138,42 +146,106 @@ export class MesCoursPage implements OnInit {
     this.loadMatieresForClasse(classe);
   }
 
-  loadMatieresForClasse(classe: string) {
-    this.isMatiereLoading = true;
-    console.log('🔍 Chargement des matières pour:', classe);
+  // loadMatieresForClasse(classe: string) {
+  //   this.isMatiereLoading = true;
+  //   console.log('🔍 Chargement des matières pour:', classe);
 
-    this.courseService.getMatieresByClasse(classe).subscribe({
-      next: (res) => {
-        console.log(
-          '📦 Réponse brute API matières:',
-          JSON.stringify(res?.data?.[0]),
-        );
-        if (res?.success && res?.data) {
-          this.availableMatieres = res.data.map((m: any) =>
-            typeof m === 'string'
-              ? m
-              : m.matiereName ||
-                m.name ||
-                m.matiere ||
-                m.title ||
-                m.nom ||
-                m.label ||
-                JSON.stringify(m),
+  //   this.courseService.getMatieresByClasse(classe).subscribe({
+  //     next: (res) => {
+  //       console.log(
+  //         '📦 Réponse brute API matières:',
+  //         JSON.stringify(res?.data?.[0]),
+  //       );
+  //       if (res?.success && res?.data) {
+  //         this.availableMatieres = res.data.map((m: any) =>
+  //           typeof m === 'string'
+  //             ? m
+  //             : m.matiereName ||
+  //               m.name ||
+  //               m.matiere ||
+  //               m.title ||
+  //               m.nom ||
+  //               m.label ||
+  //               JSON.stringify(m),
+  //         );
+  //         console.log('✅ Matières disponibles:', this.availableMatieres);
+  //       } else {
+  //         // Fallback: extraire les matières des cours
+  //         this.extractMatieresFromCourses(classe);
+  //       }
+  //       this.showMatiereSelection = true;
+  //       this.isMatiereLoading = false;
+  //     },
+  //     error: () => {
+  //       console.warn(
+  //         '⚠️ API matières indisponible, extraction depuis les cours',
+  //       );
+  //       this.extractMatieresFromCourses(classe);
+  //       this.showMatiereSelection = true;
+  //       this.isMatiereLoading = false;
+  //     },
+  //   });
+  // }
+
+  loadMatieresForClasse(classe?: string) {
+    this.isMatiereLoading = true;
+
+    console.log('🔍 Chargement matières...');
+    console.log('Niveau utilisateur:', this.userNiveauScolaire);
+    console.log('Classe reçue:', classe);
+
+    // 🎯 CAS PROFESSIONNEL
+    if (this.userNiveauScolaire === 'PROFESSIONNEL') {
+      this.courseService.getAllCourses().subscribe({
+        next: (courses) => {
+          // On récupère uniquement les cours UNIVERSITAIRE
+          const filtered = courses.filter(
+            (c) =>
+              (c.type === 'En ligne' || c.type === 'VIDEO') &&
+              c.niveauScolaire === 'UNIVERSITAIRE',
           );
-          console.log('✅ Matières disponibles:', this.availableMatieres);
-        } else {
-          // Fallback: extraire les matières des cours
-          this.extractMatieresFromCourses(classe);
-        }
+
+          const matieres = [
+            ...new Set(filtered.map((c) => c.category).filter(Boolean)),
+          ];
+
+          console.log('✅ Matières PROFESSIONNEL:', matieres);
+
+          this.availableMatieres = matieres;
+          this.showMatiereSelection = true;
+          this.isMatiereLoading = false;
+        },
+        error: (err) => {
+          console.error('❌ Erreur chargement matières PRO:', err);
+          this.isMatiereLoading = false;
+        },
+      });
+
+      return; // IMPORTANT : on sort ici
+    }
+
+    // 🎯 CAS NORMAL (MOYEN / SECONDAIRE / UNIVERSITAIRE)
+    this.courseService.getAllCourses().subscribe({
+      next: (courses) => {
+        const filtered = courses.filter(
+          (c) =>
+            (c.type === 'En ligne' || c.type === 'VIDEO') &&
+            c.niveauScolaire === this.userNiveauScolaire &&
+            c.classe === classe,
+        );
+
+        const matieres = [
+          ...new Set(filtered.map((c) => c.category).filter(Boolean)),
+        ];
+
+        console.log('✅ Matières normales:', matieres);
+
+        this.availableMatieres = matieres;
         this.showMatiereSelection = true;
         this.isMatiereLoading = false;
       },
-      error: () => {
-        console.warn(
-          '⚠️ API matières indisponible, extraction depuis les cours',
-        );
-        this.extractMatieresFromCourses(classe);
-        this.showMatiereSelection = true;
+      error: (err) => {
+        console.error('❌ Erreur chargement matières:', err);
         this.isMatiereLoading = false;
       },
     });
@@ -317,6 +389,7 @@ export class MesCoursPage implements OnInit {
       'MOYEN',
       'SECONDAIRE',
       'UNIVERSITAIRE',
+      'PROFESSIONNEL',
     ].includes(niveau || '');
 
     if (this.isMoyenSecondaireUniv && niveau) {
@@ -335,14 +408,15 @@ export class MesCoursPage implements OnInit {
           'Master 2',
         ];
       }
+
+      if (niveau === 'PROFESSIONNEL') {
+        this.availableClassesForLevel = [];
+      }
     }
   }
 
   private applyAllFilters() {
     let temp = [...this.courses];
-
-    // 1. Filtre par type (segment)
-    temp = this.filterBySegment(temp);
 
     // 2. Filtre par niveau / classe de l'utilisateur
     if (this.currentUser) {
@@ -363,44 +437,46 @@ export class MesCoursPage implements OnInit {
     this.filteredCourses = temp;
   }
 
-  private filterBySegment(courses: Course[]): Course[] {
-    switch (this.selectedSegment) {
-      case 'cours':
-        return courses.filter((c) => c.type === 'Présentiel');
-      case 'cours-en-ligne':
-        return courses.filter((c) => c.type === 'En ligne');
-      case 'tutoriel':
-        return courses.filter((c) => c.type === 'Tuto');
-      default:
-        return courses;
-    }
-  }
+  // private filterBySegment(courses: Course[]): Course[] {
+  //   switch (this.selectedSegment) {
+  //     case 'cours':
+  //       return courses.filter((c) => c.type === 'Présentiel');
+  //     case 'cours-en-ligne':
+  //       return courses.filter((c) => c.type === 'En ligne');
+  //     case 'tutoriel':
+  //       return courses.filter((c) => c.type === 'Tuto');
+  //     default:
+  //       return courses;
+  //   }
+  // }
 
   searchCourse(event: any) {
     const term = (event.target.value || '').toLowerCase().trim();
 
-    let base = [...this.courses];
-    base = this.filterBySegment(base);
-
-    if (this.currentUser) {
-      base = base.filter((course) => {
-        const matchLevel =
-          !course.level || course.level === this.currentUser?.level;
-        const matchClasse =
-          !course.classe || course.classe === this.currentUser?.classe;
-        return matchLevel && matchClasse;
-      });
+    if (!term) {
+      // Si la recherche est vide, revenir à la liste complète
+      this.filteredCourses = [...this.allCourses];
+      this.updatePagination();
+      return;
     }
 
-    if (term) {
-      this.filteredCourses = base.filter(
-        (c) =>
-          c.title.toLowerCase().includes(term) ||
-          (c.category || '').toLowerCase().includes(term),
-      );
-    } else {
-      this.filteredCourses = base;
-    }
+    // Filtrer par titre uniquement (ou titre ET description si vous voulez)
+    this.filteredCourses = this.allCourses.filter(
+      (course) => course.title.toLowerCase().includes(term),
+      // Vous pouvez ajouter d'autres critères si nécessaire :
+      // || (course.description && course.description.toLowerCase().includes(term))
+      // || (course.category && course.category.toLowerCase().includes(term))
+    );
+
+    console.log(
+      `🔍 Recherche "${term}" : ${this.filteredCourses.length} résultat(s)`,
+    );
+    this.updatePagination();
+  }
+
+  resetSearch() {
+    this.filteredCourses = [...this.allCourses];
+    this.updatePagination();
   }
 
   goToProfile() {
@@ -417,7 +493,9 @@ export class MesCoursPage implements OnInit {
     const sub = this.courseService.getAllCourses().subscribe({
       next: (courses) => {
         this.courses = courses;
+        console.log('Cours chargés:', courses);
         this.applyAllFilters();
+        this.updatePagination();
         this.isLoading = false;
       },
       error: (err) => {
@@ -429,10 +507,165 @@ export class MesCoursPage implements OnInit {
     this.subscription.add(sub);
   }
 
-  onSegmentChange(event: any) {
-    this.selectedSegment = event.detail.value;
-    this.filterCoursesBySegment();
+  updatePagination() {
+    this.totalPages = Math.ceil(
+      this.filteredCourses.length / this.itemsPerPage,
+    );
+    this.currentPage = 1;
+    this.paginateCourses();
   }
+
+  paginateCourses() {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    const end = start + this.itemsPerPage;
+    this.pagedCourses = this.filteredCourses.slice(start, end);
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.paginateCourses();
+    }
+  }
+
+  previousPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.paginateCourses();
+    }
+  }
+
+  // loadAllCoursesPreview() {
+  //   this.isCoursesLoading = true;
+
+  //   this.courseService.getAllCourses().subscribe({
+  //     next: (courses) => {
+  //       console.log("🌐 Total cours reçus de l'API:", courses.length);
+
+  //       // Filtrer par type (En ligne ou VIDEO)
+  //       let filteredCourses = courses.filter(
+  //         (c) => c.type === 'En ligne' || c.type === 'VIDEO',
+  //       );
+  //       console.log('📹 Cours "En ligne" + "VIDEO":', filteredCourses.length);
+
+  //       // Filtrer par niveau scolaire si disponible
+  //       if (this.userNiveauScolaire) {
+  //         filteredCourses = filteredCourses.filter(
+  //           (c) => c.niveauScolaire === this.userNiveauScolaire,
+  //         );
+  //         console.log(
+  //           `🎓 Cours pour niveau "${this.userNiveauScolaire}":`,
+  //           filteredCourses.length,
+  //         );
+
+  //         // Si l'utilisateur a une classe spécifique (ex: CM2), filtrer aussi par classe
+  //         if (this.userClasse) {
+  //           const beforeClassFilter = filteredCourses.length;
+  //           filteredCourses = filteredCourses.filter(
+  //             (c) => c.classe === this.userClasse,
+  //           );
+  //           console.log(`📚 Filtrage pour classe "${this.userClasse}":`);
+  //           console.log(`   Avant: ${beforeClassFilter} cours`);
+  //           console.log(`   Après: ${filteredCourses.length} cours`);
+
+  //           // Log des cours filtrés
+  //           if (filteredCourses.length > 0) {
+  //             console.log('✅ Cours filtrés pour', this.userClasse + ':');
+  //             filteredCourses.forEach((c) => {
+  //               console.log(`   - ${c.title} (classe: ${c.classe})`);
+  //             });
+  //           } else {
+  //             console.warn(
+  //               '⚠️ Aucun cours trouvé pour la classe',
+  //               this.userClasse,
+  //             );
+  //           }
+  //         }
+  //       } else {
+  //         console.warn("⚠️ Aucun niveau scolaire défini pour l'utilisateur");
+  //       }
+
+  //       this.allCourses = filteredCourses;
+  //       this.allCourses = filteredCourses;
+  //       this.filteredCourses = [...filteredCourses]; // Initialiser filteredCourses
+  //       console.log('✅ Total cours affichés:', this.allCourses.length);
+  //       console.log('✅ Total cours affichés:', this.allCourses.length);
+  //       this.isCoursesLoading = false;
+  //     },
+  //     error: (err) => {
+  //       console.error('❌ Erreur chargement cours:', err);
+  //       this.isCoursesLoading = false;
+  //     },
+  //   });
+  // }
+
+  loadAllCoursesPreview() {
+    console.log('🚀 Chargement preview cours...');
+    this.isCoursesLoading = true;
+
+    this.courseService.getAllCourses().subscribe({
+      next: (courses) => {
+        console.log('📦 Tous les cours:', courses.length);
+
+        let filteredCourses = [...courses];
+
+        // 🎯 1️⃣ On garde seulement les cours en ligne / vidéo
+        filteredCourses = filteredCourses.filter(
+          (c) => c.type === 'En ligne' || c.type === 'VIDEO',
+        );
+
+        console.log('🎥 Cours en ligne:', filteredCourses.length);
+        console.log('🎥 this.userNiveauScolaire:', this.userNiveauScolaire);
+        // 🎯 2️⃣ Gestion du niveau
+        if (this.userNiveauScolaire) {
+          // 🔥 CAS PROFESSIONNEL
+          const niveauEffectif =
+            this.userNiveauScolaire === 'PROFESSIONNEL'
+              ? 'UNIVERSITAIRE'
+              : this.userNiveauScolaire;
+
+          filteredCourses = filteredCourses.filter(
+            (c) => c.niveauScolaire === niveauEffectif,
+          );
+
+          console.log(
+            `🎓 Cours pour niveau "${niveauEffectif}":`,
+            filteredCourses.length,
+          );
+
+          // 🎯 3️⃣ Filtrage par classe UNIQUEMENT si pas professionnel
+          if (this.userClasse && this.userNiveauScolaire !== 'PROFESSIONNEL') {
+            const beforeClassFilter = filteredCourses.length;
+
+            filteredCourses = filteredCourses.filter(
+              (c) => c.classe === this.userClasse,
+            );
+
+            console.log(`📚 Filtrage classe "${this.userClasse}"`);
+            console.log(`   Avant: ${beforeClassFilter}`);
+            console.log(`   Après: ${filteredCourses.length}`);
+          }
+        }
+
+        // 🎯 4️⃣ Limiter le nombre de cours affichés (ex: 6)
+              this.allCourses = filteredCourses;
+              this.allCourses = filteredCourses;
+              this.filteredCourses = [...filteredCourses]; // Initialiser filteredCourses
+              console.log('✅ Total cours affichés:', this.allCourses.length);
+              console.log('✅ Total cours affichés:', this.allCourses.length);
+              this.isCoursesLoading = false;
+      },
+      error: (err) => {
+        console.error('❌ Erreur chargement cours:', err);
+        this.isCoursesLoading = false;
+      },
+    });
+  }
+
+  // onSegmentChange(event: any) {
+  //   this.selectedSegment = event.detail.value;
+  //   this.filterCoursesBySegment();
+  // }
 
   // filterCoursesBySegment() {
   //   if (this.selectedSegment === 'cours') {
@@ -444,35 +677,35 @@ export class MesCoursPage implements OnInit {
   //   }
   // }
 
-  filterCoursesBySegment() {
-    switch (this.selectedSegment) {
-      case 'cours':
-        // Filtrer pour afficher les cours qui ne sont PAS "En ligne" ni "Tuto"
-        this.filteredCourses = this.courses.filter(
-          (c) => c.type === 'Présentiel',
-        );
-        break;
+  // filterCoursesBySegment() {
+  //   switch (this.selectedSegment) {
+  //     case 'cours':
+  //       // Filtrer pour afficher les cours qui ne sont PAS "En ligne" ni "Tuto"
+  //       this.filteredCourses = this.courses.filter(
+  //         (c) => c.type === 'Présentiel',
+  //       );
+  //       break;
 
-      case 'cours-en-ligne':
-        // Filtrer pour afficher uniquement les cours "En ligne"
-        this.filteredCourses = this.courses.filter(
-          (c) => c.type === 'En ligne',
-        );
-        break;
+  //     case 'cours-en-ligne':
+  //       // Filtrer pour afficher uniquement les cours "En ligne"
+  //       this.filteredCourses = this.courses.filter(
+  //         (c) => c.type === 'En ligne',
+  //       );
+  //       break;
 
-      case 'tutoriel':
-        // Filtrer pour afficher uniquement les cours de type "Tuto"
-        this.filteredCourses = this.courses.filter((c) => c.type === 'Tuto');
-        break;
+  //     case 'tutoriel':
+  //       // Filtrer pour afficher uniquement les cours de type "Tuto"
+  //       this.filteredCourses = this.courses.filter((c) => c.type === 'Tuto');
+  //       break;
 
-      default:
-        this.filteredCourses = this.courses;
-    }
+  //     default:
+  //       this.filteredCourses = this.courses;
+  //   }
 
-    console.log(
-      `Segment actif: ${this.selectedSegment}, Cours affichés: ${this.filteredCourses.length}`,
-    );
-  }
+  //   console.log(
+  //     `Segment actif: ${this.selectedSegment}, Cours affichés: ${this.filteredCourses.length}`,
+  //   );
+  // }
 
   // searchCourse(event: any) {
   //   const term = event.target.value?.toLowerCase().trim() ?? '';

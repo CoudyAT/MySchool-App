@@ -2220,3 +2220,183 @@ ion-header ion-toolbar {
     }
   }
 }
+
+.hero-swiper {
+  position: relative;
+  width: 100%;
+  height: auto;
+  
+  .slide-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    
+    .slide-image {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    
+    .slide-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.1) 100%);
+      z-index: 1;
+    }
+    
+    // Contenu du slide avec bouton
+    .slide-content {
+      position: absolute;
+      top: 50%;
+      left: 10%;
+      transform: translateY(-50%);
+      z-index: 2;
+      color: white;
+      max-width: 500px;
+      animation: fadeInUp 1s ease;
+      
+      .slide-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        
+        @media (max-width: 768px) {
+          font-size: 1.5rem;
+        }
+      }
+      
+      .slide-subtitle {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        
+        @media (max-width: 768px) {
+          font-size: 1rem;
+          margin-bottom: 1rem;
+        }
+      }
+      
+      .slide-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: linear-gradient(135deg, #0066FF, #667eea);
+        color: white;
+        border: none;
+        padding: 14px 32px;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 102, 255, 0.3);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        
+        ion-icon {
+          font-size: 1.2rem;
+          transition: transform 0.3s ease;
+        }
+        
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(0, 102, 255, 0.4);
+          background: linear-gradient(135deg, #0052cc, #5a67d8);
+          
+          ion-icon {
+            transform: translateX(5px);
+          }
+        }
+        
+        &:active {
+          transform: translateY(0);
+        }
+        
+        @media (max-width: 768px) {
+          padding: 10px 24px;
+          font-size: 0.9rem;
+        }
+      }
+    }
+    
+    // Bouton simple version
+    .slide-button-wrapper {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+      
+      .slide-simple-btn {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(5px);
+        border: 3px solid white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        
+        ion-icon {
+          font-size: 35px;
+          color: white;
+          transition: transform 0.3s ease;
+        }
+        
+        &:hover {
+          transform: scale(1.1);
+          background: rgba(255, 255, 255, 0.3);
+          
+          ion-icon {
+            transform: scale(1.1);
+          }
+        }
+        
+        @media (max-width: 768px) {
+          width: 50px;
+          height: 50px;
+          
+          ion-icon {
+            font-size: 25px;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Animation pour le contenu
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%);
+  }
+}
+
+// Responsive pour mobile
+@media (max-width: 768px) {
+  .hero-swiper {
+    .slide-content {
+      left: 5%;
+      right: 5%;
+      text-align: center;
+      max-width: 90%;
+      
+      .slide-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+}

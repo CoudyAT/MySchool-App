@@ -37,9 +37,9 @@ import {
 import { PdfService } from '../../services/pdf.service';
 
 @Component({
-  selector: 'app-pdf-list',
-  templateUrl: './pdf-list.page.html',
-  styleUrls: ['./pdf-list.page.scss'],
+  selector: 'app-exo',
+  templateUrl: './exo.page.html',
+  styleUrls: ['./exo.page.scss'],
   standalone: true,
   imports: [
     IonTitle,
@@ -59,7 +59,7 @@ import { PdfService } from '../../services/pdf.service';
     IonThumbnail,
   ],
 })
-export class PdfListPage implements OnInit {
+export class ExoPage implements OnInit {
   pdfs: PdfFile[] = [];
   filteredPdfs: PdfFile[] = [];
   private subscription = new Subscription();
@@ -100,7 +100,7 @@ export class PdfListPage implements OnInit {
     this.isLoading = true;
     this.showError = false;
 
-    const sub = this.pdfService.getAllPdfs().subscribe({
+    const sub = this.pdfService.getAllExos().subscribe({
       next: (pdfs) => {
         this.pdfs = pdfs;
         this.filteredPdfs = [...pdfs];

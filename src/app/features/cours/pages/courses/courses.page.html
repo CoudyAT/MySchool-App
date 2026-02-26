@@ -63,79 +63,87 @@
           </div>
         </swiper-slide>
       </swiper-container>  -->
-      <swiper-container
-        class="hero-swiper"
-        [config]="slideOpts"
-        (swiperslidechange)="onSlideChange($event)"
-        (swiperinit)="onSwiperInit($event)"
-      >
-        <swiper-slide>
-          <a routerLink="/formations/masterclass">          
-            <div class="slide-container">
-            <picture>
-              <source media="(min-width: 1024px)" srcset="https://firebasestorage.googleapis.com/v0/b/myschool-f862b.firebasestorage.app/o/SLIDERS%2Fslider1.jpg?alt=media&token=60d46885-2548-49d8-b3b3-b5d1e3a27ee4">
-              <img src="https://firebasestorage.googleapis.com/v0/b/myschool-f862b.firebasestorage.app/o/SLIDERS%2Fslider1-mob.jpg?alt=media&token=d1ce1a4f-2c17-4fa5-aa56-6361c23149ef"
-                   alt="Formation 2"
-                   class="slide-image" />
-            </picture>
-            <div class="slide-overlay"></div>
-          </div>
-          </a>
-        </swiper-slide>
-         <!-- Slide 2 -->
-        <swiper-slide>
-          <a routerLink="/formations/masterclass">          
-            <div class="slide-container">
-            <picture>
-              <source media="(min-width: 1024px)" srcset="https://firebasestorage.googleapis.com/v0/b/myschool-f862b.firebasestorage.app/o/SLIDERS%2Fslider2.jpg?alt=media&token=60d46885-2548-49d8-b3b3-b5d1e3a27ee4">
-              <img src="https://firebasestorage.googleapis.com/v0/b/myschool-f862b.firebasestorage.app/o/SLIDERS%2Fslider2-mob.jpg?alt=media&token=d1ce1a4f-2c17-4fa5-aa56-6361c23149ef"
-                   alt="Formation 2"
-                   class="slide-image" />
-            </picture>
-            <div class="slide-overlay"></div>
-          </div>
-          </a>
-        </swiper-slide>
-        <!-- Slide 3 -->
-        <swiper-slide>
-          <a routerLink="/formations/masterclass">          
-            <div class="slide-container">
-            <picture>
-              <source media="(min-width: 1024px)" srcset="https://firebasestorage.googleapis.com/v0/b/myschool-f862b.firebasestorage.app/o/SLIDERS%2Fslider3.jpg?alt=media&token=60d46885-2548-49d8-b3b3-b5d1e3a27ee4">
-              <img src="https://firebasestorage.googleapis.com/v0/b/myschool-f862b.firebasestorage.app/o/SLIDERS%2Fslider3-mob.jpg?alt=media&token=d1ce1a4f-2c17-4fa5-aa56-6361c23149ef"
-                   alt="Formation 2"
-                   class="slide-image" />
-            </picture>
-            <div class="slide-overlay"></div>
-          </div>
-          </a>
-        </swiper-slide>
+<swiper-container
+  class="hero-swiper"
+  [config]="slideOpts"
+  (swiperslidechange)="onSlideChange($event)"
+  (swiperinit)="onSwiperInit($event)"
+>
+  <!-- Slide 1 -->
+  <swiper-slide>
+    <a routerLink="/formations/masterclass">          
+      <div class="slide-container">
+        <picture>
+          <source media="(min-width: 1024px)" srcset="https://firebasestorage.googleapis.com/v0/b/myschool-f862b.firebasestorage.app/o/SLIDERS%2Fslider1.jpg?alt=media&token=60d46885-2548-49d8-b3b3-b5d1e3a27ee4">
+          <img src="https://firebasestorage.googleapis.com/v0/b/myschool-f862b.firebasestorage.app/o/SLIDERS%2Fslider1-mob.jpg?alt=media&token=d1ce1a4f-2c17-4fa5-aa56-6361c23149ef"
+               alt="Formation 2"
+               class="slide-image" />
+        </picture>
+        <div class="slide-overlay"></div>
+        
+        <!-- Bouton ajouté -->
+        <div class="slide-content">
+          <h2 class="slide-title"></h2>
+          <p class="slide-subtitle"></p>
+          <button class="slide-btn" (click)="goToCours()">
+            <span>Voir les cours</span>
+            <ion-icon name="arrow-forward-outline"></ion-icon>
+          </button>
+        </div>
+      </div>
+    </a>
+  </swiper-slide>
 
-        <!-- Slide 2 
-        <swiper-slide>
-          <div class="slide-container">
-            <picture>
-              <source media="(min-width: 1024px)" srcset="assets/Masterclass.jpg">
-              <img src="assets/masterclass.png"
-                   alt="Formation 2"
-                   class="slide-image" />
-            </picture>
-            <div class="slide-overlay"></div>
-          </div>
-        </swiper-slide> -->
-        <!-- Slide 3 
-        <swiper-slide>
-          <div class="slide-container">
-            <picture>
-              <source media="(min-width: 1024px)" srcset="assets/Masterclass.jpg">
-              <img src="assets/masterclass.png"
-                   alt="Formation 2"
-                   class="slide-image" />
-            </picture>
-            <div class="slide-overlay"></div>
-          </div>
-        </swiper-slide> -->
-      </swiper-container>
+  <!-- Slide 2 -->
+  <swiper-slide>
+    <a routerLink="/formations/masterclass">          
+      <div class="slide-container">
+        <picture>
+          <source media="(min-width: 1024px)" srcset="https://firebasestorage.googleapis.com/v0/b/myschool-f862b.firebasestorage.app/o/SLIDERS%2Fslider2.jpg?alt=media&token=60d46885-2548-49d8-b3b3-b5d1e3a27ee4">
+          <img src="https://firebasestorage.googleapis.com/v0/b/myschool-f862b.firebasestorage.app/o/SLIDERS%2Fslider2-mob.jpg?alt=media&token=d1ce1a4f-2c17-4fa5-aa56-6361c23149ef"
+               alt="Formation 2"
+               class="slide-image" />
+        </picture>
+        <div class="slide-overlay"></div>
+        
+        <!-- Bouton ajouté -->
+        <div class="slide-content">
+          <h2 class="slide-title"></h2>
+          <p class="slide-subtitle"></p>
+          <button class="slide-btn" >
+            <span>Découvrir</span>
+            <ion-icon name="arrow-forward-outline"></ion-icon>
+          </button>
+        </div>
+      </div>
+    </a>
+  </swiper-slide>
+
+  <!-- Slide 3 -->
+  <swiper-slide>
+    <a routerLink="/formations/masterclass">          
+      <div class="slide-container">
+        <picture>
+          <source media="(min-width: 1024px)" srcset="https://firebasestorage.googleapis.com/v0/b/myschool-f862b.firebasestorage.app/o/SLIDERS%2Fslider3.jpg?alt=media&token=60d46885-2548-49d8-b3b3-b5d1e3a27ee4">
+          <img src="https://firebasestorage.googleapis.com/v0/b/myschool-f862b.firebasestorage.app/o/SLIDERS%2Fslider3-mob.jpg?alt=media&token=d1ce1a4f-2c17-4fa5-aa56-6361c23149ef"
+               alt="Formation 2"
+               class="slide-image" />
+        </picture>
+        <div class="slide-overlay"></div>
+        
+        <!-- Bouton ajouté -->
+        <div class="slide-content">
+          <h2 class="slide-title">Rejoignez notre communauté</h2>
+          <p class="slide-subtitle">Des milliers d'étudiants nous font confiance</p>
+          <button class="slide-btn" >
+            <span>Nous rejoindre</span>
+            <ion-icon name="arrow-forward-outline"></ion-icon>
+          </button>
+        </div>
+      </div>
+    </a>
+  </swiper-slide>
+</swiper-container>
 
       <!-- Pagination -->
       <div class="pagination-dots">
@@ -231,19 +239,24 @@
       <!-- ================================================ -->
 
       <!-- Bandeau pour MOYEN/SECONDAIRE/UNIV avec classe définie -->
-      <div *ngIf="isMoyenSecondaireUniv && hasClasse && !showMatiereSelection" class="classe-banner niveau-banner">
-        <div class="banner-content">
-          <ion-icon name="school-outline" class="banner-icon"></ion-icon>
-          <div class="banner-text">
-            <h3>{{ userClasse }}</h3>
-            <p>Niveau {{ userNiveauScolaire }} — Sélectionnez 3 matières pour vous abonner</p>
-          </div>
-          <ion-button fill="solid" color="primary" (click)="loadMatieresForClasse(userClasse!)">
-            <ion-icon name="book-outline" slot="start"></ion-icon>
-            Choisir mes matières
-          </ion-button>
+    <div *ngIf="isMoyenSecondaireUniv && hasClasse && !showMatiereSelection" class="classe-banner niveau-banner">
+      <div class="banner-content">
+        <ion-icon name="school-outline" class="banner-icon"></ion-icon>
+        <div class="banner-text">
+          <h3>{{ userClasse }}</h3>
+          <p *ngIf="userNiveauScolaire !== 'PROFESSIONNEL'">
+            Niveau {{ userNiveauScolaire }} — Sélectionnez 3 matières pour vous abonner
+          </p>
+          <p *ngIf="userNiveauScolaire === 'PROFESSIONNEL'">
+            Niveau Professionnel —  Sélectionnez 3 matières pour vous abonner
+          </p>
         </div>
+        <ion-button fill="solid" color="primary" (click)="loadMatieresForClasse(userClasse!)">
+          <ion-icon name="book-outline" slot="start"></ion-icon>
+          Choisir mes matières
+        </ion-button>
       </div>
+    </div>
 
       <!-- Sélecteur de classe pour MOYEN/SECONDAIRE/UNIV sans classe -->
       <div *ngIf="isMoyenSecondaireUniv && !hasClasse && !showMatiereSelection" class="classe-selector niveau-selector">
