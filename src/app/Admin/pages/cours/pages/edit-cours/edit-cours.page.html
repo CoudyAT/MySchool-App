@@ -57,7 +57,6 @@
               <ion-select-option value="En ligne">En ligne</ion-select-option>
               <ion-select-option value="Présentiel">Présentiel</ion-select-option>
               <ion-select-option value="Tuto">Tuto</ion-select-option>
-              <ion-select-option value="Pdf">Document</ion-select-option>
 
             </ion-select>
           </div>
@@ -133,6 +132,49 @@
             <label>Certificat disponible à la fin du cours</label>
           </div>
 
+        </div>
+      </section>
+
+      <section>
+        <h2>Documents du cours</h2>
+
+        <div class="document-upload-container" (click)="documentInput.click()">
+
+          <!-- Placeholder quand rien -->
+          <div *ngIf="documentsArray.length === 0" class="upload-placeholder">
+            <ion-icon name="documents-outline" size="large"></ion-icon>
+            <p>Cliquez pour ajouter des documents</p>
+            <small>PDF, DOC, DOCX — max 10 Mo par fichier</small>
+          </div>
+
+          <!-- Liste des documents -->
+          <div *ngIf="documentsArray.length > 0" class="documents-list">
+            <div *ngFor="let docCtrl of documentsArray.controls; let i = index" class="document-item">
+
+              <div class="document-info">
+                <ion-icon name="document-text-outline"></ion-icon>
+                <div>
+                  <div class="doc-name">{{ docCtrl.get('name')?.value }}</div>
+                  <div class="doc-size">
+                    {{ (docCtrl.get('size')?.value / 1048576).toFixed(2) }} Mo
+                    <span *ngIf="!docCtrl.get('url')?.value" class="new-badge">Nouveau</span>
+                  </div>
+                </div>
+              </div>
+
+              <button type="button" class="btn-remove"
+                (click)="removeDocument(i, !docCtrl.get('url')?.value); $event.stopPropagation()">
+                Supprimer
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <input #documentInput type="file" accept=".pdf,.doc,.docx" multiple hidden
+          (change)="onNewDocumentsSelected($event)" />
+
+        <div *ngIf="isUploadingDocuments" class="uploading-info">
+          Envoi des documents en cours...
         </div>
       </section>
 

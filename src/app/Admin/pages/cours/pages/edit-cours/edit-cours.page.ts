@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { IonicModule, ToastController } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CourseService } from 'src/app/features/services/courseService';
@@ -32,6 +32,13 @@ export class EditCoursPage implements OnInit {
   courseId: string = '';
   instructors: Instructor[] = [];
   categories: string[] = [];
+
+  existingDocuments: any[] = [];
+  documentsToDelete: string[] = [];
+
+  selectedNewDocuments: File[] = [];
+
+  isUploadingDocuments = false;
 
   // Gestion image
   imagePreview: string | null = null;
@@ -67,6 +74,7 @@ export class EditCoursPage implements OnInit {
       description: [''],
       duration: [0, Validators.min(0)],
       sessions: [''],
+      documents: this.fb.array([]),
       exercises: [0, Validators.min(0)],
       certificateAvailable: [false],
       selectedCategoryOption: [''],
@@ -91,12 +99,17 @@ export class EditCoursPage implements OnInit {
     this.loadCourse();
   }
 
+  get documentsArray(): FormArray {
+    return this.editForm.get('documents') as FormArray;
+  }
+
   private loadCourse() {
     this.courseService.getCourse(this.courseId).subscribe({
       next: (res: any) => {
         this.course = res.data || res;
         this.originalImageUrl = this.course.image || null;
         this.imagePreview = this.course.image || null;
+        this.existingDocuments = this.course.documents || [];
 
         const courseAny = this.course as any;
         if (courseAny.videoUrl) {
@@ -107,6 +120,16 @@ export class EditCoursPage implements OnInit {
             name: courseAny.videoName || 'Vidéo actuelle'
           };
         }
+
+        this.documentsArray.clear();
+        this.existingDocuments.forEach(doc => {
+          this.documentsArray.push(this.fb.group({
+            name: [doc.name],
+            url: [doc.url],
+            size: [doc.size],
+            uploadedAt: [doc.uploadedAt]
+          }));
+        });
 
 
         this.editForm.patchValue({
@@ -131,6 +154,82 @@ export class EditCoursPage implements OnInit {
         this.showToast('Impossible de charger le cours', 'danger');
       }
     });
+  }
+
+  // Quand l’utilisateur sélectionne de nouveaux fichiers
+  onNewDocumentsSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+
+    Array.from(input.files).forEach(file => {
+      if (!file.name.toLowerCase().match(/\.(pdf|doc|docx)$/)) {
+        this.showToast(`Format non supporté : ${file.name}`, 'warning');
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        this.showToast(`Fichier trop gros : ${file.name} (> 10 Mo)`, 'warning');
+        return;
+      }
+
+      this.selectedNewDocuments.push(file);
+
+      // Ajout dans le FormArray (url vide pour l’instant)
+      this.documentsArray.push(this.fb.group({
+        name: [file.name],
+        url: [''],
+        size: [file.size],
+        uploadedAt: ['']
+      }));
+    });
+
+    input.value = ''; // reset input
+  }
+
+  removeDocument(index: number, isNew: boolean = false) {
+    if (isNew) {
+      this.selectedNewDocuments.splice(index - this.existingDocuments.length, 1);
+      this.documentsArray.removeAt(index);
+    } else {
+      const docToRemove = this.existingDocuments[index];
+      this.existingDocuments.splice(index, 1);
+      this.documentsArray.removeAt(index);
+    }
+  }
+
+  private async uploadNewDocuments(): Promise<any[]> {
+    if (this.selectedNewDocuments.length === 0) return [];
+
+    this.isUploadingDocuments = true;
+    const storage = getStorage();
+    const uploaded: any[] = [];
+
+    try {
+      for (let i = 0; i < this.selectedNewDocuments.length; i++) {
+        const file = this.selectedNewDocuments[i];
+        const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+        const path = `courses/${this.courseId}/documents/${Date.now()}_${safeName}`;
+        const fileRef = ref(storage, path);
+
+        await uploadBytes(fileRef, file);
+        const url = await getDownloadURL(fileRef);
+
+        const docInfo = {
+          name: file.name,
+          url,
+          size: file.size,
+          uploadedAt: new Date().toISOString()
+        };
+
+        uploaded.push(docInfo);
+      }
+      return uploaded;
+    } catch (err) {
+      console.error('Erreur upload documents', err);
+      this.showToast('Erreur lors de l’upload des documents', 'danger');
+      return [];
+    } finally {
+      this.isUploadingDocuments = false;
+    }
   }
 
   async openVideoPicker() {
@@ -347,6 +446,18 @@ export class EditCoursPage implements OnInit {
       // Si une nouvelle image a été sélectionnée, on l'ajoute en base64
       if (this.imageBase64) {
         updateData.image = this.imageBase64;
+      }
+
+      const newUploadedDocs = await this.uploadNewDocuments();
+
+      // Fusion : anciens documents (non supprimés) + nouveaux
+      const finalDocuments = [
+        ...this.existingDocuments,
+        ...newUploadedDocs
+      ];
+
+      if (finalDocuments.length > 0 || this.existingDocuments.length === 0) {
+        updateData.documents = finalDocuments;
       }
 
       console.log('Mise à jour du cours avec:', updateData);

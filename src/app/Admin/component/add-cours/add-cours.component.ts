@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CourseService } from 'src/app/features/services/courseService';
 import { InstructorService } from 'src/app/features/services/instructorService';
 import { Course } from 'src/app/models/course.model';
@@ -8,12 +8,13 @@ import { Instructor } from 'src/app/models/instructor.model';
 
 // Firestore
 import { Firestore, collection, addDoc, Timestamp } from '@angular/fire/firestore';
-import { IonIcon, IonSpinner } from "@ionic/angular/standalone";
+import { IonIcon, IonSpinner, } from "@ionic/angular/standalone";
 import { getDownloadURL, getStorage, listAll, ref, uploadBytes } from 'firebase/storage';
 import { updateDoc } from 'firebase/firestore';
 import { MatiereService } from '../../services/matiereService';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import { documents, imageOutline, documentOutline, documentTextOutline, closeOutline } from 'ionicons/icons';
 
 interface StorageVideo {
   name: string;
@@ -30,6 +31,7 @@ interface StorageVideo {
   imports: [IonSpinner, IonIcon, CommonModule, ReactiveFormsModule],
 })
 export class AddCoursComponent implements OnInit {
+
   @Output() formSubmit = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();
 
@@ -62,6 +64,9 @@ export class AddCoursComponent implements OnInit {
   imageBase64: string | null = null;
   isSaving = false;
 
+  selectedDocuments: File[] = [];
+  isUploadingDocuments = false;
+
   selectedCategoryOption: string = '';
   newCategoryName: string = '';
   showNewCategoryInput: boolean = false;
@@ -88,6 +93,7 @@ export class AddCoursComponent implements OnInit {
       price: [0],
       sessions: [''],
       exercises: [0],
+      documents: this.fb.array([]),
       matiereId: ['', Validators.required],
       certificateAvailable: [false],
       duration: [0],
@@ -105,12 +111,95 @@ export class AddCoursComponent implements OnInit {
       ?.valueChanges.subscribe((value) => {
         this.onCategoryOptionChange(value);
       });
+
   }
 
   ngOnInit(): void {
     this.loadInstructors();
     this.loadCategories();
     this.loadMatieres();
+  }
+
+  onDocumentsSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+
+    const newFiles = Array.from(input.files);
+
+    newFiles.forEach(file => {
+      // Optionnel : filtre par type
+      if (!file.name.toLowerCase().endsWith('.pdf') &&
+        !file.name.toLowerCase().endsWith('.doc') &&
+        !file.name.toLowerCase().endsWith('.docx')) {
+        alert(`Fichier ignoré : ${file.name} (seuls PDF, DOC, DOCX acceptés)`);
+        return;
+      }
+
+      // Optionnel : limite de taille (ex: 10 Mo)
+      if (file.size > 10 * 1024 * 1024) {
+        alert(`Fichier trop volumineux : ${file.name} (> 10 Mo)`);
+        return;
+      }
+
+      this.selectedDocuments.push(file);
+
+      // Ajout d'une entrée vide dans le FormArray (on remplira après upload)
+      this.documentsArray.push(this.fb.group({
+        name: [file.name],
+        url: [''],
+        size: [file.size],
+        uploadedAt: ['']
+      }));
+    });
+
+    // Reset input file
+    input.value = '';
+  }
+
+  // Supprimer un document (local + formulaire)
+  removeDocument(index: number) {
+    this.selectedDocuments.splice(index, 1);
+    this.documentsArray.removeAt(index);
+  }
+
+  private async uploadDocuments(courseId: string): Promise<any[]> {
+    if (this.selectedDocuments.length === 0) return [];
+
+    this.isUploadingDocuments = true;
+    const storage = getStorage();
+    const uploadedDocs: any[] = [];
+
+    try {
+      for (let i = 0; i < this.selectedDocuments.length; i++) {
+        const file = this.selectedDocuments[i];
+        const safeFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+        const filePath = `courses/${courseId}/documents/${Date.now()}_${safeFileName}`;
+        const storageRef = ref(storage, filePath);
+
+        await uploadBytes(storageRef, file);
+        const url = await getDownloadURL(storageRef);
+
+        const docInfo = {
+          name: file.name,
+          url,
+          size: file.size,
+          uploadedAt: new Date().toISOString()
+        };
+
+        uploadedDocs.push(docInfo);
+
+        // Mise à jour dans le FormArray (optionnel mais propre)
+        this.documentsArray.at(i).patchValue(docInfo);
+      }
+
+      return uploadedDocs;
+    } catch (err) {
+      console.error("Erreur upload documents :", err);
+      alert("Erreur lors de l'envoi d'un ou plusieurs documents");
+      return [];
+    } finally {
+      this.isUploadingDocuments = false;
+    }
   }
 
   async openVideoPicker() {
@@ -323,6 +412,10 @@ export class AddCoursComponent implements OnInit {
     reader.readAsDataURL(file);
   }
 
+  get documentsArray(): FormArray {
+    return this.courseForm.get('documents') as FormArray;
+  }
+
   onPdfSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
@@ -453,10 +546,21 @@ export class AddCoursComponent implements OnInit {
       const docRef = await addDoc(collection(this.firestore, 'courses'), {
         ...this.courseForm.value,
         image: this.imageBase64 || null,
+        documents: [],
         support: null,
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
       });
+
+      const uploadedDocs = await this.uploadDocuments(docRef.id);
+
+      // 3. Mettre à jour le cours avec les vrais documents
+      if (uploadedDocs.length > 0) {
+        await updateDoc(docRef, {
+          documents: uploadedDocs,
+          updatedAt: Timestamp.now(),
+        });
+      }
 
       // Upload du PDF
       // const pdfUrl = await this.uploadPdf(docRef.id);

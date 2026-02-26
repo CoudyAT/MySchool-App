@@ -61,7 +61,6 @@
         <option value="Présentiel">Présentiel</option>
         <option value="Video">Video</option>
         <option value="Tuto">Tuto</option>
-        <option value="Pdf">Document</option>
       </select>
     </div>
     <!-- Description -->
@@ -112,6 +111,46 @@
         Veuillez sélectionner une matière
       </div>
     </div>
+
+    <div class="form-group full-width">
+      <label class="form-label">Documents (PDF, Word…)</label>
+
+      <div class="document-upload-container" (click)="documentInput.click()">
+        <div *ngIf="selectedDocuments.length === 0" class="upload-placeholder">
+          <ion-icon name="document-outline" size="large"></ion-icon>
+          <p class="upload-text">Cliquez ou glissez-déposez vos documents ici</p>
+          <span class="upload-hint">PDF, DOC, DOCX — max 10 Mo par fichier</span>
+        </div>
+
+        <div *ngIf="selectedDocuments.length > 0" class="selected-documents-list">
+          <div *ngFor="let doc of selectedDocuments; let i = index" class="document-preview-item">
+            <div class="document-icon-name">
+              <ion-icon name="document-text-outline"></ion-icon>
+              <div class="name-size">
+                <div class="document-name">{{ doc.name }}</div>
+                <div class="document-size">{{ (doc.size / (1024 * 1024)).toFixed(2) }} Mo</div>
+              </div>
+            </div>
+            <button type="button" class="btn-remove" (click)="removeDocument(i); $event.stopPropagation()">
+              <p>Retirer</p>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <input #documentInput type="file" (change)="onDocumentsSelected($event)" accept=".pdf,.doc,.docx" multiple
+        hidden />
+
+      <small class="file-hint mt-2">
+        Plusieurs fichiers possibles - Taille max : 10 Mo par fichier
+      </small>
+
+      <div *ngIf="isUploadingDocuments" class="uploading-message">
+        Envoi des documents en cours...
+      </div>
+    </div>
+
+
 
     <!-- Vidéo du cours -->
     <div class="form-group full-width">
