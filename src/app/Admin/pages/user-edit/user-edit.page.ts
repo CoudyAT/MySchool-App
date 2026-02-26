@@ -24,7 +24,7 @@ export class UserEditPage implements OnInit {
     private route: ActivatedRoute,
     private toastCtrl: ToastController,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.userId = this.route.snapshot.paramMap.get('id')!;
@@ -60,7 +60,7 @@ export class UserEditPage implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/admin-login/users']);
+    this.router.navigate([`/admin-login/user-details/${this.userId}`]);
   }
 
   private async showToast(

@@ -384,4 +384,8 @@ export class EditCoursPage implements OnInit {
     });
     await toast.present();
   }
+
+  goBack() {
+    this.router.navigate([`admin-login/cours/${this.courseId}`]);
+  }
 }
