@@ -31,33 +31,13 @@ interface SocialLink {
 export class FooterComponent implements OnInit {
   @Input() footerLinks: FooterLink[] = [
     {
-      label: 'Mentions légales',
-      href: '#',
-      external: false,
-    },
-    {
       label: "Conditions générales d'utilisation",
       href: '/terms',
       external: false,
     },
     {
-      label: 'Politique de protection des données personnelles',
-      href: '#',
-      external: false,
-    },
-    {
-      label: 'Cookies',
-      href: '#',
-      external: false,
-    },
-    {
-      label: "Déclaration d'accessibilité",
-      href: '#',
-      external: false,
-    },
-    {
       label: 'Sécurité',
-      href: '#',
+      href: '/security',
       external: false,
     },
   ];
