@@ -69,7 +69,7 @@ export interface Matiere {
 }
 
 export interface Course {
-  documents: never[];
+  documents: CourseDocument[];
   id: string;
   title: string;
   category: string;
@@ -109,6 +109,15 @@ export interface Course {
   videoName?: string;
 }
 
+export interface CourseDocument {
+  name: string;
+  url: string;
+  size: number;
+  mimeType?: string;
+  uploadedAt: string | Date;
+  uploadedBy?: string;
+  storagePath?: string;
+}
 export interface OnlineCourseExtras {
   livePlatform?: 'Zoom' | 'Meet' | 'Teams';
   startDate?: Date;

@@ -91,6 +91,53 @@
     </section>
 
     <section>
+      <h2>Documents du cours</h2>
+
+      <div class="documents-section">
+        <ng-container *ngIf="course.documents.length > 0; else noDocs">
+          <div class="documents-list">
+            <a *ngFor="let doc of course.documents" [href]="doc?.url" target="_blank" class="document-item" download>
+
+              <div class="document-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                  <path d="M9 15h6" />
+                  <path d="M9 18h6" />
+                </svg>
+              </div>
+
+              <div class="document-info">
+                <div class="document-name">{{ doc.name }}</div>
+                <div class="document-meta">
+                  <span>{{ (doc.size / (1024 * 1024)).toFixed(1) }} Mo</span>
+                  <span> • </span>
+                  <span>{{ doc.uploadedAt | date:'dd MMM yyyy' }}</span>
+                </div>
+              </div>
+
+              <div class="document-action">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+              </div>
+            </a>
+          </div>
+        </ng-container>
+
+        <ng-template #noDocs>
+          <div class="empty-state">
+            <div class="empty-icon">📄</div>
+            <p>Aucun document pour le moment</p>
+            <small>Les documents PDF, Word... apparaîtront ici</small>
+          </div>
+        </ng-template>
+      </div>
+    </section>
+
+    <section>
       <h2>Vidéo du cours</h2>
 
       <!-- Vidéo disponible -->
