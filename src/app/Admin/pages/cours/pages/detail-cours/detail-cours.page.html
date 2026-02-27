@@ -94,7 +94,7 @@
       <h2>Documents du cours</h2>
 
       <div class="documents-section">
-        <ng-container *ngIf="course.documents.length > 0; else noDocs">
+        <ng-container *ngIf="course.documents && course.documents.length > 0; else noDocs">
           <div class="documents-list">
             <a *ngFor="let doc of course.documents" [href]="doc?.url" target="_blank" class="document-item" download>
 
@@ -110,7 +110,7 @@
               <div class="document-info">
                 <div class="document-name">{{ doc.name }}</div>
                 <div class="document-meta">
-                  <span>{{ (doc.size / (1024 * 1024)).toFixed(1) }} Mo</span>
+                  <span>{{ ((doc?.size || 0) / (1024 * 1024)) | number:'1.1-1' }} Mo</span>
                   <span> • </span>
                   <span>{{ doc.uploadedAt | date:'dd MMM yyyy' }}</span>
                 </div>
