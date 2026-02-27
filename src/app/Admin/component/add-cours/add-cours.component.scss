@@ -288,3 +288,120 @@
   border-color: #0066cc;
   box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2);
 }
+
+.document-upload-container {
+  cursor: pointer;
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f8fafc;
+  transition: all 0.3s ease;
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  &:hover {
+    border-color: #3b82f6;
+    background: #f0f5ff;
+  }
+
+  .upload-placeholder {
+    padding: 40px 20px;
+    text-align: center;
+    color: #64748b;
+
+    ion-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+      color: #94a3b8;
+    }
+
+    .upload-text {
+      font-size: 16px;
+      font-weight: 500;
+      margin: 0 0 8px;
+    }
+
+    .upload-hint {
+      font-size: 13px;
+      color: #94a3b8;
+    }
+  }
+
+  .selected-documents-list {
+    padding: 16px;
+    width: 100%;
+  }
+
+  .document-preview-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    transition: all 0.2s;
+
+    &:hover {
+      background: #f8fafc;
+    }
+
+    .document-icon-name {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+
+      ion-icon {
+        font-size: 28px;
+        color: #64748b;
+      }
+
+      .name-size {
+        flex: 1;
+        min-width: 0;
+
+        .document-name {
+          font-size: 14px;
+          font-weight: 500;
+          color: #1f2937;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .document-size {
+          font-size: 12px;
+          color: #6b7280;
+        }
+      }
+    }
+
+    .btn-remove {
+      background: none;
+      border: none;
+      color: #9ca3af;
+      font-size: 15px;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 50%;
+      transition: all 0.2s;
+
+      &:hover {
+        color: #ef4444;
+        background: #fee2e2;
+      }
+    }
+  }
+}
+
+.uploading-message {
+  margin-top: 12px;
+  color: #3b82f6;
+  font-size: 14px;
+  text-align: center;
+  font-style: italic;
+}

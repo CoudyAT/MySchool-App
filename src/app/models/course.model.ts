@@ -71,6 +71,7 @@ export interface Matiere {
 }
 
 export interface Course {
+  documents: never[];
   id: string;
   title: string;
   category: string;
