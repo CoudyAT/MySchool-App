@@ -228,7 +228,7 @@ export class SignupFlowComponent implements OnInit {
 
   classesParNiveau: { [key: string]: string[] } = {
     ELEMENTAIRE: ['CI', 'CP', 'CE1', 'CE2', 'CM1', 'CM2'],
-    MOYEN: ['6ème', '5ème', '4ème', '3ème'],
+    MOYEN: ['6ème', '5ème', '4ème', '3ème (BFEM)'],
     SECONDAIRE: ['Seconde', 'Première', 'Terminale'],
     UNIVERSITAIRE: ['Licence1', 'Licence2', 'Licence3', 'Master1', 'Master2'],
   };

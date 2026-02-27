@@ -70,8 +70,15 @@ export interface Matiere {
   updatedAt: Date;
 }
 
+export interface CourseDocument {
+  name: string;
+  url: string;
+  size?: number;
+  uploadedAt?: any;
+}
+
 export interface Course {
-  documents: never[];
+  documents?: CourseDocument[];
   id: string;
   title: string;
   category: string;

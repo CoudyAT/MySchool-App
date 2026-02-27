@@ -117,17 +117,36 @@
 
         <!-- Contenu Documents -->
         <div class="hero-tab-content" *ngIf="heroActiveTab === 'documents'">
-          <div class="hero-documents-list">
-            <div class="hero-document-item">
-              <div class="hero-document-icon">
-                <ion-icon name="document-text-outline"></ion-icon>
-              </div>
-              <div class="hero-document-info">
-                <h4 class="hero-document-name">Support de cours</h4>
-                <p class="hero-document-type">PDF</p>
-              </div>
+        <div
+          class="hero-documents-list"
+          *ngIf="(course?.documents?.length || 0) > 0; else noDocs"
+        >
+          <div
+            class="hero-document-item"
+            *ngFor="let doc of course?.documents || []"
+            style="cursor:pointer"
+          >
+            <div class="hero-document-icon">
+              <ion-icon name="document-text-outline"></ion-icon>
+            </div>
+
+            <div class="hero-document-info">
+              <h4 class="hero-document-name">
+                {{ doc.name }}
+              </h4>
+
+              <p class="hero-document-type">
+                PDF • {{ ((doc?.size || 0) / 1024 / 1024) | number:'1.1-1' }} MB
+              </p>
             </div>
           </div>
+        </div>
+
+        <ng-template #noDocs>
+          <div class="hero-empty-state">
+            <p>Aucun document disponible</p>
+          </div>
+        </ng-template>
         </div>
       </div>
     </div>
@@ -252,16 +271,27 @@
       <!-- Section Documents -->
       <div class="documents-section">
         <h2 class="section-title">Documents</h2>
-        <ion-card class="document-card">
-          <ion-card-content class="document-card-content">
-            <div class="document-item">
-              <div class="document-info">
-                <span class="document-name">Support de cours</span>
-                <span class="document-type">PDF</span>
+        <div *ngIf="(course?.documents?.length || 0) > 0; else noMobileDocs">
+          <ion-card
+            class="document-card"
+            *ngFor="let doc of course?.documents || []"
+          >
+            <ion-card-content class="document-card-content">
+              <div class="document-item">
+                <div class="document-info">
+                  <span class="document-name">{{ doc.name }}</span>
+                  <span class="document-type">
+                    PDF • {{ ((doc?.size || 0) / 1024 / 1024) | number:'1.1-1' }} MB
+                  </span>
+                </div>
               </div>
-            </div>
-          </ion-card-content>
-        </ion-card>
+            </ion-card-content>
+          </ion-card>
+        </div>
+
+        <ng-template #noMobileDocs>
+          <p>Aucun document disponible</p>
+        </ng-template>
       </div>
 
       <!-- Bouton continuer (uniquement si inscrit) -->
