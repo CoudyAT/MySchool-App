@@ -38,6 +38,7 @@ import { PdfListPage } from './features/pdf/pdf-list/pdf-list.page';
 import { MatieresPage } from './Admin/pages/matieres/matieres.page';
 import { adminGuard } from './guard/admin-guard';
 import { ReferralsPage } from './Admin/pages/referrals/referrals.page';
+import { UpdatePasswordPage } from './Admin/pages/update-password/update-password.page';
 
 export const routes: Routes = [
   {
@@ -183,6 +184,10 @@ export const routes: Routes = [
         path: 'referrals',
         component: ReferralsPage
       },
+      {
+        path: 'update-password',
+        component: UpdatePasswordPage,
+      },
 
     ],
   },
@@ -249,5 +254,6 @@ export const routes: Routes = [
     path: 'conditions',
     loadComponent: () => import('./features/auth/pages/conditions/conditions.page').then(m => m.ConditionsPage)
   },
+
 
 ];

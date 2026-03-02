@@ -96,4 +96,8 @@ export class BaseLayoutAdminComponent {
     });
     await alert.present();
   }
+
+  async updatePassword() {
+    this.router.navigate(['/admin-login/update-password']);
+  }
 }
