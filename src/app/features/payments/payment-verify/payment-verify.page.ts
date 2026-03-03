@@ -278,7 +278,7 @@ export class PaymentVerifyPage implements OnInit {
     }
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   setupDisplayedMethods() {
     const selected = this.allPaymentMethods.find(
@@ -308,7 +308,6 @@ export class PaymentVerifyPage implements OnInit {
 
   async applyPromoCode() {
     const promo = this.promoCodeInput.trim().toUpperCase();
-
     if (!promo) return;
 
     if (!this.userId) {
@@ -319,30 +318,46 @@ export class PaymentVerifyPage implements OnInit {
     try {
       await this.showLoader('Validation du code promo...');
 
-      // Appel API
       const response: any = await firstValueFrom(
         this.paymentService.validatePromoCode({
           code: promo,
           userId: this.userId,
-        }),
+        })
       );
 
       await this.hideLoader();
 
       if (response.success && response.data) {
-        // Ici tu peux récupérer par exemple data.discount ou data.finalPrice
-        // Adapte selon la réponse exacte de ton backend
-        const { discountAmount, finalPrice } = response.data;
+        const { discountAmount, discountPercentage, finalPrice } = response.data;
 
-        this.appliedPromoCode = promo;
-        this.summary.promoCode = discountAmount || 0;
+        // ──────────────────────────────────────────────
+        // MONTANT fixe
+        // ──────────────────────────────────────────────
+        if (discountAmount !== undefined) {
+          this.summary.promoCode = discountAmount;
+          this.discountPercentage = 0;
+        }
+
+
+        //  priorité au montant si présent
+        else if (discountPercentage !== undefined) {
+          this.discountPercentage = discountPercentage;
+          this.summary.promoCode = Math.round(this.summary.price * (discountPercentage / 100));
+        }
+
+        // Mise à jour du total
         this.calculateTotal();
 
-        this.showSuccessToast(`Code promo appliqué : -${discountAmount} FCFA`);
+        // Sauvegarde du code appliqué
+        this.appliedPromoCode = promo;
         this.showPromoInput = false;
         this.promoCodeInput = '';
+
+        await this.showSuccessToast(
+          `Code promo appliqué : -${this.summary.promoCode} FCFA`
+        );
       } else {
-        this.showErrorAlert('Code promo invalide ou expiré');
+        await this.showErrorAlert('Code promo invalide ou expiré');
       }
     } catch (err) {
       await this.hideLoader();
