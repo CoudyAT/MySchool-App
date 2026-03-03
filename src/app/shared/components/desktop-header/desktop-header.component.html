@@ -1,11 +1,10 @@
-<div class="desktop-premium-bar" *ngIf="showPremiumBar">
+<div class="desktop-premium-bar" *ngIf="showPremiumBar && !hasActiveSubscription">
   <ion-button
     fill="solid"
-    class="preminum"
+    class="subscription-btn"
     (click)="openPremiumModal()"
   >
-    <ion-icon name="star-outline" slot="start"></ion-icon>
-    Abonnez-vous pour avoir accès à tous les cours
+    {{ subscriptionButtonText }}
   </ion-button>
 </div>
 <ion-header class="desktop-header ion-no-border">
@@ -13,16 +12,16 @@
     <div class="desktop-header-content">
 
       <!-- Logo -->
-      <img 
-        src="assets/logo.svg" 
-        class="logo" 
+      <img
+        src="assets/logo.svg"
+        class="logo"
         (click)="navigateTo('home')"
         style="cursor: pointer;"
       />
 
       <!-- Menu -->
       <nav class="desktop-nav">
-        <!-- Menu 
+        <!-- Menu
       <div class="menu-item" [class.active]="activePage === 'home'" (click)="navigateTo('home')">
         <ion-icon name="home-outline"></ion-icon>
         <span class="menu-label">Accueil</span>
@@ -52,7 +51,7 @@
         >
           <ion-icon name="trophy-outline"></ion-icon>
           <span class="menu-label">Réussites</span>
-        </div> -->  
+        </div> -->
 
         <div class="menu-item" [class.active]="activePage === 'videos'" (click)="navigateTo('videos')">
         <ion-icon name="play-circle-outline"></ion-icon>

@@ -27,7 +27,9 @@ import { addIcons } from 'ionicons';
 import { ChapterService } from 'src/app/features/services/chapter.service';
 
 // 🔥 Firestore
-import { Firestore, doc, updateDoc } from '@angular/fire/firestore';
+import { DocumentData, DocumentReference, Firestore, doc, updateDoc } from '@angular/fire/firestore';
+import { Subscription } from 'rxjs';
+import { CourseService } from 'src/app/features/services/courseService';
 
 @Component({
   selector: 'app-video-player',
@@ -51,6 +53,9 @@ import { Firestore, doc, updateDoc } from '@angular/fire/firestore';
 export class VideoPlayerPage implements OnInit {
   course: any = {};
   enrollment: any;
+  isLoading = true;
+  private courseSubscription: Subscription = new Subscription();
+  
 
   progress: number = 0;
 
@@ -70,6 +75,7 @@ export class VideoPlayerPage implements OnInit {
     private route: ActivatedRoute,
     private chapterService: ChapterService,
     private firestore: Firestore,
+    private courseService: CourseService,
   ) {
     addIcons({
       chevronBackOutline,
@@ -81,12 +87,14 @@ export class VideoPlayerPage implements OnInit {
   }
 
   ngOnInit() {
+    this.loadCourseDetails();
     const nav = this.router.getCurrentNavigation();
 
     if (nav?.extras?.state) {
       this.course =
         nav.extras.state['lesson'] || nav.extras.state['course'] || {};
       this.enrollment = nav.extras.state['enrollment'];
+      console.log('ooo', this.course);
 
       const chapter = nav.extras.state['chapter'];
       this.currentChapterIndex = nav.extras.state['chapterIndex'] ?? 0;
@@ -123,6 +131,40 @@ export class VideoPlayerPage implements OnInit {
 
   goBack() {
     this.router.navigate(['/video-page']);
+  }
+
+  async loadCourseDetails() {
+    const courseId = this.route.snapshot.paramMap.get('id');
+
+    if (!courseId) {
+      console.error('No course ID provided');
+      this.router.navigate(['/mes-cours']);
+      return;
+    }
+
+    console.log('Loading course details for ID:', courseId);
+
+    this.courseSubscription = this.courseService.getCourse(courseId).subscribe({
+      next: async (courseData: any) => {
+        if (!courseData) {
+          console.error('Course not found');
+          this.router.navigate(['/mes-cours']);
+          return;
+        }
+
+        // 🔹 Données venant de l'API
+        this.course = courseData;
+        console.log('Course loaded from API:', this.course);
+        // Charger autres données
+
+        this.isLoading = false;
+      },
+
+      error: (error) => {
+        console.error('Error loading course:', error);
+        this.isLoading = false;
+      },
+    });
   }
 
   startCourse() {
@@ -193,5 +235,9 @@ export class VideoPlayerPage implements OnInit {
   getChaptersCount(): number {
     return this.course.chapters?.length || this.course.exercises || 15;
   }
+}
+
+function getDoc(courseRef: DocumentReference<DocumentData, DocumentData>) {
+  throw new Error('Function not implemented.');
 }
 

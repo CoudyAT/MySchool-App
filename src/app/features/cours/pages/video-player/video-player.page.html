@@ -53,22 +53,25 @@
         Commencer
       </button>
     </div>
-
-
-
-    <!-- Barre de progression -->
-    <div class="progress-container">
+    <div class="description-section" *ngIf="course.description">
+      <h2 class="section-title">Description video</h2>
+      <p class="description-text">{{ course.description }}</p>
+    </div> 
+        <div class="progress-container">
+              <h2 class="progress">Progression Barre</h2>
       <div class="progress-bar">
         <div class="progress-fill" [style.width.%]="progress"></div>
       </div>
       <span class="progress-text">{{ progress }}%</span>
-    </div>
+    </div> 
+
+
+
+    <!-- Barre de progression -->
+
 
     <!-- Description -->
-    <div class="description-section" *ngIf="course.description">
-      <h2 class="section-title">Description video</h2>
-      <p class="description-text">{{ course.description }}</p>
-    </div>  
+
 
   </div>
 </ion-content>

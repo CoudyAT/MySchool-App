@@ -1,10 +1,4 @@
 <app-desktop-header></app-desktop-header>
-<!-- 
-<ion-header class="ion-no-border select-courses-header">
-  <ion-toolbar>
-    <ion-title>Choisissez 3 cours Premium</ion-title>
-  </ion-toolbar>
-</ion-header> -->
 
 <ion-content class="select-courses-content">
   <div class="select-courses-container">
@@ -12,110 +6,95 @@
     <!-- Loader -->
     <div class="loading-state" *ngIf="isLoading">
       <ion-spinner name="crescent" color="primary"></ion-spinner>
-      <p>Chargement des cours...</p>
+      <p>Chargement des matières...</p>
     </div>
 
-    <!-- Categories Section -->
-    <div class="categories-section" *ngIf="!isLoading">
+    <!-- Matieres Section -->
+    <div class="courses-section" *ngIf="!isLoading">
       <div class="section-header">
-        <h2>Catégories</h2>
-        <p class="section-subtitle">Sélectionnez une catégorie pour voir les cours</p>
+        <h2>Matières disponibles</h2>
+        <p class="section-subtitle">
+          Sélectionnez jusqu’à 3 matières Premium
+        </p>
       </div>
 
-      <div class="category-list">
-        <button
-          *ngFor="let cat of categories"
-          (click)="selectCategory(cat)"
-          [class.active]="cat === selectedCategory"
-          class="category-btn"
-        >
-          <ion-icon name="folder-outline" class="cat-icon"></ion-icon>
-          {{ cat }}
-        </button>
-      </div>
-    </div>
-
-    <!-- Courses Section -->
-    <div class="courses-section" *ngIf="selectedCategory && !isLoading">
-      <div class="section-header">
-        <h2>{{ selectedCategory }}</h2>
-        <p class="section-subtitle">{{ filteredCourses.length }} cours disponibles</p>
-      </div>
-
-      <!-- Courses Grid -->
+      <!-- Matieres Grid -->
       <div class="courses-grid">
         <ion-card
-          *ngFor="let course of filteredCourses"
-          (click)="toggleCourse(course)"
-          [class.selected]="isSelected(course)"
-          [class.disabled]="!isSelected(course) && selectedCourses.length >= 3"
+          *ngFor="let matiere of matieres"
+          (click)="toggleMatiere(matiere)"
+          [class.selected]="isSelected(matiere)"
+          [class.disabled]="isMatiereDisabled(matiere) || (!isSelected(matiere) && selectedMatieres.length >= 3)"
           class="course-card"
         >
           <ion-card-content>
+
+            <!-- Header -->
             <div class="course-header">
               <div class="course-icon">
-                <ion-icon name="book-outline"></ion-icon>
+                <span class="matiere-emoji">{{ matiere.icone }}</span>
               </div>
-              
-              <div class="course-badge" *ngIf="isSelected(course)">
-                <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
+              <div class="course-badge" *ngIf="isSelected(matiere)">
+                <ion-icon
+                  name="checkmark-circle"
+                  class="check-icon"
+                ></ion-icon>
               </div>
             </div>
 
+            <!-- Content -->
             <div class="course-content">
-              <h3 class="course-title">{{ course.title }}</h3>
-              <p class="course-description">{{ course.description }}</p>
-              
-              <!-- Course Meta -->
-              <div class="course-meta" *ngIf="course.duration ">
-                <span class="meta-item" *ngIf="course.duration">
-                  <ion-icon name="time-outline"></ion-icon>
-                  {{ course.duration }}
+              <h3 class="course-title">{{ matiere.nom }}</h3>
+              <p class="course-description">
+                Classe : {{ matiere.classe }}
+              </p>
+              <div class="course-meta">
+                <span class="meta-item">
+                  Niveau : {{ matiere.niveauScolaire }}
                 </span>
-  
+              </div>
+              <div *ngIf="isMatiereDisabled(matiere)" class="matiere-disabled-text">
+                <ion-icon name="lock-closed-outline"></ion-icon>
+                Déjà souscrite
               </div>
             </div>
 
+            <!-- Footer -->
             <div class="course-footer">
-              <span class="select-btn" [class.active]="isSelected(course)">
-                {{ isSelected(course) ? 'Sélectionné' : 'Sélectionner' }}
+              <span class="select-btn" [class.active]="isSelected(matiere)">
+                {{ isSelected(matiere) ? 'Sélectionné' : 'Sélectionner' }}
               </span>
             </div>
+
           </ion-card-content>
         </ion-card>
       </div>
 
-      <!-- No Courses Message -->
-      <div class="no-courses" *ngIf="filteredCourses.length === 0">
+      <!-- No Matieres -->
+      <div class="no-courses" *ngIf="matieres.length === 0">
         <ion-icon name="inbox-outline"></ion-icon>
-        <p>Aucun cours disponible dans cette catégorie</p>
+        <p>Aucune matière disponible</p>
       </div>
-    </div>
-
-    <!-- Empty State -->
-    <div class="empty-state" *ngIf="!selectedCategory && !isLoading">
-      <div class="empty-icon">
-        <ion-icon name="search-outline"></ion-icon>
-      </div>
-      <h3>Sélectionnez une catégorie</h3>
-      <p>Commencez par choisir une catégorie pour voir les cours disponibles</p>
     </div>
 
   </div>
 </ion-content>
 
-<!-- Footer Button -->
+<!-- Footer -->
 <div class="select-courses-footer">
   <div class="footer-content">
     <div class="footer-info">
       <span class="footer-label">Sélection</span>
-      <span class="footer-count">{{ selectedCourses.length }}/3 cours</span>
+      <span class="footer-count">
+        {{ selectedMatieres.length }}/3 matières
+      </span>
     </div>
+
     <ion-button
       expand="block"
       fill="solid"
       class="continue-button"
-      [disabled]="selectedCourses.length !== 3"
+      [disabled]="selectedMatieres.length !== 3"
       (click)="continue()"
     >
       <ion-icon slot="start" name="arrow-forward-outline"></ion-icon>

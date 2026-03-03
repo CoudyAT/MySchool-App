@@ -30,15 +30,16 @@ import { EditCoursPage } from './Admin/pages/cours/pages/edit-cours/edit-cours.p
 import { UserEditPage } from './Admin/pages/user-edit/user-edit.page';
 import { EnrollmentsPage } from './Admin/pages/enrollments/enrollments.page';
 import { SecurityPage } from './features/auth/security/security.page';
+import { PdfListPage } from './features/pdf/pdf-list/pdf-list.page';
 import { ForgotPasswordPage } from './features/auth/forgot-password/forgot-password.page';
 import { PaymentOptionComponent } from './features/payments/payment-option/payment-option.component';
 import { VideoDetailPage } from './features/cours/pages/video-detail/video-detail.page';
 import { VideoPlayerPage } from './features/cours/pages/video-player/video-player.page';
-import { PdfListPage } from './features/pdf/pdf-list/pdf-list.page';
-import { MatieresPage } from './Admin/pages/matieres/matieres.page';
 import { adminGuard } from './guard/admin-guard';
 import { ReferralsPage } from './Admin/pages/referrals/referrals.page';
-import { UpdatePasswordPage } from './Admin/pages/update-password/update-password.page';
+import { CodePromoPage } from './Admin/pages/code-promo/code-promo.page';
+import { MatieresPage } from './Admin/pages/matieres/matieres.page';
+import { PaymentsHistoryPage } from './features/payments/payments-history.page';
 
 export const routes: Routes = [
   {
@@ -93,6 +94,13 @@ export const routes: Routes = [
   {
     path: 'payment-callback',
     component: PaymentCallbackPage,
+  },
+  {
+    path: 'subscription/success',
+    loadComponent: () =>
+      import('./features/payments/subscription-success/subscription-success.page').then(
+        (m) => m.SubscriptionSuccessPage,
+      ),
   },
   {
     path: 'course-video/:id',
@@ -161,6 +169,10 @@ export const routes: Routes = [
         component: UserDetailsPage,
       },
       {
+        path: 'code-promo',
+        component: CodePromoPage,
+      },
+      {
         path: 'user-edit/:id',
         component: UserEditPage,
       },
@@ -182,13 +194,8 @@ export const routes: Routes = [
       },
       {
         path: 'referrals',
-        component: ReferralsPage
+        component: ReferralsPage,
       },
-      {
-        path: 'update-password',
-        component: UpdatePasswordPage,
-      },
-
     ],
   },
   {
@@ -252,8 +259,22 @@ export const routes: Routes = [
   },
   {
     path: 'conditions',
-    loadComponent: () => import('./features/auth/pages/conditions/conditions.page').then(m => m.ConditionsPage)
+    loadComponent: () =>
+      import('./features/auth/pages/conditions/conditions.page').then(
+        (m) => m.ConditionsPage,
+      ),
   },
-
-
+  {
+    path: 'payments-history',
+    component: PaymentsHistoryPage,
+  },
+  {
+    path: 'exo',
+    loadComponent: () =>
+      import('./features/exercice/exo/exo.page').then((m) => m.ExoPage),
+  },
+  {
+    path: 'tuto',
+    loadComponent: () => import('./features/tuto/tuto/tuto.page').then(m => m.TutoPage)
+  },
 ];

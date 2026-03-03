@@ -440,7 +440,7 @@
           </div>
 
       <!-- NOUVEAU: Classe -->
-          <div class="form-group">
+          <div class="form-group" *ngIf="userInfoForm.get('niveauScolaire')?.value !== 'PROFESSIONNEL'">
             <ion-item class="custom-item" [class.item-error]="isFieldInvalid(userInfoForm, 'classe')">
               <ion-label position="stacked">Classe</ion-label>
               <ion-select 
@@ -461,6 +461,26 @@
               Veuillez d'abord sélectionner un niveau d'étude
             </div>
           </div>
+
+          <div class="form-group" *ngIf="userInfoForm.get('niveauScolaire')?.value === 'PROFESSIONNEL'">
+              <ion-item class="custom-item" [class.item-error]="isFieldInvalid(userInfoForm, 'specialite')">
+                <ion-label position="stacked">Spécialité / Formation</ion-label>
+                <ion-input 
+                  type="text" 
+                  formControlName="classe" 
+                  placeholder="Ex: Comptabilité, Informatique, Commerce..." 
+                  class="custom-input">
+                  <ion-icon name="business-outline" slot="start"></ion-icon>
+                </ion-input>
+              </ion-item>
+              <div class="error-text" *ngIf="isFieldInvalid(userInfoForm, 'specialite')">
+                {{ getFieldError(userInfoForm, 'specialite') }}
+              </div>
+              <div class="input-hint">
+                Indiquez votre spécialité ou domaine de formation professionnelle
+              </div>
+          </div>
+
 
         <div class="form-group">
           <ion-item class="custom-item">

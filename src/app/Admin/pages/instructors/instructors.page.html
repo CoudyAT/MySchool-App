@@ -212,21 +212,21 @@
             placeholder="https://... ou assets/photo.jpg">
         </div> -->
 
-        <div class="form-group full-width">
-          <label class="form-label">Image de couverture</label>
+            <div class="form-group full-width">
+      <label class="form-label">Image de couverture</label>
 
-          <div class="image-upload-container" (click)="fileInput.click()">
-            <img *ngIf="imagePreview" [src]="imagePreview" alt="Prévisualisation de l'image de couverture"
-              class="image-preview" />
-            <div *ngIf="!imagePreview" class="upload-placeholder">
-              <ion-icon name="image-outline" size="large"></ion-icon>
-              <p class="upload-text">Cliquez pour ajouter une image de couverture</p>
-              <span class="upload-hint">Recommandé : 1200x600px (JPG, PNG)</span>
-            </div>
-          </div>
-
-          <input #fileInput type="file" accept="image/*" (change)="onFileSelected($event)" hidden />
+      <div class="image-upload-container" (click)="fileInput.click()">
+        <img *ngIf="imagePreview" [src]="imagePreview" alt="Prévisualisation de l'image de couverture"
+          class="image-preview" />
+        <div *ngIf="!imagePreview" class="upload-placeholder">
+          <ion-icon name="image-outline" size="large"></ion-icon>
+          <p class="upload-text">Cliquez pour ajouter une image de couverture</p>
+          <span class="upload-hint">Recommandé : 1200x600px (JPG, PNG)</span>
         </div>
+      </div>
+
+      <input #fileInput type="file" accept="image/*" (change)="onFileSelected($event)" hidden />
+    </div>
 
         <!-- Expertises -->
         <div class="form-group full-width">

@@ -4,7 +4,7 @@
 <ion-header class="ion-no-border mobile-header">
   <ion-toolbar>
     <div class="header-content">
-      <img src="assets/logo.svg" alt="MySchool Logo" class="logo" />
+      <img src="assets/logo.svg" alt="MySchool Logo" class="logo" (click)="goHome()" style="cursor: pointer;" />
       <ion-button
           fill="clear"
           (click)="goToProfile()"
@@ -19,9 +19,9 @@
 <div class="desktop-header-search">
   <div class="desktop-search-wrapper">
     <h1 class="desktop-main-title">Liste des videos</h1>
-    
+
     <div class="desktop-search-container">
-      <ion-searchbar 
+      <ion-searchbar
         placeholder="Rechercher un cours"
         (ionInput)="searchCourse($event)"
         class="desktop-custom-searchbar">
@@ -44,11 +44,11 @@
       <h1 class="main-title">Liste des videos</h1>
 
       <!-- Segment pour les onglets - MOBILE -->
-  
+
 
       <!-- Barre de recherche et filtres - MOBILE -->
       <div class="search-filter-container">
-        <ion-searchbar 
+        <ion-searchbar
           placeholder="Rechercher un cours"
           (ionInput)="searchCourse($event)"
           class="custom-searchbar">
@@ -76,8 +76,8 @@
     <div class="courses-container" *ngIf="!isLoading && filteredCourses.length > 0">
       <ng-container >
         <div class="courses-row">
-          <ion-card 
-            *ngFor="let course of filteredCourses" 
+          <ion-card
+            *ngFor="let course of filteredCourses"
             class="course-card"
             (click)="openCourse(course)">
             <div class="card-image">
@@ -85,7 +85,7 @@
               [src]="course?.image"
               alt="Instructeur"
               class="instructor-image"
-            /> 
+            />
               <div class="card-badge">
                 <ion-icon name="lock-open-outline"></ion-icon>
               </div>

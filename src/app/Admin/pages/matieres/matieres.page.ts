@@ -48,8 +48,8 @@ export class MatieresPage implements OnInit {
 
   constructor(
     private matiereService: MatiereService,
-    private toastCtrl: ToastController
-  ) { }
+    private toastCtrl: ToastController,
+  ) {}
 
   ngOnInit() {
     this.loadMatieres();
@@ -82,7 +82,7 @@ export class MatieresPage implements OnInit {
   // ─────────────────────────────────────────────────────────
   private updateUniqueClasses() {
     const classes = this.allMatieres
-      .map(m => m.classe)
+      .map((m) => m.classe)
       .filter((classe): classe is string => !!classe)
       .filter((classe, index, self) => self.indexOf(classe) === index)
       .sort();
@@ -95,12 +95,12 @@ export class MatieresPage implements OnInit {
   // ─────────────────────────────────────────────────────────
   updatePagination() {
     this.totalPages = Math.ceil(
-      this.filteredMatieres.length / this.itemsPerPage
+      this.filteredMatieres.length / this.itemsPerPage,
     );
     const start = (this.currentPage - 1) * this.itemsPerPage;
     this.paginatedMatieres = this.filteredMatieres.slice(
       start,
-      start + this.itemsPerPage
+      start + this.itemsPerPage,
     );
   }
 
@@ -161,23 +161,24 @@ export class MatieresPage implements OnInit {
     // Recherche par texte
     if (this.searchText.trim()) {
       const term = this.searchText.trim().toLowerCase();
-      filtered = filtered.filter(matiere =>
-        matiere.nom?.toLowerCase().includes(term) ||
-        matiere.classe?.toLowerCase().includes(term)
+      filtered = filtered.filter(
+        (matiere) =>
+          matiere.nom?.toLowerCase().includes(term) ||
+          matiere.classe?.toLowerCase().includes(term),
       );
     }
 
     // Filtre par niveau
     if (this.selectedNiveau) {
-      filtered = filtered.filter(matiere =>
-        matiere.niveauScolaire === this.selectedNiveau
+      filtered = filtered.filter(
+        (matiere) => matiere.niveauScolaire === this.selectedNiveau,
       );
     }
 
     // Filtre par classe
     if (this.selectedClasse) {
-      filtered = filtered.filter(matiere =>
-        matiere.classe === this.selectedClasse
+      filtered = filtered.filter(
+        (matiere) => matiere.classe === this.selectedClasse,
       );
     }
 
@@ -243,20 +244,20 @@ export class MatieresPage implements OnInit {
   // ─────────────────────────────────────────────────────────
   getNiveauLabel(niveau: string): string {
     const labels: { [key: string]: string } = {
-      'PRIMAIRE': 'Primaire',
-      'MOYEN': 'Moyen',
-      'SECONDAIRE': 'Secondaire',
-      'SUPERIEUR': 'Supérieur',
+      PRIMAIRE: 'Primaire',
+      MOYEN: 'Moyen',
+      SECONDAIRE: 'Secondaire',
+      SUPERIEUR: 'Supérieur',
     };
     return labels[niveau] || niveau;
   }
 
   getNiveauColor(niveau: string): string {
     const colors: { [key: string]: string } = {
-      'PRIMAIRE': 'badge-primary',
-      'MOYEN': 'badge-warning',
-      'SECONDAIRE': 'badge-success',
-      'SUPERIEUR': 'badge-danger',
+      PRIMAIRE: 'badge-primary',
+      MOYEN: 'badge-warning',
+      SECONDAIRE: 'badge-success',
+      SUPERIEUR: 'badge-danger',
     };
     return colors[niveau] || 'badge-secondary';
   }
@@ -275,7 +276,10 @@ export class MatieresPage implements OnInit {
       !this.modalMatiere.classe?.trim() ||
       !this.modalMatiere.niveauScolaire
     ) {
-      this.showToast('Le nom, la classe et le niveau sont obligatoires', 'warning');
+      this.showToast(
+        'Le nom, la classe et le niveau sont obligatoires',
+        'warning',
+      );
       return;
     }
 
@@ -292,7 +296,7 @@ export class MatieresPage implements OnInit {
 
         if (updated) {
           const idx = this.allMatieres.findIndex(
-            (m) => m.id === this.editingMatiereId
+            (m) => m.id === this.editingMatiereId,
           );
           if (idx !== -1) {
             this.allMatieres[idx] = {
@@ -326,7 +330,7 @@ export class MatieresPage implements OnInit {
       }
     } catch (err) {
       console.error('Erreur sauvegarde matière:', err);
-      this.showToast('Erreur lors de l\'enregistrement', 'danger');
+      this.showToast("Erreur lors de l'enregistrement", 'danger');
     }
   }
 
@@ -337,12 +341,10 @@ export class MatieresPage implements OnInit {
     if (!confirm('Voulez-vous vraiment supprimer cette matière ?')) return;
 
     try {
-      await this.matiereService
-        .deleteMatiere(matiereId)
-        .toPromise();
+      await this.matiereService.deleteMatiere(matiereId).toPromise();
 
       // Supprime de la liste locale
-      this.allMatieres = this.allMatieres.filter(m => m.id !== matiereId);
+      this.allMatieres = this.allMatieres.filter((m) => m.id !== matiereId);
       this.applyFilters();
 
       this.showToast('Matière supprimée avec succès', 'success');
@@ -357,7 +359,7 @@ export class MatieresPage implements OnInit {
   // ─────────────────────────────────────────────────────────
   private async showToast(
     message: string,
-    color: 'success' | 'danger' | 'warning' | 'primary' = 'primary'
+    color: 'success' | 'danger' | 'warning' | 'primary' = 'primary',
   ) {
     const toast = await this.toastCtrl.create({
       message,

@@ -62,8 +62,20 @@ export class PaymentVerifyPage implements OnInit {
   selectedMethod: any;
   selectedPaymentOption = '';
   selectedCategory: string | null = null;
+  userInfo: any = null;
+  selectedMatieres: any[] = [];
 
   isPremiumSubscription = false;
+
+  // Abonnement par classe (ELEMENTAIRE)
+  isClasseSubscription = false;
+  classe: string = '';
+  niveauScolaire: string = '';
+  totalCourses: number = 0;
+
+  // Abonnement par matière (MOYEN/SECONDAIRE/UNIVERSITAIRE)
+  isMatiereSubscription = false;
+  subscriptionMatieres: string[] = [];
 
   course: any = {};
   courseId = '';
@@ -101,6 +113,31 @@ export class PaymentVerifyPage implements OnInit {
     },
   ];
 
+  private initializePaymentMethods(userPhone: string) {
+    this.allPaymentMethods = [
+      {
+        id: 'wave',
+        name: 'Wave',
+        type: 'Paiement mobile',
+        displayNumber: userPhone || 'Numéro non disponible',
+      },
+      {
+        id: 'orange-money',
+        name: 'Orange Money',
+        type: 'Paiement mobile',
+        displayNumber: userPhone || 'Numéro non disponible',
+      },
+      {
+        id: 'card',
+        name: 'Carte bancaire',
+        type: 'Carte bancaire',
+        displayNumber: '**** **** **** 3345',
+      },
+    ];
+
+    this.setupDisplayedMethods();
+  }
+
   displayedPaymentMethods: PaymentMethod[] = [];
 
   // Propriétés pour le code promo
@@ -130,13 +167,43 @@ export class PaymentVerifyPage implements OnInit {
      *  =============================== */
     const state =
       this.router.getCurrentNavigation()?.extras?.state || history.state;
-    console.log("State reçu dans PaymentVerifyPage:", state);
-    
+    console.log('State reçu dans PaymentVerifyPage:', state);
+
     this.selectedPlan = state?.plan;
-     console.log('State reçu dans PaymentVerifyPage:', this.selectedPlan);
-    this.selectedMethod = state?.method;
+    console.log('State reçu dans PaymentVerifyPage:', this.selectedPlan);
+    this.selectedMethod = state?.selectedMethod || state?.method;
     this.selectedCategory = state?.selectedCategory || null;
     this.isPremiumSubscription = state?.isPremiumSubscription || false;
+    this.userInfo = state['userInfo'] || null;
+    console.log('user', this.userInfo);
+
+    this.selectedMatieres = state['selectedMatieres'] || [];
+    console.log('matire', this.selectedMatieres);
+
+    // 🎯 Abonnement par classe
+    this.isClasseSubscription = state?.isClasseSubscription || false;
+    // 🎯 Abonnement par matière
+    this.isMatiereSubscription = state?.isMatiereSubscription || false;
+
+    if (this.isClasseSubscription) {
+      this.classe = state?.classe || '';
+      this.niveauScolaire = state?.niveauScolaire || '';
+      this.totalCourses = state?.totalCourses || 0;
+      this.courseTitle = `Abonnement classe ${this.classe}`;
+
+      console.log('🎯 Abonnement par classe détecté');
+    } else if (this.isMatiereSubscription) {
+      this.classe = state?.classe || '';
+      this.niveauScolaire = state?.niveauScolaire || '';
+      this.subscriptionMatieres = state?.matieres || [];
+      this.totalCourses = state?.totalCourses || 0;
+      this.courseTitle = `Abonnement ${this.subscriptionMatieres.length} matières - ${this.classe}`;
+
+      console.log('🎯 Abonnement par matière détecté');
+      console.log('   Classe:', this.classe);
+      console.log('   Niveau:', this.niveauScolaire);
+      console.log('   Matières:', this.subscriptionMatieres);
+    }
 
     this.course = state?.course || {};
     this.courseId = state?.courseId || this.course?.id || '';
@@ -154,14 +221,24 @@ export class PaymentVerifyPage implements OnInit {
         console.log(user);
 
         this.userId = user.id || user._id;
+        const userPhone = user.phone || '';
+        this.initializePaymentMethods(userPhone);
         console.log(this.userId);
       } catch (e) {
         console.error('Erreur parsing user', e);
       }
     }
 
-    if (!this.isPremiumSubscription && !this.courseId) {
-      console.error('❌ Aucun courseId reçu');
+    // Validation : il faut soit un courseId, soit une souscription Premium, soit un abonnement classe/matière
+    if (
+      !this.isPremiumSubscription &&
+      !this.isClasseSubscription &&
+      !this.isMatiereSubscription &&
+      !this.courseId
+    ) {
+      console.error(
+        "❌ Aucun courseId reçu et ce n'est ni Premium ni abonnement classe/matière",
+      );
       this.router.navigate(['/courses']);
       return;
     }
@@ -169,7 +246,24 @@ export class PaymentVerifyPage implements OnInit {
     /** ===============================
      *  SUMMARY
      *  =============================== */
-    if (this.selectedPlan) {
+    if (this.isClasseSubscription) {
+      // Résumé pour abonnement par classe (ELEMENTAIRE)
+      this.summary.formula = `Abonnement classe ${this.classe}`;
+      this.summary.price = 5000;
+      this.calculateTotal();
+    } else if (this.isMatiereSubscription) {
+      // Résumé pour abonnement par matière (MOYEN/SECONDAIRE/UNIVERSITAIRE)
+      this.summary.formula = `Abonnement ${this.subscriptionMatieres.length} matières — ${this.classe}`;
+      this.summary.price = 5000;
+      this.calculateTotal();
+
+      console.log('📊 Résumé abonnement matière:', {
+        classe: this.classe,
+        niveauScolaire: this.niveauScolaire,
+        matieres: this.subscriptionMatieres,
+        price: this.summary.price,
+      });
+    } else if (this.selectedPlan) {
       this.summary.formula = this.isPremiumSubscription
         ? 'Abonnement Premium'
         : `Formule ${this.selectedPlan.plan}`;
@@ -197,7 +291,7 @@ export class PaymentVerifyPage implements OnInit {
   calculateTotal() {
     const subtotal = this.summary.price - this.summary.promoCode;
     this.summary.tva = Math.round(subtotal * 0.1);
-    this.summary.total = subtotal ;
+    this.summary.total = subtotal;
   }
 
   goBack() {
@@ -212,31 +306,48 @@ export class PaymentVerifyPage implements OnInit {
     }
   }
 
-  applyPromoCode() {
+  async applyPromoCode() {
     const promo = this.promoCodeInput.trim().toUpperCase();
 
-    // Liste des codes promo valides
-    const validPromoCodes = {
-      SANK10: 10,
-      IMMA10: 10,
-    };
+    if (!promo) return;
 
-    if (validPromoCodes[promo as keyof typeof validPromoCodes]) {
-      this.discountPercentage =
-        validPromoCodes[promo as keyof typeof validPromoCodes];
-      this.appliedPromoCode = promo;
-      this.summary.promoCode = Math.round(
-        (this.summary.price * this.discountPercentage) / 100,
-      );
-      this.calculateTotal();
+    if (!this.userId) {
+      await this.showErrorAlert('Utilisateur non identifié.');
+      return;
+    }
 
-      this.showSuccessToast('Code promo appliqué avec succès !');
-      this.showPromoInput = false;
-      this.promoCodeInput = '';
-    } else {
-      this.showErrorAlert(
-        'Code promo invalide. Codes valides : SANK10, IMMA10',
+    try {
+      await this.showLoader('Validation du code promo...');
+
+      // Appel API
+      const response: any = await firstValueFrom(
+        this.paymentService.validatePromoCode({
+          code: promo,
+          userId: this.userId,
+        }),
       );
+
+      await this.hideLoader();
+
+      if (response.success && response.data) {
+        // Ici tu peux récupérer par exemple data.discount ou data.finalPrice
+        // Adapte selon la réponse exacte de ton backend
+        const { discountAmount, finalPrice } = response.data;
+
+        this.appliedPromoCode = promo;
+        this.summary.promoCode = discountAmount || 0;
+        this.calculateTotal();
+
+        this.showSuccessToast(`Code promo appliqué : -${discountAmount} FCFA`);
+        this.showPromoInput = false;
+        this.promoCodeInput = '';
+      } else {
+        this.showErrorAlert('Code promo invalide ou expiré');
+      }
+    } catch (err) {
+      await this.hideLoader();
+      console.error('Erreur validation code promo', err);
+      await this.showErrorAlert('Erreur lors de la validation du code promo');
     }
   }
 
@@ -319,28 +430,120 @@ export class PaymentVerifyPage implements OnInit {
       await this.showLoader('Initialisation du paiement...');
 
       /** ===============================
+       *  🎯 ABONNEMENT PAR CLASSE (ELEMENTAIRE)
+       *  =============================== */
+      if (this.isClasseSubscription) {
+        await this.showLoader("Création de l'abonnement classe...");
+        console.log('🎯 Traitement abonnement classe:', {
+          classe: this.classe,
+          niveauScolaire: this.niveauScolaire,
+          totalCourses: this.totalCourses,
+          userId: this.userId,
+        });
+
+        if (!this.userId || !this.classe) {
+          throw new Error("Informations d'abonnement manquantes");
+        }
+
+        // Appeler l'API pour créer l'abonnement classe
+        const response = await firstValueFrom(
+          this.paymentService.createSubscriptionPayment(
+            this.userId,
+            this.classe,
+            this.niveauScolaire,
+            'CLASSE',
+          ),
+        );
+
+        if (response?.success && response?.data?.paymentUrl) {
+          await this.hideLoader();
+          console.log('✅ URL de paiement reçue:', response.data.paymentUrl);
+          window.location.href = response.data.paymentUrl;
+          return;
+        }
+
+        throw new Error("URL de paiement introuvable pour l'abonnement classe");
+      }
+
+      /** ===============================
+       *  📚 ABONNEMENT PAR MATIÈRE (MOYEN/SECONDAIRE/UNIVERSITAIRE)
+       *  =============================== */
+      if (this.isMatiereSubscription) {
+        await this.showLoader("Création de l'abonnement matières...");
+        console.log('📚 Traitement abonnement matière:', {
+          classe: this.classe,
+          niveauScolaire: this.niveauScolaire,
+          matieres: this.subscriptionMatieres,
+          userId: this.userId,
+        });
+
+        if (!this.userId || this.subscriptionMatieres.length === 0) {
+          throw new Error("Informations d'abonnement manquantes");
+        }
+
+        // Pour MOYEN/SECONDAIRE/UNIVERSITAIRE, classe pas obligatoire
+        // La classe est déterminée par les matières sélectionnées
+        const response = await firstValueFrom(
+          this.paymentService.createSubscriptionPayment(
+            this.userId,
+            this.classe || '',
+            this.niveauScolaire,
+            'MATIERE',
+            this.subscriptionMatieres,
+          ),
+        );
+
+        if (response?.success && response?.data?.paymentUrl) {
+          await this.hideLoader();
+          console.log('✅ URL de paiement reçue:', response.data.paymentUrl);
+          window.location.href = response.data.paymentUrl;
+          return;
+        }
+
+        throw new Error(
+          "URL de paiement introuvable pour l'abonnement matière",
+        );
+      }
+
+      /** ===============================
        *  ⭐ ABONNEMENT PREMIUM
        *  =============================== */
       if (this.isPremium) {
-        
-        
         await this.showLoader('Redirection vers le paiement Premium...');
-        console.log('PREMINNUM', this.selectedPlan.type);
+        console.log('PREMIUM', this.selectedPlan.type);
+
         if (this.selectedPlan.type) {
-          console.log('PREMINNUM', this.selectedPlan.type);
           const planType = this.mapPlanTypeToBackend(this.selectedPlan.type);
 
-          if (!this.userId || !planType || !this.selectedCategory) {
+          if (!this.userId || !planType) {
             throw new Error('Infos abonnement manquantes');
           }
 
-          const response = await firstValueFrom(
-            this.paymentService.createSubscriptionPayment(
-              planType,
-              this.userId,
-              this.selectedCategory,
-            ),
-          );
+          let response;
+
+          // ✅ CAS ÉLÉMENTAIRE
+          if (this.userInfo?.niveau === 'ELEMENTAIRE') {
+            response = await firstValueFrom(
+              this.paymentService.createSubscriptionPayment(
+                this.userId,
+                this.userInfo?.classe || '',
+                this.userInfo?.niveau || '',
+                'CLASSE',
+              ),
+            );
+          }
+          // ✅ AUTRES NIVEAUX
+          else {
+            response = await firstValueFrom(
+              this.paymentService.createSubscriptionPayment(
+                this.userId,
+                this.userInfo?.classe || '',
+                this.userInfo?.niveau || '',
+                'MATIERE',
+                this.selectedMatieres,
+              ),
+            );
+          }
 
           if (response?.success && response?.data?.paymentUrl) {
             await this.hideLoader(); // 🔴 IMPORTANT
@@ -371,6 +574,7 @@ export class PaymentVerifyPage implements OnInit {
 
       const paymentData: PaymentData = {
         plan: this.selectedPlan,
+
         method,
         amount: this.summary.total,
         courseId: this.courseId,

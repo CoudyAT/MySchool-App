@@ -58,18 +58,22 @@ export interface Video {
 export interface Matiere {
   id: string;
   nom: string;
-  classe: string;
-  niveauScolaire: 'PRIMAIRE' | 'MOYEN' | 'SECONDAIRE' | 'SUPERIEUR';
+  classe?: string;
+  niveauScolaire: 'ELEMENTAIRE' | 'MOYEN' | 'SECONDAIRE' | 'UNIVERSITAIRE';
   icon: string;
+  icone?: string; // Alias utilisé par le backend (emoji)
   color: string;
   ordre: number;
+  description?: string;
+  isActive?: boolean;
   createdAt: Date;
   updatedAt: Date;
-
 }
 
+
+
 export interface Course {
-  documents: CourseDocument[];
+  documents?: CourseDocument[];
   id: string;
   title: string;
   category: string;
@@ -80,7 +84,6 @@ export interface Course {
   sessions: string;
   exercises: number;
   image: string;
-  matiereId: string;
   isPublished: boolean;
   certificateAvailable?: boolean;
   price?: number;
@@ -89,6 +92,13 @@ export interface Course {
   chaptersIds?: string[]; // Relation avec les chapitres
   createdAt: Date;
   updatedAt: Date;
+
+  // Champs liés au système d'abonnement
+  niveauScolaire?: 'ELEMENTAIRE' | 'MOYEN' | 'SECONDAIRE' | 'UNIVERSITAIRE';
+  classe?: string;
+  matiereId?: string;
+  matiere?: string; // Nom de la matière
+
   levels?: Array<{
     icon: string;
     completed: boolean;
@@ -101,8 +111,6 @@ export interface Course {
   support?: string;
   isOnline?: boolean;
   onlineExtras?: OnlineCourseExtras;
-  niveauScolaire?: string;
-  classe?: string;
   videoUrl?: string;
   videoPath?: string;
   videoDuration?: number;
@@ -112,9 +120,9 @@ export interface Course {
 export interface CourseDocument {
   name: string;
   url: string;
-  size: number;
+  size?: number;
   mimeType?: string;
-  uploadedAt: string | Date;
+  uploadedAt?: string | Date;
   uploadedBy?: string;
   storagePath?: string;
 }

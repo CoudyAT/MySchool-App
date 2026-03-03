@@ -1,0 +1,109 @@
+<app-desktop-header></app-desktop-header>
+
+<!-- HEADER MOBILE -->
+<ion-header class="ion-no-border mobile-header">
+  <ion-toolbar>
+    <div class="header-content">
+      <img src="assets/logo.svg" alt="MySchool Logo" class="logo" (click)="goHome()" style="cursor: pointer;" />
+      <ion-button
+          fill="clear"
+          (click)="goToProfile()"
+          class="profile-button">
+          <ion-icon class="profile" name="person-circle-outline"></ion-icon>
+        </ion-button>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<!-- DESKTOP HEADER AVEC RECHERCHE -->
+<div class="desktop-header-search">
+  <div class="desktop-search-wrapper">
+    <h1 class="desktop-main-title">Liste des Tutoriels</h1>
+
+    <div class="desktop-search-container">
+      <ion-searchbar
+        placeholder="Rechercher un cours"
+        (ionInput)="searchCourse($event)"
+        class="desktop-custom-searchbar">
+      </ion-searchbar>
+      <ion-button fill="clear" class="desktop-filter-button" (click)="openFilters()">
+        <ion-icon slot="start" name="options-outline"></ion-icon>
+        FILTRES
+      </ion-button>
+    </div>
+
+    <!-- Segment pour les onglets - DESKTOP -->
+  </div>
+</div>
+
+<!-- CONTENU PRINCIPAL -->
+<ion-content class="ion-padding">
+  <div class="content-wrapper">
+    <!-- MOBILE: Titre et Segment -->
+    <div class="mobile-header-section">
+      <h1 class="main-title">Liste des Tutoriels</h1>
+
+      <!-- Segment pour les onglets - MOBILE -->
+
+
+      <!-- Barre de recherche et filtres - MOBILE -->
+      <div class="search-filter-container">
+        <ion-searchbar
+          placeholder="Rechercher un cours"
+          (ionInput)="searchCourse($event)"
+          class="custom-searchbar">
+        </ion-searchbar>
+        <ion-button fill="clear" class="filter-button" (click)="openFilters()">
+          <ion-icon slot="start" name="options-outline"></ion-icon>
+          Filtres
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- Message de chargement -->
+    <div *ngIf="isLoading" class="loading-container">
+      <ion-icon name="hourglass-outline"></ion-icon>
+      <p>Chargement des cours...</p>
+    </div>
+
+    <!-- Message si aucun cours -->
+    <div *ngIf="!isLoading && filteredCourses.length === 0" class="empty-container">
+      <ion-icon name="book-outline"></ion-icon>
+      <p>Aucun cours disponible</p>
+    </div>
+
+    <!-- Liste des cours par catégorie -->
+    <div class="courses-container" *ngIf="!isLoading && filteredCourses.length > 0">
+      <ng-container >
+        <div class="courses-row">
+          <ion-card
+            *ngFor="let course of filteredCourses"
+            class="course-card"
+            (click)="openCourse(course)">
+            <div class="card-image">
+             <img
+              [src]="course?.image"
+              alt="Instructeur"
+              class="instructor-image"
+            />
+              <div class="card-badge">
+                <ion-icon name="lock-open-outline"></ion-icon>
+              </div>
+            </div>
+            <ion-card-content>
+              <h3 class="course-title">{{course.title}}</h3>
+              <div class="course-date">
+                  <ion-icon name="calendar-outline"></ion-icon>
+                  {{ getSimpleDate(course.createdAt) }}
+              </div>
+            </ion-card-content>
+          </ion-card>
+        </div>
+
+
+      </ng-container>
+    </div>
+  </div>
+</ion-content>
+
+<app-bottom-menu class="mobile-header" activePage="videos"></app-bottom-menu>

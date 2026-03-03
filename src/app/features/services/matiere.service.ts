@@ -23,12 +23,14 @@ export class MatiereService {
 
     getMatieresByNiveau(niveau: string): Observable<Matiere[]> {
         return this.api
-            .get<Matiere[]>(`/matieres/niveau/${niveau}`);
+            .get<any>(`/matieres/niveau/${niveau}`)
+            .pipe(map((res) => res?.data ?? []));
     }
 
     getMatieresByClasse(classe: string): Observable<Matiere[]> {
         return this.api
-            .get<Matiere[]>(`/matieres/classe/${classe}`);
+            .get<any>(`/matieres/classe/${encodeURIComponent(classe)}`)
+            .pipe(map((res) => res?.data ?? []));
     }
 
     getMatiereById(id: string): Observable<Matiere> {

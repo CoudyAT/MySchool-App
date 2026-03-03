@@ -4,9 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { Subscription } from 'rxjs';
-import { ModalController } from '@ionic/angular/standalone'; 
+import { ModalController } from '@ionic/angular/standalone';
 import { PreminumModalComponent } from 'src/app/features/component/preminum-modal/preminum-modal.component';
-import { ToastController } from '@ionic/angular';
+import { ToastController, AlertController } from '@ionic/angular';
 
 import {
   IonContent,
@@ -86,6 +86,10 @@ export class CoursDetailPage implements OnInit, OnDestroy {
   private courseSubscription: Subscription = new Subscription();
   private enrollmentSubscription: Subscription = new Subscription();
 
+  // Données utilisateur pour l'abonnement
+  userNiveauScolaire: string = '';
+  userClasse: string = '';
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -96,6 +100,7 @@ export class CoursDetailPage implements OnInit, OnDestroy {
     private firestore: Firestore,
     private modalCtrl: ModalController,
     private toastCtrl: ToastController,
+    private alertCtrl: AlertController,
   ) {
     addIcons({
       chevronBackOutline,
@@ -124,7 +129,57 @@ export class CoursDetailPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.loadUserData();
     this.loadCourseDetails();
+  }
+
+  loadUserData() {
+    const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+    if (localUser) {
+      this.userClasse = localUser.classe || '';
+      this.userNiveauScolaire = localUser.niveauScolaire || '';
+    }
+  }
+
+  get subscriptionButtonText(): string {
+    if (this.userNiveauScolaire === 'ELEMENTAIRE' && this.userClasse) {
+      return `Souscrire à l'abonnement ${this.userClasse}`;
+    }
+    if (['MOYEN', 'SECONDAIRE', 'UNIVERSITAIRE'].includes(this.userNiveauScolaire) && this.userClasse) {
+      return `Souscrire à l'abonnement ${this.userClasse}`;
+    }
+    return "Souscrire à l'abonnement";
+  }
+
+  openSubscription() {
+    const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+
+    // Cas ÉLÉMENTAIRE → redirection directe vers payment-method (abonnement classe)
+    if (localUser?.niveauScolaire === 'ELEMENTAIRE') {
+      this.router.navigate(['/payment-method'], {
+        state: {
+          isPremiumFlow: true,
+          method: 'premium',
+          plan: {
+            type: 'ANNUAL',
+            name: `Abonnement ${localUser.classe}`,
+            price: 5000,
+            currency: 'XOF',
+          },
+          isClasseSubscription: true,
+          classe: localUser.classe,
+          niveauScolaire: localUser.niveauScolaire,
+        },
+      });
+      return;
+    }
+
+    // Autres niveaux → sélection des matières
+    this.router.navigate(['/premium-course-selection'], {
+      state: {
+        isPremiumFlow: true,
+      },
+    });
   }
 
   ngOnDestroy() {
@@ -225,6 +280,45 @@ export class CoursDetailPage implements OnInit, OnDestroy {
   }
 
   checkUserEnrollment(courseId: string) {
+    // D'abord vérifier si l'utilisateur a un abonnement actif
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const userId = currentUser.id || currentUser._id;
+
+    // Vérifier si l'utilisateur a un abonnement actif dans le localStorage
+    if (currentUser.hasActiveSubscription) {
+      console.log('✅ Utilisateur a un abonnement actif (localStorage)');
+      this.isUserEnrolled = true;
+      return;
+    }
+
+    // Vérifier l'abonnement via l'API
+    if (userId) {
+      this.enrollmentService.checkCourseAccess(userId).subscribe({
+        next: (response) => {
+          if (response.success && response.hasAccess) {
+            console.log('✅ Utilisateur a accès via abonnement');
+            this.isUserEnrolled = true;
+
+            // Mettre à jour le localStorage
+            currentUser.hasActiveSubscription = true;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            return;
+          }
+
+          // Sinon vérifier les enrollments individuels
+          this.checkIndividualEnrollment(courseId);
+        },
+        error: () => {
+          // En cas d'erreur API, vérifier les enrollments
+          this.checkIndividualEnrollment(courseId);
+        }
+      });
+    } else {
+      this.checkIndividualEnrollment(courseId);
+    }
+  }
+
+  private checkIndividualEnrollment(courseId: string) {
     this.enrollmentSubscription = this.enrollmentService
       .getUserEnrollments()
       .subscribe({
@@ -417,5 +511,92 @@ export class CoursDetailPage implements OnInit, OnDestroy {
         this.chapters = [];
       },
     });
+  }
+
+  /**
+   * Ouvrir un chapitre :
+   * - Si inscrit → naviguer vers le contenu du chapitre
+   * - Si non inscrit → proposer l'abonnement selon le niveau du cours
+   */
+  async openChapter(chapter: Chapter, index: number) {
+    if (this.isUserEnrolled) {
+      // L'utilisateur est abonné → ouvrir le contenu
+      const courseId = this.route.snapshot.paramMap.get('id');
+      this.router.navigate(['/course-video', courseId], {
+        state: {
+          enrollment: this.currentEnrollment,
+          course: this.course,
+          progress: this.enrollmentProgress,
+          chapterIndex: index,
+          chapter: chapter,
+        },
+      });
+      return;
+    }
+
+    // Non inscrit → demander l'abonnement
+    const niveau = this.course?.niveauScolaire || '';
+    const classe = this.course?.classe || '';
+
+    // Niveaux qui utilisent l'abonnement par matière
+    const niveauxMatiere = ['MOYEN', 'SECONDAIRE', 'UNIVERSITAIRE'];
+
+    if (niveauxMatiere.includes(niveau.toUpperCase())) {
+      // MOYEN / SECONDAIRE / UNIVERSITAIRE → rediriger vers la page courses pour sélectionner les matières
+      const alert = await this.alertCtrl.create({
+        header: 'Abonnement requis',
+        message: `Pour accéder à ce chapitre, vous devez vous abonner. Choisissez 3 matières pour votre niveau ${niveau}.`,
+        buttons: [
+          { text: 'Annuler', role: 'cancel' },
+          {
+            text: 'Choisir mes matières',
+            handler: () => {
+              this.router.navigate(['/courses'], {
+                state: { openMatiereSelection: true, niveau, classe },
+              });
+            },
+          },
+        ],
+      });
+      await alert.present();
+    } else if (niveau.toUpperCase() === 'ELEMENTAIRE') {
+      // ELEMENTAIRE → abonnement par classe
+      const alert = await this.alertCtrl.create({
+        header: 'Abonnement requis',
+        message: `Pour accéder à ce chapitre, vous devez vous abonner à la classe ${classe || 'de ce cours'}.`,
+        buttons: [
+          { text: 'Annuler', role: 'cancel' },
+          {
+            text: "S'abonner",
+            handler: () => {
+              this.router.navigate(['/courses'], {
+                state: { openClasseSubscription: true, classe },
+              });
+            },
+          },
+        ],
+      });
+      await alert.present();
+    } else {
+      // Autre cas (cours payant ou premium) → modal premium
+      const modal = await this.modalCtrl.create({
+        component: PreminumModalComponent,
+        cssClass: 'premium-modal',
+        breakpoints: [0, 0.5, 0.8, 1],
+        initialBreakpoint: 0.8,
+      });
+
+      await modal.present();
+
+      const { data } = await modal.onWillDismiss();
+      if (data?.subscribed) {
+        const toast = await this.toastCtrl.create({
+          message: 'Bienvenue dans Premium ! 🌟',
+          duration: 2000,
+          color: 'success',
+        });
+        await toast.present();
+      }
+    }
   }
 }

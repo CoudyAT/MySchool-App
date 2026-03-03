@@ -55,7 +55,6 @@ import { DesktopHeaderComponent } from 'src/app/shared/components/desktop-header
     IonButtons,
     IonButton,
     IonIcon,
-    IonInput,
     IonItem,
     IonLabel,
     IonAccordionGroup,

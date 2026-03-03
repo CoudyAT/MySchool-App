@@ -25,7 +25,7 @@ export class BaseLayoutAdminComponent {
     private auth: Auth,
     private alertCtrl: AlertController,
     private toastCtrl: ToastController,
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.currentUser = JSON.parse(
@@ -45,6 +45,7 @@ export class BaseLayoutAdminComponent {
       chat: '/admin-login/chat',
       matiere: '/admin-login/matiere',
       referrals: '/admin-login/referrals',
+      'code-promo': '/admin-login/code-promo',
     };
 
     this.activePage = page;

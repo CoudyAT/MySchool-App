@@ -2,12 +2,37 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { User } from 'src/app/models/user.model';
 import { ApiService } from 'src/app/core/services/api.service';
+import { Firestore, doc, docData } from '@angular/fire/firestore';
+import { Auth, authState } from '@angular/fire/auth';
+import { switchMap, filter, map } from 'rxjs/operators';
+
+export interface AppUser {
+  niveauScolaire: string;
+  classe: string;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
   private readonly api = inject(ApiService);
+
+  constructor(
+    private auth: Auth,
+    private firestore: Firestore,
+  ) {}
+
+  getCurrentUser(): Observable<AppUser> {
+    return authState(this.auth).pipe(
+      filter((user): user is any => !!user), // attend que l'utilisateur existe
+      switchMap(
+        (user) =>
+          docData(
+            doc(this.firestore, `users/${user.uid}`),
+          ) as Observable<AppUser>,
+      ),
+    );
+  }
 
   /**
    * CRUD de base
@@ -20,7 +45,9 @@ export class UserService {
 
   // Récupérer tous les utilisateurs
   getAllUsers(): Observable<{ success: boolean; data: User[]; count: number }> {
-    return this.api.get<{ success: boolean; data: User[]; count: number }>('/users');
+    return this.api.get<{ success: boolean; data: User[]; count: number }>(
+      '/users',
+    );
   }
 
   // Récupérer un utilisateur par ID
@@ -53,12 +80,23 @@ export class UserService {
   }
 
   // Récupérer les utilisateurs par rôle
-  getUsersByRole(role: 'student' | 'instructor' | 'admin'): Observable<User[]> {
-    return this.api.get<User[]>(`/users/role/${role}`);
+  getUsersByRole(
+    role: 'student' | 'instructor' | 'admin' | 'influenceur',
+  ): Observable<User[]> {
+    return this.api
+      .get<{
+        success: boolean;
+        data: User[];
+        count: number;
+      }>(`/users/role/${role}`)
+      .pipe(
+        map((res) => res.data), // <-- on renvoie directement "data"
+      );
   }
-
   // Récupérer les utilisateurs par statut
-  getUsersByStatus(status: 'active' | 'inactive' | 'suspended'): Observable<User[]> {
+  getUsersByStatus(
+    status: 'active' | 'inactive' | 'suspended',
+  ): Observable<User[]> {
     return this.api.get<User[]>(`/users/status/${status}`);
   }
 
@@ -67,7 +105,10 @@ export class UserService {
    */
 
   // Mettre à jour l'image de profil
-  updateProfileImage(userId: string, profileImageBase64: string): Observable<User> {
+  updateProfileImage(
+    userId: string,
+    profileImageBase64: string,
+  ): Observable<User> {
     return this.api.patch<User>(`/users/${userId}/profile-image`, {
       profileImageBase64,
     });
@@ -76,7 +117,7 @@ export class UserService {
   // Mettre à jour le statut d'un utilisateur
   updateUserStatus(
     userId: string,
-    status: 'active' | 'inactive' | 'suspended'
+    status: 'active' | 'inactive' | 'suspended',
   ): Observable<User> {
     return this.api.patch<User>(`/users/${userId}/status`, { status });
   }

@@ -31,7 +31,6 @@ interface StorageVideo {
   imports: [IonSpinner, IonIcon, CommonModule, ReactiveFormsModule],
 })
 export class AddCoursComponent implements OnInit {
-
   @Output() formSubmit = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();
 
@@ -49,7 +48,7 @@ export class AddCoursComponent implements OnInit {
 
   classesParNiveau: { [key: string]: string[] } = {
     ELEMENTAIRE: ['CI', 'CP', 'CE1', 'CE2', 'CM1', 'CM2'],
-    MOYEN: ['6ème', '5ème', '4ème', '3ème'],
+    MOYEN: ['6ème', '5ème', '4ème', '3ème (BFEM)'],
     SECONDAIRE: ['Seconde', 'Première', 'Terminale'],
     UNIVERSITAIRE: ['Licence1', 'Licence2', 'Licence3', 'Master1', 'Master2'],
   };
@@ -81,8 +80,7 @@ export class AddCoursComponent implements OnInit {
     private courseService: CourseService,
     private matiereService: MatiereService,
     private firestore: Firestore,
-    private http: HttpClient
-
+    private http: HttpClient,
   ) {
     this.courseForm = this.fb.group({
       title: ['', Validators.required],
@@ -111,7 +109,6 @@ export class AddCoursComponent implements OnInit {
       ?.valueChanges.subscribe((value) => {
         this.onCategoryOptionChange(value);
       });
-
   }
 
   ngOnInit(): void {
@@ -126,11 +123,13 @@ export class AddCoursComponent implements OnInit {
 
     const newFiles = Array.from(input.files);
 
-    newFiles.forEach(file => {
+    newFiles.forEach((file) => {
       // Optionnel : filtre par type
-      if (!file.name.toLowerCase().endsWith('.pdf') &&
+      if (
+        !file.name.toLowerCase().endsWith('.pdf') &&
         !file.name.toLowerCase().endsWith('.doc') &&
-        !file.name.toLowerCase().endsWith('.docx')) {
+        !file.name.toLowerCase().endsWith('.docx')
+      ) {
         alert(`Fichier ignoré : ${file.name} (seuls PDF, DOC, DOCX acceptés)`);
         return;
       }
@@ -144,12 +143,14 @@ export class AddCoursComponent implements OnInit {
       this.selectedDocuments.push(file);
 
       // Ajout d'une entrée vide dans le FormArray (on remplira après upload)
-      this.documentsArray.push(this.fb.group({
-        name: [file.name],
-        url: [''],
-        size: [file.size],
-        uploadedAt: ['']
-      }));
+      this.documentsArray.push(
+        this.fb.group({
+          name: [file.name],
+          url: [''],
+          size: [file.size],
+          uploadedAt: [''],
+        }),
+      );
     });
 
     // Reset input file
@@ -183,7 +184,7 @@ export class AddCoursComponent implements OnInit {
           name: file.name,
           url,
           size: file.size,
-          uploadedAt: new Date().toISOString()
+          uploadedAt: new Date().toISOString(),
         };
 
         uploadedDocs.push(docInfo);
@@ -194,7 +195,7 @@ export class AddCoursComponent implements OnInit {
 
       return uploadedDocs;
     } catch (err) {
-      console.error("Erreur upload documents :", err);
+      console.error('Erreur upload documents :', err);
       alert("Erreur lors de l'envoi d'un ou plusieurs documents");
       return [];
     } finally {
@@ -217,11 +218,10 @@ export class AddCoursComponent implements OnInit {
           return {
             name: item.name,
             path: item.fullPath,
-            url
+            url,
           };
-        })
+        }),
       );
-
     } catch (err) {
       console.error('Erreur chargement vidéos :', err);
       alert('Impossible de charger les vidéos du stockage');
@@ -234,7 +234,7 @@ export class AddCoursComponent implements OnInit {
     this.selectedVideo = video;
 
     this.courseForm.patchValue({
-      sessions: video.url
+      sessions: video.url,
     });
 
     this.isVideoPickerOpen = false;
@@ -575,7 +575,6 @@ export class AddCoursComponent implements OnInit {
 
       alert('Cours créé avec succès !');
       this.formSubmit.emit();
-
     } catch (error: any) {
       console.error(error);
       alert(error.message);

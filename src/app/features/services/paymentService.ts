@@ -41,6 +41,13 @@ export class PaymentService {
   }
 
   /**
+   * Récupère tous les historiques de paiements (y compris les paiements annulés et expirés)
+   */
+  getPaymentsHistory(): Observable<ApiResponse<Payment[]>> {
+    return this.api.get<ApiResponse<Payment[]>>('/payments/history');
+  }
+
+  /**
    * Récupère un paiement par ID
    */
   getPaymentById(id: string): Observable<ApiResponse<Payment>> {
@@ -58,10 +65,10 @@ export class PaymentService {
    * Récupère les paiements d'une inscription
    */
   getEnrollmentPayments(
-    enrollmentId: string
+    enrollmentId: string,
   ): Observable<ApiResponse<Payment[]>> {
     return this.api.get<ApiResponse<Payment[]>>(
-      `/payments/enrollment/${enrollmentId}`
+      `/payments/enrollment/${enrollmentId}`,
     );
   }
 
@@ -69,7 +76,7 @@ export class PaymentService {
    * Filtre les paiements par statut
    */
   getPaymentsByStatus(
-    status: PaymentStatus
+    status: PaymentStatus,
   ): Observable<ApiResponse<Payment[]>> {
     return this.api.get<ApiResponse<Payment[]>>(`/payments/status/${status}`);
   }
@@ -78,11 +85,18 @@ export class PaymentService {
    * Recherche un paiement par référence de commande
    */
   getPaymentByOrderReference(
-    orderReference: string
+    orderReference: string,
   ): Observable<ApiResponse<Payment>> {
     return this.api.get<ApiResponse<Payment>>(
-      `/payments/order/${orderReference}`
+      `/payments/order/${orderReference}`,
     );
+  }
+
+  validatePromoCode(payload: {
+    code: string;
+    userId: string;
+  }): Observable<any> {
+    return this.api.post<any>('/codes-promo/validate', payload);
   }
 
   /**
@@ -98,7 +112,7 @@ export class PaymentService {
   cancelPayment(paymentId: string): Observable<ApiResponse<Payment>> {
     return this.api.post<ApiResponse<Payment>>(
       `/payments/${paymentId}/cancel`,
-      {}
+      {},
     );
   }
 
@@ -166,11 +180,26 @@ export class PaymentService {
     return cleanPhone;
   }
 
-  createSubscriptionPayment(plan: string, userId: string, category: string) {
-    return this.api.post<any>('/subscriptions/create-payment', {
-      plan,
+  createSubscriptionPayment(
+    userId: string,
+    classe: string,
+    niveauScolaire: string,
+    typeAbonnement: string,
+    matieres?: any[],
+  ): Observable<any> {
+    const body: any = {
       userId,
-      category,
-    });
+      classe,
+      niveauScolaire,
+      typeAbonnement,
+    };
+
+    // Ajouter les matières pour les abonnements MATIERE
+    if (typeAbonnement === 'MATIERE' && matieres) {
+      body.matieres = matieres;
+    }
+
+    console.log('📡 API POST /subscriptions/create-payment', body);
+    return this.api.post<any>('/subscriptions/create-payment', body);
   }
 }

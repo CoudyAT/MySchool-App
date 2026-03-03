@@ -1,6 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   logoFacebook,
@@ -27,38 +26,18 @@ interface SocialLink {
   standalone: true,
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss'],
-  imports: [CommonModule, IonIcon],
+  imports: [CommonModule],
 })
 export class FooterComponent implements OnInit {
   @Input() footerLinks: FooterLink[] = [
-    {
-      label: 'Mentions légales',
-      href: '#',
-      external: false,
-    },
     {
       label: "Conditions générales d'utilisation",
       href: '/terms',
       external: false,
     },
     {
-      label: 'Politique de protection des données personnelles',
-      href: '#',
-      external: false,
-    },
-    {
-      label: 'Cookies',
-      href: '#',
-      external: false,
-    },
-    {
-      label: "Déclaration d'accessibilité",
-      href: '#',
-      external: false,
-    },
-    {
       label: 'Sécurité',
-      href: '#',
+      href: '/security',
       external: false,
     },
   ];

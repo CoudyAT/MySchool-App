@@ -1,3 +1,12 @@
+export type NiveauScolaire = 'ELEMENTAIRE' | 'MOYEN' | 'SECONDAIRE' | 'UNIVERSITAIRE';
+
+export type ClasseElementaire = 'CI' | 'CP' | 'CE1' | 'CE2' | 'CM1' | 'CM2';
+export type ClasseMoyen = '6ème' | '5ème' | '4ème' | '3ème';
+export type ClasseSecondaire = 'Seconde' | 'Première' | 'Terminale';
+export type ClasseUniversitaire = 'Licence1' | 'Licence2' | 'Licence3' | 'Master1' | 'Master2';
+
+export type Classe = ClasseElementaire | ClasseMoyen | ClasseSecondaire | ClasseUniversitaire;
+
 export interface User {
   id?: string;
   uid?: string;
@@ -11,6 +20,8 @@ export interface User {
     libelle: 'student' | 'instructor' | 'admin';
   };
   level?: string;
+  niveauScolaire?: 'ELEMENTAIRE' | 'MOYEN' | 'SECONDAIRE' | 'UNIVERSITAIRE' | 'SUPERIEUR';
+  classe?: string; // Ex: CM2, 3ème, 6ème, etc.
   login?: string;
   password?: string;
   birthDate?: string;
@@ -19,6 +30,10 @@ export interface User {
   profession?: string;
   school?: string;
   objectives?: string[];
+
+  // Nouveaux champs pour le système d'abonnement
+ 
+
   isPremium?: boolean;
   premiumSince?: Date;
   premiumExpiresAt?: Date;
@@ -26,3 +41,4 @@ export interface User {
   createdAt?: any;
   updatedAt?: any;
 }
+

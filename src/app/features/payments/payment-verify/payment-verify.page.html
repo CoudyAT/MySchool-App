@@ -13,15 +13,6 @@
   <div class="page-container">
     <h1 class="page-title">Vérifiez vos informations</h1>
 
-    <!-- Premium -->
-    <div *ngIf="isPremiumSubscription" class="premium-notice">
-      <ion-icon name="star" class="premium-icon"></ion-icon>
-      <div class="premium-text">
-        <strong>Abonnement Premium</strong>
-        <span>Accès immédiat à tous les cours disponibles</span>
-      </div>
-    </div>
-
     <!-- Résumé -->
     <div class="summary-card">
       <h2 class="card-title">Résumé de la souscription</h2>
@@ -36,48 +27,48 @@
         <div class="summary-row promo-section">
           <div class="promo-header">
             <span class="label">Code promo</span>
-            <button 
-              *ngIf="!appliedPromoCode" 
-              class="add-promo-btn" 
+            <button
+              *ngIf="!appliedPromoCode"
+              class="add-promo-btn"
               (click)="togglePromoInput()"
             >
               {{ showPromoInput ? 'Annuler' : '+ Ajouter un code' }}
             </button>
-            <button 
-              *ngIf="appliedPromoCode" 
-              class="remove-promo-btn" 
+            <button
+              *ngIf="appliedPromoCode"
+              class="remove-promo-btn"
               (click)="removePromoCode()"
             >
               Retirer
             </button>
           </div>
-          
+
           <!-- Input pour code promo -->
           <div *ngIf="showPromoInput" class="promo-input-container">
             <div class="promo-input-wrapper">
-              <input 
-                type="text" 
+              <input
+                type="text"
                 [(ngModel)]="promoCodeInput"
                 placeholder="Entrez votre code promo"
                 class="promo-input"
                 (keyup.enter)="applyPromoCode()"
               />
-              <button 
-                class="apply-promo-btn" 
+              <button
+                class="apply-promo-btn"
                 (click)="applyPromoCode()"
                 [disabled]="!promoCodeInput.trim()"
               >
                 Appliquer
               </button>
             </div>
-            
+
           </div>
 
           <div *ngIf="appliedPromoCode" class="applied-promo">
             <span class="promo-code">{{ appliedPromoCode }} (-{{ discountPercentage }}%)</span>
             <span class="value negative">-{{ summary.promoCode }} FCFA</span>
           </div>
-          
+
           <!-- Valeur par défaut si aucun code promo -->
           <div *ngIf="!appliedPromoCode && !showPromoInput" class="value">
             {{ summary.promoCode }} FCFA
@@ -176,11 +167,28 @@
       </div>
     </div>
 
+    <!-- Infos abonnement matière -->
+    <div *ngIf="isMatiereSubscription" class="course-info matiere-info">
+      <h3>Abonnement — {{ classe }} ({{ niveauScolaire }})</h3>
+      <div class="matiere-list">
+        <div *ngFor="let m of subscriptionMatieres" class="matiere-item">
+          <ion-icon name="checkmark-circle" style="color: #0ea5e9;"></ion-icon>
+          <span>{{ m }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Infos abonnement classe -->
+    <div *ngIf="isClasseSubscription" class="course-info">
+      <h3>Abonnement classe {{ classe }}</h3>
+      <p style="color: #64748b; margin: 4px 0 0;">Niveau {{ niveauScolaire }} — Accès à tous les cours de {{ classe }}</p>
+    </div>
+
     <!-- Bouton final -->
-    <ion-button expand="block" 
+    <ion-button expand="block"
       (click)="proceedToPayment()"
       class="proceed-button">
-      {{ isPremium ? 'Activer Premium' : 'Payer le cours' }}
+      {{ (isClasseSubscription || isMatiereSubscription || isPremiumSubscription) ? 'Souscrire à l\'abonnement' : 'Payer le cours' }}
     </ion-button>
   </div>
 </ion-content>

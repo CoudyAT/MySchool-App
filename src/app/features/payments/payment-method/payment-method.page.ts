@@ -42,6 +42,18 @@ export class PaymentMethodPage implements OnInit {
   selectedPlan: any;
   isPremiumSubscription = false;
   selectedCategory: string | null = null;
+  userInfo: any = null;
+  selectedMatieres: any[] = [];
+
+  // Abonnement par classe (ELEMENTAIRE)
+  isClasseSubscription = false;
+  classe: string = '';
+  niveauScolaire: string = '';
+  totalCourses: number = 0;
+
+  // Abonnement par matière (MOYEN/SECONDAIRE/UNIVERSITAIRE)
+  isMatiereSubscription = false;
+  selectedMatieresList: string[] = [];
 
   course: any = null;
   courseId = '';
@@ -65,7 +77,7 @@ export class PaymentMethodPage implements OnInit {
     private router: Router,
     private location: Location,
     private paymentService: PaymentService,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
   ) {
     addIcons({
       'chevron-back-outline': chevronBackOutline,
@@ -81,8 +93,33 @@ export class PaymentMethodPage implements OnInit {
       this.selectedPlan = state['plan'];
       this.isPremiumSubscription = state['isPremiumSubscription'] ?? false;
       this.selectedCategory = state['selectedCategory'] || null;
+      this.userInfo = state['userInfo'] || null;
+      this.selectedMatieres = state['matieres'] || [];
 
-      if (!this.isPremiumSubscription) {
+      // 🎯 Abonnement par classe (ELEMENTAIRE)
+      this.isClasseSubscription = state['isClasseSubscription'] ?? false;
+      // 🎯 Abonnement par matière (MOYEN/SECONDAIRE/UNIVERSITAIRE)
+      this.isMatiereSubscription = state['isMatiereSubscription'] ?? false;
+
+      if (this.isClasseSubscription) {
+        this.classe = state['classe'] || '';
+        this.niveauScolaire = state['niveauScolaire'] || '';
+        this.totalCourses = state['totalCourses'] || 0;
+
+        console.log('🎯 Abonnement par classe détecté');
+        console.log('   Classe:', this.classe);
+        console.log('   Niveau:', this.niveauScolaire);
+      } else if (this.isMatiereSubscription) {
+        this.classe = state['classe'] || '';
+        this.niveauScolaire = state['niveauScolaire'] || '';
+        this.selectedMatieresList = state['matieres'] || [];
+        this.totalCourses = state['totalCourses'] || 0;
+
+        console.log('🎯 Abonnement par matière détecté');
+        console.log('   Classe:', this.classe);
+        console.log('   Niveau:', this.niveauScolaire);
+        console.log('   Matières:', this.selectedMatieresList);
+      } else if (!this.isPremiumSubscription) {
         this.course = state['course'] ?? null;
 
         // ✅ CORRECTION MAJEURE ICI
@@ -110,6 +147,8 @@ export class PaymentMethodPage implements OnInit {
     console.log('📋 PaymentMethodPage - Données finales:', {
       plan: this.selectedPlan,
       isPremiumSubscription: this.isPremiumSubscription,
+      isClasseSubscription: this.isClasseSubscription,
+      classe: this.classe,
       courseId: this.courseId,
       courseTitle: this.courseTitle,
       courseImage: this.courseImage,
@@ -156,7 +195,7 @@ export class PaymentMethodPage implements OnInit {
     }
 
     const formattedPhone = this.paymentService.formatSenegalPhone(
-      this.customerPhone
+      this.customerPhone,
     );
 
     localStorage.setItem(
@@ -165,7 +204,7 @@ export class PaymentMethodPage implements OnInit {
         name: this.customerName,
         email: this.customerEmail,
         phone: formattedPhone,
-      })
+      }),
     );
 
     this.proceedToVerification({
@@ -183,13 +222,39 @@ export class PaymentMethodPage implements OnInit {
   }
 
   private proceedToVerification(method: any) {
-    if (this.isPremiumSubscription) {
+    if (this.isClasseSubscription) {
+      // Abonnement par classe (ELEMENTAIRE)
+      this.router.navigate(['/payment-verify'], {
+        state: {
+          selectedMethod: method,
+          isClasseSubscription: true,
+          classe: this.classe,
+          niveauScolaire: this.niveauScolaire,
+          totalCourses: this.totalCourses,
+        },
+      });
+    } else if (this.isMatiereSubscription) {
+      // Abonnement par matière (MOYEN/SECONDAIRE/UNIVERSITAIRE)
+      this.router.navigate(['/payment-verify'], {
+        state: {
+          selectedMethod: method,
+          isMatiereSubscription: true,
+          classe: this.classe,
+          niveauScolaire: this.niveauScolaire,
+          matieres: this.selectedMatieresList,
+          totalCourses: this.totalCourses,
+        },
+      });
+    } else if (this.isPremiumSubscription) {
+      console.log("hhh",this.userInfo);
       this.router.navigate(['/payment-verify'], {
         state: {
           method,
           plan: this.selectedPlan,
           isPremiumSubscription: true,
           selectedCategory: this.selectedCategory,
+          userInfo: this.userInfo,
+          selectedMatieres: this.selectedMatieres,
         },
       });
     } else {
@@ -201,6 +266,7 @@ export class PaymentMethodPage implements OnInit {
           courseId: this.courseId, // ✅ GARANTI
           courseTitle: this.courseTitle,
           courseImage: this.courseImage,
+
         },
       });
     }

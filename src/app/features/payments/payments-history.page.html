@@ -1,0 +1,66 @@
+<ion-header class="white">
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-button (click)="goBack()">
+                <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title>Historique des paiements</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content class="white-page">
+  <div class="payments-container">
+
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="loading">
+      <div class="spinner"></div>
+      <p>Chargement des paiements...</p>
+    </div>
+
+    <!-- Empty state -->
+    <div *ngIf="!isLoading && payments.length === 0" class="empty-state">
+      <div class="empty-icon">💳</div>
+      <h3>Aucun paiement</h3>
+      <p>Vous n’avez encore effectué aucun paiement.</p>
+    </div>
+
+    <!-- Liste des paiements -->
+    <div *ngIf="!isLoading && payments.length > 0" class="payments-list">
+      <div class="payment-card" *ngFor="let payment of payments">
+        
+        <div class="card-header">
+          <div class="amount">
+            {{ payment.amount | number }} XOF
+          </div>
+
+          <span 
+            class="status"
+            [ngClass]="{
+              'success': payment.status === 'success',
+              'pending': payment.status === 'pending',
+              'failed': payment.status === 'failed'
+            }"
+          >
+            {{ payment.status }}
+          </span>
+        </div>
+
+        <div class="card-body">
+          <div class="info">
+            <span class="label">Méthode</span>
+            <span class="value">{{ payment.method || 'Mobile Money' }}</span>
+          </div>
+
+          <div class="info">
+            <span class="label">Date</span>
+            <span class="value">
+              {{ payment.date | date:'dd/MM/yyyy à HH:mm' }}
+            </span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</ion-content>

@@ -1,0 +1,225 @@
+<div class="page-container">
+
+  <!-- HEADER -->
+
+  <div class="header-section">
+    <div class="header">
+      <div>
+        <h1 class="title">Gestion des Codes Promo</h1>
+        <p class="subtitle">Gérez les codes promo</p>
+      </div>
+      <button class="add-button" (click)="openModal()">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        Nouveau Code
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= FILTERS ================= -->
+  <div class="filters-section">
+
+    <!-- Recherche -->
+    <div class="search-wrapper">
+      <div class="search-container">
+        <input
+          type="text"
+          placeholder="Rechercher un code..."
+          class="search-input"
+          [(ngModel)]="searchText"
+          (input)="onSearchChange()" />
+      </div>
+    </div>
+
+    <!-- Filtre Influenceur -->
+    <div class="filter-group">
+      <label>Influenceur ID</label>
+      <input
+        type="text"
+        class="form-input"
+        [(ngModel)]="selectedInfluenceurId"
+        (input)="loadCodesPromo()" />
+    </div>
+
+    <!-- Filtre Statut -->
+    <div class="filter-group">
+      <label>Statut</label>
+      <select
+        class="filter-select"
+        [(ngModel)]="activeOnly"
+        (change)="loadCodesPromo()">
+        <option [ngValue]="null">Tous</option>
+        <option [ngValue]="true">Actifs</option>
+        <option [ngValue]="false">Inactifs</option>
+      </select>
+    </div>
+
+  </div>
+
+  <!-- ================= LOADING ================= -->
+  <div *ngIf="isLoading" class="loading-container">
+    Chargement...
+  </div>
+
+  <!-- ================= TABLE ================= -->
+  <div class="users-list"
+       *ngIf="!isLoading && paginatedCodesPromo.length">
+
+    <!-- HEADER  <span>Utilisations</span> -->
+    <div class="users-list-header">
+      <span>Code</span>
+      <span>Valeur</span>
+      <span>Commission</span>
+      <span>Expiration</span>
+     
+      <span>Statut</span>
+      <span>Actions</span>
+    </div>
+
+    <!-- ROW -->
+    <div *ngFor="let code of paginatedCodesPromo"
+         class="user-row">
+
+      <div class="user-cell">
+        <span class="user-name">{{ code.code }}</span>
+        <span class="user-email">
+          {{ code.description }}
+        </span>
+      </div>
+
+      <div class="user-cell">
+        {{ code.type === 'fixed'
+            ? (code.value + ' FCFA')
+            : (code.value + '%') }}
+      </div>
+
+      <div class="user-cell">
+        {{ code.commissionValue }}
+        {{ code.commissionType === 'fixed' ? 'FCFA' : '%' }}
+      </div>
+
+      <div class="user-cell">
+        {{ code.expirationDate | date:'dd/MM/yyyy' }}
+      </div>
+
+    <!--  <div class="user-cell">
+        {{ code.influenceurId ? code.influenceurId : 'N/A' }}
+      </div> -->
+
+      <div class="user-cell">
+        <span class="badge"
+              [class.badge-premium]="code.isActive"
+              [class.badge-expired]="!code.isActive">
+          {{ code.isActive ? 'Actif' : 'Inactif' }}
+        </span>
+      </div>
+
+      <div class="user-actions">
+
+        <button class="action-button"
+                (click)="openModal(code)">
+          ✏️
+        </button>
+
+        <button class="action-button delete"
+                (click)="deleteCodePromo(code.code)">
+          🗑
+        </button> 
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ================= EMPTY STATE ================= -->
+  <div *ngIf="!isLoading && !paginatedCodesPromo.length"
+       class="empty-state">
+    Aucun code promo trouvé.
+  </div>
+
+</div>
+
+
+<!-- ================= MODAL =================  -->
+<div *ngIf="isModalOpen" class="modal-overlay" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ isEditing ? 'Modifier Code' : 'Nouveau Code' }}</h2>
+      <button class="close-button" (click)="closeModal()">✖</button>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="form-group">
+        <label>Code</label>
+        <input type="text" class="form-input" [(ngModel)]="modalCodePromo.code" />
+      </div>
+
+      <div class="form-group">
+        <label>Type</label>
+        <select class="form-input" [(ngModel)]="modalCodePromo.type">
+          <option value="fixed">Montant fixe</option>
+          <option value="percent">Pourcentage</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Valeur</label>
+        <input type="number" class="form-input" [(ngModel)]="modalCodePromo.value" />
+      </div>
+
+      <div class="form-group">
+        <label>Commission Type</label>
+        <select class="form-input" [(ngModel)]="modalCodePromo.commissionType">
+          <option value="fixed">Fixe</option>
+          <option value="percent">Pourcentage</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Commission Valeur</label>
+        <input type="number" class="form-input" [(ngModel)]="modalCodePromo.commissionValue" />
+      </div>
+
+      <div class="form-group">
+          <label>Influenceur</label>
+          <select class="form-input" [(ngModel)]="modalCodePromo.influenceurId">
+            <option value="">-- Sélectionner un influenceur --</option>
+            <option *ngFor="let user of influenceurs" [value]="user.uid">
+              {{ user.firstName }} {{ user.lastName }}
+            </option>
+          </select>
+</div>
+
+      <div class="form-group">
+        <label>Date d'expiration</label>
+        <input type="datetime-local" class="form-input" [(ngModel)]="modalCodePromo.expirationDate" />
+      </div>
+
+      <div class="form-group">
+        <label>Limite d'utilisation</label>
+        <input type="number" class="form-input" [(ngModel)]="modalCodePromo.usageLimit" />
+      </div>
+
+      <div class="form-group">
+        <label>Description</label>
+        <input type="text" class="form-input" [(ngModel)]="modalCodePromo.description" />
+      </div>
+
+      <div class="form-group checkbox-group">
+        <label>
+          <input type="checkbox" [(ngModel)]="modalCodePromo.isActive" />
+          Code actif
+        </label>
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button class="secondary-button" (click)="closeModal()">Annuler</button>
+      <button class="primary-button" (click)="saveCode()">Enregistrer</button>
+    </div>
+  </div>
+</div>
