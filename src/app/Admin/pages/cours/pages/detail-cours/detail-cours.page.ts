@@ -129,20 +129,20 @@ export class DetailCoursPage implements OnInit {
 
     this.isSubmitting = true;
 
-    // this.courseService.updateCourse(this.course.id, {
-    //   matiereId: this.selectedMatiereId
-    // }).subscribe({
-    //   next: () => {
-    //     this.course.matiereId = this.selectedMatiereId!;
-    //     this.presentToast('Matière liée avec succès', 'success');
-    //     this.closeLinkMatiere();
-    //   },
-    //   error: (err) => {
-    //     console.error('Erreur liaison matière', err);
-    //     this.presentToast('Erreur lors de la liaison', 'danger');
-    //   },
-    //   complete: () => this.isSubmitting = false
-    // });
+    this.courseService.updateCourse(this.course.id, {
+      matiereId: this.selectedMatiereId
+    }).subscribe({
+      next: () => {
+        this.course.matiereId = this.selectedMatiereId!;
+        this.presentToast('Matière liée avec succès', 'success');
+        this.closeLinkMatiere();
+      },
+      error: (err) => {
+        console.error('Erreur liaison matière', err);
+        this.presentToast('Erreur lors de la liaison', 'danger');
+      },
+      complete: () => this.isSubmitting = false
+    });
   }
 
   loadChapters() {

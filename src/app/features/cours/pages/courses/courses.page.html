@@ -4,21 +4,14 @@
     <div class="header-content">
       <img src="assets/logo.svg" alt="MySchool Logo" class="logo" (click)="goHome()" style="cursor: pointer;" />
       <!-- Hero Section - CARROUSEL SWIPER  -->
-      <ion-button
-        fill="outline"
-        class="help-button"
-        (click)="openHelp()"
-      >
-        <br/>
-      <ion-icon (click)="openHelp()" name="search-outline"></ion-icon>
+      <ion-button fill="outline" class="help-button" (click)="openHelp()">
+        <br />
+        <ion-icon (click)="openHelp()" name="search-outline"></ion-icon>
       </ion-button>
 
-      <ion-button
-          fill="clear"
-          (click)="goToProfile()"
-          class="profile-button">
-          <ion-icon class="profile" name="person-circle-outline"></ion-icon>
-        </ion-button>
+      <ion-button fill="clear" (click)="goToProfile()" class="profile-button">
+        <ion-icon class="profile" name="person-circle-outline"></ion-icon>
+      </ion-button>
     </div>
   </ion-toolbar>
   <div class="mobile-subscription-bar" *ngIf="!hasActiveSubscription">
@@ -33,7 +26,7 @@
 
     <!-- Hero Section - CARROUSEL SWIPER -->
     <div class="hero-section">
-    <!--   <swiper-container
+      <!--   <swiper-container
         class="hero-swiper"
         [config]="slideOpts"
         (swiperslidechange)="onSlideChange($event)"
@@ -63,24 +56,21 @@
           </div>
         </swiper-slide>
       </swiper-container>  -->
-      <swiper-container
-        class="hero-swiper"
-        [config]="slideOpts"
-        (swiperslidechange)="onSlideChange($event)"
-        (swiperinit)="onSwiperInit($event)"
-      >
+      <swiper-container class="hero-swiper" [config]="slideOpts" (swiperslidechange)="onSlideChange($event)"
+        (swiperinit)="onSwiperInit($event)">
         <!-- Slide 1 -->
         <swiper-slide>
-          <a routerLink="/formations/masterclass">          
+          <a routerLink="/formations/masterclass">
             <div class="slide-container">
               <picture>
-                <source media="(min-width: 1024px)" srcset="https://firebasestorage.googleapis.com/v0/b/myschool-f862b.firebasestorage.app/o/SLIDERS%2Fslider1.jpg?alt=media&token=60d46885-2548-49d8-b3b3-b5d1e3a27ee4">
-                <img src="https://firebasestorage.googleapis.com/v0/b/myschool-f862b.firebasestorage.app/o/SLIDERS%2Fslider1-mob.jpg?alt=media&token=d1ce1a4f-2c17-4fa5-aa56-6361c23149ef"
-                    alt="Formation 2"
-                    class="slide-image" />
+                <source media="(min-width: 1024px)"
+                  srcset="https://firebasestorage.googleapis.com/v0/b/myschool-f862b.firebasestorage.app/o/SLIDERS%2Fslider1.jpg?alt=media&token=60d46885-2548-49d8-b3b3-b5d1e3a27ee4">
+                <img
+                  src="https://firebasestorage.googleapis.com/v0/b/myschool-f862b.firebasestorage.app/o/SLIDERS%2Fslider1-mob.jpg?alt=media&token=d1ce1a4f-2c17-4fa5-aa56-6361c23149ef"
+                  alt="Formation 2" class="slide-image" />
               </picture>
               <div class="slide-overlay"></div>
-              
+
               <!-- Bouton ajouté -->
               <div class="slide-content">
                 <h2 class="slide-title"></h2>
@@ -96,16 +86,17 @@
 
         <!-- Slide 2 -->
         <swiper-slide>
-          <a routerLink="/formations/masterclass">          
+          <a routerLink="/formations/masterclass">
             <div class="slide-container">
               <picture>
-                <source media="(min-width: 1024px)" srcset="https://firebasestorage.googleapis.com/v0/b/myschool-f862b.firebasestorage.app/o/SLIDERS%2Fslider2.jpg?alt=media&token=60d46885-2548-49d8-b3b3-b5d1e3a27ee4">
-                <img src="https://firebasestorage.googleapis.com/v0/b/myschool-f862b.firebasestorage.app/o/SLIDERS%2Fslider2-mob.jpg?alt=media&token=d1ce1a4f-2c17-4fa5-aa56-6361c23149ef"
-                    alt="Formation 2"
-                    class="slide-image" />
+                <source media="(min-width: 1024px)"
+                  srcset="https://firebasestorage.googleapis.com/v0/b/myschool-f862b.firebasestorage.app/o/SLIDERS%2Fslider2.jpg?alt=media&token=60d46885-2548-49d8-b3b3-b5d1e3a27ee4">
+                <img
+                  src="https://firebasestorage.googleapis.com/v0/b/myschool-f862b.firebasestorage.app/o/SLIDERS%2Fslider2-mob.jpg?alt=media&token=d1ce1a4f-2c17-4fa5-aa56-6361c23149ef"
+                  alt="Formation 2" class="slide-image" />
               </picture>
               <div class="slide-overlay"></div>
-              
+
               <!-- Bouton ajouté -->
               <div class="slide-content">
                 <h2 class="slide-title"></h2>
@@ -121,16 +112,17 @@
 
         <!-- Slide 3 -->
         <swiper-slide>
-          <a routerLink="/formations/masterclass">          
+          <a routerLink="/formations/masterclass">
             <div class="slide-container">
               <picture>
-                <source media="(min-width: 1024px)" srcset="https://firebasestorage.googleapis.com/v0/b/myschool-f862b.firebasestorage.app/o/SLIDERS%2Fslider3.jpg?alt=media&token=60d46885-2548-49d8-b3b3-b5d1e3a27ee4">
-                <img src="https://firebasestorage.googleapis.com/v0/b/myschool-f862b.firebasestorage.app/o/SLIDERS%2Fslider3-mob.jpg?alt=media&token=d1ce1a4f-2c17-4fa5-aa56-6361c23149ef"
-                    alt="Formation 2"
-                    class="slide-image" />
+                <source media="(min-width: 1024px)"
+                  srcset="https://firebasestorage.googleapis.com/v0/b/myschool-f862b.firebasestorage.app/o/SLIDERS%2Fslider3.jpg?alt=media&token=60d46885-2548-49d8-b3b3-b5d1e3a27ee4">
+                <img
+                  src="https://firebasestorage.googleapis.com/v0/b/myschool-f862b.firebasestorage.app/o/SLIDERS%2Fslider3-mob.jpg?alt=media&token=d1ce1a4f-2c17-4fa5-aa56-6361c23149ef"
+                  alt="Formation 2" class="slide-image" />
               </picture>
               <div class="slide-overlay"></div>
-              
+
               <!-- Bouton ajouté -->
               <div class="slide-content">
                 <h2 class="slide-title">Rejoignez notre communauté</h2>
@@ -186,9 +178,9 @@
       </div>
     </div>
 
-        <!-- Section Tous les cours -->
+    <!-- Section Tous les cours -->
     <div class="courses-section">
-       <h1 class="section-title">Liste des cours</h1>
+      <h1 class="section-title">Liste des cours</h1>
 
       <!-- Bandeau pour ELEMENTAIRE avec classe définie -->
       <div *ngIf="isElementaire && hasClasse" class="classe-banner">
@@ -214,12 +206,8 @@
         </div>
 
         <div class="classes-grid">
-          <div
-            *ngFor="let classe of availableClasses"
-            class="classe-card"
-            [class.selected]="selectedClasse === classe"
-            (click)="selectClasse(classe)"
-          >
+          <div *ngFor="let classe of availableClasses" class="classe-card" [class.selected]="selectedClasse === classe"
+            (click)="selectClasse(classe)">
             <ion-icon name="book-outline" class="classe-icon"></ion-icon>
             <h4>{{ classe }}</h4>
             <p *ngIf="selectedClasse === classe" class="selected-badge">Sélectionné</p>
@@ -239,24 +227,24 @@
       <!-- ================================================ -->
 
       <!-- Bandeau pour MOYEN/SECONDAIRE/UNIV avec classe définie -->
-    <div *ngIf="isMoyenSecondaireUniv && hasClasse && !showMatiereSelection" class="classe-banner niveau-banner">
-      <div class="banner-content">
-        <ion-icon name="school-outline" class="banner-icon"></ion-icon>
-        <div class="banner-text">
-          <h3>{{ userClasse }}</h3>
-          <p *ngIf="userNiveauScolaire !== 'PROFESSIONNEL'">
-            Niveau {{ userNiveauScolaire }} — Sélectionnez 3 matières pour vous abonner
-          </p>
-          <p *ngIf="userNiveauScolaire === 'PROFESSIONNEL'">
-            Niveau Professionnel —  Sélectionnez 3 matières pour vous abonner
-          </p>
+      <div *ngIf="isMoyenSecondaireUniv && hasClasse && !showMatiereSelection" class="classe-banner niveau-banner">
+        <div class="banner-content">
+          <ion-icon name="school-outline" class="banner-icon"></ion-icon>
+          <div class="banner-text">
+            <h3>{{ userClasse }}</h3>
+            <p *ngIf="userNiveauScolaire !== 'PROFESSIONNEL'">
+              Niveau {{ userNiveauScolaire }} — Sélectionnez 3 matières pour vous abonner
+            </p>
+            <p *ngIf="userNiveauScolaire === 'PROFESSIONNEL'">
+              Niveau Professionnel — Sélectionnez 3 matières pour vous abonner
+            </p>
+          </div>
+          <ion-button fill="solid" color="primary" (click)="loadMatieresForClasse(userClasse!)">
+            <ion-icon name="book-outline" slot="start"></ion-icon>
+            Choisir mes matières
+          </ion-button>
         </div>
-        <ion-button fill="solid" color="primary" (click)="loadMatieresForClasse(userClasse!)">
-          <ion-icon name="book-outline" slot="start"></ion-icon>
-          Choisir mes matières
-        </ion-button>
       </div>
-    </div>
 
       <!-- Sélecteur de classe pour MOYEN/SECONDAIRE/UNIV sans classe -->
       <div *ngIf="isMoyenSecondaireUniv && !hasClasse && !showMatiereSelection" class="classe-selector niveau-selector">
@@ -267,12 +255,8 @@
         </div>
 
         <div class="classes-grid">
-          <div
-            *ngFor="let classe of availableClassesForLevel"
-            class="classe-card"
-            [class.selected]="selectedClasse === classe"
-            (click)="selectClasseForLevel(classe)"
-          >
+          <div *ngFor="let classe of availableClassesForLevel" class="classe-card"
+            [class.selected]="selectedClasse === classe" (click)="selectClasseForLevel(classe)">
             <ion-icon name="book-outline" class="classe-icon"></ion-icon>
             <h4>{{ classe }}</h4>
             <p *ngIf="selectedClasse === classe" class="selected-badge">Sélectionné</p>
@@ -287,10 +271,12 @@
             <ion-icon name="book-outline" class="matiere-icon"></ion-icon>
             <div>
               <h3>Choisissez vos matières</h3>
-              <p>Classe : <strong>{{ selectedClasse }}</strong> — Sélectionnez {{ maxMatieres }} matières ({{ selectedMatieres.length }}/{{ maxMatieres }})</p>
+              <p>Classe : <strong>{{ selectedClasse }}</strong> — Sélectionnez {{ maxMatieres }} matières ({{
+                selectedMatieres.length }}/{{ maxMatieres }})</p>
             </div>
           </div>
-          <ion-button *ngIf="!hasClasse" fill="clear" size="small" (click)="showMatiereSelection = false; selectedMatieres = []">
+          <ion-button *ngIf="!hasClasse" fill="clear" size="small"
+            (click)="showMatiereSelection = false; selectedMatieres = []">
             <ion-icon name="chevron-back-outline" slot="start"></ion-icon>
             Changer de classe
           </ion-button>
@@ -302,13 +288,10 @@
         </div>
 
         <div *ngIf="!isMatiereLoading" class="matieres-grid">
-          <div
-            *ngFor="let matiere of availableMatieres"
-            class="matiere-card"
+          <div *ngFor="let matiere of availableMatieres" class="matiere-card"
             [class.selected]="isMatiereSelected(matiere)"
             [class.disabled]="!isMatiereSelected(matiere) && selectedMatieres.length >= maxMatieres"
-            (click)="toggleMatiere(matiere)"
-          >
+            (click)="toggleMatiere(matiere)">
             <div class="matiere-check">
               <ion-icon [name]="isMatiereSelected(matiere) ? 'checkmark-circle' : 'ellipse-outline'"></ion-icon>
             </div>
@@ -327,7 +310,8 @@
         </div>
 
         <div *ngIf="selectedMatieres.length > 0 && selectedMatieres.length < maxMatieres" class="matieres-remaining">
-          <p>⚠️ Vous devez sélectionner {{ maxMatieres }} matières (encore {{ maxMatieres - selectedMatieres.length }} à choisir)</p>
+          <p>⚠️ Vous devez sélectionner {{ maxMatieres }} matières (encore {{ maxMatieres - selectedMatieres.length }} à
+            choisir)</p>
         </div>
 
         <div *ngIf="selectedMatieres.length === maxMatieres" class="subscribe-action matiere-subscribe">
@@ -345,16 +329,9 @@
 
       <!-- Liste des cours -->
       <div *ngIf="!isCoursesLoading" class="enrolled-courses-grid">
-        <ion-card
-          *ngFor="let course of allCourses"
-          class="course-card"
-          (click)="openCour(course)"
-        >
+        <ion-card *ngFor="let course of allCourses" class="course-card" (click)="openCour(course)">
           <div class="card-image">
-            <img
-              [src]="course.image || 'assets/algo.svg'"
-              alt="{{ course.title }}"
-            />
+            <img [src]="course.image || 'assets/algo.svg'" alt="{{ course.title }}" />
 
             <div class="play-icon">
               <ion-icon name="play"></ion-icon>
@@ -421,15 +398,11 @@
         <ion-card *ngFor="let course of enrolledCourses" class="course-card" (click)="openCourse(course)">
 
           <div class="card-image">
-            <img
-              [src]="course.courseDetails?.image || 'assets/algo.svg'"
-              alt="Image du cours"
-              class="course-image"
-            />
-             <!-- Badge Certificat disponible -->
+            <img [src]="course.courseDetails?.image || 'assets/algo.svg'" alt="Image du cours" class="course-image" />
+            <!-- Badge Certificat disponible -->
             <div class="certificate-badge" *ngIf="course?.courseDetails?.certificateAvailable">
-                <ion-icon name="shield-checkmark"></ion-icon>
-                <span>Certificat disponible</span>
+              <ion-icon name="shield-checkmark"></ion-icon>
+              <span>Certificat disponible</span>
             </div>
 
             <!-- Icône play -->
@@ -446,14 +419,10 @@
             <div class="enrollment-date" *ngIf="course.enrolledAt">
               Inscrit le {{ getFormattedDate(course.enrolledAt) }}
             </div>
-              <ion-button
-                expand="block"
-                size="small"
-                class="continue-button"
-                (click)="openCourse(course); $event.stopPropagation()"
-              >
-                Continuer
-              </ion-button>
+            <ion-button expand="block" size="small" class="continue-button"
+              (click)="openCourse(course); $event.stopPropagation()">
+              Continuer
+            </ion-button>
           </ion-card-content>
         </ion-card>
       </div>
@@ -465,12 +434,8 @@
       <div class="instructors-grid">
         <div class="instructor-card" *ngFor="let instructor of instructors"
           [style.background-color]="instructor.backgroundColor" (click)="goToInstructorProfile(instructor.id)">
-          <img
-             [src]="instructor.image"
-              [alt]="instructor.name"
-            class="instructor-image"
-          />
-        <!--   <div class="instructor-name">{{ instructor.name }}</div> -->
+          <img [src]="instructor.image" [alt]="instructor.name" class="instructor-image" />
+          <!--   <div class="instructor-name">{{ instructor.name }}</div> -->
         </div>
       </div>
     </div>
