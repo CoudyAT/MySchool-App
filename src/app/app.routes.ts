@@ -38,6 +38,9 @@ import { VideoPlayerPage } from './features/cours/pages/video-player/video-playe
 import { adminGuard } from './guard/admin-guard';
 import { ReferralsPage } from './Admin/pages/referrals/referrals.page';
 import { UpdatePasswordPage } from './Admin/pages/update-password/update-password.page';
+import { CodePromoPage } from './Admin/pages/code-promo/code-promo.page';
+import { MatieresPage } from './Admin/pages/matieres/matieres.page';
+import { PaymentsHistoryPage } from './features/payments/payments-history.page';
 
 export const routes: Routes = [
   {
