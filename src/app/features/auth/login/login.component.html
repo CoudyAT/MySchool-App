@@ -4,25 +4,15 @@
     <!-- Header -->
     <div class="header-section">
       <div class="nav-section">
-        <ion-button
-          fill="clear"
-          color="dark"
-          routerLink="/"
-          class="back-button"
-          *ngIf="!otpSent">
+        <ion-button fill="clear" color="dark" routerLink="/" class="back-button" *ngIf="!otpSent">
           <ion-icon name="chevron-back"></ion-icon>
         </ion-button>
-        
-        <ion-button
-          fill="clear"
-          color="dark"
-          class="back-button"
-          (click)="editPhoneNumber()"
-          *ngIf="otpSent">
+
+        <ion-button fill="clear" color="dark" class="back-button" (click)="editPhoneNumber()" *ngIf="otpSent">
           <ion-icon name="chevron-back"></ion-icon>
         </ion-button>
       </div>
-      
+
       <div class="logo-container">
         <img src="assets/logo.svg" alt="MySchool Logo" class="logo" />
       </div>
@@ -36,7 +26,7 @@
         </h1>
         <p class="subtitle">
           <span *ngIf="!otpSent">
-            Connectez-vous ou 
+            Connectez-vous ou
             <span class="create-account-link" (click)="goToSignup()">
               créez un compte
             </span>
@@ -54,14 +44,8 @@
             <label class="input-label-modern">Numéro de téléphone </label>
             <div class="phone-input-wrapper">
               <div class="input-wrapper">
-                <ion-input
-                  #phoneInput
-                  type="tel"
-                  formControlName="phone"
-                  placeholder="77 123 45 67"
-                  (ionInput)="onPhoneInput($event)"
-                  (keyup.enter)="sendOtp()"
-                  class="phone-input">
+                <ion-input #phoneInput type="tel" formControlName="phone" placeholder="77 123 45 67"
+                  (ionInput)="onPhoneInput($event)" (keyup.enter)="sendOtp()" class="phone-input">
                 </ion-input>
               </div>
             </div>
@@ -73,10 +57,7 @@
             </div>
           </div>
 
-          <ion-button
-            expand="block"
-            class="modern-primary-button"
-            [disabled]="!phoneForm.valid || loading"
+          <ion-button expand="block" class="modern-primary-button" [disabled]="!phoneForm.valid || loading"
             (click)="sendOtp()">
             <ion-icon name="send-outline" slot="start" *ngIf="!loading"></ion-icon>
             {{ loading ? 'Envoi en cours...' : 'Recevoir le code' }}
@@ -149,49 +130,33 @@
             <p class="phone-display">{{ displayedPhone }}</p>
             <p class="code-instruction">Entrez le code à 6 chiffres reçu par SMS</p>
           </div>
-          
+
           <div class="input-group-modern">
             <label class="input-label-modern">Code de vérification</label>
-            
+
             <!-- UN SEUL CHAMP SIMPLE -->
             <div class="single-otp-container">
-              <ion-input
-                #otpInput
-                type="text"
-                formControlName="otpCode"
-                placeholder="123456"
-                maxlength="6"
-                [inputmode]="'numeric'"
-                pattern="[0-9]*"
-                autocomplete="one-time-code"
-                class="single-otp-input"
-                (ionInput)="onSingleOtpInput($event)"
-                (keydown)="onOtpKeyDown($event)"
-                (paste)="onOtpPaste($event)"
+              <ion-input #otpInput type="text" formControlName="otpCode" placeholder="123456" maxlength="6"
+                [inputmode]="'numeric'" pattern="[0-9]*" autocomplete="one-time-code" class="single-otp-input"
+                (ionInput)="onSingleOtpInput($event)" (keydown)="onOtpKeyDown($event)" (paste)="onOtpPaste($event)"
                 (ionBlur)="validateOtpLength()">
                 <ion-icon name="key-outline" slot="start"></ion-icon>
               </ion-input>
-              
+
               <!-- Indicateur de longueur -->
               <div class="length-indicator">
                 <span class="length-text">{{ otpForm.get('otpCode')?.value?.length || 0 }}/6</span>
               </div>
             </div>
-            
+
             <div class="error-text" *ngIf="otpError">
               {{ otpError }}
             </div>
-            
+
             <!-- Bouton pour afficher/masquer le code -->
             <div class="toggle-visibility">
-              <ion-button 
-                fill="clear" 
-                size="small" 
-                (click)="toggleOtpVisibility()"
-                class="visibility-btn">
-                <ion-icon 
-                  [name]="showOtpText ? 'eye-off-outline' : 'eye-outline'" 
-                  slot="start">
+              <ion-button fill="clear" size="small" (click)="toggleOtpVisibility()" class="visibility-btn">
+                <ion-icon [name]="showOtpText ? 'eye-off-outline' : 'eye-outline'" slot="start">
                 </ion-icon>
                 {{ showOtpText ? 'Masquer' : 'Afficher' }}
               </ion-button>
@@ -205,23 +170,17 @@
           </div>
 
           <div class="resend-section" *ngIf="countdown === 0">
-            <button 
-              type="button" 
-              class="resend-link" 
-              (click)="resendOtp()">
+            <button type="button" class="resend-link" (click)="resendOtp()">
               Renvoyer le code
             </button>
           </div>
 
-          <ion-button
-            expand="block"
-            class="modern-primary-button"
-            [disabled]="!isOtpComplete() || verifying"
+          <ion-button expand="block" class="modern-primary-button" [disabled]="!isOtpComplete() || verifying"
             (click)="verifyOtp()">
             <ion-icon name="checkmark-outline" slot="start" *ngIf="!verifying"></ion-icon>
             {{ verifying ? 'Vérification...' : 'Vérifier le code' }}
           </ion-button>
-          
+
           <!-- Option de vérification automatique -->
           <div class="auto-verify-option">
             <ion-checkbox [(ngModel)]="autoVerify" (ionChange)="onAutoVerifyChange()"></ion-checkbox>

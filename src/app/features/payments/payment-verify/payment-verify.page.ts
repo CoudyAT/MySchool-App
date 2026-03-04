@@ -278,7 +278,7 @@ export class PaymentVerifyPage implements OnInit {
     }
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   setupDisplayedMethods() {
     const selected = this.allPaymentMethods.find(

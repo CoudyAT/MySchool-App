@@ -41,6 +41,9 @@ export class DetailCoursPage implements OnInit {
   selectedMatiereId: string | null = null;
   isLinkingMatiere = false;
 
+  matieresFiltrees: Matiere[] = [];
+  linkedMatiere: Matiere | undefined = undefined;
+
   // Nouveau chapitre
   newChapter: any = {
     title: '',
@@ -92,6 +95,7 @@ export class DetailCoursPage implements OnInit {
     this.courseService.getCourse(this.courseId).subscribe({
       next: (response: any) => {
         this.course = response.data || response;
+        this.updateMatieresFiltrees();
 
         console.log('videoUrl reçu:', this.course.videoUrl);
 
@@ -105,12 +109,34 @@ export class DetailCoursPage implements OnInit {
     this.matiereService.getMatieresActives().subscribe({
       next: (matieres) => {
         this.matieres = matieres;
+        this.updateMatieresFiltrees();
       },
       error: (err) => {
         console.error('Erreur chargement matières', err);
         this.presentToast('Impossible de charger les matières', 'danger');
       }
     });
+  }
+
+  private updateMatieresFiltrees() {
+    if (!this.course) {
+      this.matieresFiltrees = this.matieres;
+      return;
+    }
+
+    let filtered = this.matieres;
+
+    if (this.course.classe) {
+      filtered = filtered.filter(m => m.classe === this.course.classe);
+    }
+
+    if (this.course.niveauScolaire) {
+      filtered = filtered.filter(m => m.niveauScolaire === this.course.niveauScolaire);
+    }
+
+    this.matieresFiltrees = filtered.sort((a, b) =>
+      (a.ordre || 0) - (b.ordre || 0) || a.nom.localeCompare(b.nom)
+    );
   }
 
   openLinkMatiere() {
@@ -121,6 +147,16 @@ export class DetailCoursPage implements OnInit {
     this.isLinkingMatiere = false;
   }
 
+  getNiveauLabel(niveau: string): string {
+    const map: Record<string, string> = {
+      ELEMENTAIRE: 'Élémentaire',
+      MOYEN: 'Moyen',
+      SECONDAIRE: 'Secondaire',
+      UNIVERSITAIRE: 'Universitaire'
+    };
+    return map[niveau] || niveau || '—';
+  }
+
   saveMatiereLink() {
     if (!this.selectedMatiereId) {
       this.presentToast('Veuillez sélectionner une matière', 'warning');
@@ -129,20 +165,20 @@ export class DetailCoursPage implements OnInit {
 
     this.isSubmitting = true;
 
-    // this.courseService.updateCourse(this.course.id, {
-    //   matiereId: this.selectedMatiereId
-    // }).subscribe({
-    //   next: () => {
-    //     this.course.matiereId = this.selectedMatiereId!;
-    //     this.presentToast('Matière liée avec succès', 'success');
-    //     this.closeLinkMatiere();
-    //   },
-    //   error: (err) => {
-    //     console.error('Erreur liaison matière', err);
-    //     this.presentToast('Erreur lors de la liaison', 'danger');
-    //   },
-    //   complete: () => this.isSubmitting = false
-    // });
+    this.courseService.updateCourse(this.course.id, {
+      matiereId: this.selectedMatiereId
+    }).subscribe({
+      next: () => {
+        this.course.matiereId = this.selectedMatiereId!;
+        this.presentToast('Matière liée avec succès', 'success');
+        this.closeLinkMatiere();
+      },
+      error: (err) => {
+        console.error('Erreur liaison matière', err);
+        this.presentToast('Erreur lors de la liaison', 'danger');
+      },
+      complete: () => this.isSubmitting = false
+    });
   }
 
   loadChapters() {

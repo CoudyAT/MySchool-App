@@ -55,25 +55,27 @@
             <label>Type</label>
             <ion-select formControlName="type">
               <ion-select-option value="En ligne">En ligne</ion-select-option>
-              <ion-select-option value="Présentiel">Présentiel</ion-select-option>
+              <ion-select-option value="Presentiel">Présentiel</ion-select-option>
+              <ion-select-option value="Video">Vidéo</ion-select-option>
               <ion-select-option value="Tuto">Tuto</ion-select-option>
 
             </ion-select>
           </div>
 
           <div class="form-group">
-            <label>Niveau</label>
-            <ion-select formControlName="level">
-              <ion-select-option value="Débutant">Débutant</ion-select-option>
-              <ion-select-option value="Intermédiaire">Intermédiaire</ion-select-option>
-              <ion-select-option value="Avancé">Avancé</ion-select-option>
+            <label>Niveau scolaire</label>
+            <ion-select formControlName="niveauScolaire" (ionChange)="updateMatieresFiltrees()" interface="popover">
+              <ion-select-option value="ELEMENTAIRE">Elementaire</ion-select-option>
+              <ion-select-option value="MOYEN">Moyen</ion-select-option>
+              <ion-select-option value="SECONDAIRE">Secondaire</ion-select-option>
+              <ion-select-option value="UNIVERSITAIRE">Universitaire</ion-select-option>
             </ion-select>
           </div>
-
+          <!-- 
           <div class="form-group">
             <label>Prix (FCFA)</label>
             <ion-input type="number" formControlName="price" min="0"></ion-input>
-          </div>
+          </div> -->
 
         </div>
       </section>
@@ -93,6 +95,30 @@
             <ion-input formControlName="newCategoryName" placeholder="Nom de la nouvelle catégorie"></ion-input>
             <button type="button" class="btn-small" (click)="addNewCategory()">Ajouter</button>
             <button type="button" class="btn-small btn-outline" (click)="cancelNewCategory()">Annuler</button>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Matière</h2>
+        <div class="category-section">
+          <ion-select formControlName="matiere" interface="popover" placeholder="Choisir une matière"
+            [disabled]="matieresFiltrees.length === 0 || isSaving">
+
+            <ion-select-option value="">— Sélectionner une matière —</ion-select-option>
+
+            <ion-select-option *ngFor="let mat of matieresFiltrees" [value]="mat.id">
+              {{ mat.nom }}
+              <ng-container *ngIf="mat.classe"> • {{ mat.classe }}</ng-container>
+              <ng-container *ngIf="mat.niveauScolaire">
+                ({{ getNiveauLabel(mat.niveauScolaire) }})
+              </ng-container>
+            </ion-select-option>
+          </ion-select>
+
+          <div *ngIf="matieresFiltrees.length === 0 && editForm.get('niveauScolaire')?.value"
+            class="info-empty warning mt-2">
+            Aucune matière disponible pour ce niveau
           </div>
         </div>
       </section>

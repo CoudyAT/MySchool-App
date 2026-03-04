@@ -716,6 +716,30 @@
     }
 }
 
+.form-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.input-error {
+    border-color: var(--ion-color-danger) !important;
+}
+
+.phone-preview {
+    display: block;
+    font-size: 0.85em;
+    color: #666;
+    margin-top: 4px;
+}
+
+.error-text {
+    color: var(--ion-color-danger);
+    font-size: 0.85em;
+    margin-top: 4px;
+}
+
 /* Animations */
 @keyframes fadeIn {
     from {

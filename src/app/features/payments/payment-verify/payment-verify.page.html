@@ -27,18 +27,10 @@
         <div class="summary-row promo-section">
           <div class="promo-header">
             <span class="label">Code promo</span>
-            <button
-              *ngIf="!appliedPromoCode"
-              class="add-promo-btn"
-              (click)="togglePromoInput()"
-            >
+            <button *ngIf="!appliedPromoCode" class="add-promo-btn" (click)="togglePromoInput()">
               {{ showPromoInput ? 'Annuler' : '+ Ajouter un code' }}
             </button>
-            <button
-              *ngIf="appliedPromoCode"
-              class="remove-promo-btn"
-              (click)="removePromoCode()"
-            >
+            <button *ngIf="appliedPromoCode" class="remove-promo-btn" (click)="removePromoCode()">
               Retirer
             </button>
           </div>
@@ -46,18 +38,9 @@
           <!-- Input pour code promo -->
           <div *ngIf="showPromoInput" class="promo-input-container">
             <div class="promo-input-wrapper">
-              <input
-                type="text"
-                [(ngModel)]="promoCodeInput"
-                placeholder="Entrez votre code promo"
-                class="promo-input"
-                (keyup.enter)="applyPromoCode()"
-              />
-              <button
-                class="apply-promo-btn"
-                (click)="applyPromoCode()"
-                [disabled]="!promoCodeInput.trim()"
-              >
+              <input type="text" [(ngModel)]="promoCodeInput" placeholder="Entrez votre code promo" class="promo-input"
+                (keyup.enter)="applyPromoCode()" />
+              <button class="apply-promo-btn" (click)="applyPromoCode()" [disabled]="!promoCodeInput.trim()">
                 Appliquer
               </button>
             </div>
@@ -90,11 +73,9 @@
         <ion-icon name="card-outline" class="card-icon"></ion-icon>
       </div>
 
-      <ion-radio-group
-        [value]="selectedPaymentOption"
-      >
+      <ion-radio-group [value]="selectedPaymentOption">
         <div *ngFor="let method of displayedPaymentMethods" class="payment-option">
-          <div class="option-header" >
+          <div class="option-header">
             <span class="option-type">{{ method.type }}</span>
           </div>
 
@@ -105,35 +86,19 @@
             </div>
 
             <div class="option-right">
-              <img
-                *ngIf="method.id === 'wave'"
-                src="assets/wave.svg"
-                alt="Wave"
-                class="payment-logo"
-              />
+              <img *ngIf="method.id === 'wave'" src="assets/wave.svg" alt="Wave" class="payment-logo" />
 
-              <img
-                *ngIf="method.id === 'orange-money'"
-                src="assets/orange-money.svg"
-                alt="Orange Money"
-                class="payment-logo"
-              />
+              <img *ngIf="method.id === 'orange-money'" src="assets/orange-money.svg" alt="Orange Money"
+                class="payment-logo" />
 
-              <ion-icon
-                *ngIf="method.id === 'card'"
-                name="card-outline"
-                class="payment-logo"
-              ></ion-icon>
+              <ion-icon *ngIf="method.id === 'card'" name="card-outline" class="payment-logo"></ion-icon>
 
               <span class="payment-number">{{ method.displayNumber }}</span>
             </div>
           </div>
 
           <!-- ✅ CORRIGÉ -->
-          <button
-            class="change-button"
-            (click)="goBack()"
-          >
+          <button class="change-button" (click)="goBack()">
             Changer
           </button>
         </div>
@@ -156,11 +121,7 @@
     <div *ngIf="!isPremiumSubscription && courseId" class="course-info">
       <h3>Cours sélectionné :</h3>
       <div class="course-details">
-        <img
-          [src]="courseImage || 'assets/algo.svg'"
-          alt="Course image"
-          class="course-thumbnail"
-        />
+        <img [src]="courseImage || 'assets/algo.svg'" alt="Course image" class="course-thumbnail" />
         <div>
           <h4>{{ courseTitle }}</h4>
         </div>
@@ -181,14 +142,14 @@
     <!-- Infos abonnement classe -->
     <div *ngIf="isClasseSubscription" class="course-info">
       <h3>Abonnement classe {{ classe }}</h3>
-      <p style="color: #64748b; margin: 4px 0 0;">Niveau {{ niveauScolaire }} — Accès à tous les cours de {{ classe }}</p>
+      <p style="color: #64748b; margin: 4px 0 0;">Niveau {{ niveauScolaire }} — Accès à tous les cours de {{ classe }}
+      </p>
     </div>
 
     <!-- Bouton final -->
-    <ion-button expand="block"
-      (click)="proceedToPayment()"
-      class="proceed-button">
-      {{ (isClasseSubscription || isMatiereSubscription || isPremiumSubscription) ? 'Souscrire à l\'abonnement' : 'Payer le cours' }}
+    <ion-button expand="block" (click)="proceedToPayment()" class="proceed-button">
+      {{ (isClasseSubscription || isMatiereSubscription || isPremiumSubscription) ? 'Souscrire à l\'abonnement' : 'Payer
+      le cours' }}
     </ion-button>
   </div>
 </ion-content>

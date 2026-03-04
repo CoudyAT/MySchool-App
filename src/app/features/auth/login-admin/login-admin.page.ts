@@ -5,6 +5,8 @@ import {
   FormGroup,
   Validators,
   ReactiveFormsModule,
+  AbstractControl,
+  ValidationErrors,
 } from '@angular/forms';
 
 import { Router } from '@angular/router';
@@ -27,6 +29,14 @@ import {
   IonIcon,
 } from '@ionic/angular/standalone';
 
+function emailOrPhoneValidator(control: AbstractControl): ValidationErrors | null {
+  const value = control.value || '';
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const phoneRegex = /^\+?[\d\s\-().]{8,15}$/;
+  if (emailRegex.test(value) || phoneRegex.test(value)) return null;
+  return { invalidLoginFormat: true };
+}
+
 @Component({
   selector: 'app-login-admin',
   templateUrl: './login-admin.page.html',
@@ -44,6 +54,7 @@ import {
 export class LoginAdminPage {
   loginForm: FormGroup;
   loading = false;
+  isPhone = false;
 
   constructor(
     private fb: FormBuilder,
@@ -53,63 +64,79 @@ export class LoginAdminPage {
     private toastCtrl: ToastController,
   ) {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      login: ['', [Validators.required, emailOrPhoneValidator]],
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
   }
+
+  detectInputType(event: any) {
+    const value = event.detail.value || '';
+    const phoneRegex = /^\+?[\d\s\-().]{3,}$/;
+    this.isPhone = phoneRegex.test(value) && !value.includes('@');
+  }
+
+  private buildFakeEmail(phone: string): string {
+    const clean = phone.replace(/\s+/g, '').replace('+', '');
+    return `${clean}@myschool.app`;
+  }
+
 
   // 🔐 LOGIN
   async login() {
     if (this.loginForm.invalid) return;
     this.loading = true;
 
-    const { email, password } = this.loginForm.value;
+    const { login, password } = this.loginForm.value;
+
     try {
-      // Firebase Auth
-      const cred = await signInWithEmailAndPassword(this.auth, email, password);
-      // Vérifier rôle admin dans Firestore
-      const usersRef = collection(this.firestore, 'utilisateur');
+      let emailToUse: string;
 
-      const q = query(usersRef, where('login', '==', this.loginForm.value.email));
-      const snap = await getDocs(q);
+      if (this.isPhone) {
+        const usersRef = collection(this.firestore, 'utilisateur');
+        const q = query(usersRef, where('phone', '==', login.replace(/\s+/g, '')));
+        const snap = await getDocs(q);
 
-      if (snap.empty) {
-        throw new Error('Utilisateur introuvable');
+        if (snap.empty) throw new Error('Utilisateur introuvable');
+
+        const userData = snap.docs[0].data();
+        if (userData?.['role']?.['libelle'] !== 'admin') throw new Error('Accès refusé');
+
+        // Reconstruction du faux email 👇
+        emailToUse = userData['email'] ?? this.buildFakeEmail(login);
+
+        await signInWithEmailAndPassword(this.auth, emailToUse, password);
+
+        localStorage.setItem('currentUser', JSON.stringify({ ...userData, id: snap.docs[0].id }));
+
+      } else {
+        // Connexion classique par email
+        await signInWithEmailAndPassword(this.auth, login, password);
+
+        const usersRef = collection(this.firestore, 'utilisateur');
+        const q = query(usersRef, where('login', '==', login));
+        const snap = await getDocs(q);
+
+        if (snap.empty) throw new Error('Utilisateur introuvable');
+
+        const userData = snap.docs[0].data();
+        if (userData?.['role']?.['libelle'] !== 'admin') throw new Error('Accès refusé');
+
+        localStorage.setItem('currentUser', JSON.stringify({ ...userData, id: snap.docs[0].id }));
       }
-
-      const userData = snap.docs[0].data();
-
-      if (userData?.['role']?.['libelle'] !== 'admin') {
-        throw new Error('Accès refusé');
-      }
-
-      // Sauvegarde locale
-      localStorage.setItem(
-        'currentUser',
-        JSON.stringify({
-          ...userData,
-          id: snap.docs[0].id,
-        }),
-      );
 
       await this.showToast('Connexion réussie', 'success');
-
-      // Redirection ADMIN
       this.router.navigate(['/admin-login/users'], { replaceUrl: true });
+
     } catch (err: any) {
       console.error(err);
-
-      let message = 'Erreur de connexion';
-
-      if (err.code === 'auth/wrong-password') {
-        message = 'Mot de passe incorrect';
-      }
-
-      if (err.message === 'Accès refusé') {
-        message = 'Vous n’êtes pas administrateur';
-      }
-
-      await this.showToast(message, 'danger');
+      const map: Record<string, string> = {
+        'auth/wrong-password': 'Mot de passe incorrect',
+        'auth/user-not-found': 'Aucun compte trouvé',
+        'auth/invalid-credential': 'Identifiants incorrects',
+        'Accès refusé': "Vous n'êtes pas administrateur",
+        'Utilisateur introuvable': 'Aucun admin avec ces identifiants',
+      };
+      await this.showToast(map[err.code] ?? map[err.message] ?? 'Erreur de connexion', 'danger');
     } finally {
       this.loading = false;
     }

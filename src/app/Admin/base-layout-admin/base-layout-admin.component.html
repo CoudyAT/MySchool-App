@@ -7,7 +7,7 @@
     <!-- Sidebar -->
     <nav class="menu">
       <ul>
-      <!--  <li [class.active]="activePage === 'dashboard'" (click)="navigate('dashboard')">
+        <!--  <li [class.active]="activePage === 'dashboard'" (click)="navigate('dashboard')">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
             style="width: 30px; height: 30px; margin-right: 10px;">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -119,7 +119,7 @@
         </div>
       </div>
 
-     <!-- <div class="right">
+      <!-- <div class="right">
         <div class="notif">
           <i class="bi bi-bell"></i>
           <span class="notif-badge">3</span>
@@ -136,18 +136,25 @@
 
       <div class="right">
         <div class="profile" (click)="toggleProfileMenu()">
-            <img [src]="currentUser?.photoURL || 'https://ui-avatars.com/api/?name=' + (currentUser?.firstName || 'Admin')" alt="profil" />
-            <div class="profile-info">
-              <strong>{{ currentUser?.firstName }} {{ currentUser?.lastName }}</strong>
-              <span class="role">ADMIN</span>
-            </div>
-            <i class="bi bi-caret-down-fill"></i>
+          <img
+            [src]="currentUser?.photoURL || 'https://ui-avatars.com/api/?name=' + (currentUser?.firstName || 'Admin')"
+            alt="profil" />
+          <div class="profile-info">
+            <strong>{{ currentUser?.firstName }} {{ currentUser?.lastName }}</strong>
+            <span class="role">ADMIN</span>
+          </div>
+          <i class="bi bi-caret-down-fill"></i>
 
-          <!-- Dropdown menu -->
+
           <div class="profile-menu" *ngIf="showProfileMenu">
             <button (click)="logout()">Déconnexion</button>
             <button (click)="updatePassword()">Modifier le mot de passe</button>
           </div>
+          <div class="profile-menu" *ngIf="showProfileMenu">
+            <button (click)="logout()">Déconnexion</button>
+            <button (click)="updatePassword()">Modifier le mot de passe</button>
+          </div>
+
         </div>
 
       </div>

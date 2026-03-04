@@ -3,7 +3,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CourseService } from 'src/app/features/services/courseService';
 import { InstructorService } from 'src/app/features/services/instructorService';
-import { Course } from 'src/app/models/course.model';
+import { Course, Matiere } from 'src/app/models/course.model';
 import { Instructor } from 'src/app/models/instructor.model';
 
 // Firestore
@@ -39,6 +39,13 @@ export class AddCoursComponent implements OnInit {
   isLoadingVideos = false;
   selectedVideo: StorageVideo | null = null;
 
+  matieres: Matiere[] = [];
+
+  // Listes filtrées dynamiques
+  niveauxUniques: string[] = [];
+  classesDisponibles: string[] = [];
+  matieresDisponibles: Matiere[] = [];
+
   niveauxEtude = [
     { value: 'ELEMENTAIRE', label: 'Élémentaire' },
     { value: 'MOYEN', label: 'Moyen (Collège)' },
@@ -46,13 +53,12 @@ export class AddCoursComponent implements OnInit {
     { value: 'UNIVERSITAIRE', label: 'Universitaire' },
   ];
 
-  classesParNiveau: { [key: string]: string[] } = {
-    ELEMENTAIRE: ['CI', 'CP', 'CE1', 'CE2', 'CM1', 'CM2'],
-    MOYEN: ['6ème', '5ème', '4ème', '3ème (BFEM)'],
-    SECONDAIRE: ['Seconde', 'Première', 'Terminale'],
-    UNIVERSITAIRE: ['Licence1', 'Licence2', 'Licence3', 'Master1', 'Master2'],
-  };
-  classesDisponibles: string[] = [];
+  // classesParNiveau: { [key: string]: string[] } = {
+  //   ELEMENTAIRE: ['CI', 'CP', 'CE1', 'CE2', 'CM1', 'CM2'],
+  //   MOYEN: ['6ème', '5ème', '4ème', '3ème (BFEM)'],
+  //   SECONDAIRE: ['Seconde', 'Première', 'Terminale'],
+  //   UNIVERSITAIRE: ['Licence1', 'Licence2', 'Licence3', 'Master1', 'Master2'],
+  // };
 
   courseForm: FormGroup;
   instructors: Instructor[] = [];
@@ -72,7 +78,6 @@ export class AddCoursComponent implements OnInit {
   selectedCategoryBeforeAdd: string = '';
 
   selectedPdf: File | null = null;
-  matieres: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -115,6 +120,16 @@ export class AddCoursComponent implements OnInit {
     this.loadInstructors();
     this.loadCategories();
     this.loadMatieres();
+
+    // Écoute des changements
+    this.courseForm.get('niveauScolaire')?.valueChanges.subscribe(() => {
+      this.updateClassesDisponibles();
+      this.updateMatieresDisponibles();
+    });
+
+    this.courseForm.get('classe')?.valueChanges.subscribe(() => {
+      this.updateMatieresDisponibles();
+    });
   }
 
   onDocumentsSelected(event: Event) {
@@ -527,9 +542,65 @@ export class AddCoursComponent implements OnInit {
 
   private loadMatieres() {
     this.matiereService.getMatieres().subscribe({
-      next: (data) => (this.matieres = data),
+      next: (data) => {
+        this.matieres = data || [];
+
+        this.niveauxUniques = [...new Set(
+          this.matieres
+            .map(m => m.niveauScolaire)
+            .filter(Boolean)
+        )].sort();
+
+      },
       error: (err) => console.error('Erreur matières', err),
     });
+  }
+
+  updateClassesDisponibles() {
+    const niveau = this.courseForm.get('niveauScolaire')?.value;
+
+    let filtered = this.matieres;
+
+    if (niveau) {
+      filtered = filtered.filter(m => m.niveauScolaire === niveau);
+    }
+
+    this.classesDisponibles = [...new Set(
+      filtered
+        .map(m => m.classe)
+        .filter((c): c is string => !!c)
+    )].sort();
+
+    // Si la classe actuelle n'est plus valide → reset
+    const currentClasse = this.courseForm.get('classe')?.value;
+    if (currentClasse && !this.classesDisponibles.includes(currentClasse)) {
+      this.courseForm.patchValue({ classe: '' });
+      this.updateMatieresDisponibles(); // cascade
+    }
+  }
+
+  updateMatieresDisponibles() {
+    const niveau = this.courseForm.get('niveauScolaire')?.value;
+    const classe = this.courseForm.get('classe')?.value;
+
+    let filtered = this.matieres;
+
+    if (niveau) {
+      filtered = filtered.filter(m => m.niveauScolaire === niveau);
+    }
+    if (classe) {
+      filtered = filtered.filter(m => m.classe === classe);
+    }
+
+    this.matieresDisponibles = filtered.sort((a, b) =>
+      (a.ordre || 0) - (b.ordre || 0) || a.nom.localeCompare(b.nom)
+    );
+
+    // Reset matière si plus valide
+    const currentMatiereId = this.courseForm.get('matiereId')?.value;
+    if (currentMatiereId && !this.matieresDisponibles.some(m => m.id === currentMatiereId)) {
+      this.courseForm.patchValue({ matiereId: '' });
+    }
   }
 
   // ==================== SOUMISSION ====================
@@ -629,16 +700,16 @@ export class AddCoursComponent implements OnInit {
     });
   }
 
-  onNiveauEtudeChange(niveau: string) {
-    if (niveau && this.classesParNiveau[niveau]) {
-      this.classesDisponibles = this.classesParNiveau[niveau];
-      // Réinitialiser la classe sélectionnée si elle n'est plus dans la liste
-      const currentClasse = this.courseForm.get('classe')?.value;
-      if (currentClasse && !this.classesDisponibles.includes(currentClasse)) {
-        this.courseForm.patchValue({ classe: '' });
-      }
-    } else {
-      this.classesDisponibles = [];
-    }
-  }
+  // onNiveauEtudeChange(niveau: string) {
+  //   if (niveau && this.classesParNiveau[niveau]) {
+  //     this.classesDisponibles = this.classesParNiveau[niveau];
+  //     // Réinitialiser la classe sélectionnée si elle n'est plus dans la liste
+  //     const currentClasse = this.courseForm.get('classe')?.value;
+  //     if (currentClasse && !this.classesDisponibles.includes(currentClasse)) {
+  //       this.courseForm.patchValue({ classe: '' });
+  //     }
+  //   } else {
+  //     this.classesDisponibles = [];
+  //   }
+  // }
 }

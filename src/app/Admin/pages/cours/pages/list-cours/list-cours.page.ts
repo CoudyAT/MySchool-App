@@ -34,7 +34,7 @@ export class ListCoursPage implements OnInit {
   instructors: Instructor[] = [];
   categories: string[] = [];
   isLoading: boolean = false;
-  types: string[] = ['Vidéo', 'En ligne', 'Présentiel'];
+  types: string[] = ['Video', 'En ligne', 'Presentiel', 'Tuto'];
 
 
   constructor(private router: Router, private courseService: CourseService,) { }

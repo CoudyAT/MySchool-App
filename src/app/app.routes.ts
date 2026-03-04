@@ -37,10 +37,10 @@ import { VideoDetailPage } from './features/cours/pages/video-detail/video-detai
 import { VideoPlayerPage } from './features/cours/pages/video-player/video-player.page';
 import { adminGuard } from './guard/admin-guard';
 import { ReferralsPage } from './Admin/pages/referrals/referrals.page';
-import { UpdatePasswordPage } from './Admin/pages/update-password/update-password.page';
 import { CodePromoPage } from './Admin/pages/code-promo/code-promo.page';
 import { MatieresPage } from './Admin/pages/matieres/matieres.page';
 import { PaymentsHistoryPage } from './features/payments/payments-history.page';
+import { UpdatePasswordPage } from './Admin/pages/update-password/update-password.page';
 
 export const routes: Routes = [
   {
@@ -201,7 +201,6 @@ export const routes: Routes = [
         path: 'update-password',
         component: UpdatePasswordPage,
       },
-
     ],
   },
   {
@@ -281,6 +280,6 @@ export const routes: Routes = [
   },
   {
     path: 'tuto',
-    loadComponent: () => import('./features/tuto/tuto/tuto.page').then( m => m.TutoPage)
+    loadComponent: () => import('./features/tuto/tuto/tuto.page').then(m => m.TutoPage)
   },
 ];

@@ -67,6 +67,35 @@
       </div>
     </section>
 
+    <section>
+      <div class="info-block">
+        <p class="label">Niveau scolaire</p>
+        <p class="value">
+          <ng-container *ngIf="linkedMatiere; else fallbackNiveau">
+            {{ getNiveauLabel(linkedMatiere.niveauScolaire!) }}
+          </ng-container>
+
+          <ng-template #fallbackNiveau>
+            {{ course.niveauScolaire ? getNiveauLabel(course.niveauScolaire) : '—' }}
+          </ng-template>
+        </p>
+      </div>
+
+      <div class="info-block">
+        <p class="label">Classe</p>
+        <p class="value">
+          {{ linkedMatiere?.classe || course.classe || '—' }}
+        </p>
+      </div>
+
+      <div class="info-block">
+        <p class="label">Matière liée</p>
+        <p class="value">
+          {{ linkedMatiere?.nom || course.matiereId || '—' }}
+        </p>
+      </div>
+    </section>
+
     <!-- Formateur -->
     <section>
       <h2>Formateur</h2>
@@ -488,12 +517,18 @@
       <div class="form-group">
         <label for="matiereSelect">Matière</label>
         <select id="matiereSelect" class="form-input" [(ngModel)]="selectedMatiereId"
-          [disabled]="isSubmitting || matieres.length === 0">
+          [disabled]="isSubmitting || matieresFiltrees.length === 0">
           <option [value]="null">— Choisir une matière —</option>
-          <option *ngFor="let mat of matieres" [value]="mat.id">
-            {{ mat.nom || 'Matière sans nom' }}
+          <option *ngFor="let mat of matieresFiltrees" [value]="mat.id">
+            {{ mat.nom }}
+            <ng-container *ngIf="mat.classe"> • {{ mat.classe }}</ng-container>
+            <ng-container *ngIf="mat.niveauScolaire"> ({{ getNiveauLabel(mat.niveauScolaire) }})</ng-container>
           </option>
         </select>
+
+        <div *ngIf="matieresFiltrees.length === 0 && course?.classe" class="info-empty warning">
+          Aucune matière trouvée pour la classe {{ course.classe }}
+        </div>
       </div>
 
       <div *ngIf="matieres.length === 0 && !isSubmitting" class="info-empty">
