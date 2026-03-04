@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonIcon } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonIcon, ToastController } from '@ionic/angular/standalone';
 import { UserService } from 'src/app/features/auth/services/user.service';
 import { User } from 'src/app/models/user.model';
 import { Router } from '@angular/router';
+import { Auth, RecaptchaVerifier } from '@angular/fire/auth';
 
 import { addIcons } from 'ionicons';
 import { send, sparkles, trash, pencilOutline } from 'ionicons/icons';
@@ -16,7 +17,7 @@ import { send, sparkles, trash, pencilOutline } from 'ionicons/icons';
   standalone: true,
   imports: [IonIcon, CommonModule, FormsModule]
 })
-export class UsersPage implements OnInit {
+export class UsersPage implements OnInit, AfterViewInit {
   allUsers: User[] = [];
   filteredUsers: User[] = [];
   paginatedUsers: User[] = [];
@@ -30,20 +31,98 @@ export class UsersPage implements OnInit {
   isLoading: boolean = false;
   selectedRole: string = '';
 
+  phoneDisplay: string = '';
+  phoneError: string = '';
+  isPhoneValid: boolean = false;
+
+  recaptchaVerifier!: RecaptchaVerifier;
+
   isCreateModalOpen = false;
   newUser: any = {
     firstName: '',
     lastName: '',
-    password: '',
     phone: '',
-    role: 'student',
-    isPremium: false,
-    login: ''
+    password: '',
+    level: 'beginner',
+    classe: '3ème (BFEM)',
+    niveauScolaire: 'MOYEN',
+    role: { libelle: 'student' },
+    status: 'active',
+    profileImage: '',
+    specializationId: '',
+    hasActiveSubscription: false
   };
-  constructor(private userService: UserService, private router: Router) {
+
+  constructor(private userService: UserService, private router: Router, private toastController: ToastController, private auth: Auth) {
     addIcons({ pencilOutline, trash, send, sparkles });
 
+
   }
+
+  ngAfterViewInit() {
+    setTimeout(() => {
+      this.recaptchaVerifier = new RecaptchaVerifier(
+        this.auth,
+        'recaptcha-container',
+        {
+          size: 'invisible',
+          callback: () => console.log('reCAPTCHA resolved'),
+          'expired-callback': () => console.log('reCAPTCHA expired'),
+        }
+      );
+    }, 500);
+  }
+  onPhoneInputAdmin(event: any) {
+    let value = (event.target.value || '').trim();
+
+    const onlyDigits = value.replace(/[^\d+]/g, '');
+
+    let normalized = onlyDigits;
+
+    if (!normalized.startsWith('+221')) {
+      if (normalized.startsWith('+')) {
+        normalized = '+221' + normalized.replace('+', '').replace(/^221/, '');
+      } else {
+        normalized = '+221' + normalized.replace(/^221/, '');
+      }
+    }
+
+    const digitsAfterPrefix = normalized.replace('+221', '');
+    if (digitsAfterPrefix.length > 9) {
+      normalized = '+221' + digitsAfterPrefix.substring(0, 9);
+    }
+
+    this.newUser.phone = normalized;
+
+    this.phoneDisplay = this.formatPhoneDisplay(normalized);
+
+    // Validation
+    this.validatePhone();
+  }
+
+  private validatePhone() {
+    const clean = (this.newUser.phone || '').replace(/\D/g, '');
+    const isValid = clean.length === 12 && clean.startsWith('221');
+
+    this.isPhoneValid = isValid;
+    this.phoneError = isValid ? '' :
+      (clean.length < 12 ? 'Numéro incomplet (9 chiffres attendus)' : 'Format invalide');
+
+    if (isValid) {
+      this.newUser.login = clean;
+    }
+  }
+
+  // Même format que dans le login
+  private formatPhoneDisplay(phone: string): string {
+    const cleaned = phone.replace(/\D/g, '');
+    if (cleaned.length !== 12 || !cleaned.startsWith('221')) {
+      return phone || '+221 ';
+    }
+    const national = cleaned.substring(3);
+    return `+221 ${national.replace(/(\d{2})(\d{3})(\d{2})(\d{2})/, '$1 $2 $3 $4')}`;
+  }
+
   onPhoneChange() {
     this.newUser.login = this.newUser.phone;
   }
@@ -66,26 +145,69 @@ export class UsersPage implements OnInit {
       phone: '',
       password: '',
       role: 'student',
-      isPremium: false
     };
+    this.phoneDisplay = '+221 ';
+    this.phoneError = '';
+    this.isPhoneValid = false;
   }
 
-  // Créer l'utilisateur
   createUser() {
-    if (!this.newUser.firstName || !this.newUser.lastName) {
+
+    const phoneClean = this.newUser.phone.trim().replace(/\s+/g, '');
+    const fakeEmail = `${phoneClean.replace('+', '')}@myschool.app`;
+
+    if (!this.newUser.firstName || !this.newUser.lastName || !this.newUser.phone || !this.newUser.password) {
+      this.presentToast('Veuillez remplir tous les champs obligatoires', 'warning');
       return;
     }
 
-    this.userService.createUser(this.newUser).subscribe({
+    this.validatePhone();
+
+    if (!this.isPhoneValid) {
+      this.presentToast('Numéro de téléphone invalide (ex: +221771234567)', 'danger');
+      return;
+    }
+
+    const userToCreate: User = {
+      firstName: this.newUser.firstName.trim(),
+      lastName: this.newUser.lastName.trim(),
+      login: this.newUser.phone.trim().replace(/\s+/g, ''),
+      password: this.newUser.password.trim(),
+      phone: this.newUser.phone.trim().replace(/\s+/g, ''),
+      email: fakeEmail,
+      level: 'beginner',
+      niveauScolaire: 'MOYEN' as const,
+      classe: '3ème (BFEM)',
+      role: { libelle: this.newUser.role.libelle },
+      status: 'active',
+      specializationId: 'none',
+      hasActiveSubscription: false,
+
+    };
+
+
+
+    this.userService.createUser(userToCreate).subscribe({
       next: (createdUser) => {
         this.allUsers.push(createdUser);
         this.applyFilters();
         this.closeCreateModal();
-        // toast de succès
+        this.presentToast('Utilisateur créé avec succès !', 'success', 2500);
       },
       error: (err) => {
-        console.error('Erreur création', err);
-        //afficher erreur
+        console.error('Erreur création utilisateur', err);
+
+        let errorMessage = 'Une erreur est survenue lors de la création de l\'utilisateur';
+
+        if (err?.error?.message === 'Email invalide') {
+          errorMessage = 'Ce numéro est déjà utilisé';
+        } else if (err?.error?.message) {
+          errorMessage = err.error.message;
+        } else if (err?.status === 409) {
+          errorMessage = 'Ce numéro est déjà utilisé';
+        }
+
+        this.presentToast(errorMessage, 'danger', 5000);
       }
     });
   }
@@ -245,5 +367,23 @@ export class UsersPage implements OnInit {
         }
       });
     }
+  }
+
+  private async presentToast(message: string, color: 'success' | 'danger' | 'warning' | 'primary' = 'primary', duration: number = 3000) {
+    const toast = await this.toastController.create({
+      message,
+      duration,
+      color,
+      position: 'top',
+      cssClass: 'ion-text-center',
+      buttons: [
+        {
+          text: 'OK',
+          role: 'cancel'
+        }
+      ]
+    });
+
+    await toast.present();
   }
 }

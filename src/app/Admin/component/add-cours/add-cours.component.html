@@ -54,60 +54,75 @@
     </div>
     <!-- Type de cours -->
     <div class="form-group">
-      <label for="type" class="form-label">Type du cours</label>
+      <label for="type" class="form-label">Type du cours <span class="required">*</span></label>
       <select id="type" formControlName="type" class="form-input">
         <option value="">Sélectionnez un type</option>
         <option value="En ligne">En ligne</option>
-        <option value="Présentiel">Présentiel</option>
+        <option value="Presentiel">Présentiel</option>
         <option value="Video">Video</option>
         <option value="Tuto">Tuto</option>
       </select>
+      <div *ngIf="courseForm.get('type')?.invalid && courseForm.get('type')?.touched" class="error-message">
+        Le type est requis
+      </div>
     </div>
+
     <!-- Description -->
     <div class="form-group full-width">
-      <label for="description" class="form-label">Description</label>
+      <label for="description" class="form-label">Description <span class="required">*</span></label>
       <textarea id="description" formControlName="description" class="form-textarea"
         placeholder="Décrivez le contenu et les objectifs du cours..." rows="5"></textarea>
+      <div *ngIf="courseForm.get('description')?.invalid && courseForm.get('description')?.touched"
+        class="error-message">
+        La description est requise
+      </div>
     </div>
     <!-- Exercices 
     <div class="form-group">
       <label for="exercises" class="form-label">Nombre d'exercices</label>
       <input id="exercises" type="number" formControlName="exercises" class="form-input" placeholder="Ex: 25" min="0" />
     </div> -->
-    <!-- Niveau -->
+    <!-- Niveau scolaire -->
     <div class="form-group">
-      <label for="niveauScolaire" class="form-label">Niveau</label>
-      <select id="niveauScolaire" formControlName="niveauScolaire" class="form-input"
-        (change)="onNiveauEtudeChange($any($event.target).value)">
+      <label for="niveauScolaire" class="form-label">Niveau <span class="required">*</span></label>
+      <select id="niveauScolaire" formControlName="niveauScolaire" class="form-input">
         <option value="">Sélectionnez un niveau</option>
-        <option *ngFor="let niveau of niveauxEtude" [value]="niveau.value">{{ niveau.label }}</option>
-      </select>
-    </div>
-    <!-- Classe -->
-    <div class="form-group">
-      <label for="classe" class="form-label">Classe</label>
-      <select id="classe" formControlName="classe" class="form-input">
-        <option value="">Sélectionnez une classe</option>
-        <option *ngFor="let classe of classesDisponibles" [value]="classe">{{ classe }}</option>
-      </select>
-    </div>
-    <!-- Matière -->
-    <div class="form-group">
-      <label for="matiere" class="form-label">
-        Matière <span class="required">*</span>
-      </label>
 
-      <select id="matiere" formControlName="matiereId" class="form-input">
-        <option value="">Sélectionnez une matière</option>
-        <option *ngFor="let matiere of matieres" [value]="matiere.id">
-          {{ matiere.nom }} {{ matiere.classe }}
+        <option *ngFor="let niveau of niveauxEtude" [value]="niveau.value">
+          {{ niveau.label }}
         </option>
       </select>
+      <div *ngIf="courseForm.get('niveauScolaire')?.invalid && courseForm.get('niveauScolaire')?.touched"
+        class="error-message">
+        Le niveau est requis
+      </div>
+    </div>
 
-      <div *ngIf="
-          courseForm.get('matiereId')?.invalid &&
-          courseForm.get('matiereId')?.touched
-        " class="error-message">
+    <!-- Classe -->
+    <div class="form-group">
+      <label for="classe" class="form-label">Classe <span class="required">*</span></label>
+      <select id="classe" formControlName="classe" class="form-input">
+        <option value="">Sélectionnez une classe</option>
+        <option *ngFor="let classe of classesDisponibles" [value]="classe">
+          {{ classe }}
+        </option>
+      </select>
+      <div *ngIf="courseForm.get('classe')?.invalid && courseForm.get('classe')?.touched" class="error-message">
+        La classe est requise
+      </div>
+    </div>
+
+    <!-- Matière -->
+    <div class="form-group">
+      <label for="matiere" class="form-label">Matière <span class="required">*</span></label>
+      <select id="matiere" formControlName="matiereId" class="form-input">
+        <option value="">Sélectionnez une matière</option>
+        <option *ngFor="let mat of matieresDisponibles" [value]="mat.id">
+          {{ mat.nom }}
+          <ng-container *ngIf="mat.classe"> • {{ mat.classe }}</ng-container>
+        </option>
+      </select>
+      <div *ngIf="courseForm.get('matiereId')?.invalid && courseForm.get('matiereId')?.touched" class="error-message">
         Veuillez sélectionner une matière
       </div>
     </div>

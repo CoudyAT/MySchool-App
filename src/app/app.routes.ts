@@ -40,6 +40,7 @@ import { ReferralsPage } from './Admin/pages/referrals/referrals.page';
 import { CodePromoPage } from './Admin/pages/code-promo/code-promo.page';
 import { MatieresPage } from './Admin/pages/matieres/matieres.page';
 import { PaymentsHistoryPage } from './features/payments/payments-history.page';
+import { UpdatePasswordPage } from './Admin/pages/update-password/update-password.page';
 
 export const routes: Routes = [
   {
@@ -195,6 +196,10 @@ export const routes: Routes = [
       {
         path: 'referrals',
         component: ReferralsPage,
+      },
+      {
+        path: 'update-password',
+        component: UpdatePasswordPage,
       },
     ],
   },

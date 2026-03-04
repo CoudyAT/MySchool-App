@@ -32,7 +32,7 @@ export interface User {
   objectives?: string[];
 
   // Nouveaux champs pour le système d'abonnement
- 
+
 
   isPremium?: boolean;
   premiumSince?: Date;
@@ -40,5 +40,7 @@ export interface User {
   status?: 'active' | 'inactive' | 'suspended';
   createdAt?: any;
   updatedAt?: any;
+  specializationId: string;
+  hasActiveSubscription: boolean;
 }
 

@@ -18,6 +18,7 @@ export class MatieresPage implements OnInit {
   filteredMatieres: Matiere[] = [];
   paginatedMatieres: Matiere[] = [];
 
+  filteredUniqueClasses: string[] = [];
   totalMatieres = 0;
   currentPage = 1;
   itemsPerPage = 20;
@@ -49,7 +50,7 @@ export class MatieresPage implements OnInit {
   constructor(
     private matiereService: MatiereService,
     private toastCtrl: ToastController,
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadMatieres();
@@ -65,6 +66,7 @@ export class MatieresPage implements OnInit {
         this.allMatieres = matieres || [];
         this.filteredMatieres = [...this.allMatieres];
         this.updateUniqueClasses();
+        this.updateAvailableClasses();
         this.totalMatieres = this.filteredMatieres.length;
         this.updatePagination();
         this.isLoading = false;
@@ -88,6 +90,20 @@ export class MatieresPage implements OnInit {
       .sort();
 
     this.uniqueClasses = classes;
+  }
+
+  private updateAvailableClasses() {
+    this.filteredUniqueClasses = this.allMatieres
+      .filter(m => !this.selectedNiveau || m.niveauScolaire === this.selectedNiveau)
+      .map(m => m.classe)
+      .filter((c): c is string => !!c);
+
+    this.filteredUniqueClasses = [...new Set(this.filteredUniqueClasses)].sort();
+
+    // Option très utile : si la classe sélectionnée n'est plus valide → on la reset
+    if (this.selectedClasse && !this.filteredUniqueClasses.includes(this.selectedClasse)) {
+      this.selectedClasse = '';
+    }
   }
 
   // ─────────────────────────────────────────────────────────
@@ -152,6 +168,7 @@ export class MatieresPage implements OnInit {
   }
 
   onFilterChange() {
+    this.updateAvailableClasses();
     this.applyFilters();
   }
 
@@ -192,9 +209,21 @@ export class MatieresPage implements OnInit {
     this.searchText = '';
     this.selectedNiveau = '';
     this.selectedClasse = '';
+    this.updateAvailableClasses();
     this.onSearchChange();
   }
 
+  get availableClasses(): string[] {
+    const filtered = this.allMatieres.filter(m =>
+      !this.selectedNiveau || m.niveauScolaire === this.selectedNiveau
+    );
+
+    const classes = filtered
+      .map(m => m.classe)
+      .filter((c): c is string => !!c);
+
+    return [...new Set(classes)].sort();
+  }
   // ─────────────────────────────────────────────────────────
   // Ouverture / fermeture modal
   // ─────────────────────────────────────────────────────────

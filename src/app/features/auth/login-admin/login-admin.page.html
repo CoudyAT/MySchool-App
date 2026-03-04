@@ -28,21 +28,17 @@
       <!-- FORM -->
       <form [formGroup]="loginForm" class="form-container-modern">
 
-        <!-- EMAIL -->
         <div class="input-group-modern">
-          <label class="input-label-modern">Login</label>
+          <label class="input-label-modern">Email ou téléphone</label>
 
           <div class="phone-input-wrapper">
-            <ion-input
-              type="email"
-              placeholder="admin@myschool.com"
-              formControlName="email">
+            <ion-input [type]="isPhone ? 'tel' : 'email'" placeholder="admin@myschool.com ou +221 77 000 00 00"
+              formControlName="login" (ionInput)="detectInputType($event)">
             </ion-input>
           </div>
 
-          <div class="error-text"
-               *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
-            Email invalide
+          <div class="error-text" *ngIf="loginForm.get('login')?.invalid && loginForm.get('login')?.touched">
+            Email ou numéro de téléphone invalide
           </div>
         </div>
 
@@ -51,24 +47,17 @@
           <label class="input-label-modern">Mot de passe</label>
 
           <div class="phone-input-wrapper">
-            <ion-input
-              type="password"
-              placeholder="********"
-              formControlName="password">
+            <ion-input type="password" placeholder="********" formControlName="password">
             </ion-input>
           </div>
 
-          <div class="error-text"
-               *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+          <div class="error-text" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
             Mot de passe requis
           </div>
         </div>
 
         <!-- BUTTON -->
-        <ion-button
-          expand="block"
-          class="modern-primary-button"
-          [disabled]="loginForm.invalid || loading"
+        <ion-button expand="block" class="modern-primary-button" [disabled]="loginForm.invalid || loading"
           (click)="login()">
 
           {{ loading ? 'Connexion...' : 'Se connecter' }}

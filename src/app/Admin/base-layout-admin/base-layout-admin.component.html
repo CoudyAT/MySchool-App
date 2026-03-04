@@ -145,10 +145,16 @@
           </div>
           <i class="bi bi-caret-down-fill"></i>
 
-          <!-- Dropdown menu -->
+
           <div class="profile-menu" *ngIf="showProfileMenu">
             <button (click)="logout()">Déconnexion</button>
+            <button (click)="updatePassword()">Modifier le mot de passe</button>
           </div>
+          <div class="profile-menu" *ngIf="showProfileMenu">
+            <button (click)="logout()">Déconnexion</button>
+            <button (click)="updatePassword()">Modifier le mot de passe</button>
+          </div>
+
         </div>
 
       </div>

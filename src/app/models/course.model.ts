@@ -61,7 +61,7 @@ export interface Matiere {
   classe?: string;
   niveauScolaire: 'ELEMENTAIRE' | 'MOYEN' | 'SECONDAIRE' | 'UNIVERSITAIRE';
   icon: string;
-  icone?: string; // Alias utilisé par le backend (emoji)
+  icone?: string;
   color: string;
   ordre: number;
   description?: string;

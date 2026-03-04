@@ -47,10 +47,10 @@
               <label>Niveau :</label>
               <select [(ngModel)]="selectedNiveau" (change)="onFilterChange()" class="filter-select">
                 <option value="">Tous les niveaux</option>
-                <option value="PRIMAIRE">Primaire</option>
+                <option value="ELEMENTAIRE">Elementaire</option>
                 <option value="MOYEN">Moyen</option>
                 <option value="SECONDAIRE">Secondaire</option>
-                <option value="SUPERIEUR">Supérieur</option>
+                <option value="UNIVERSITAIRE">Universitaire</option>
               </select>
             </div>
 
@@ -58,7 +58,9 @@
               <label>Classe :</label>
               <select [(ngModel)]="selectedClasse" (change)="onFilterChange()" class="filter-select">
                 <option value="">Toutes les classes</option>
-                <option *ngFor="let classe of uniqueClasses" [value]="classe">{{ classe }}</option>
+                <option *ngFor="let classe of availableClasses" [value]="classe">
+                  {{ classe }}
+                </option>
               </select>
             </div>
           </div>
@@ -222,10 +224,10 @@
             <select id="modalNiveau" name="niveauScolaire" [(ngModel)]="modalMatiere.niveauScolaire" required
               #niveauCtrl="ngModel" class="form-input">
               <option value="">Sélectionner un niveau</option>
-              <option value="PRIMAIRE">Primaire</option>
+              <option value="ELEMENTAIRE">Elementaire</option>
               <option value="MOYEN">Moyen</option>
               <option value="SECONDAIRE">Secondaire</option>
-              <option value="SUPERIEUR">Supérieur</option>
+              <option value="UNIVERSITAIRE">Universitaire</option>
             </select>
             <div *ngIf="niveauCtrl.invalid && niveauCtrl.touched" class="error-text">
               Le niveau est obligatoire

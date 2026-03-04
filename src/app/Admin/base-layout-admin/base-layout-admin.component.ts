@@ -25,7 +25,7 @@ export class BaseLayoutAdminComponent {
     private auth: Auth,
     private alertCtrl: AlertController,
     private toastCtrl: ToastController,
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.currentUser = JSON.parse(

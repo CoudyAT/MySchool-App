@@ -110,7 +110,7 @@
             <option value="">Tous les rôles</option>
             <option value="student">Étudiant</option>
             <option value="admin">Administrateur</option>
-             <option value="influenceur">Influenceur</option>
+            <option value="influenceur">Influenceur</option>
           </select>
         </div>
       </div>
@@ -259,27 +259,34 @@
         </div>
 
         <div class="form-group">
-          <label for="phone">Téléphone</label>
-          <input type="text" id="phone" name="phone" [(ngModel)]="newUser.phone" class="form-input"
-            (input)="onPhoneChange()" placeholder="+221 77 123 45 67">
+          <label for="phone">Téléphone <span class="text-danger">*</span></label>
+          <input type="tel" id="phone" name="phone" [(ngModel)]="newUser.phone" (input)="onPhoneInputAdmin($event)"
+            placeholder="+221 77 123 45 67" class="form-input"
+            [class.input-error]="phoneError && newUser.phone.length > 4" required />
+          <small class="phone-preview" *ngIf="phoneDisplay && phoneDisplay !== newUser.phone">
+            → {{ phoneDisplay }}
+          </small>
+          <div class="error-text" *ngIf="phoneError && (newUser.phone.length > 4 || newUser.phone === '+221')">
+            {{ phoneError }}
+          </div>
         </div>
 
         <div class="form-group">
           <label for="role">Rôle</label>
-          <select id="role" name="role" [(ngModel)]="newUser.role" required class="form-input">
+          <select id="role" name="role.libelle" [(ngModel)]="newUser.role.libelle" required class="form-input">
             <option value="student">Étudiant</option>
             <option value="admin">Administrateur</option>
             <option value="influenceur">Influenceur</option>
           </select>
         </div>
 
-        <div class="form-group">
+        <!-- <div class="form-group">
           <label for="isPremium">Abonnement</label>
           <select id="isPremium" name="isPremium" [(ngModel)]="newUser.isPremium" class="form-input">
             <option [ngValue]="false">Standard</option>
             <option [ngValue]="true">Premium</option>
           </select>
-        </div>
+        </div> -->
       </div>
 
       <div class="modal-footer">
@@ -291,3 +298,4 @@
     </form>
   </div>
 </div>
+<div id="recaptcha-container" style="display:none"></div>

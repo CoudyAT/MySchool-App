@@ -5,11 +5,12 @@ import { IonicModule, ToastController } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CourseService } from 'src/app/features/services/courseService';
 import { InstructorService } from 'src/app/features/services/instructorService';
-import { Course } from 'src/app/models/course.model';
+import { Course, Matiere } from 'src/app/models/course.model';
 import { Instructor } from 'src/app/models/instructor.model';
 import { getStorage, ref, listAll, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 import { updateDoc, doc, Firestore, Timestamp } from '@angular/fire/firestore';
+import { MatiereService } from 'src/app/features/services/matiere.service';
 
 // Interface vidéo Storage
 interface StorageVideo {
@@ -29,9 +30,11 @@ export class EditCoursPage implements OnInit {
 
   editForm: FormGroup;
   course!: Course;
+  matieres: Matiere[] = [];
   courseId: string = '';
   instructors: Instructor[] = [];
   categories: string[] = [];
+  matieresFiltrees: Matiere[] = [];
 
   existingDocuments: any[] = [];
   documentsToDelete: string[] = [];
@@ -55,7 +58,7 @@ export class EditCoursPage implements OnInit {
   isLoadingVideos = false;
   selectedVideo: StorageVideo | null = null;
   currentVideoUrl: string | null = null;
-
+  classesDisponibles: string[] = [];
   constructor(
     private fb: FormBuilder,
     private courseService: CourseService,
@@ -63,13 +66,14 @@ export class EditCoursPage implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private toastCtrl: ToastController,
-    private firestore: Firestore
+    private firestore: Firestore,
+    private matiereService: MatiereService
   ) {
     this.editForm = this.fb.group({
       title: [''],
       instructorId: [''],
       type: ['En ligne'],
-      level: ['Débutant'],
+      niveauScolaire: [this.course?.niveauScolaire || '', Validators.required],
       price: [0, Validators.min(0)],
       description: [''],
       duration: [0, Validators.min(0)],
@@ -80,6 +84,7 @@ export class EditCoursPage implements OnInit {
       selectedCategoryOption: [''],
       newCategoryName: [''],
       category: [''],
+      matiere: [this.course?.matiereId || '', Validators.required],
       videoUrl: [''],
       videoPath: [''],
       videoName: [''],
@@ -97,6 +102,29 @@ export class EditCoursPage implements OnInit {
     this.loadInstructors();
     this.loadCategories();
     this.loadCourse();
+    this.loadMatieres();
+
+    this.editForm.get('niveauScolaire')?.valueChanges.subscribe(() => {
+      this.updateMatieresFiltrees();
+      const currentMatiere = this.editForm.get('matiere')?.value;
+      if (currentMatiere && !this.matieresFiltrees.some(m => m.id === currentMatiere)) {
+        this.editForm.patchValue({ matiere: '' });
+      }
+
+      this.editForm.get('classe')?.valueChanges.subscribe(() => this.updateMatieresFiltrees());
+    });
+
+
+  }
+
+  getNiveauLabel(niveau: string): string {
+    const labels: Record<string, string> = {
+      ELEMENTAIRE: 'Élémentaire',
+      MOYEN: 'Moyen',
+      SECONDAIRE: 'Secondaire',
+      UNIVERSITAIRE: 'Universitaire'
+    };
+    return labels[niveau] || niveau || '?';
   }
 
   get documentsArray(): FormArray {
@@ -136,9 +164,9 @@ export class EditCoursPage implements OnInit {
           title: this.course.title || '',
           instructorId: this.course.instructorId || '',
           type: this.course.type || 'En ligne',
-          level: this.course.level || 'Débutant',
           price: this.course.price ?? 0,
           description: this.course.description || '',
+          niveauScolaire: this.course.niveauScolaire || this.course.level || '',
           duration: this.course.duration ?? 0,
           sessions: this.course.sessions ?? 0,
           exercises: this.course.exercises ?? 0,
@@ -148,6 +176,7 @@ export class EditCoursPage implements OnInit {
           videoUrl: courseAny.videoUrl || '',
           videoPath: courseAny.videoPath || '',
           videoName: courseAny.videoName || '',
+          matiere: this.course.matiereId || '',
         });
       },
       error: () => {
@@ -308,6 +337,33 @@ export class EditCoursPage implements OnInit {
     });
   }
 
+  loadMatieres() {
+    this.matiereService.getMatieresActives().subscribe({
+      next: (data) => {
+        this.matieres = data || [];
+        this.updateMatieresFiltrees();
+      },
+      error: err => console.error('Erreur matières', err)
+    });
+  }
+
+  updateMatieresFiltrees() {
+    const niveau = this.editForm.get('niveauScolaire')?.value;
+    const classe = this.editForm.get('classe')?.value;
+    let filtered = this.matieres;
+
+    if (niveau) {
+      filtered = filtered.filter(m => m.niveauScolaire === niveau);
+    }
+
+    if (classe) {
+      filtered = filtered.filter(m => m.classe === classe);
+    }
+
+    this.matieresFiltrees = filtered.sort((a, b) =>
+      (a.ordre || 0) - (b.ordre || 0) || a.nom.localeCompare(b.nom)
+    );
+  }
   // ──────────────────────────────────────────────────
   // Gestion image
   // ──────────────────────────────────────────────────
@@ -440,6 +496,7 @@ export class EditCoursPage implements OnInit {
         videoUrl: formValue.videoUrl || null,
         videoPath: formValue.videoPath || null,
         videoName: formValue.videoName || null,
+        matiereId: formValue.matiere || null,
         updatedAt: Timestamp.now()
       };
 
