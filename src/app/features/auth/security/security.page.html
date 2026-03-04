@@ -1,48 +1,77 @@
-<ion-header class="ion-no-border">
+<ion-header class="security-header ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button (click)="goBack()">
+      <ion-button (click)="goBack()" class="back-button">
         <ion-icon name="chevron-back-outline"></ion-icon>
-        <span class="back-text">Retour</span>
       </ion-button>
     </ion-buttons>
     <ion-title>Sécurité</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="security-content">
   <div class="security-container">
 
+    <!-- Hero Section -->
+    <div class="security-hero">
+      <h1 class="hero-title">Modifier votre mot de passe</h1>
+      <p class="hero-subtitle">Maintenez votre compte sécurisé en utilisant un mot de passe fort</p>
+    </div>
+
+    <!-- Security Form -->
     <form class="security-form">
 
       <!-- Ancien mot de passe -->
       <div class="form-group">
-        <label class="form-label">Ancien mot de passe</label>
+        <label class="form-label">
+          <ion-icon name="shield-checkmark-outline" class="label-icon"></ion-icon>
+          Ancien mot de passe
+        </label>
         <ion-item lines="none" class="form-item">
+          <ion-icon name="key-outline" slot="start" class="input-icon"></ion-icon>
           <ion-input
             [(ngModel)]="oldPassword"
             name="oldPassword"
             type="password"
-            placeholder="Entrez votre ancien mot de passe">
+            placeholder="Entrez votre ancien mot de passe"
+            class="form-input">
           </ion-input>
         </ion-item>
       </div>
 
       <!-- Nouveau mot de passe -->
       <div class="form-group">
-        <label class="form-label">Nouveau mot de passe</label>
+        <label class="form-label">
+          <ion-icon name="key-outline" class="label-icon"></ion-icon>
+          Nouveau mot de passe
+        </label>
         <ion-item lines="none" class="form-item">
+          <ion-icon name="lock-closed-outline" slot="start" class="input-icon"></ion-icon>
           <ion-input
             [(ngModel)]="newPassword"
             name="newPassword"
             type="password"
-            placeholder="Minimum 6 caractères">
+            placeholder="Minimum 6 caractères"
+            class="form-input">
           </ion-input>
         </ion-item>
 
+        <!-- Password Strength Indicator 
+        <div class="password-strength" *ngIf="newPassword">
+          <div class="strength-bar">
+            <div class="strength-fill" [class.weak]="newPassword.length < 6" [class.medium]="newPassword.length >= 6 && newPassword.length < 12" [class.strong]="newPassword.length >= 12"></div>
+          </div>
+          <span class="strength-text" [class.weak]="newPassword.length < 6" [class.medium]="newPassword.length >= 6 && newPassword.length < 12" [class.strong]="newPassword.length >= 12">
+            {{ getPasswordStrength() }}
+          </span> 
+        </div>  -->
+
+        <!-- Password Hint -->
         <div class="password-hint" *ngIf="newPassword">
           <ion-icon
-            [name]="newPassword.length >= 6 ? 'checkmark-circle-outline' : 'close-circle-outline'">
+            [name]="newPassword.length >= 6 ? 'checkmark-circle-outline' : 'close-circle-outline'"
+            [class.valid]="newPassword.length >= 6"
+            [class.invalid]="newPassword.length < 6">
           </ion-icon>
           <span
             [class.valid]="newPassword.length >= 6"
@@ -54,19 +83,27 @@
 
       <!-- Confirmation -->
       <div class="form-group">
-        <label class="form-label">Confirmer le nouveau mot de passe</label>
+        <label class="form-label">
+          <ion-icon name="checkmark-done-outline" class="label-icon"></ion-icon>
+          Confirmer le nouveau mot de passe
+        </label>
         <ion-item lines="none" class="form-item">
+          <ion-icon name="lock-open-outline" slot="start" class="input-icon"></ion-icon>
           <ion-input
             [(ngModel)]="confirmPassword"
             name="confirmPassword"
             type="password"
-            placeholder="Répétez le mot de passe">
+            placeholder="Répétez le mot de passe"
+            class="form-input">
           </ion-input>
         </ion-item>
 
+        <!-- Match Hint -->
         <div class="password-hint" *ngIf="confirmPassword">
           <ion-icon
-            [name]="passwordsMismatch() ? 'close-circle-outline' : 'checkmark-circle-outline'">
+            [name]="passwordsMismatch() ? 'close-circle-outline' : 'checkmark-circle-outline'"
+            [class.invalid]="passwordsMismatch()"
+            [class.valid]="!passwordsMismatch()">
           </ion-icon>
           <span
             [class.invalid]="passwordsMismatch()"
@@ -76,15 +113,45 @@
         </div>
       </div>
 
-      <!-- Bouton -->
-      <ion-button
-        expand="block"
-        class="save-button"
-        [disabled]="isSaving || !canChangePassword()"
-        (click)="changePassword()">
-        <ion-spinner *ngIf="isSaving" name="crescent"></ion-spinner>
-        <span *ngIf="!isSaving">Modifier le mot de passe</span>
-      </ion-button>
+      <!-- Security Tips -->
+      <div class="security-tips">
+        <h3 class="tips-title">
+          <ion-icon name="bulb-outline"></ion-icon>
+          Conseils de sécurité
+        </h3>
+        <ul class="tips-list">
+          <li>Utilisez au moins 6 caractères</li>
+          <li>Mélangez les majuscules et minuscules</li>
+          <li>Incluez des chiffres et caractères spéciaux</li>
+          <li>N'utilisez pas d'informations personnelles</li>
+        </ul>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="form-actions">
+        <ion-button
+          expand="block"
+          fill="outline"
+          class="cancel-button"
+          (click)="goBack()">
+          <ion-icon name="close-outline" slot="start"></ion-icon>
+          Annuler
+        </ion-button>
+
+        <ion-button
+          expand="block"
+          fill="solid"
+          class="save-button"
+          [disabled]="isSaving || !canChangePassword()"
+          (click)="changePassword()">
+          <ion-spinner *ngIf="isSaving" name="crescent"></ion-spinner>
+          <span *ngIf="!isSaving">
+            <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+            MODIFIER
+          </span>
+        </ion-button>
+      </div>
+
     </form>
 
   </div>

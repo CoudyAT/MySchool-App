@@ -17,6 +17,7 @@ import {
   IonBadge,
   IonAccordion,
   IonAccordionGroup,
+  IonButtons,
 } from '@ionic/angular/standalone';
 import { SubscriptionService } from '../services/subscription.service';
 import { CourseService } from '../services/courseService';
@@ -24,6 +25,30 @@ import { Router } from '@angular/router';
 import { DesktopHeaderComponent } from 'src/app/shared/components/desktop-header/desktop-header.component';
 import { ClasseInfo, MatiereInfo } from 'src/app/models/classe.model';
 import { User } from 'src/app/models/user.model';
+import {
+  document as documentIcon,
+  download,
+  eye,
+  time,
+  documents,
+  arrowBack,
+  cardOutline,
+  chevronBackOutline,
+  checkmarkCircle,
+  ellipseOutline,
+  playCircle,
+  checkmark,
+  searchOutline,
+  documentsOutline,
+  eyeOutline,
+  documentOutline,
+  calendarOutline,
+  hourglassOutline,
+  schoolOutline,
+  personOutline,
+  funnelOutline,
+} from 'ionicons/icons';
+import { addIcons } from 'ionicons';
 
 @Component({
   selector: 'app-abonnement',
@@ -31,6 +56,7 @@ import { User } from 'src/app/models/user.model';
   styleUrls: ['./abonnement.page.scss'],
   standalone: true,
   imports: [
+    IonButtons,
     IonAccordionGroup,
     IonAccordion,
     IonBadge,
@@ -74,8 +100,31 @@ export class AbonnementPage implements OnInit {
   constructor(
     private readonly subscriptionService: SubscriptionService,
     private readonly courseService: CourseService,
-    private readonly router: Router
-  ) {}
+    private readonly router: Router,
+  ) {
+    addIcons({
+      chevronBackOutline,
+      hourglassOutline,
+      schoolOutline,
+      personOutline,
+      cardOutline,
+      searchOutline,
+      funnelOutline,
+      calendarOutline,
+      documentsOutline,
+      eyeOutline,
+      documentOutline,
+      checkmarkCircle,
+      documents,
+      time,
+      eye,
+      download,
+      arrowBack,
+      checkmark,
+      playCircle,
+      ellipseOutline,
+    });
+  }
 
   ngOnInit() {
     this.loadUser();
@@ -88,10 +137,16 @@ export class AbonnementPage implements OnInit {
    */
   loadUser() {
     const localUser = localStorage.getItem('currentUser');
+    console.log('Local user data:', localUser);
+
     if (localUser) {
       this.currentUser = JSON.parse(localUser);
       console.log('📊 === UTILISATEUR CONNECTÉ ===');
-      console.log('👤 Nom:', this.currentUser?.firstName, this.currentUser?.lastName);
+      console.log(
+        '👤 Nom:',
+        this.currentUser?.firstName,
+        this.currentUser?.lastName,
+      );
       console.log('🎓 Niveau scolaire:', this.currentUser?.niveauScolaire);
       console.log('📚 Classe:', this.currentUser?.classe || 'Non définie');
       console.log('📋 Email:', this.currentUser?.email);
@@ -110,7 +165,7 @@ export class AbonnementPage implements OnInit {
     console.log('\n🔍 === DÉBUT loadAvailableClasses ===');
 
     if (!this.currentUser?.niveauScolaire) {
-      console.warn('⚠️ Niveau scolaire non défini pour l\'utilisateur');
+      console.warn("⚠️ Niveau scolaire non défini pour l'utilisateur");
       this.isLoading = false;
       return;
     }
@@ -121,13 +176,16 @@ export class AbonnementPage implements OnInit {
 
     console.log('✅ isElementaireLevel:', this.isElementaireLevel);
     console.log('✅ hasSpecificClasse:', this.hasSpecificClasse);
-    console.log('✅ Classe de l\'utilisateur:', this.currentUser.classe);
+    console.log("✅ Classe de l'utilisateur:", this.currentUser.classe);
 
     // CAS 1 : Utilisateur ELEMENTAIRE avec classe spécifique (ex: CM2)
     // On affiche directement les matières de SA classe
     if (this.isElementaireLevel && this.hasSpecificClasse) {
       console.log('🎯 CAS 1 : ELEMENTAIRE avec classe spécifique');
-      console.log('📚 Chargement des matières pour la classe:', this.currentUser.classe);
+      console.log(
+        '📚 Chargement des matières pour la classe:',
+        this.currentUser.classe,
+      );
       this.loadMatieresForSpecificClasse(this.currentUser.classe!);
       return;
     }
@@ -183,7 +241,11 @@ export class AbonnementPage implements OnInit {
     console.log('🎓 Niveau scolaire:', this.currentUser!.niveauScolaire);
 
     // Récupérer tous les cours du niveau ELEMENTAIRE et filtrer par classe
-    console.log('📡 Appel API: getCoursesByNiveauScolaire(' + this.currentUser!.niveauScolaire + ')');
+    console.log(
+      '📡 Appel API: getCoursesByNiveauScolaire(' +
+        this.currentUser!.niveauScolaire +
+        ')',
+    );
 
     this.courseService
       .getCoursesByNiveauScolaire(this.currentUser!.niveauScolaire!)
@@ -201,22 +263,31 @@ export class AbonnementPage implements OnInit {
                 classe: course.classe,
                 niveauScolaire: course.niveauScolaire,
                 matiereId: course.matiereId,
-                category: course.category
+                category: course.category,
               });
             });
 
             // Filtrer les cours pour ne garder que ceux de la classe spécifique
             console.log('\n🔍 Filtrage pour la classe:', classe);
             const coursesForClasse = res.data.filter(
-              (course: any) => course.classe === classe
+              (course: any) => course.classe === classe,
             );
 
-            console.log('✅ Nombre de cours après filtrage:', coursesForClasse.length);
+            console.log(
+              '✅ Nombre de cours après filtrage:',
+              coursesForClasse.length,
+            );
 
             if (coursesForClasse.length > 0) {
               console.log('📚 Cours filtrés:');
               coursesForClasse.forEach((course: any, index: number) => {
-                console.log(`  ✓ Cours ${index + 1}:`, course.title, '(', course.category, ')');
+                console.log(
+                  `  ✓ Cours ${index + 1}:`,
+                  course.title,
+                  '(',
+                  course.category,
+                  ')',
+                );
               });
             } else {
               console.warn('⚠️ AUCUN cours trouvé pour la classe', classe);
@@ -224,8 +295,12 @@ export class AbonnementPage implements OnInit {
 
             // Grouper par matière
             console.log('\n🔄 Groupement par matière...');
-            this.availableMatieres = this.groupCoursesByMatiere(coursesForClasse);
-            console.log('✅ Nombre de matières après groupement:', this.availableMatieres.length);
+            this.availableMatieres =
+              this.groupCoursesByMatiere(coursesForClasse);
+            console.log(
+              '✅ Nombre de matières après groupement:',
+              this.availableMatieres.length,
+            );
             console.log('📚 Matières:', this.availableMatieres);
 
             this.showMatieresOnly = true;
@@ -237,8 +312,11 @@ export class AbonnementPage implements OnInit {
           console.log('🔍 === FIN loadMatieresForSpecificClasse ===\n');
         },
         error: (err) => {
-          console.error('❌ Erreur lors du chargement des matières pour la classe:', err);
-          console.error('❌ Détails de l\'erreur:', err.message, err.status);
+          console.error(
+            '❌ Erreur lors du chargement des matières pour la classe:',
+            err,
+          );
+          console.error("❌ Détails de l'erreur:", err.message, err.status);
           this.isLoading = false;
         },
       });
@@ -255,7 +333,7 @@ export class AbonnementPage implements OnInit {
       totalDuration:
         matiere.courses?.reduce(
           (sum: number, course: any) => sum + (course.duration || 0),
-          0
+          0,
         ) || 0,
     }));
   }
@@ -285,7 +363,7 @@ export class AbonnementPage implements OnInit {
       // Grouper par matière
       const matiereId = course.matiereId || 'unknown';
       let matiereInfo = classeInfo.matieres.find(
-        (m) => m.matiereId === matiereId
+        (m) => m.matiereId === matiereId,
       );
 
       if (!matiereInfo) {
@@ -303,7 +381,7 @@ export class AbonnementPage implements OnInit {
     });
 
     return Array.from(classesMap.values()).sort((a, b) =>
-      a.classe.localeCompare(b.classe)
+      a.classe.localeCompare(b.classe),
     );
   }
 
@@ -371,7 +449,7 @@ export class AbonnementPage implements OnInit {
     });
 
     return Array.from(matieresMap.values()).sort((a, b) =>
-      a.matiereName.localeCompare(b.matiereName)
+      a.matiereName.localeCompare(b.matiereName),
     );
   }
 
@@ -405,45 +483,54 @@ export class AbonnementPage implements OnInit {
     });
   }
 
+  goBack() {
+    this.router.navigate(['/courses']);
+  }
+
   /**
    * Charger les abonnements de l'utilisateur
    */
   loadSubscriptions() {
+    console.log(
+      "🔍 Chargement des abonnements pour l'utilisateur:",
+      this.currentUser,
+    );
     if (!this.currentUser?.id) {
       this.isLoading = false;
       return;
     }
 
     // Convertir l'ID en number si c'est une string
-    const userId = typeof this.currentUser.id === 'string'
-      ? Number.parseInt(this.currentUser.id, 10)
-      : this.currentUser.id;
+    const userId = this.currentUser.id;
+    // typeof this.currentUser.id === 'string'
+    //   ? Number.parseInt(this.currentUser.id, 10)
+    //   : this.currentUser.id;
 
-    this.subscriptionService
-      .getUserSubscriptions(userId)
-      .subscribe({
-        next: (res) => {
-          this.subscriptions = res.data.map((sub: any) => ({
-            ...sub,
-            startDate: this.convertTimestampToDate(sub.startDate),
-            endDate: this.convertTimestampToDate(sub.endDate),
-            createdAt: this.convertTimestampToDate(sub.createdAt),
-            // Déterminer le statut basé sur la date
-            status: this.getSubscriptionStatus(
-              this.convertTimestampToDate(sub.startDate),
-              this.convertTimestampToDate(sub.endDate)
-            ),
-          }));
+    console.log('📡 Appel API: getUserSubscriptions', userId);
 
-          // Initialiser la liste filtrée
-          this.filteredSubscriptions = [...this.subscriptions];
-          this.isLoading = false;
-        },
-        error: (err) => {
-          console.error('Erreur lors du chargement des abonnements:', err);
-          this.isLoading = false;
-        },
-      });
+    this.subscriptionService.getUserSubscriptions(userId).subscribe({
+      next: (res) => {
+        this.subscriptions = res.data.map((sub: any) => ({
+          ...sub,
+          startDate: this.convertTimestampToDate(sub.startDate),
+          endDate: this.convertTimestampToDate(sub.endDate),
+          createdAt: this.convertTimestampToDate(sub.createdAt),
+          // Déterminer le statut basé sur la date
+          status: this.getSubscriptionStatus(
+            this.convertTimestampToDate(sub.startDate),
+            this.convertTimestampToDate(sub.endDate),
+          ),
+        }));
+
+        // Initialiser la liste filtrée
+        this.filteredSubscriptions = [...this.subscriptions];
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Erreur lors du chargement des abonnements:', err);
+        this.isLoading = false;
+      },
+    });
   }
 
   /**

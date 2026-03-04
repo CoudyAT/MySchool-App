@@ -1,77 +1,164 @@
-<ion-header class="ion-no-border">
+<ion-header class="video-header ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button (click)="goBack()">
-        <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+      <ion-button (click)="goBack()" class="back-button">
+        <ion-icon name="chevron-back-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>Cours vidéo</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <div class="page-container">
-    
-    <!-- Zone vidéo / thumbnail -->
-    <div class="video-container">
+<ion-content class="video-content">
+  <div class="video-container">
 
-      <!-- Thumbnail + Play (affiché seulement si showVideo == false) -->
-      <div class="video-thumbnail" *ngIf="!showVideo">
-        <div class="video-overlay">
-          <div class="play-button" (click)="startCourse()">
-            <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-              <circle cx="40" cy="40" r="40" fill="white"/>
-              <path d="M32 25L55 40L32 55V25Z" fill="#000"/>
-            </svg>
+    <!-- Hero Video Section -->
+    <div class="video-hero">
+      
+      <!-- Thumbnail + Play Button -->
+      <div class="video-wrapper" *ngIf="!showVideo">
+        <div class="video-thumbnail">
+          <img 
+            [src]="course.image || course.courseImage || 'assets/algo.svg'" 
+            [alt]="course.title || course.courseTitle" 
+            class="course-image"
+            *ngIf="course.image || course.courseImage"
+          />
+          <div class="thumbnail-placeholder" *ngIf="!course.image && !course.courseImage"></div>
+          
+          <!-- Overlay Gradient -->
+          <div class="video-overlay"></div>
+
+          <!-- Play Button -->
+          <div class="play-button-container">
+            <button class="play-button" (click)="startCourse()" title="Lire la vidéo">
+              <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                <circle cx="32" cy="32" r="32" fill="white" opacity="0.95"/>
+                <path d="M28 22L45 32L28 42V22Z" fill="#667eea"/>
+              </svg>
+            </button>
           </div>
         </div>
 
-        <img 
-          [src]="course.image || course.courseImage || 'assets/algo.svg'" 
-          [alt]="course.title || course.courseTitle" 
-          class="course-image"
-          *ngIf="course.image || course.courseImage"
-        />
-
-        <div class="thumbnail-placeholder" *ngIf="!course.image && !course.courseImage"></div>
+        <!-- Video Info Overlay -->
+        <div class="video-info-overlay">
+          <div class="video-duration">
+            <ion-icon name="play-circle-outline"></ion-icon>
+            Cliquez pour lire
+          </div>
+        </div>
       </div>
 
-      <!-- 🎬 Lecteur vidéo (affiché après clic) -->
-      <video
-        *ngIf="showVideo"
-        width="100%"
-        height="250"
-        controls
-        autoplay
-      >
-        <source [src]="course.sessions" type="video/mp4">
-        Votre navigateur ne supporte pas la lecture vidéo.
-      </video>
+      <!-- Video Player -->
+      <div class="video-player-wrapper" *ngIf="showVideo">
+        <video
+          width="100%"
+          controls
+          autoplay
+          class="video-player"
+        >
+          <source [src]="course.sessions" type="video/mp4">
+          Votre navigateur ne supporte pas la lecture vidéo.
+        </video>
+      </div>
 
-      <!-- Bouton Commencer -->
-      <button class="start-button" (click)="startCourse()" *ngIf="!showVideo">
-        Commencer
-      </button>
     </div>
-    <div class="description-section" *ngIf="course.description">
-      <h2 class="section-title">Description video</h2>
-      <p class="description-text">{{ course.description }}</p>
-    </div> 
-        <div class="progress-container">
-              <h2 class="progress">Progression Barre</h2>
-      <div class="progress-bar">
-        <div class="progress-fill" [style.width.%]="progress"></div>
+
+    <!-- Content Section -->
+    <div class="content-section">
+      <h1 class="course-title">{{ course.title || course.courseTitle }}</h1>
+      <!-- Course Header -->
+      <div class="course-header" *ngIf="course.type !== 'Video'">
+        <span class="category-badge">{{ course.category || 'Cours' }}</span>
+        <!-- Course Meta -->
+        <div class="course-meta">
+          <div class="meta-item" *ngIf="course.niveauScolaire">
+            <ion-icon name="layers-outline"></ion-icon>
+            <span>{{ course.niveauScolaire }}</span>
+          </div>
+          <div class="meta-item" *ngIf="course.duration">
+            <ion-icon name="time-outline"></ion-icon>
+            <span>{{ course.duration }}</span>
+          </div>
+          <div class="meta-item" *ngIf="course.instructor">
+            <ion-icon name="person-outline"></ion-icon>
+            <span>{{ course.instructor }}</span>
+          </div>
+        </div>
+
+        <!-- Progress Bar
+        <div class="progress-section" *ngIf="progress">
+          <div class="progress-header">
+            <span class="progress-label">Progression</span>
+            <span class="progress-percentage">{{ progress }}%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="progress"></div>
+          </div>
+        </div> -->
+      </div> 
+
+      <!-- Description Section -->
+      <div class="description-section" *ngIf="course.description">
+        <h2 class="section-title">Description</h2>
+        <p class="description-text">{{ course.description }}</p>
       </div>
-      <span class="progress-text">{{ progress }}%</span>
-    </div> 
 
+      <!-- Course Info Cards -->
+      <div class="info-grid" *ngIf="course.type !== 'Video'">
+        <div class="info-card" *ngIf="course.exercises">
+          <div class="info-icon">
+            <ion-icon name="pencil-outline"></ion-icon>
+          </div>
+          <div class="info-content">
+            <h3 class="info-title">Exercices</h3>
+            <p class="info-value">{{ course.exercises }} exercices</p>
+          </div>
+        </div>
 
+        <div class="info-card" *ngIf="course.lessons">
+          <div class="info-icon">
+            <ion-icon name="book-outline"></ion-icon>
+          </div>
+          <div class="info-content">
+            <h3 class="info-title">Leçons</h3>
+            <p class="info-value">{{ course.lessons }} leçons</p>
+          </div>
+        </div>
 
-    <!-- Barre de progression -->
+        <div class="info-card" *ngIf="course.certificateAvailable">
+          <div class="info-icon">
+            <ion-icon name="shield-checkmark-outline"></ion-icon>
+          </div>
+          <div class="info-content">
+            <h3 class="info-title">Certificat</h3>
+            <p class="info-value">À la fin du cours</p>
+          </div>
+        </div>
+      </div>
 
+      <!-- Action Button 
+      <ion-button 
+        expand="block" 
+        fill="solid"
+        class="action-button"
+        *ngIf="!showVideo"
+        (click)="startCourse()">
+        <ion-icon slot="start" name="play-outline"></ion-icon>
+        Commencer le cours
+      </ion-button> -->
 
-    <!-- Description -->
+      <!-- Continue Button
+      <ion-button 
+        expand="block" 
+        fill="solid"
+        class="action-button"
+        *ngIf="showVideo && progress > 0"
+        (click)="continueCourse()">
+        <ion-icon slot="start" name="arrow-forward-outline"></ion-icon>
+        Continuer
+      </ion-button>  -->
 
+    </div>
 
   </div>
 </ion-content>

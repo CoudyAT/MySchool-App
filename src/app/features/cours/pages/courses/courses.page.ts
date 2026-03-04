@@ -839,6 +839,54 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
   //   });
   // }
 
+  // loadMatieresForClasse(classe?: string) {
+  //   this.isMatiereLoading = true;
+
+  //   const niveauToUse = this.getEffectiveLevel();
+
+  //   console.log('📘 Niveau utilisé:', niveauToUse);
+  //   console.log('📚 Classe reçue:', classe);
+
+  //   this.courseService.getAllCourses().subscribe({
+  //     next: (courses) => {
+  //       let filtered = [];
+
+  //       if (this.userNiveauScolaire === 'PROFESSIONNEL') {
+  //         // ✅ UNIQUEMENT PAR NIVEAU
+  //         filtered = courses.filter(
+  //           (c) =>
+  //             (c.type === 'En ligne' || c.type === 'VIDEO') &&
+  //             c.niveauScolaire === niveauToUse,
+  //         );
+  //       } else {
+  //         // ✅ NIVEAU + CLASSE
+  //         filtered = courses.filter(
+  //           (c) =>
+  //             (c.type === 'En ligne' || c.type === 'VIDEO') &&
+  //             c.niveauScolaire === niveauToUse &&
+  //             c.classe === classe,
+  //         );
+  //       }
+
+  //       console.log('🎯 Cours trouvés:', filtered.length);
+
+  //       const matieres = [
+  //         ...new Set(filtered.map((c) => c.matiere).filter(Boolean)),
+  //       ];
+
+  //       console.log('📖 Matières trouvées:', matieres);
+
+  //       this.availableMatieres = matieres;
+  //       this.showMatiereSelection = true;
+  //       this.isMatiereLoading = false;
+  //     },
+  //     error: (err) => {
+  //       console.error('❌ Erreur:', err);
+  //       this.isMatiereLoading = false;
+  //     },
+  //   });
+  // }
+
   loadMatieresForClasse(classe?: string) {
     this.isMatiereLoading = true;
 
@@ -847,19 +895,50 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
     console.log('📘 Niveau utilisé:', niveauToUse);
     console.log('📚 Classe reçue:', classe);
 
+    // ✅ 1. Essayer API matières (rapide)
+    this.courseService.getMatieresByClasse(classe!).subscribe({
+      next: (res) => {
+        if (res?.success && res?.data?.length) {
+          this.availableMatieres = res.data
+            .map((m: any) =>
+              typeof m === 'string'
+                ? m
+                : m.matiereName ||
+                  m.name ||
+                  m.matiere ||
+                  m.title ||
+                  m.nom ||
+                  m.label,
+            )
+            .filter((m: any): m is string => !!m);
+
+          console.log('✅ Matières API:', this.availableMatieres);
+
+          this.finishMatiereLoading();
+        } else {
+          this.loadMatieresFromCourses(classe, niveauToUse);
+        }
+      },
+
+      error: () => {
+        console.warn('⚠️ API indisponible → fallback cours');
+        this.loadMatieresFromCourses(classe, niveauToUse);
+      },
+    });
+  }
+
+  private loadMatieresFromCourses(classe?: string, niveauToUse?: string) {
     this.courseService.getAllCourses().subscribe({
-      next: (courses) => {
-        let filtered = [];
+      next: (courses: Course[]) => {
+        let filtered: Course[];
 
         if (this.userNiveauScolaire === 'PROFESSIONNEL') {
-          // ✅ UNIQUEMENT PAR NIVEAU
           filtered = courses.filter(
             (c) =>
               (c.type === 'En ligne' || c.type === 'VIDEO') &&
               c.niveauScolaire === niveauToUse,
           );
         } else {
-          // ✅ NIVEAU + CLASSE
           filtered = courses.filter(
             (c) =>
               (c.type === 'En ligne' || c.type === 'VIDEO') &&
@@ -868,25 +947,32 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
           );
         }
 
-        console.log('🎯 Cours trouvés:', filtered.length);
+        const matieres = Array.from(
+          new Set(
+            filtered
+              .map((c) => c.matiere?.trim())
+              .filter((m): m is string => !!m),
+          ),
+        ).sort();
 
-        const matieres = [
-          ...new Set(filtered.map((c) => c.category).filter(Boolean)),
-        ];
-
-        console.log('📖 Matières trouvées:', matieres);
+        console.log('📖 Matières fallback:', matieres);
 
         this.availableMatieres = matieres;
-        this.showMatiereSelection = true;
-        this.isMatiereLoading = false;
+
+        this.finishMatiereLoading();
       },
       error: (err) => {
-        console.error('❌ Erreur:', err);
-        this.isMatiereLoading = false;
+        console.error('❌ Erreur cours:', err);
+        this.finishMatiereLoading();
       },
     });
   }
 
+
+  private finishMatiereLoading() {
+    this.showMatiereSelection = true;
+    this.isMatiereLoading = false;
+  }
   /**
    * Extraire les matières uniques depuis les cours filtrés
    */
@@ -911,20 +997,26 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
   extractMatieresFromCourses(classe: string) {
     this.courseService.getAllCourses().subscribe({
       next: (courses) => {
-        let niveauToFilter =
+        const niveauToFilter =
           this.userNiveauScolaire === 'PROFESSIONNEL'
             ? 'UNIVERSITAIRE'
             : this.userNiveauScolaire;
 
         const classeCourses = courses.filter(
-          (c) =>
+          (c: Course) =>
             (c.type === 'En ligne' || c.type === 'VIDEO') &&
-            c.niveauScolaire === niveauToFilter,
+            c.niveauScolaire === niveauToFilter &&
+            c.classe === classe,
         );
 
-        const matieres = [
-          ...new Set(classeCourses.map((c) => c.category).filter(Boolean)),
-        ];
+        // ✅ récupérer MATIERE et non CATEGORY
+        const matieres = Array.from(
+          new Set(
+            classeCourses.map((c) => c.matiere).filter((m): m is string => !!m),
+          ),
+        );
+
+        console.log('📚 Matières extraites:', matieres);
 
         this.availableMatieres = matieres;
       },

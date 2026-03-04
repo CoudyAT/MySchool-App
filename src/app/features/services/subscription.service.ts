@@ -17,7 +17,7 @@ export class SubscriptionService {
     return this.api.get<any>('/subscriptions/plans');
   }
 
-  getUserSubscriptions(userId: number): Observable<SubscriptionApiResponse> {
+  getUserSubscriptions(userId: string): Observable<SubscriptionApiResponse> {
     return this.api.get<SubscriptionApiResponse>(
       `/subscriptions/user/${userId}`
     );

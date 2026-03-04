@@ -10,9 +10,6 @@ import { CodePromo } from 'src/app/models/code-promo.model';
 export class CodePromoPageService {
   private readonly api = inject(ApiService);
 
-  //   getMatieres(): Observable<any[]> {
-  //     return this.api.get<any[]>('/matieres');
-  //   }
 
   getPromo(filters?: {
     influenceurId?: string;

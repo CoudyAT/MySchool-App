@@ -18,6 +18,7 @@ import {
   IonHeader,
   IonTitle,
   IonButtons,
+  IonInput,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -33,6 +34,12 @@ import {
   ellipseOutline,
   playCircle,
   checkmark,
+  documentTextOutline,
+  searchOutline,
+  documentsOutline,
+  eyeOutline,
+  documentOutline,
+  calendarOutline,
 } from 'ionicons/icons';
 import { PdfService } from '../../services/pdf.service';
 
@@ -42,6 +49,7 @@ import { PdfService } from '../../services/pdf.service';
   styleUrls: ['./exo.page.scss'],
   standalone: true,
   imports: [
+    IonInput,
     IonTitle,
     IonHeader,
     IonToolbar,
@@ -74,16 +82,21 @@ export class ExoPage implements OnInit {
   ) {
     addIcons({
       chevronBackOutline,
+      searchOutline,
+      documentsOutline,
+      eyeOutline,
+      documentOutline,
+      calendarOutline,
+      checkmarkCircle,
+      documentTextOutline,
       documents,
       time,
       eye,
       download,
-      document: documentIcon,
       arrowBack,
       checkmark,
       playCircle,
       cardOutline,
-      checkmarkCircle,
       ellipseOutline,
     });
   }

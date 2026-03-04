@@ -1164,7 +1164,7 @@ ion-content {
   display: flex;
   justify-content: center;
   padding: 4px 16px 8px;
-  background: transparent;
+  background: white;
 
   @media (min-width: 1024px) {
     display: none;
@@ -1184,6 +1184,7 @@ ion-content {
   font-weight: 500;
   text-transform: none;
   margin: 0;
+  width: 100%;
 
   ion-icon {
     font-size: 14px;
@@ -1200,7 +1201,7 @@ ion-content {
   --background-hover: #3D5AE8;
   --background-activated: #3D5AE8;
   color: white;
-  width: auto;
+  width: 100%;
   max-width: none;
   height: 36px;
   font-size: 13px;
@@ -1300,19 +1301,19 @@ ion-header ion-toolbar {
       object-position: center;
     }
 
-    .slide-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 0.1) 0%,
-        rgba(0, 0, 0, 0.3) 100%
-      );
-      pointer-events: none;
-    }
+    // .slide-overlay {
+    //   position: absolute;
+    //   top: 0;
+    //   left: 0;
+    //   right: 0;
+    //   bottom: 0;
+    //   background: linear-gradient(
+    //     to bottom,
+    //     rgba(0, 0, 0, 0.1) 0%,
+    //     rgba(0, 0, 0, 0.3) 100%
+    //   );
+    //   pointer-events: none;
+    // }
   }
 
   // Pagination dots
@@ -2237,26 +2238,30 @@ ion-header ion-toolbar {
       display: block;
     }
     
-    .slide-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(90deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.1) 100%);
-      z-index: 1;
-    }
+    // .slide-overlay {
+    //   position: absolute;
+    //   top: 0;
+    //   left: 0;
+    //   right: 0;
+    //   bottom: 0;
+    //   background: linear-gradient(90deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.1) 100%);
+    //   z-index: 1;
+    // }
     
     // Contenu du slide avec bouton
     .slide-content {
-      position: absolute;
-      top: 50%;
-      left: 10%;
-      transform: translateY(-50%);
-      z-index: 2;
-      color: white;
-      max-width: 500px;
-      animation: fadeInUp 1s ease;
+    position: absolute;
+    top: 77%;
+    right: 4%;
+    transform: translateY(-50%);
+    z-index: 2;
+    color: white;
+    max-width: 500px;
+    animation: _ngcontent-ng-c439520026_fadeInUp 1s ease;
+    @media (max-width: 768px) {
+      display: none;
+    }
+}
       
       .slide-title {
         font-size: 2.5rem;
@@ -2370,7 +2375,7 @@ ion-header ion-toolbar {
       }
     }
   }
-}
+
 
 // Animation pour le contenu
 @keyframes fadeInUp {

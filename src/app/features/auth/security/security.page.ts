@@ -37,6 +37,12 @@ import {
   informationCircleOutline,
   checkmarkCircleOutline,
   closeCircleOutline,
+  keyOutline,
+  checkmarkDoneOutline,
+  lockOpenOutline,
+  bulbOutline,
+  closeOutline,
+  checkmarkOutline,
 } from 'ionicons/icons';
 
 @Component({
@@ -71,16 +77,22 @@ export class SecurityPage {
   constructor(
     private router: Router,
     private toastCtrl: ToastController,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
   ) {
     addIcons({
       chevronBackOutline,
-      cameraOutline,
       lockClosedOutline,
+      shieldCheckmarkOutline,
+      keyOutline,
+      checkmarkDoneOutline,
+      lockOpenOutline,
+      bulbOutline,
+      closeOutline,
+      checkmarkOutline,
+      cameraOutline,
       personOutline,
       cardOutline,
       notificationsOutline,
-      shieldCheckmarkOutline,
       languageOutline,
       eyeOutline,
       eyeOffOutline,
@@ -151,13 +163,13 @@ export class SecurityPage {
       this.isSaving = false;
       this.showToast(
         error.message || 'Erreur lors de la modification ❌',
-        'danger'
+        'danger',
       );
     }
   }
 
   goBack() {
-    this.router.navigate(['/profile']);
+    this.router.navigate(['/courses']);
   }
 
   private async showToast(message: string, color: string = 'primary') {

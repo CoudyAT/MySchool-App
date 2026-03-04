@@ -70,7 +70,7 @@
         (swiperinit)="onSwiperInit($event)"
       >
         <!-- Slide 1 -->
-        <swiper-slide>
+        <swiper-slide (click)="goToCours()">
           <a routerLink="/formations/masterclass">          
             <div class="slide-container">
               <picture>
@@ -78,9 +78,7 @@
                 <img src="https://firebasestorage.googleapis.com/v0/b/myschool-f862b.firebasestorage.app/o/SLIDERS%2Fslider1-mob.jpg?alt=media&token=d1ce1a4f-2c17-4fa5-aa56-6361c23149ef"
                     alt="Formation 2"
                     class="slide-image" />
-              </picture>
-              <div class="slide-overlay"></div>
-              
+              </picture>              
               <!-- Bouton ajouté -->
               <div class="slide-content">
                 <h2 class="slide-title"></h2>
@@ -95,7 +93,7 @@
         </swiper-slide>
 
         <!-- Slide 2 -->
-        <swiper-slide>
+        <swiper-slide (click)="goToCours()">
           <a routerLink="/formations/masterclass">          
             <div class="slide-container">
               <picture>
@@ -120,7 +118,7 @@
         </swiper-slide>
 
         <!-- Slide 3 -->
-        <swiper-slide>
+        <swiper-slide (click)="goToCours()">
           <a routerLink="/formations/masterclass">          
             <div class="slide-container">
               <picture>
@@ -475,7 +473,7 @@
       </div>
     </div>
 
-    <!-- Section Certifications -->
+    <!-- Section Certifications 
     <div class="courses-section hide-desktop">
       <h1 class="section-title">Certifications</h1>
 
@@ -486,7 +484,7 @@
         Bénéficiez des certifications de l’OIT
         (Organisation Internationale du Travail)
       </p>
-    </div>
+    </div> -->
 
 
 

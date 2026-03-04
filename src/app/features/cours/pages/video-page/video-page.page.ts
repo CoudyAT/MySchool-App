@@ -184,9 +184,13 @@ export class VideoPagePage implements OnInit {
     );
   }
 
+  // openCourse(course: Course) {
+  //   console.log('Ouvrir le cours:', course.id);
+  //   this.router.navigate(['/video-detail', course.id]);
+  // }
+
   openCourse(course: Course) {
-    console.log('Ouvrir le cours:', course.id);
-    this.router.navigate(['/video-detail', course.id]);
+    this.router.navigate(['/video-player', course.id]);
   }
 
   openFilters() {

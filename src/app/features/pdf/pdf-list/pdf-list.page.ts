@@ -18,6 +18,7 @@ import {
   IonHeader,
   IonTitle,
   IonButtons,
+  IonInput,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -33,6 +34,11 @@ import {
   ellipseOutline,
   playCircle,
   checkmark,
+  searchOutline,
+  documentsOutline,
+  eyeOutline,
+  documentOutline,
+  calendarOutline,
 } from 'ionicons/icons';
 import { PdfService } from '../../services/pdf.service';
 
@@ -42,6 +48,7 @@ import { PdfService } from '../../services/pdf.service';
   styleUrls: ['./pdf-list.page.scss'],
   standalone: true,
   imports: [
+    IonInput,
     IonTitle,
     IonHeader,
     IonToolbar,
@@ -74,16 +81,20 @@ export class PdfListPage implements OnInit {
   ) {
     addIcons({
       chevronBackOutline,
+      searchOutline,
+      documentsOutline,
+      eyeOutline,
+      documentOutline,
+      calendarOutline,
+      checkmarkCircle,
       documents,
       time,
       eye,
       download,
-      document: documentIcon,
       arrowBack,
       checkmark,
       playCircle,
       cardOutline,
-      checkmarkCircle,
       ellipseOutline,
     });
   }

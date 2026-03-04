@@ -1,114 +1,601 @@
-ion-content {
-  --background: #ffffff;
-}
+/* ==========================================
+   HEADER
+   ========================================== */
 
-    ion-buttons {
-      ion-button {
-        --color: #000000;
-        font-size: 16px;
-        
-        .back-text {
-          margin-left: 4px;
-          font-weight: 500;
-        }
-        
-        ion-icon {
-          font-size: 24px;
-        }
+.security-header {
+  ion-toolbar {
+    --background: #ffffff;
+    --border-bottom: 1px solid #e8eef5;
+    --min-height: 60px;
+
+    ion-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #000;
+      text-align: left;
+      padding-left: 8px;
+
+      @media (min-width: 1024px) {
+        font-size: 24px;
       }
     }
 
-/* ===== Container ===== */
-.security-container {
-  padding: 24px 20px;
+    .back-button {
+      --color: #000;
+
+      ion-icon {
+        font-size: 24px;
+      }
+
+      .back-text {
+        margin-left: 4px;
+        font-weight: 500;
+        font-size: 16px;
+      }
+    }
+  }
 }
 
-/* ===== Form ===== */
+/* ==========================================
+   CONTENT
+   ========================================== */
+
+.security-content {
+  --background: #f8f9fa;
+  --padding-bottom: 60px;
+
+  @media (min-width: 1024px) {
+    --background: #ffffff;
+  }
+}
+
+/* ==========================================
+   CONTAINER
+   ========================================== */
+
+.security-container {
+  padding: 20px 16px;
+  max-width: 100%;
+  margin: 0 auto;
+  background: white;
+
+  @media (min-width: 768px) {
+    padding: 32px 24px;
+    max-width: 600px;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 40px 60px;
+    max-width: 900px;
+    background: transparent;
+  }
+
+  @media (min-width: 1400px) {
+    padding: 40px 120px;
+    max-width: 1200px;
+  }
+}
+
+/* ==========================================
+   HERO SECTION
+   ========================================== */
+
+.security-hero {
+  text-align: center;
+  margin-bottom: 32px;
+
+  @media (min-width: 768px) {
+    margin-bottom: 40px;
+  }
+
+  @media (min-width: 1024px) {
+    margin-bottom: 48px;
+  }
+
+  .hero-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2650BB 0%, #2650BB 100%);
+    margin-bottom: 16px;
+
+    ion-icon {
+      font-size: 32px;
+      color: white;
+    }
+
+    @media (min-width: 768px) {
+      width: 80px;
+      height: 80px;
+
+      ion-icon {
+        font-size: 40px;
+      }
+    }
+  }
+
+  .hero-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #000;
+    margin: 0 0 12px 0;
+
+    @media (min-width: 768px) {
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+
+    @media (min-width: 1024px) {
+      font-size: 32px;
+    }
+  }
+
+  .hero-subtitle {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+
+    @media (min-width: 768px) {
+      font-size: 16px;
+    }
+  }
+}
+
+/* ==========================================
+   FORM
+   ========================================== */
+
 .security-form {
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 24px;
+
+  @media (min-width: 768px) {
+    gap: 28px;
+  }
+
+  @media (min-width: 1024px) {
+    gap: 32px;
+  }
 }
 
-/* ===== Labels ===== */
+/* ==========================================
+   FORM GROUP
+   ========================================== */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  @media (min-width: 768px) {
+    gap: 10px;
+  }
+}
+
+/* ==========================================
+   LABELS
+   ========================================== */
+
 .form-label {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   color: #1f1f1f;
-  margin-bottom: 6px;
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  @media (min-width: 768px) {
+    font-size: 15px;
+    gap: 10px;
+  }
+
+  @media (min-width: 1024px) {
+    font-size: 16px;
+  }
+
+  .label-icon {
+    font-size: 18px;
+    color: #2650BB;
+    flex-shrink: 0;
+
+    @media (min-width: 768px) {
+      font-size: 20px;
+    }
+  }
 }
 
-/* ===== Inputs ===== */
+/* ==========================================
+   FORM ITEMS (INPUTS)
+   ========================================== */
+
 .form-item {
   --background: #f7f7f7;
-  --border-radius: 14px;
+  --border-radius: 12px;
   --padding-start: 14px;
   --padding-end: 14px;
-  --min-height: 52px;
+  --min-height: 48px;
+  border: 2px solid #f0f0f0;
+  transition: all 0.3s ease;
 
-  border-radius: 14px;
+  @media (min-width: 768px) {
+    --border-radius: 14px;
+    --min-height: 52px;
+  }
+
+  @media (min-width: 1024px) {
+    --border-radius: 16px;
+    --min-height: 56px;
+  }
+
+  &:focus-within {
+    --background: #ffffff;
+    border-color: #2650BB;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+  }
+
+  .input-icon {
+    font-size: 18px;
+    color: #2650BB;
+    margin-right: 8px;
+
+    @media (min-width: 768px) {
+      font-size: 20px;
+      margin-right: 10px;
+    }
+  }
+
+  .form-input {
+    font-size: 14px;
+    color: #222;
+
+    @media (min-width: 768px) {
+      font-size: 15px;
+    }
+
+    @media (min-width: 1024px) {
+      font-size: 16px;
+    }
+
+    &::placeholder {
+      color: #999;
+    }
+  }
 }
 
-ion-input {
-  font-size: 15px;
-  color: #222;
+/* ==========================================
+   PASSWORD STRENGTH
+   ========================================== */
+
+.password-strength {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+
+  @media (min-width: 768px) {
+    gap: 12px;
+    margin-top: 10px;
+  }
+
+  .strength-bar {
+    flex: 1;
+    height: 4px;
+    background: #e8eef5;
+    border-radius: 2px;
+    overflow: hidden;
+
+    @media (min-width: 768px) {
+      height: 5px;
+      border-radius: 3px;
+    }
+
+    .strength-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+
+      &.weak {
+        width: 33%;
+        background: #f44336;
+      }
+
+      &.medium {
+        width: 66%;
+        background: #ff9800;
+      }
+
+      &.strong {
+        width: 100%;
+        background: #4caf50;
+      }
+    }
+  }
+
+  .strength-text {
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+
+    @media (min-width: 768px) {
+      font-size: 13px;
+    }
+
+    &.weak {
+      color: #f44336;
+    }
+
+    &.medium {
+      color: #ff9800;
+    }
+
+    &.strong {
+      color: #4caf50;
+    }
+  }
 }
 
-/* ===== Password hints ===== */
+/* ==========================================
+   PASSWORD HINTS
+   ========================================== */
+
 .password-hint {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-top: 6px;
-  font-size: 13px;
-}
-
-.password-hint ion-icon {
-  font-size: 16px;
-}
-
-.password-hint .valid {
-  color: #2ecc71;
-}
-
-.password-hint .invalid {
-  color: #e74c3c;
-}
-
-/* ===== Button ===== */
-.save-button {
-  --background: #00bfa5;
-  --border-radius: 12px;
-  --padding-top: 14px;
-  --padding-bottom: 14px;
-  font-weight: 600;
-  font-size: 16px;
-  margin-top: 12px;
-  text-transform: none;
-  color: #FFFFFF;
-  
-  &:active {
-    --background: #009688;
-  }
-  
-  ion-spinner {
-    margin-right: 8px;
-  }
-}
-
-/* ===== Disabled button ===== */
-.save-button[disabled] {
-  opacity: 0.6;
-  --box-shadow: none;
-}
-
-/* ===== Header ===== */
-ion-toolbar {
-  --background: #ffffff;
-}
-
-.back-text {
-  font-size: 14px;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: 12px;
   font-weight: 500;
+
+  @media (min-width: 768px) {
+    gap: 10px;
+    font-size: 13px;
+    margin-top: 10px;
+  }
+
+  @media (min-width: 1024px) {
+    font-size: 14px;
+  }
+
+  ion-icon {
+    font-size: 16px;
+    flex-shrink: 0;
+
+    @media (min-width: 768px) {
+      font-size: 18px;
+    }
+
+    &.valid {
+      color: #4caf50;
+    }
+
+    &.invalid {
+      color: #f44336;
+    }
+  }
+
+  span {
+    &.valid {
+      color: #4caf50;
+    }
+
+    &.invalid {
+      color: #f44336;
+    }
+  }
+}
+
+/* ==========================================
+   SECURITY TIPS
+   ========================================== */
+
+.security-tips {
+  background: linear-gradient(135deg, #f0f4ff 0%, #f8faff 100%);
+  border: 1px solid #e8eef5;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 20px 0;
+
+  @media (min-width: 768px) {
+    border-radius: 14px;
+    padding: 20px;
+    margin: 24px 0;
+  }
+
+  @media (min-width: 1024px) {
+    border-radius: 16px;
+    padding: 24px;
+    margin: 28px 0;
+  }
+
+  .tips-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #2650BB;
+    margin: 0 0 12px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    @media (min-width: 768px) {
+      font-size: 15px;
+      margin-bottom: 14px;
+      gap: 10px;
+    }
+
+    @media (min-width: 1024px) {
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+
+    ion-icon {
+      font-size: 18px;
+
+      @media (min-width: 768px) {
+        font-size: 20px;
+      }
+    }
+  }
+
+  .tips-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    @media (min-width: 768px) {
+      gap: 10px;
+    }
+
+    li {
+      font-size: 13px;
+      color: #333;
+      padding-left: 20px;
+      position: relative;
+
+      @media (min-width: 768px) {
+        font-size: 14px;
+        padding-left: 24px;
+      }
+
+      @media (min-width: 1024px) {
+        font-size: 15px;
+      }
+
+      &::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: #2650BB;
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+/* ==========================================
+   FORM ACTIONS
+   ========================================== */
+
+.form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    gap: 14px;
+    margin-top: 24px;
+  }
+
+  @media (min-width: 1024px) {
+    gap: 16px;
+    margin-top: 28px;
+  }
+
+  ion-button {
+    flex: 1;
+    height: 48px;
+    font-weight: 600;
+    text-transform: none;
+    font-size: 16px;
+
+    @media (min-width: 768px) {
+      height: 52px;
+      font-size: 17px;
+    }
+
+    @media (min-width: 1024px) {
+      height: 56px;
+      font-size: 18px;
+      --border-radius: 14px;
+    }
+
+    ion-spinner {
+      margin-right: 8px;
+
+      @media (min-width: 768px) {
+        margin-right: 10px;
+      }
+    }
+  }
+}
+
+.cancel-button {
+  --color: #2650BB;
+  --border-color: #2650BB;
+  --border-radius: 12px;
+
+  @media (min-width: 768px) {
+    --border-radius: 14px;
+  }
+
+  @media (min-width: 1024px) {
+    --border-radius: 16px;
+  }
+
+  &:hover {
+    --background: #f0f4ff;
+  }
+}
+
+.save-button {
+  --background:  #2650BB;
+  --border-radius: 12px;
+  color: #ffffff;
+
+  @media (min-width: 768px) {
+    --border-radius: 14px;
+  }
+
+  @media (min-width: 1024px) {
+    --border-radius: 16px;
+  }
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:active {
+    opacity: 0.8;
+  }
+
+  &[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+/* ==========================================
+   RESPONSIVE ADJUSTMENTS
+   ========================================== */
+
+@media (max-width: 576px) {
+  .security-container {
+    padding: 16px 12px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  ion-button {
+    width: 100%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .security-container {
+    background: white;
+  }
+
+  .security-content {
+    --background: #ffffff;
+  }
 }

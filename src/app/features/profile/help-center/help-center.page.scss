@@ -19,6 +19,9 @@ ion-header {
         font-size: 22px;
       }
     }
+    @media (min-width: 1024px) {
+        display: none;
+      }
   }
 }
 

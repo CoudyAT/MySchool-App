@@ -190,83 +190,122 @@ export class MesCoursPage implements OnInit {
   loadMatieresForClasse(classe?: string) {
     this.isMatiereLoading = true;
 
-    console.log('🔍 Chargement matières...');
-    console.log('Niveau utilisateur:', this.userNiveauScolaire);
-    console.log('Classe reçue:', classe);
+    const niveauToUse = this.getEffectiveLevel();
 
-    // 🎯 CAS PROFESSIONNEL
-    if (this.userNiveauScolaire === 'PROFESSIONNEL') {
-      this.courseService.getAllCourses().subscribe({
-        next: (courses) => {
-          // On récupère uniquement les cours UNIVERSITAIRE
-          const filtered = courses.filter(
-            (c) =>
-              (c.type === 'En ligne' || c.type === 'VIDEO') &&
-              c.niveauScolaire === 'UNIVERSITAIRE',
-          );
+    console.log('📘 Niveau utilisé:', niveauToUse);
+    console.log('📚 Classe reçue:', classe);
 
-          const matieres = [
-            ...new Set(filtered.map((c) => c.category).filter(Boolean)),
-          ];
+    // ✅ 1. Essayer API matières (rapide)
+    this.courseService.getMatieresByClasse(classe!).subscribe({
+      next: (res) => {
+        if (res?.success && res?.data?.length) {
+          this.availableMatieres = res.data
+            .map((m: any) =>
+              typeof m === 'string'
+                ? m
+                : m.matiereName ||
+                  m.name ||
+                  m.matiere ||
+                  m.title ||
+                  m.nom ||
+                  m.label,
+            )
+            .filter((m: any): m is string => !!m);
 
-          console.log('✅ Matières PROFESSIONNEL:', matieres);
+          console.log('✅ Matières API:', this.availableMatieres);
 
-          this.availableMatieres = matieres;
-          this.showMatiereSelection = true;
-          this.isMatiereLoading = false;
-        },
-        error: (err) => {
-          console.error('❌ Erreur chargement matières PRO:', err);
-          this.isMatiereLoading = false;
-        },
-      });
-
-      return; // IMPORTANT : on sort ici
-    }
-
-    // 🎯 CAS NORMAL (MOYEN / SECONDAIRE / UNIVERSITAIRE)
-    this.courseService.getAllCourses().subscribe({
-      next: (courses) => {
-        const filtered = courses.filter(
-          (c) =>
-            (c.type === 'En ligne' || c.type === 'VIDEO') &&
-            c.niveauScolaire === this.userNiveauScolaire &&
-            c.classe === classe,
-        );
-
-        const matieres = [
-          ...new Set(filtered.map((c) => c.category).filter(Boolean)),
-        ];
-
-        console.log('✅ Matières normales:', matieres);
-
-        this.availableMatieres = matieres;
-        this.showMatiereSelection = true;
-        this.isMatiereLoading = false;
+          this.finishMatiereLoading();
+        } else {
+          this.loadMatieresFromCourses(classe, niveauToUse);
+        }
       },
-      error: (err) => {
-        console.error('❌ Erreur chargement matières:', err);
-        this.isMatiereLoading = false;
+
+      error: () => {
+        console.warn('⚠️ API indisponible → fallback cours');
+        this.loadMatieresFromCourses(classe, niveauToUse);
       },
     });
+  }
+
+  private getEffectiveLevel(): string {
+    return this.userNiveauScolaire === 'PROFESSIONNEL'
+      ? 'UNIVERSITAIRE'
+      : this.userNiveauScolaire || '';
   }
 
   extractMatieresFromCourses(classe: string) {
     this.courseService.getAllCourses().subscribe({
       next: (courses) => {
+        const niveauToFilter =
+          this.userNiveauScolaire === 'PROFESSIONNEL'
+            ? 'UNIVERSITAIRE'
+            : this.userNiveauScolaire;
+
         const classeCourses = courses.filter(
-          (c) =>
+          (c: Course) =>
             (c.type === 'En ligne' || c.type === 'VIDEO') &&
-            c.niveauScolaire === this.userNiveauScolaire &&
+            c.niveauScolaire === niveauToFilter &&
             c.classe === classe,
         );
-        const matieres = [
-          ...new Set(classeCourses.map((c) => c.category).filter(Boolean)),
-        ];
+
+        // ✅ récupérer MATIERE et non CATEGORY
+        const matieres = Array.from(
+          new Set(
+            classeCourses.map((c) => c.matiere).filter((m): m is string => !!m),
+          ),
+        );
+
+        console.log('📚 Matières extraites:', matieres);
+
         this.availableMatieres = matieres;
-        console.log('📋 Matières extraites des cours:', matieres);
       },
     });
+  }
+
+  private loadMatieresFromCourses(classe?: string, niveauToUse?: string) {
+    this.courseService.getAllCourses().subscribe({
+      next: (courses: Course[]) => {
+        let filtered: Course[];
+
+        if (this.userNiveauScolaire === 'PROFESSIONNEL') {
+          filtered = courses.filter(
+            (c) =>
+              (c.type === 'En ligne' || c.type === 'VIDEO') &&
+              c.niveauScolaire === niveauToUse,
+          );
+        } else {
+          filtered = courses.filter(
+            (c) =>
+              (c.type === 'En ligne' || c.type === 'VIDEO') &&
+              c.niveauScolaire === niveauToUse &&
+              c.classe === classe,
+          );
+        }
+
+        const matieres = Array.from(
+          new Set(
+            filtered
+              .map((c) => c.matiere?.trim())
+              .filter((m): m is string => !!m),
+          ),
+        ).sort();
+
+        console.log('📖 Matières fallback:', matieres);
+
+        this.availableMatieres = matieres;
+
+        this.finishMatiereLoading();
+      },
+      error: (err) => {
+        console.error('❌ Erreur cours:', err);
+        this.finishMatiereLoading();
+      },
+    });
+  }
+
+  private finishMatiereLoading() {
+    this.showMatiereSelection = true;
+    this.isMatiereLoading = false;
   }
 
   isMatiereSelected(m: string): boolean {
@@ -648,12 +687,12 @@ export class MesCoursPage implements OnInit {
         }
 
         // 🎯 4️⃣ Limiter le nombre de cours affichés (ex: 6)
-              this.allCourses = filteredCourses;
-              this.allCourses = filteredCourses;
-              this.filteredCourses = [...filteredCourses]; // Initialiser filteredCourses
-              console.log('✅ Total cours affichés:', this.allCourses.length);
-              console.log('✅ Total cours affichés:', this.allCourses.length);
-              this.isCoursesLoading = false;
+        this.allCourses = filteredCourses;
+        this.allCourses = filteredCourses;
+        this.filteredCourses = [...filteredCourses]; // Initialiser filteredCourses
+        console.log('✅ Total cours affichés:', this.allCourses.length);
+        console.log('✅ Total cours affichés:', this.allCourses.length);
+        this.isCoursesLoading = false;
       },
       error: (err) => {
         console.error('❌ Erreur chargement cours:', err);

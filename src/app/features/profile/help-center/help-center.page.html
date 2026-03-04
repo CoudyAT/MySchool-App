@@ -1,11 +1,14 @@
 <app-desktop-header></app-desktop-header>
 
 
-<ion-header class="ion-no-border help-header">
+<ion-header class="help-header ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
+      <ion-button (click)="goBack()" class="back-button">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+        <ion-title>Centre d'aide</ion-title>
+      </ion-button>
     </ion-buttons>
-    <ion-title>Centre d'aide</ion-title>
   </ion-toolbar>
 </ion-header>
 

@@ -1,25 +1,12 @@
 
-<app-desktop-header></app-desktop-header>
-<ion-header [translucent]="true" class="subscriptions-header">
+<ion-header class="pdf-header ion-no-border">
   <ion-toolbar>
-    <ion-title>
-      <ng-container *ngIf="isElementaireLevel && hasSpecificClasse">
-        Matières - {{ currentUser?.classe }}
-      </ng-container>
-      <ng-container *ngIf="isElementaireLevel && !hasSpecificClasse">
-        {{ showClasseSelection ? 'Choisir une classe' : 'Matières et cours' }}
-      </ng-container>
-      <ng-container *ngIf="!isElementaireLevel">
-        Matières disponibles
-      </ng-container>
-    </ion-title>
-    <ion-button
-      slot="start"
-      fill="clear"
-      *ngIf="showMatieres && !showMatieresOnly"
-      (click)="backToClasseSelection()">
-      <ion-icon name="arrow-back-outline"></ion-icon>
-    </ion-button>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()" class="back-button">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Abonnements</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -55,7 +42,7 @@
       </ion-button>
     </div>
 
-    <!-- Liste des classes -->
+    <!-- Liste des classes 
     <div class="classes-grid" *ngIf="availableClasses.length > 0 && isElementaireLevel">
       <ion-card
         *ngFor="let classe of availableClasses"
@@ -88,16 +75,16 @@
           </ion-button>
         </ion-card-content>
       </ion-card>
-    </div>
+    </div> -->
   </div>
 
-<!-- Affichage des matières uniquement (SECONDAIRE, MOYEN, UNIVERSITAIRE ou ELEMENTAIRE avec classe) -->
+<!-- Affichage des matières uniquement (SECONDAIRE, MOYEN, UNIVERSITAIRE ou ELEMENTAIRE avec classe) 
   <div *ngIf="showMatieresOnly && !isLoading" class="matieres-only-container">
 
-    <!-- En-tête -->
+    <!-- En-tête
     <div class="matieres-header">
       <div class="header-content">
-        <!-- Si l'utilisateur a une classe spécifique (ELEMENTAIRE avec classe définie) -->
+        <!-- Si l'utilisateur a une classe spécifique (ELEMENTAIRE avec classe définie) 
         <ng-container *ngIf="hasSpecificClasse">
           <h2>Matières de {{ currentUser?.classe }}</h2>
           <ion-badge color="primary">{{ currentUser?.niveauScolaire }}</ion-badge>
@@ -108,7 +95,7 @@
           </p>
         </ng-container>
 
-        <!-- Si pas de classe spécifique (SECONDAIRE, MOYEN, UNIVERSITAIRE) -->
+        <!-- Si pas de classe spécifique (SECONDAIRE, MOYEN, UNIVERSITAIRE) 
         <ng-container *ngIf="!hasSpecificClasse">
           <h2>Matières disponibles</h2>
           <ion-badge color="primary">{{ currentUser?.niveauScolaire }}</ion-badge>
@@ -120,7 +107,7 @@
         </ng-container>
       </div>
 
-      <!-- Bouton d'abonnement adapté selon le cas -->
+      <!-- Bouton d'abonnement adapté selon le cas
       <ion-button
         expand="block"
         fill="solid"
@@ -142,7 +129,7 @@
       </ion-button>
     </div>
 
-    <!-- Aucune matière disponible -->
+    <!-- Aucune matière disponible
     <div *ngIf="availableMatieres.length === 0" class="empty-state">
       <div class="empty-icon">
         <ion-icon name="book-outline"></ion-icon>
@@ -156,7 +143,7 @@
       </p>
     </div>
 
-    <!-- Accordion des matières -->
+    <!-- Accordion des matières 
     <ion-accordion-group *ngIf="availableMatieres.length > 0">
       <ion-accordion *ngFor="let matiere of availableMatieres" [value]="matiere.matiereId">
         <ion-item slot="header" color="light">
@@ -198,12 +185,12 @@
         </div>
       </ion-accordion>
     </ion-accordion-group>
-  </div>
+  </div> -->
 
-  <!-- Affichage des matières et cours d'une classe -->
+  <!-- Affichage des matières et cours d'une classe 
   <div *ngIf="showMatieres && selectedClasse" class="matieres-container">
 
-    <!-- En-tête de la classe -->
+    <!-- En-tête de la classe 
     <div class="classe-info-header">
       <h2>{{ selectedClasse.classe }}</h2>
       <ion-badge color="primary">{{ selectedClasse.niveauScolaire }}</ion-badge>
@@ -217,7 +204,7 @@
       </ion-button>
     </div>
 
-    <!-- Accordion pour les matières -->
+    <!-- Accordion pour les matières
     <ion-accordion-group>
       <ion-accordion *ngFor="let matiere of selectedClasse.matieres" [value]="matiere.matiereId">
         <ion-item slot="header" color="light">
@@ -259,7 +246,7 @@
         </div>
       </ion-accordion>
     </ion-accordion-group>
-  </div>
+  </div>  -->
 
   <!-- Mes abonnements (section existante) -->
   <!-- Aucun abonnement -->
@@ -330,18 +317,19 @@
             <!-- Plan -->
             <td class="col-user">
               <div class="user-cell">
-                <div class="user-icon">
-                  <ion-icon name="calendar-outline"></ion-icon>
-                </div>
-                <div class="user-info">
-                  <div class="user-name"> Formule Annuelle </div>
-                </div>
+                  <div class="user-icon">
+                    <ion-icon name="calendar-outline"></ion-icon>
+                  </div>
+                  <div class="user-info">
+                    <div class="user-name"> Formule Annuelle </div>
+                    <div class="matiere"> {{ sub.matieres }} </div>
+                  </div>        
               </div>
             </td>
 
             <!-- Montant -->
             <td class="col-amount">
-              <span class="amount-badge">{{ sub.amount }} {{ sub.currency }}</span>
+              <span class="amount-badge">{{ sub.amount }} FCFA</span>
             </td>
 
             <!-- Période -->

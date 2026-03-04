@@ -2,6 +2,33 @@
    HEADER
    ========================================== */
 
+.pdf-header {
+  ion-toolbar {
+    --background: #ffffff;
+    --border-bottom: 1px solid #e8eef5;
+    --min-height: 60px;
+
+    ion-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #000;
+      text-align: left;
+      padding-left: 8px;
+
+      @media (min-width: 1024px) {
+        font-size: 24px;
+      }
+    }
+
+    .back-button {
+      --color: #000;
+
+      ion-icon {
+        font-size: 24px;
+      }
+    }
+  }
+}
 .subscriptions-header {
   ion-toolbar {
     --background: white;
@@ -107,6 +134,7 @@
     height: 48px;
     font-weight: 600;
     padding: 0 32px;
+    color: white;
 
     @media (min-width: 1024px) {
       height: 52px;
@@ -429,6 +457,18 @@
     .user-name {
       font-weight: 600;
       color: #000;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      @media (min-width: 768px) {
+        font-size: 15px;
+      }
+    }
+
+    .matiere {
+      font-weight: 200;
+      color: #383737;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;

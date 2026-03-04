@@ -1,77 +1,116 @@
-<ion-header>
-    <ion-toolbar>
-        <ion-buttons slot="start">
-            <ion-button (click)="goBack()">
-                <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
-            </ion-button>
-        </ion-buttons>
-        <ion-title>Documents PDF</ion-title>
-    </ion-toolbar>
+<ion-header class="pdf-header ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()" class="back-button">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Bibliothèque PDF</ion-title>
+  </ion-toolbar>
 </ion-header>
 
-<ion-content class="white-background">
-    <div class="page-container">
-        <!-- Barre de recherche -->
-        <ion-searchbar placeholder="Rechercher un PDF..." (ionInput)="searchPdf($event)" animated debounce="300"
-            class="custom-searchbar">
-        </ion-searchbar>
+<ion-content class="pdf-content">
+  <div class="pdf-container">
 
-        <!-- Chargement -->
-        <div *ngIf="isLoading" class="loading-container">
-            <ion-spinner name="crescent"></ion-spinner>
-            <p>Chargement des PDFs...</p>
-        </div>
-
-        <!-- Erreur -->
-        <ion-alert *ngIf="showError && !isLoading" [isOpen]="showError" header="Erreur" [message]="errorMessage"
-            [buttons]="['OK']" (didDismiss)="showError = false">
-        </ion-alert>
-
-        <!-- Liste des PDFs -->
-        <div *ngIf="!isLoading && !showError">
-            <div *ngIf="filteredPdfs.length === 0" class="empty-state">
-                <ion-icon name="documents" size="large"></ion-icon>
-                <h3>Aucun PDF trouvé</h3>
-                <p>Essayez une autre recherche</p>
-            </div>
-
-            <ion-list *ngIf="filteredPdfs.length > 0">
-                <ion-item *ngFor="let pdf of filteredPdfs" class="pdf-item">
-                    <ion-thumbnail slot="start" class="pdf-thumbnail">
-                        <ion-icon name="document" size="large"></ion-icon>
-                    </ion-thumbnail>
-
-                    <ion-label class="pdf-info">
-                        <h2 class="pdf-title">{{ pdf.name }}</h2>
-                        <div class="pdf-details">
-                            <span class="pdf-size">
-                                <ion-icon name="document"></ion-icon>
-                                {{ pdf.size }}
-                            </span>
-                            <span class="pdf-date">
-                                <ion-icon name="time"></ion-icon>
-                                {{ formatDate(pdf.lastModified) }}
-                            </span>
-                        </div>
-                    </ion-label>
-
-                    <div slot="end" class="pdf-actions">
-                        <ion-button fill="clear" color="primary" (click)="viewPdf(pdf)">
-                            <ion-icon name="eye" slot="icon-only"></ion-icon>
-                        </ion-button>
-                        <!-- Liste des PDFs 
-                        <ion-button fill="clear" color="secondary" (click)="downloadPdf(pdf)">
-                            <ion-icon name="download" slot="icon-only"></ion-icon>
-                        </ion-button> -->
-                    </div>
-                </ion-item>
-            </ion-list>
-
-            <!-- Compteur -->
-            <div class="pdf-count" *ngIf="filteredPdfs.length > 0">
-                {{ filteredPdfs.length }} PDF{{ filteredPdfs.length > 1 ? 's' : '' }}
-                trouvé{{ filteredPdfs.length > 1 ? 's' : '' }}
-            </div>
-        </div>
+    <!-- Search Bar -->
+    <div class="search-container">
+      <ion-icon name="search-outline" class="search-icon"></ion-icon>
+      <ion-input 
+        placeholder="Rechercher un PDF..."
+        (ionInput)="searchPdf($event)"
+        class="search-input">
+      </ion-input>
     </div>
+
+    <!-- Loading State -->
+    <div class="loading-state" *ngIf="isLoading">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p>Chargement des PDFs...</p>
+    </div>
+
+    <!-- Error State -->
+    <ion-alert 
+      *ngIf="showError && !isLoading" 
+      [isOpen]="showError" 
+      header="Erreur" 
+      [message]="errorMessage"
+      [buttons]="['OK']" 
+      (didDismiss)="showError = false">
+    </ion-alert>
+
+    <!-- Content -->
+    <div class="pdf-content-area" *ngIf="!isLoading && !showError">
+
+      <!-- Empty State -->
+      <div class="empty-state" *ngIf="filteredPdfs.length === 0">
+        <div class="empty-icon">
+          <ion-icon name="documents-outline"></ion-icon>
+        </div>
+        <h3>Aucun PDF trouvé</h3>
+        <p>Essayez une autre recherche ou parcourez nos documents</p>
+      </div>
+
+      <!-- PDFs Grid -->
+      <div class="pdfs-grid" *ngIf="filteredPdfs.length > 0">
+        <div 
+          *ngFor="let pdf of filteredPdfs" 
+          class="pdf-card"
+          (click)="viewPdf(pdf)">
+          
+          <!-- Card Header -->
+          <div class="card-header">
+            <div class="pdf-icon-container">
+              <ion-icon name="document" class="pdf-icon"></ion-icon>
+              <span class="pdf-badge">PDF</span>
+            </div>
+            
+            <ion-button 
+              fill="clear" 
+              class="action-button"
+              (click)="viewPdf(pdf); $event.stopPropagation()">
+              <ion-icon name="eye-outline"></ion-icon>
+            </ion-button>
+          </div>
+
+          <!-- Card Content -->
+          <div class="card-content">
+            <h3 class="pdf-title">{{ pdf.name }}</h3>
+            
+            <div class="pdf-meta">
+              <span class="meta-item">
+                <ion-icon name="document-outline"></ion-icon>
+                {{ pdf.size }}
+              </span>
+              <span class="meta-item">
+                <ion-icon name="calendar-outline"></ion-icon>
+                {{ formatDate(pdf.lastModified) }}
+              </span>
+            </div>
+
+          </div>
+
+          <!-- Card Footer
+          <div class="card-footer">
+            <ion-button 
+              fill="solid" 
+              size="small"
+              class="view-button"
+              (click)="viewPdf(pdf); $event.stopPropagation()">
+              <ion-icon slot="start" name="eye-outline"></ion-icon>
+              Consulter
+            </ion-button>
+          </div> -->
+        </div>
+      </div>
+
+      <!-- Results Counter -->
+      <div class="results-counter" *ngIf="filteredPdfs.length > 0">
+        <ion-icon name="checkmark-circle"></ion-icon>
+        <span>{{ filteredPdfs.length }} PDF{{ filteredPdfs.length > 1 ? 's' : '' }} 
+          trouvé{{ filteredPdfs.length > 1 ? 's' : '' }}</span>
+      </div>
+
+    </div>
+
+  </div>
 </ion-content>

@@ -51,6 +51,7 @@ import { Chapter, Course } from 'src/app/models/course.model';
 import { EnrollmentService } from 'src/app/features/services/enrollmentService'; // Ajouter cet import
 import { ChapterService } from 'src/app/features/services/chapter.service';
 import { DesktopHeaderComponent } from 'src/app/shared/components/desktop-header/desktop-header.component';
+import { InstructorService } from 'src/app/features/services/instructorService';
 
 @Component({
   selector: 'app-cours-detail',
@@ -81,6 +82,7 @@ export class CoursDetailPage implements OnInit, OnDestroy {
   currentEnrollment: any = null;
   chapter!: Chapter;
   heroActiveTab: 'chapters' | 'documents' = 'chapters';
+  instructor: any = null;
 
   chapters: Chapter[] = [];
   private courseSubscription: Subscription = new Subscription();
@@ -101,6 +103,7 @@ export class CoursDetailPage implements OnInit, OnDestroy {
     private modalCtrl: ModalController,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
+    private instructorService: InstructorService,
   ) {
     addIcons({
       chevronBackOutline,
@@ -133,6 +136,8 @@ export class CoursDetailPage implements OnInit, OnDestroy {
     this.loadCourseDetails();
   }
 
+
+
   loadUserData() {
     const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
     if (localUser) {
@@ -141,11 +146,27 @@ export class CoursDetailPage implements OnInit, OnDestroy {
     }
   }
 
+  handleDocumentAccess(doc: any) {
+    if (!this.isUserEnrolled) {
+      this.openSubscription(); // popup abonnement
+      return;
+    }
+
+    if (doc?.url) {
+      window.open(doc.url, '_blank');
+    }
+  }
+
   get subscriptionButtonText(): string {
     if (this.userNiveauScolaire === 'ELEMENTAIRE' && this.userClasse) {
       return `Souscrire à l'abonnement ${this.userClasse}`;
     }
-    if (['MOYEN', 'SECONDAIRE', 'UNIVERSITAIRE'].includes(this.userNiveauScolaire) && this.userClasse) {
+    if (
+      ['MOYEN', 'SECONDAIRE', 'UNIVERSITAIRE'].includes(
+        this.userNiveauScolaire,
+      ) &&
+      this.userClasse
+    ) {
       return `Souscrire à l'abonnement ${this.userClasse}`;
     }
     return "Souscrire à l'abonnement";
@@ -247,24 +268,24 @@ export class CoursDetailPage implements OnInit, OnDestroy {
         console.log('Course loaded from API:', this.course);
 
         // 🔥 Lecture Firestore pour champs manquants
-        try {
-          const courseRef = doc(this.firestore, 'courses', courseId);
-          const snap = await getDoc(courseRef);
+        // try {
+        //   const courseRef = doc(this.firestore, 'courses', courseId);
+        //   const snap = await getDoc(courseRef);
 
-          if (snap.exists()) {
-            const firestoreCourse: any = snap.data();
+        //   if (snap.exists()) {
+        //     const firestoreCourse: any = snap.data();
 
-            if (this.course) {
-              this.course.instructorId = firestoreCourse.instructorId || null;
+        //     if (this.course) {
+        //       this.course.instructorId = firestoreCourse.instructorId || null;
 
-              this.course.instructorName =
-                firestoreCourse.instructorName || null;
-            }
-          }
-        } catch (err) {
-          console.error('Erreur lecture Firestore:', err);
-        }
-
+        //       this.course.instructorName =
+        //         firestoreCourse.instructorName || null;
+        //     }
+        //   }
+        // } catch (err) {
+        //   console.error('Erreur lecture Firestore:', err);
+        // }
+        this.loadInstructorData();
         // Charger autres données
         this.loadChapters(courseId);
         this.checkUserEnrollment(courseId);
@@ -277,6 +298,34 @@ export class CoursDetailPage implements OnInit, OnDestroy {
         this.isLoading = false;
       },
     });
+  }
+
+  async loadInstructorData() {
+    this.isLoading = true;
+
+    const instructorId = this.course?.instructorId;
+    console.log('instructorId', this.course);
+    
+    if (!instructorId) {
+      // Pas d'instructeur associé au cours : arrêter et enlever le loader
+      this.isLoading = false;
+      return;
+    }
+
+    this.instructorService
+      .getInstructorById(instructorId)
+      .subscribe({
+        next: async (instructor) => {
+          this.instructor = instructor;
+          console.log("jjj", this.instructor);
+          
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Erreur chargement instructeur :', error);
+          this.isLoading = false;
+        },
+      });
   }
 
   checkUserEnrollment(courseId: string) {
@@ -293,6 +342,8 @@ export class CoursDetailPage implements OnInit, OnDestroy {
 
     // Vérifier l'abonnement via l'API
     if (userId) {
+      console.log('je suis ici');
+
       this.enrollmentService.checkCourseAccess(userId).subscribe({
         next: (response) => {
           if (response.success && response.hasAccess) {
@@ -311,7 +362,7 @@ export class CoursDetailPage implements OnInit, OnDestroy {
         error: () => {
           // En cas d'erreur API, vérifier les enrollments
           this.checkIndividualEnrollment(courseId);
-        }
+        },
       });
     } else {
       this.checkIndividualEnrollment(courseId);

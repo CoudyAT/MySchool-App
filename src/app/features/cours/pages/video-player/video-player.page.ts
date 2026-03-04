@@ -19,6 +19,15 @@ import {
   downloadOutline,
   star,
   starHalf,
+  playCircleOutline,
+  layersOutline,
+  timeOutline,
+  personOutline,
+  pencilOutline,
+  bookOutline,
+  shieldCheckmarkOutline,
+  playOutline,
+  arrowForwardOutline,
 } from 'ionicons/icons';
 
 import { Router, ActivatedRoute } from '@angular/router';
@@ -27,7 +36,13 @@ import { addIcons } from 'ionicons';
 import { ChapterService } from 'src/app/features/services/chapter.service';
 
 // 🔥 Firestore
-import { DocumentData, DocumentReference, Firestore, doc, updateDoc } from '@angular/fire/firestore';
+import {
+  DocumentData,
+  DocumentReference,
+  Firestore,
+  doc,
+  updateDoc,
+} from '@angular/fire/firestore';
 import { Subscription } from 'rxjs';
 import { CourseService } from 'src/app/features/services/courseService';
 
@@ -55,7 +70,6 @@ export class VideoPlayerPage implements OnInit {
   enrollment: any;
   isLoading = true;
   private courseSubscription: Subscription = new Subscription();
-  
 
   progress: number = 0;
 
@@ -79,6 +93,15 @@ export class VideoPlayerPage implements OnInit {
   ) {
     addIcons({
       chevronBackOutline,
+      playCircleOutline,
+      layersOutline,
+      timeOutline,
+      personOutline,
+      pencilOutline,
+      bookOutline,
+      shieldCheckmarkOutline,
+      playOutline,
+      arrowForwardOutline,
       languageOutline,
       downloadOutline,
       star,
@@ -240,4 +263,3 @@ export class VideoPlayerPage implements OnInit {
 function getDoc(courseRef: DocumentReference<DocumentData, DocumentData>) {
   throw new Error('Function not implemented.');
 }
-

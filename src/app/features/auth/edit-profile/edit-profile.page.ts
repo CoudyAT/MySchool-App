@@ -242,7 +242,7 @@ export class EditProfilePage implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/profile']);
+    this.router.navigate(['/courses']);
   }
 
   selectImage() {
