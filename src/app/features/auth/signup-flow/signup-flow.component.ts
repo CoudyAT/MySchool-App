@@ -68,6 +68,7 @@ import {
   callOutline,
   closeCircle,
   informationCircleOutline,
+  keyOutline,
 } from 'ionicons/icons';
 import { nations } from 'src/app/shared/utils/nations';
 
@@ -158,6 +159,12 @@ export class SignupFlowComponent implements OnInit {
   @ViewChild('daySelect') daySelect!: ElementRef<HTMLSelectElement>;
   @ViewChild('monthSelect') monthSelect!: ElementRef<HTMLSelectElement>;
   @ViewChild('yearSelect') yearSelect!: ElementRef<HTMLSelectElement>;
+  @ViewChild('phoneInput') phoneInput!: ElementRef<HTMLIonInputElement>;
+  @ViewChild('otpInput') otpInput!: ElementRef<HTMLIonInputElement>;
+
+  displayedPhone = '';
+  otpError = '';
+  autoVerify = true;
 
   // Nouveaux états
   isCheckingUser = false;
@@ -263,7 +270,6 @@ export class SignupFlowComponent implements OnInit {
   ) {
     addIcons({
       chevronBack,
-      callOutline,
       person,
       calendarOutline,
       closeCircle,
@@ -273,6 +279,8 @@ export class SignupFlowComponent implements OnInit {
       businessOutline,
       checkmarkCircle,
       sync,
+      keyOutline,
+      callOutline,
       business,
       informationCircleOutline,
       arrowForward,
@@ -329,15 +337,18 @@ export class SignupFlowComponent implements OnInit {
 
   initForms() {
     this.welcomeForm = this.fb.group({
+      countryCode: ['+221', Validators.required],
       phone: [
         '',
-        [Validators.required, Validators.pattern(/^\+?[\d\s\-\(\)]{8,}$/)],
+        [
+          Validators.required,
+          Validators.pattern(/^[0-9]{6,15}$/), // Uniquement des chiffres
+        ],
       ],
-      // password: [''],
     });
 
     this.otpForm = this.fb.group({
-      otp: ['', [Validators.required, Validators.minLength(6)]],
+      otpCode: ['', [Validators.required, Validators.minLength(6)]],
     });
 
     // Formulaire d'info personnelles avec confirmation mot de passe
@@ -368,6 +379,139 @@ export class SignupFlowComponent implements OnInit {
   // =====================
   // Étape 1: Vérifier si connexion ou inscription
   // =====================
+
+  onPhoneInput(event: any) {
+    let value = event.target.value || '';
+
+    // Ne garder que les chiffres
+    const digits = value.replace(/\D/g, '');
+
+    // Mettre à jour le champ avec seulement les chiffres
+    this.welcomeForm.patchValue({ phone: digits }, { emitEvent: false });
+  }
+
+  onCountryCodeChange() {
+    setTimeout(() => {
+      if (this.phoneInput?.nativeElement) {
+        try {
+          this.phoneInput.nativeElement.setFocus();
+        } catch (e) {}
+      }
+    }, 100);
+  }
+
+  onSingleOtpInput(event: any) {
+    const input = event.target;
+    let value = input.value || '';
+
+    // Nettoyer : ne garder que les chiffres
+    value = value.replace(/\D/g, '');
+
+    // Limiter à 6 chiffres
+    if (value.length > 6) {
+      value = value.substring(0, 6);
+    }
+
+    // Mettre à jour la valeur du formulaire
+    this.otpForm.patchValue({ otpCode: value });
+
+    // Effacer les erreurs
+    this.otpError = '';
+
+    // Vérification automatique si activée
+    if (this.autoVerify && value.length === 6) {
+      setTimeout(() => {
+        this.verifyOtp();
+      }, 500);
+    }
+  }
+
+  onOtpKeyDown(event: KeyboardEvent) {
+    const allowedKeys = [
+      '0',
+      '1',
+      '2',
+      '3',
+      '4',
+      '5',
+      '6',
+      '7',
+      '8',
+      '9',
+      'Backspace',
+      'Delete',
+      'Tab',
+      'ArrowLeft',
+      'ArrowRight',
+      'Home',
+      'End',
+    ];
+
+    if (!allowedKeys.includes(event.key) && !event.ctrlKey && !event.metaKey) {
+      event.preventDefault();
+    }
+  }
+
+  onOtpPaste(event: ClipboardEvent) {
+    event.preventDefault();
+
+    const pastedData = event.clipboardData?.getData('text') || '';
+    const digits = pastedData.replace(/\D/g, '').slice(0, 6);
+
+    if (digits) {
+      this.otpForm.patchValue({ otpCode: digits });
+      this.otpError = '';
+
+      if (this.autoVerify && digits.length === 6) {
+        setTimeout(() => {
+          this.verifyOtp();
+        }, 500);
+      }
+    }
+  }
+
+  // Vérifier si l'OTP est complet
+  isOtpComplete(): boolean {
+    const otpValue = this.otpForm.get('otpCode')?.value || '';
+    return otpValue.length === 6 && /^\d+$/.test(otpValue);
+  }
+
+  // Modifier le numéro
+  editPhoneNumber() {
+    this.otpSent = false;
+    this.otpForm.reset();
+    this.otpError = '';
+
+    if (this.otpTimer) {
+      clearInterval(this.otpTimer);
+    }
+    this.otpCountdown = 0;
+    this.canResendOtp = true;
+
+    setTimeout(() => {
+      if (this.phoneInput?.nativeElement) {
+        try {
+          this.phoneInput.nativeElement.setFocus();
+        } catch (e) {}
+      }
+    }, 300);
+  }
+
+  // Formater le numéro pour l'affichage
+  formatPhoneDisplay(phone: string): string {
+    const countryCode = this.welcomeForm.get('countryCode')?.value || '+221';
+    const phoneNumber = this.welcomeForm.get('phone')?.value || '';
+
+    if (countryCode === '+221' && phoneNumber.length === 9) {
+      const formatted = phoneNumber.replace(
+        /(\d{2})(\d{3})(\d{2})(\d{2})/,
+        '$1 $2 $3 $4',
+      );
+      return `${countryCode} ${formatted}`;
+    }
+
+    return `${countryCode} ${phoneNumber}`;
+  }
 
   async checkLoginOrSignup() {
     if (!this.welcomeForm.get('phone')?.valid || this.isCheckingUser) {
@@ -673,25 +817,102 @@ export class SignupFlowComponent implements OnInit {
     return this.availableObjectives.filter((obj) => obj.selected).length;
   }
 
+  // async sendOtp() {
+  //   if (!this.welcomeForm.get('phone')?.valid || this.isSendingOtp) {
+  //     return;
+  //   }
+
+  //   this.isSendingOtp = true;
+  //   const phone = this.welcomeForm.value.phone;
+
+  //   try {
+  //     // Initialiser le recaptcha si ce n'est pas déjà fait
+  //     if (!this.recaptchaVerifier) {
+  //       this.recaptchaVerifier = new RecaptchaVerifier(
+  //         this.auth,
+  //         'recaptcha-container',
+  //         {
+  //           size: 'invisible',
+  //           callback: () => {
+  //             console.log('reCAPTCHA résolu');
+  //           },
+  //           'expired-callback': () => {
+  //             console.log('reCAPTCHA expiré');
+  //           },
+  //         },
+  //       );
+  //     }
+
+  //     // Nettoyer et formater le numéro pour Firebase
+  //     const formattedPhone = this.formatPhoneForFirebase(phone);
+
+  //     // Envoyer le code OTP
+  //     this.confirmationResult = await signInWithPhoneNumber(
+  //       this.auth,
+  //       formattedPhone,
+  //       this.recaptchaVerifier,
+  //     );
+
+  //     // Activer l'étape OTP
+  //     this.otpSent = true;
+  //     this.startOtpCountdown();
+
+  //     await this.showToast('Code OTP envoyé par SMS', 'success');
+  //   } catch (error: any) {
+  //     console.error('Erreur envoi OTP:', error);
+
+  //     let errorMessage = "Erreur lors de l'envoi du code OTP";
+
+  //     if (error.code === 'auth/invalid-phone-number') {
+  //       errorMessage = 'Numéro de téléphone invalide';
+  //     } else if (error.code === 'auth/too-many-requests') {
+  //       errorMessage = 'Trop de tentatives. Veuillez réessayer plus tard';
+  //     } else if (error.code === 'auth/quota-exceeded') {
+  //       errorMessage = 'Quota SMS dépassé. Contactez le support';
+  //     }
+
+  //     await this.showToast(errorMessage, 'danger');
+  //   } finally {
+  //     this.isSendingOtp = false;
+  //   }
+  // }
+
   async sendOtp() {
-    if (!this.welcomeForm.get('phone')?.valid || this.isSendingOtp) {
+    if (!this.welcomeForm.valid || this.isSendingOtp) {
       return;
     }
 
     this.isSendingOtp = true;
-    const phone = this.welcomeForm.value.phone;
+
+    const countryCode = this.welcomeForm.get('countryCode')?.value;
+    let phoneNumber = this.welcomeForm.get('phone')?.value;
+
+    // Nettoyer le numéro
+    phoneNumber = phoneNumber.replace(/\D/g, '');
+    const fullPhone = countryCode + phoneNumber;
+
+    // Validation spécifique selon le pays
+    if (countryCode === '+221' && phoneNumber.length !== 9) {
+      await this.showToast(
+        'Le numéro sénégalais doit contenir 9 chiffres',
+        'warning',
+      );
+      this.isSendingOtp = false;
+      return;
+    }
+
+    // Stocker pour affichage
+    this.displayedPhone = this.formatPhoneDisplay(fullPhone);
 
     try {
-      // Initialiser le recaptcha si ce n'est pas déjà fait
+      // Initialiser reCAPTCHA si nécessaire
       if (!this.recaptchaVerifier) {
         this.recaptchaVerifier = new RecaptchaVerifier(
           this.auth,
           'recaptcha-container',
           {
             size: 'invisible',
-            callback: () => {
-              console.log('reCAPTCHA résolu');
-            },
+            callback: () => {},
             'expired-callback': () => {
               console.log('reCAPTCHA expiré');
             },
@@ -699,32 +920,38 @@ export class SignupFlowComponent implements OnInit {
         );
       }
 
-      // Nettoyer et formater le numéro pour Firebase
-      const formattedPhone = this.formatPhoneForFirebase(phone);
-
       // Envoyer le code OTP
       this.confirmationResult = await signInWithPhoneNumber(
         this.auth,
-        formattedPhone,
+        fullPhone,
         this.recaptchaVerifier,
       );
 
-      // Activer l'étape OTP
+      // Succès
       this.otpSent = true;
       this.startOtpCountdown();
+      await this.showToast('Code envoyé par SMS', 'success');
 
-      await this.showToast('Code OTP envoyé par SMS', 'success');
+      // Focus sur le champ OTP
+      setTimeout(() => {
+        if (this.otpInput?.nativeElement) {
+          try {
+            this.otpInput.nativeElement.setFocus();
+          } catch (e) {}
+        }
+      }, 300);
     } catch (error: any) {
       console.error('Erreur envoi OTP:', error);
 
-      let errorMessage = "Erreur lors de l'envoi du code OTP";
-
+      let errorMessage = "Erreur lors de l'envoi du code";
       if (error.code === 'auth/invalid-phone-number') {
         errorMessage = 'Numéro de téléphone invalide';
       } else if (error.code === 'auth/too-many-requests') {
         errorMessage = 'Trop de tentatives. Veuillez réessayer plus tard';
       } else if (error.code === 'auth/quota-exceeded') {
-        errorMessage = 'Quota SMS dépassé. Contactez le support';
+        errorMessage = 'Quota SMS dépassé';
+      } else if (error.code === 'auth/invalid-app-credential') {
+        errorMessage = 'Erreur de configuration Firebase';
       }
 
       await this.showToast(errorMessage, 'danger');
@@ -733,62 +960,124 @@ export class SignupFlowComponent implements OnInit {
     }
   }
 
+  // async verifyOtp() {
+  //   if (!this.otpForm.valid || this.isVerifyingOtp) {
+  //     return;
+  //   }
+
+  //   this.isVerifyingOtp = true;
+  //   const code = this.otpForm.value.otp;
+
+  //   try {
+  //     const result = await this.confirmationResult.confirm(code);
+  //     const firebaseUser = result.user;
+
+  //     // Numéro vérifié avec succès
+  //     const verifiedPhone = firebaseUser.phoneNumber;
+  //     const cleanPhone = this.formatPhoneForSearch(verifiedPhone || '');
+
+  //     // 🔍 Vérifier si l'utilisateur existe déjà
+  //     // const usersRef = collection(this.firestore, 'utilisateur');
+  //     // const q = query(usersRef, where('phone', '==', cleanPhone));
+  //     // const snapshot = await getDocs(q);
+
+  //     // if (!snapshot.empty) {
+  //     //   // 🔐 Connexion d'un utilisateur existant
+  //     //   const userDoc = snapshot.docs[0];
+  //     //   localStorage.setItem(
+  //     //     'currentUser',
+  //     //     JSON.stringify({ ...userDoc.data(), id: userDoc.id }),
+  //     //   );
+
+  //     //   await this.showToast('Connexion réussie', 'success');
+  //     //   setTimeout(() => {
+  //     //     window.location.href = '/courses';
+  //     //   }, 1000);
+  //     //   return;
+  //     // }
+
+  //     // 🆕 Nouvel utilisateur - passer à l'étape 1
+  //     this.userData.phone = cleanPhone;
+  //     this.personalInfoForm.patchValue({ phone: cleanPhone });
+  //     this.currentStep = 1; // Passer à l'étape des infos personnelles
+  //     this.otpSent = false;
+
+  //     await this.showToast('Numéro vérifié avec succès', 'success');
+  //   } catch (error: any) {
+  //     console.error('Erreur vérification OTP:', error);
+
+  //     let errorMessage = 'Code OTP incorrect';
+
+  //     if (error.code === 'auth/invalid-verification-code') {
+  //       errorMessage = 'Code OTP invalide';
+  //     } else if (error.code === 'auth/code-expired') {
+  //       errorMessage = 'Code OTP expiré. Veuillez en demander un nouveau';
+  //       this.otpSent = false;
+  //     }
+
+  //     await this.showToast(errorMessage, 'danger');
+  //   } finally {
+  //     this.isVerifyingOtp = false;
+  //   }
+  // }
+
   async verifyOtp() {
-    if (!this.otpForm.valid || this.isVerifyingOtp) {
+    if (!this.isOtpComplete() || this.isVerifyingOtp) {
       return;
     }
 
     this.isVerifyingOtp = true;
-    const code = this.otpForm.value.otp;
+    this.otpError = '';
 
     try {
-      const result = await this.confirmationResult.confirm(code);
-      const firebaseUser = result.user;
-
-      // Numéro vérifié avec succès
-      const verifiedPhone = firebaseUser.phoneNumber;
+      const otpCode = this.otpForm.get('otpCode')?.value;
+      const result = await this.confirmationResult.confirm(otpCode);
+      const verifiedPhone = result.user.phoneNumber;
       const cleanPhone = this.formatPhoneForSearch(verifiedPhone || '');
 
-      // 🔍 Vérifier si l'utilisateur existe déjà
-      // const usersRef = collection(this.firestore, 'utilisateur');
-      // const q = query(usersRef, where('phone', '==', cleanPhone));
-      // const snapshot = await getDocs(q);
+      // Vérifier si l'utilisateur existe
+      const usersCollection = collection(this.firestore, 'utilisateur');
+      const phoneQuery = query(
+        usersCollection,
+        where('phone', '==', cleanPhone),
+      );
+      const snapshot = await getDocs(phoneQuery);
 
-      // if (!snapshot.empty) {
-      //   // 🔐 Connexion d'un utilisateur existant
-      //   const userDoc = snapshot.docs[0];
-      //   localStorage.setItem(
-      //     'currentUser',
-      //     JSON.stringify({ ...userDoc.data(), id: userDoc.id }),
-      //   );
+      if (!snapshot.empty) {
+        // Utilisateur existant - connexion
+        const userDoc = snapshot.docs[0];
+        localStorage.setItem(
+          'currentUser',
+          JSON.stringify({ ...userDoc.data(), id: userDoc.id }),
+        );
+        await this.showToast('Connexion réussie', 'success');
+        setTimeout(() => {
+          window.location.href = '/courses';
+        }, 1000);
+        return;
+      }
 
-      //   await this.showToast('Connexion réussie', 'success');
-      //   setTimeout(() => {
-      //     window.location.href = '/courses';
-      //   }, 1000);
-      //   return;
-      // }
-
-      // 🆕 Nouvel utilisateur - passer à l'étape 1
+      // Nouvel utilisateur
       this.userData.phone = cleanPhone;
       this.personalInfoForm.patchValue({ phone: cleanPhone });
-      this.currentStep = 1; // Passer à l'étape des infos personnelles
+      this.currentStep = 1;
       this.otpSent = false;
 
       await this.showToast('Numéro vérifié avec succès', 'success');
     } catch (error: any) {
       console.error('Erreur vérification OTP:', error);
 
-      let errorMessage = 'Code OTP incorrect';
-
       if (error.code === 'auth/invalid-verification-code') {
-        errorMessage = 'Code OTP invalide';
+        this.otpError = 'Code incorrect';
       } else if (error.code === 'auth/code-expired') {
-        errorMessage = 'Code OTP expiré. Veuillez en demander un nouveau';
+        this.otpError = 'Code expiré';
         this.otpSent = false;
+      } else {
+        this.otpError = 'Erreur de vérification';
       }
 
-      await this.showToast(errorMessage, 'danger');
+      await this.showToast(this.otpError, 'danger');
+      this.otpForm.patchValue({ otpCode: '' });
     } finally {
       this.isVerifyingOtp = false;
     }

@@ -38,6 +38,8 @@ import {
   ToastController,
   IonCheckbox,
   IonLabel,
+  IonSelectOption,
+  IonSelect,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -67,6 +69,8 @@ import {
     IonProgressBar,
     IonCheckbox,
     IonLabel,
+    IonSelectOption,
+    IonSelect,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
@@ -110,9 +114,13 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
     // Initialiser avec +221 par défaut
     this.phoneForm = this.fb.group({
+      countryCode: ['+221', Validators.required],
       phone: [
-        '+221',
-        [Validators.required, Validators.pattern(/^\+\d{6,15}$/)],
+        '',
+        [
+          Validators.required,
+          Validators.pattern(/^[\d\s]{6,15}$/), // Accepter chiffres et espaces
+        ],
       ],
     });
 
@@ -131,11 +139,30 @@ export class LoginComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.phoneForm = this.fb.group({
+      countryCode: ['+221', Validators.required],
+      phone: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(/^[0-9]{6,15}$/), // ← UNIQUEMENT DES CHIFFRES, pas d'espaces
+        ],
+      ],
+    });
     // Vérifier si un numéro est passé en paramètre
     this.route.queryParams.subscribe((params) => {
       if (params['phone']) {
         const phone = this.normalizePhone(params['phone']);
-        this.phoneForm.patchValue({ phone });
+        // Extraire l'indicatif et le numéro
+        if (phone.startsWith('+')) {
+          const match = phone.match(/^(\+\d+)(.+)$/);
+          if (match) {
+            this.phoneForm.patchValue({
+              countryCode: match[1],
+              phone: match[2].trim(),
+            });
+          }
+        }
       }
     });
 
@@ -184,128 +211,181 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
   // Normaliser le numéro de téléphone
   normalizePhone(phone: string): string {
-    if (!phone) return '+221';
-
-    // Si le numéro commence déjà par +, le garder
-    if (phone.startsWith('+')) {
-      return phone;
-    }
-
-    // Nettoyer les caractères non numériques
-    const cleaned = phone.replace(/\D/g, '');
-
-    if (cleaned.startsWith('221')) {
-      return '+' + cleaned;
-    }
-
-    if (cleaned.length === 9) {
-      // Numéro Sénégal: 771234567 -> +221771234567
-      return '+221' + cleaned;
-    }
-
-    if (cleaned.length === 10 && cleaned.startsWith('0')) {
-      // Numéro avec 0: 0771234567 -> +221771234567
-      return '+221' + cleaned.substring(1);
-    }
-
-    // Par défaut, ajouter +221
-    return '+221' + cleaned;
+    return phone.replace(/\D/g, '');
   }
 
   // Gestion de la saisie du téléphone
   onPhoneInput(event: any) {
     let value = event.target.value || '';
 
-    // Si l'utilisateur supprime le +221, le remettre
-    if (!value.startsWith('+221')) {
-      // Ajouter +221 si absent
-      if (value.startsWith('+')) {
-        // Si c'est un autre code pays, le garder
-        // Sinon, forcer +221
-        if (value.length <= 4) {
-          value = '+221';
-        }
-      } else {
-        // Ajouter +221 devant
-        const digits = value.replace(/\D/g, '');
-        value = '+221' + digits;
-      }
+    // Ne garder que les chiffres
+    const digits = value.replace(/\D/g, '');
 
-      // Mettre à jour le champ
-      this.phoneForm.patchValue({ phone: value });
+    // Mettre à jour le champ avec seulement les chiffres
+    this.phoneForm.patchValue({ phone: digits }, { emitEvent: false });
 
-      // Déplacer le curseur à la fin
-      setTimeout(() => {
-        if (this.phoneInput) {
-          const inputEl = this.phoneInput.nativeElement;
-          inputEl.setFocus();
-          // Positionner le curseur à la fin
-          const input = inputEl.getInputElement();
-          input.then((nativeInput: HTMLInputElement) => {
-            nativeInput.setSelectionRange(value.length, value.length);
-          });
-        }
-      }, 10);
-    }
+    // Ne pas forcer le focus ou le curseur ici
   }
 
   // Envoyer OTP
+  // async sendOtp() {
+  //   console.log("sendOtp called",this.phoneForm.valid);
+
+  //   // Vérifier que le formulaire est valide
+  //   if (!this.phoneForm.valid) {
+  //     await this.showToast('Veuillez entrer un numéro valide', 'warning');
+  //     return;
+  //   }
+
+  //   const countryCode = this.phoneForm.value.countryCode;
+  //   const phoneNumber = this.phoneForm.value.phone;
+
+  //   const fullPhone = countryCode + phoneNumber;
+
+  //   // Vérifier que le numéro est complet (9 chiffres après +221)
+  //   const cleanPhone = this.formatPhoneForSearch(fullPhone);
+  //   if (cleanPhone.length !== 9) {
+  //     await this.showToast('Le numéro doit contenir 9 chiffres', 'warning');
+  //     return;
+  //   }
+
+  //   // Activer le loader
+  //   this.loading = true;
+
+  //   // Formater le numéro pour l'affichage
+  //   this.displayedPhone = `${countryCode} ${phoneNumber}`;
+
+  //   console.log('hhhg', this.displayedPhone);
+
+  //   // Afficher un toast informatif
+  //   await this.showToast(
+  //     `Envoi du code à ${this.displayedPhone}...`,
+  //     'primary',
+  //   );
+
+  //   try {
+  //     // Envoyer le code OTP avec reCAPTCHA
+  //     this.confirmationResult = await signInWithPhoneNumber(
+  //       this.auth,
+  //       fullPhone,
+  //       this.recaptchaVerifier,
+  //     );
+
+  //     // Succès
+  //     this.otpSent = true;
+  //     this.loading = false;
+
+  //     // Démarrer le compte à rebours
+  //     this.startCountdown();
+
+  //     await this.showToast('Code envoyé par SMS avec succès', 'success');
+
+  //     // Focus sur le champ OTP
+  //     setTimeout(() => {
+  //       if (this.otpInput) {
+  //         this.otpInput.nativeElement.setFocus();
+  //       }
+  //     }, 300);
+  //   } catch (error: any) {
+  //     console.error('Erreur envoi OTP:', error);
+  //     this.loading = false;
+
+  //     // Gestion des erreurs spécifiques Firebase
+  //     let errorMessage = "Erreur lors de l'envoi du code";
+
+  //     if (error.code === 'auth/invalid-phone-number') {
+  //       errorMessage = 'Numéro de téléphone invalide';
+  //     } else if (error.code === 'auth/too-many-requests') {
+  //       errorMessage = 'Trop de tentatives. Veuillez réessayer plus tard.';
+  //     } else if (error.code === 'auth/quota-exceeded') {
+  //       errorMessage = 'Quota SMS dépassé. Veuillez contacter le support.';
+  //     } else if (error.code === 'auth/captcha-check-failed') {
+  //       errorMessage = 'Échec de vérification reCAPTCHA. Réessayez.';
+  //     }
+
+  //     await this.showToast(errorMessage, 'danger');
+  //   }
+  // }
+
   async sendOtp() {
-    // Vérifier que le formulaire est valide
+    console.log('sendOtp called', this.phoneForm.valid);
+    console.log('Form values:', this.phoneForm.value);
+
     if (!this.phoneForm.valid) {
       await this.showToast('Veuillez entrer un numéro valide', 'warning');
       return;
     }
 
-    const phone = this.phoneForm.value.phone;
+    const countryCode = this.phoneForm.get('countryCode')?.value;
+    let phoneNumber = this.phoneForm.get('phone')?.value;
 
-    // Vérifier que le numéro est complet (9 chiffres après +221)
-    const cleanPhone = this.formatPhoneForSearch(phone);
-    if (cleanPhone.length !== 9) {
-      await this.showToast('Le numéro doit contenir 9 chiffres', 'warning');
+    if (!countryCode || !phoneNumber) {
+      await this.showToast('Veuillez remplir tous les champs', 'warning');
       return;
     }
 
-    // Activer le loader
+    phoneNumber = phoneNumber.replace(/\D/g, '');
+    const fullPhone = countryCode + phoneNumber;
+
+    console.log('Full phone:', fullPhone);
+
+    // Vérification plus stricte pour le Sénégal
+    if (countryCode === '+221' && phoneNumber.length !== 9) {
+      await this.showToast(
+        'Le numéro sénégalais doit contenir 9 chiffres',
+        'warning',
+      );
+      return;
+    }
+
     this.loading = true;
-
-    // Formater le numéro pour l'affichage
-    this.displayedPhone = this.formatPhoneDisplay(phone);
-
-    // Afficher un toast informatif
-    await this.showToast(
-      `Envoi du code à ${this.displayedPhone}...`,
-      'primary',
-    );
+    this.displayedPhone = this.formatPhoneDisplay(fullPhone);
 
     try {
-      // Envoyer le code OTP avec reCAPTCHA
+      // S'assurer que le conteneur reCAPTCHA existe
+      const recaptchaContainer = document.getElementById('recaptcha-container');
+      if (!recaptchaContainer) {
+        throw new Error('reCAPTCHA container not found');
+      }
+
+      // Réinitialiser reCAPTCHA si nécessaire
+      if (this.recaptchaVerifier) {
+        try {
+          await this.recaptchaVerifier.clear();
+        } catch (e) {
+          console.log('Could not clear reCAPTCHA', e);
+        }
+      }
+
+      // Initialiser reCAPTCHA
+      this.initializeRecaptcha();
+
+      // Attendre que reCAPTCHA soit prêt
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Envoyer le code
       this.confirmationResult = await signInWithPhoneNumber(
         this.auth,
-        phone,
+        fullPhone,
         this.recaptchaVerifier,
       );
 
-      // Succès
       this.otpSent = true;
       this.loading = false;
-
-      // Démarrer le compte à rebours
       this.startCountdown();
-
       await this.showToast('Code envoyé par SMS avec succès', 'success');
 
-      // Focus sur le champ OTP
       setTimeout(() => {
-        if (this.otpInput) {
-          this.otpInput.nativeElement.setFocus();
+        if (this.otpInput?.nativeElement) {
+          try {
+            this.otpInput.nativeElement.setFocus();
+          } catch (e) {}
         }
       }, 300);
     } catch (error: any) {
       console.error('Erreur envoi OTP:', error);
       this.loading = false;
 
-      // Gestion des erreurs spécifiques Firebase
       let errorMessage = "Erreur lors de l'envoi du code";
 
       if (error.code === 'auth/invalid-phone-number') {
@@ -313,13 +393,30 @@ export class LoginComponent implements OnInit, AfterViewInit {
       } else if (error.code === 'auth/too-many-requests') {
         errorMessage = 'Trop de tentatives. Veuillez réessayer plus tard.';
       } else if (error.code === 'auth/quota-exceeded') {
-        errorMessage = 'Quota SMS dépassé. Veuillez contacter le support.';
+        errorMessage = 'Quota SMS dépassé';
       } else if (error.code === 'auth/captcha-check-failed') {
-        errorMessage = 'Échec de vérification reCAPTCHA. Réessayez.';
+        errorMessage = 'Échec de vérification reCAPTCHA';
+      } else if (error.code === 'auth/invalid-app-credential') {
+        errorMessage =
+          "Erreur de configuration Firebase. Vérifiez que l'authentification par téléphone est activée dans Firebase Console.";
+        console.error('Configuration Firebase requise:', {
+          message:
+            'Activez "Phone" dans Firebase Console > Authentication > Sign-in methods',
+          documentation: 'https://firebase.google.com/docs/auth/web/phone-auth',
+        });
       }
 
       await this.showToast(errorMessage, 'danger');
     }
+  }
+
+  onCountryCodeChange() {
+    // Remettre le focus sur le champ téléphone après changement d'indicatif
+    setTimeout(() => {
+      if (this.phoneInput) {
+        this.phoneInput.nativeElement.setFocus();
+      }
+    }, 100);
   }
 
   // Gestion de la saisie OTP simplifiée
@@ -648,7 +745,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
       if (this.phoneInput) {
         this.phoneInput.nativeElement.setFocus();
       }
-    }, 100);
+    }, 300);
   }
 
   // Gestion du compte à rebours
@@ -694,13 +791,10 @@ export class LoginComponent implements OnInit, AfterViewInit {
     let clean = phone.replace(/\D/g, '');
 
     if (clean.startsWith('221') && clean.length === 12) {
-      return clean.substring(3); // Enlever "221"
+      return clean.substring(3);
     }
     if (clean.length === 10 && clean.startsWith('0')) {
-      return clean.substring(1); // Enlever le 0 initial
-    }
-    if (clean.length === 9) {
-      return clean; // Format Sénégal
+      return clean.substring(1);
     }
     return clean;
   }

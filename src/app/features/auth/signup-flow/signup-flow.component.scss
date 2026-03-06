@@ -21,7 +21,98 @@ body{
 }
 
 
+// Dans login.component.scss ou signup-flow.component.scss
 
+.phone-input-wrapper {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: #f5f7fa;
+  border-radius: 12px;
+  padding: 4px;
+}
+
+.country-select {
+  min-width: 100px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+  background: white;
+  border-radius: 10px;
+  --background: white;
+  --placeholder-color: #666;
+  --color: #333;
+  font-weight: 500;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  
+  &::part(icon) {
+    color: #666;
+  }
+}
+
+.phone-input {
+  --background: transparent;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+  --placeholder-color: #999;
+  --color: #333;
+  font-size: 16px;
+  flex: 1;
+  
+  input {
+    &::placeholder {
+      color: #bbb;
+      font-weight: 400;
+    }
+  }
+}
+
+.input-group-modern {
+  margin-bottom: 24px;
+  
+  .input-label-modern {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+    margin-left: 4px;
+  }
+}
+
+.phone-hint {
+  font-size: 13px;
+  color: #666;
+  margin-top: 8px;
+  margin-left: 4px;
+}
+
+.error-message {
+  color: #f44336;
+  font-size: 12px;
+  margin-top: 4px;
+  margin-left: 4px;
+}
+
+.modern-primary-button {
+  --background: #0066cc;
+  --background-hover: #0052a3;
+  --background-activated: #004080;
+  --border-radius: 12px;
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+  font-weight: 600;
+  font-size: 16px;
+  margin-top: 16px;
+  
+  &[disabled] {
+    opacity: 0.7;
+  }
+}
 
 .signup-container {
   color: white !important;
@@ -1385,6 +1476,43 @@ body{
       }
     }
   }
+}
+
+.phone-field {
+  display: flex;
+  align-items: center;
+  border: 2px solid #e5e5e5;
+  border-radius: 20px;
+  padding: 8px 12px;
+  background: #f9f9f9;
+}
+
+.country-select {
+  max-width: 70px;
+  margin-right: 10px;
+
+  --padding-start: 0;
+  --padding-end: 0;
+  --background: transparent;
+  font-size: 20px;
+}
+
+.phone-input {
+  flex: 1;
+
+  --background: transparent;
+  --padding-start: 0;
+  font-size: 18px;
+}
+
+.phone-input::part(native) {
+  padding-left: 5px;
+}
+
+.phone-hint {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #7f8c8d;
 }
 
 

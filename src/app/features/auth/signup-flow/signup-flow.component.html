@@ -43,9 +43,9 @@
 
 <!-- Ajoutez cette section au début du contenu principal -->
 
-<!-- Step 0: Vérification du téléphone -->
+<!-- Step 0: Vérification du téléphone 
 <div *ngIf="currentStep === 0" class="step-content active">
-  <!-- Étape téléphone sans OTP -->
+  <!-- Étape téléphone sans OTP 
   <div *ngIf="!otpSent">
     <form [formGroup]="welcomeForm" class="form-container-modern">
       <div class="input-group-modern">
@@ -78,7 +78,7 @@
     </form>
   </div>
 
-  <!-- Étape OTP -->
+  <!-- Étape OTP
   <div *ngIf="otpSent">
     <form [formGroup]="otpForm" class="form-container-modern">
       <div class="otp-header">
@@ -102,7 +102,7 @@
           </ion-input>
         </div>
         
-        <!-- Compte à rebours pour renvoyer le code -->
+        <!-- Compte à rebours pour renvoyer le code 
         <div class="otp-actions">
           <div class="otp-countdown" *ngIf="otpCountdown > 0">
             Vous pourrez renvoyer le code dans {{ otpCountdown }} seconde{{ otpCountdown > 1 ? 's' : '' }}
@@ -140,7 +140,119 @@
       </div>
     </form>
   </div>
-</div>
+</div>  -->
+
+<div *ngIf="currentStep === 0" class="step-content active">
+  <!-- Étape téléphone avec OTP -->
+  <div *ngIf="!otpSent">
+          <form [formGroup]="welcomeForm" class="form-container-modern">
+            <div class="input-group-modern">
+              <label class="input-label-modern">Numéro de téléphone</label>
+
+              <div class="phone-field">
+
+                <!-- Select pays -->
+                <ion-select
+                  formControlName="countryCode"
+                  interface="popover"
+                  class="country-select"
+                >
+                  <ion-select-option value="+221">🇸🇳 +221</ion-select-option>
+                  <ion-select-option value="+33">🇫🇷 +33</ion-select-option>
+                  <ion-select-option value="+225">🇨🇮 +225</ion-select-option>
+                  <ion-select-option value="+1">🇺🇸 +1</ion-select-option>
+                </ion-select>
+
+                <!-- Input téléphone -->
+                <ion-input
+                  type="tel"
+                  formControlName="phone"
+                  placeholder="771234567"
+                  class="phone-input"
+                ></ion-input>
+
+              </div>
+
+              <div class="phone-hint">
+                Format: 77 123 45 67 (9 chiffres)
+              </div>
+            </div>
+
+            <ion-button
+              expand="block"
+              class="modern-primary-button"
+              [disabled]="!welcomeForm.valid || isSendingOtp"
+              (click)="sendOtp()">
+              <ion-spinner *ngIf="isSendingOtp" name="crescent" class="spinner"></ion-spinner>
+              <span *ngIf="!isSendingOtp">Envoyer le code de vérification</span>
+              <span *ngIf="isSendingOtp">Envoi en cours...</span>
+            </ion-button>
+          </form>
+  </div>
+
+  <!-- Étape OTP -->
+    <div *ngIf="otpSent">
+        <form [formGroup]="otpForm" class="form-container-modern">
+          <div class="otp-header">
+            <p class="otp-instruction">
+              Entrez le code à 6 chiffres envoyé au<br>
+              <strong>{{ welcomeForm.value.phone }}</strong>
+            </p>
+          </div>
+
+          <div class="input-group-modern">
+            <label class="input-label-modern">Code de vérification</label>
+            <div class="input-wrapper">
+              <ion-input
+                type="text"
+                maxlength="6"
+                formControlName="otpCode"
+                placeholder="123456"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                [disabled]="isVerifyingOtp">
+              </ion-input>
+            </div>
+            
+            <!-- Compte à rebours pour renvoyer le code -->
+            <div class="otp-actions">
+              <div class="otp-countdown" *ngIf="otpCountdown > 0">
+                Vous pourrez renvoyer le code dans {{ otpCountdown }} seconde{{ otpCountdown > 1 ? 's' : '' }}
+              </div>
+              
+              <button 
+                type="button" 
+                class="resend-button" 
+                (click)="resendOtp()"
+                [disabled]="!canResendOtp || isSendingOtp">
+                <span *ngIf="!isSendingOtp">Renvoyer le code</span>
+                <span *ngIf="isSendingOtp">Envoi en cours...</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="otp-buttons">
+            <ion-button
+              expand="block"
+              class="modern-primary-button"
+              [disabled]="!otpForm.valid || isVerifyingOtp"
+              (click)="verifyOtp()">
+              <ion-spinner *ngIf="isVerifyingOtp" name="crescent" class="spinner"></ion-spinner>
+              <span *ngIf="!isVerifyingOtp">Vérifier</span>
+              <span *ngIf="isVerifyingOtp">Vérification...</span>
+            </ion-button>
+            
+            <ion-button
+              fill="clear"
+              color="medium"
+              expand="block"
+              (click)="otpSent = false">
+              Modifier le numéro
+            </ion-button>
+          </div>
+        </form>
+    </div>
+  </div>
 
 <!-- Recaptcha container (toujours caché) -->
 <div id="recaptcha-container" style="display: none;"></div>

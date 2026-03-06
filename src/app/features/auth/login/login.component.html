@@ -37,7 +37,7 @@
         </p>
       </div>
 
-      <!-- Étape 1: Saisie du téléphone -->
+      <!-- Étape 1: Saisie du téléphone 
       <div *ngIf="!otpSent" class="step-content active">
         <form [formGroup]="phoneForm" class="form-container-modern">
           <div class="input-group-modern">
@@ -63,7 +63,65 @@
             {{ loading ? 'Envoi en cours...' : 'Recevoir le code' }}
           </ion-button>
         </form>
-      </div>
+      </div> -->
+
+    <div *ngIf="!otpSent" class="step-content input-group-modern">
+      <form [formGroup]="phoneForm" class="form-container-modern">
+        <div class="input-group-modern">
+          <label class="input-label-modern">Numéro de téléphone</label>
+
+          <div class="phone-input-wrapper">
+            <!-- SELECT INDICATIF -->
+            <ion-select
+              formControlName="countryCode"
+              interface="popover"
+              class="country-select"
+              (ionChange)="onCountryCodeChange()"
+            >
+              <ion-select-option value="+221">🇸🇳 +221</ion-select-option>
+              <ion-select-option value="+33">🇫🇷 +33</ion-select-option>
+              <ion-select-option value="+1">🇺🇸 +1</ion-select-option>
+              <ion-select-option value="+225">🇨🇮 +225</ion-select-option>
+            </ion-select>
+
+            <!-- INPUT NUMERO -->
+            <div class="input-wrapper">
+              <ion-input
+                #phoneInput
+                type="tel"
+                formControlName="phone"
+                placeholder="771234567"
+                (keyup.enter)="sendOtp()"
+                (ionInput)="onPhoneInput($event)"
+                class="phone-input"
+              >
+              </ion-input>
+            </div>
+          </div>
+
+          <!-- Message d'erreur -->
+          <div *ngIf="isFieldInvalid()" class="error-message">
+            {{ getFieldError() }}
+          </div>
+          
+          <!-- Hint selon l'indicatif -->
+          <div class="phone-hint" *ngIf="phoneForm.get('countryCode')?.value === '+221'">
+            Format: 77 123 45 67 (9 chiffres)
+          </div>
+        </div>
+
+        <ion-button 
+          expand="block" 
+          class="modern-primary-button" 
+          (click)="sendOtp()"
+          [disabled]="!phoneForm.valid || loading"
+        >
+          <ion-icon name="send-outline" slot="start" *ngIf="!loading"></ion-icon>
+          {{ loading ? 'Envoi en cours...' : 'Recevoir le code' }}
+        </ion-button>
+      </form>
+    </div>
+
 
       <!-- Étape 2: Vérification OTP
       <div *ngIf="otpSent" class="step-content active">
