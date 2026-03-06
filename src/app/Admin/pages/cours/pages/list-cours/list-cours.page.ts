@@ -83,16 +83,19 @@ export class ListCoursPage implements OnInit {
   }
 
   applyFilters(): void {
-    this.filteredCourses = this.allCourses.filter((course) => {
-      const matchesSearch =
-        course.title.toLowerCase().includes(this.searchText.toLowerCase()) ||
-        course.type.toLowerCase().includes(this.searchText.toLowerCase());
-      const matchesCategory =
-        this.selectedType === 'all' ||
-        course.type === this.selectedType;
-      return matchesSearch && matchesCategory;
-    });
+    const search = this.searchText.toLowerCase().trim();
 
+    this.filteredCourses = this.allCourses.filter((course) => {
+      return (
+        course.title.toLowerCase().includes(search) ||
+        course.type.toLowerCase().includes(search) ||
+        course.category.toLowerCase().includes(search) ||
+        (course.instructorName || '').toLowerCase().includes(search)
+      ) && (
+          this.selectedType === 'all' ||
+          course.type === this.selectedType
+        );
+    });
     this.totalPages = Math.ceil(
       this.filteredCourses.length / this.itemsPerPage
     );

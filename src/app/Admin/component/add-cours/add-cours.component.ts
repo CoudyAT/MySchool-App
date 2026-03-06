@@ -266,61 +266,76 @@ export class AddCoursComponent implements OnInit {
 
   // async importCoursesFromJson() {
   //   try {
-  //     const data = await firstValueFrom(this.http.get<any[]>('assets/csvtest.json'));
+  //     const data = await firstValueFrom(this.http.get<any[]>('assets/csv.json'));
   //     console.log(`📊 ${data.length} lignes à traiter`);
 
-  //     // 1️⃣ REGROUPER les données par cours (même Description)
+  //     // 1️⃣ REGROUPER par cours ET par niveau
+  //     // Clé = "Thématique||Niveau" pour séparer les niveaux
   //     const coursesMap = new Map<string, any[]>();
 
   //     data.forEach(item => {
-  //       const courseTitle = item["Description"]?.trim();
+  //       const courseTitle = item["Thématique"]?.trim();
+  //       const niveauRaw = item["Niveau"]?.trim() || "";
+
   //       if (!courseTitle) return;
 
-  //       if (!coursesMap.has(courseTitle)) {
-  //         coursesMap.set(courseTitle, []);
-  //       }
-  //       coursesMap.get(courseTitle)!.push(item);
+  //       // Séparer les niveaux multiples (ex: "Terminale L2, Terminale L1")
+  //       const niveaux = niveauRaw.split(',').map((n: string) => n.trim()).filter((n: string) => n);
+
+  //       // Si pas de niveau, on utilise une clé sans niveau
+  //       const niveauxList = niveaux.length > 0 ? niveaux : [""];
+
+  //       niveauxList.forEach((niveau: string) => {
+  //         const key = `${courseTitle}||${niveau}`;
+  //         if (!coursesMap.has(key)) {
+  //           coursesMap.set(key, []);
+  //         }
+  //         // Stocker l'item avec le niveau isolé
+  //         coursesMap.get(key)!.push({ ...item, _niveauIsolé: niveau });
+  //       });
   //     });
 
-  //     console.log(`📚 ${coursesMap.size} cours uniques détectés`);
+  //     console.log(`📚 ${coursesMap.size} cours uniques détectés (après séparation des niveaux)`);
 
   //     let success = 0;
   //     let failed = 0;
 
   //     // 2️⃣ CRÉER chaque cours avec ses chapitres
-  //     for (const [courseTitle, items] of coursesMap.entries()) {
+  //     for (const [key, items] of coursesMap.entries()) {
   //       try {
-  //         const firstItem = items[0]; // Données communes du cours
+  //         const firstItem = items[0];
+  //         const courseTitle = firstItem["Thématique"]?.trim();
+  //         const niveauIsolé = firstItem["_niveauIsolé"];
 
   //         // Trouver l'instructeur
   //         const instructor = this.instructors.find(
-  //           p => p.name?.toLowerCase().trim() === firstItem["Professeurs"]?.toLowerCase().trim()
+  //           p => p.name?.toLowerCase().trim() === firstItem["Professeur"]?.toLowerCase().trim()
   //         );
 
   //         // Trouver la matière
   //         const matiere = this.matieres.find(
-  //           m => m.nom?.toLowerCase().trim() === firstItem["Matiéres"]?.toLowerCase().trim()
+  //           m => m.nom?.toLowerCase().trim() === firstItem["Matière"]?.toLowerCase().trim()
   //         );
 
   //         if (!instructor) {
-  //           console.warn('⚠️ Professeur introuvable:', firstItem["Professeurs"]);
+  //           console.warn('⚠️ Professeur introuvable:', firstItem["Professeur"]);
   //           failed++;
   //           continue;
   //         }
 
   //         if (!matiere) {
-  //           console.warn('⚠️ Matière introuvable:', firstItem["Matiéres"]);
+  //           console.warn('⚠️ Matière introuvable:', firstItem["Matière"]);
   //           failed++;
   //           continue;
   //         }
 
-  //         // 3️⃣ CRÉER LE COURS d'abord
+  //         // 3️⃣ CRÉER LE COURS
   //         const courseData = {
   //           title: courseTitle,
-  //           category: firstItem["Matiéres"] || "",
+  //           category: firstItem["Matière"] || "",
   //           matiereId: matiere.id,
   //           description: `Cours comprenant ${items.length} chapitre(s)`,
-  //           level: firstItem["Niveau"]?.toUpperCase() || "",
+  //           niveauScolaire: firstItem["Classe"]?.toUpperCase() || "",
   //           type: "En ligne",
   //           duration: 0,
   //           sessions: "",
@@ -331,8 +346,7 @@ export class AddCoursComponent implements OnInit {
   //           price: 0,
   //           instructorId: instructor.id,
   //           instructorName: instructor.name,
-  //           niveauScolaire: firstItem["Niveau"]?.toUpperCase(),
-  //           classe: firstItem["Classe"],
+  //           classe: niveauIsolé, // ✅ Niveau unique et propre
   //           chapters: [],
   //           chaptersIds: []
   //         };
@@ -343,9 +357,9 @@ export class AddCoursComponent implements OnInit {
   //           updatedAt: Timestamp.now()
   //         });
 
-  //         console.log(`✅ Cours créé: ${courseTitle} (ID: ${courseRef.id})`);
+  //         console.log(`✅ Cours créé: "${courseTitle}" — ${niveauIsolé} (ID: ${courseRef.id})`);
 
-  //         // 4️⃣ CRÉER LES CHAPITRES pour ce cours
+  //         // 4️⃣ CRÉER LES CHAPITRES
   //         const chapterIds: string[] = [];
 
   //         for (let i = 0; i < items.length; i++) {
@@ -373,7 +387,7 @@ export class AddCoursComponent implements OnInit {
   //           console.log(`  📝 Chapitre ${i + 1}/${items.length}: ${chapterTitle}`);
   //         }
 
-  //         // 5️⃣ METTRE À JOUR le cours avec les IDs des chapitres
+  //         // 5️⃣ METTRE À JOUR le cours avec les IDs chapitres
   //         await updateDoc(courseRef, {
   //           chaptersIds: chapterIds,
   //           updatedAt: Timestamp.now()
@@ -383,14 +397,12 @@ export class AddCoursComponent implements OnInit {
   //         success++;
 
   //       } catch (err) {
-  //         console.error(`❌ Erreur pour le cours "${courseTitle}":`, err);
+  //         console.error(`❌ Erreur pour la clé "${key}":`, err);
   //         failed++;
   //       }
   //     }
 
   //     alert(`🎉 Import terminé!\n\n✅ Cours créés: ${success}\n❌ Échecs: ${failed}`);
-
-  //     // Recharger les données
   //     this.loadCategories();
 
   //   } catch (err) {
