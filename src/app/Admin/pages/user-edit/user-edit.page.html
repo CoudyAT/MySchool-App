@@ -38,10 +38,11 @@
 
           <div class="info-block">
             <p class="label">Niveau</p>
-            <ion-select [(ngModel)]="user.level" name="level">
-              <ion-select-option value="Débutant">Débutant</ion-select-option>
-              <ion-select-option value="Intermédiaire">Intermédiaire</ion-select-option>
-              <ion-select-option value="Avancé">Avancé</ion-select-option>
+            <ion-select [(ngModel)]="user.niveauScolaire" name="niveauScolaire">
+              <ion-select-option value="PRIMAIRE">Primaire</ion-select-option>
+              <ion-select-option value="MOYEN">Moyen</ion-select-option>
+              <ion-select-option value="SECONDAIRE">Secondaire</ion-select-option>
+              <ion-select-option value="UNIVERSITAIRE">Universitaire</ion-select-option>
             </ion-select>
           </div>
 

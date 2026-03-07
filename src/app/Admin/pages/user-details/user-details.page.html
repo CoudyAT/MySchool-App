@@ -23,8 +23,8 @@
         </div>
         <div class="info-block">
           <p class="label">Niveau</p>
-          <p class="value" *ngIf="!isEditMode">{{ user.level }}</p>
-          <ion-select *ngIf="isEditMode" [(ngModel)]="user.level">
+          <p class="value" *ngIf="!isEditMode">{{ user.niveauScolaire }}</p>
+          <ion-select *ngIf="isEditMode" [(ngModel)]="user.niveauScolaire">
             <ion-select-option value="Débutant">Débutant</ion-select-option>
             <ion-select-option value="Intermédiaire">Intermédiaire</ion-select-option>
             <ion-select-option value="Avancé">Avancé</ion-select-option>
