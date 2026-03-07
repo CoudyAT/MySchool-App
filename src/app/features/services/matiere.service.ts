@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { ApiService } from 'src/app/core/services/api.service';
-import { Matiere } from 'src/app/models/course.model';
+import {  Matiere } from 'src/app/models/course.model';
 
 @Injectable({
     providedIn: 'root',
@@ -9,25 +9,25 @@ import { Matiere } from 'src/app/models/course.model';
 export class MatiereService {
     private readonly api = inject(ApiService);
 
-    getMatieresActives(): Observable<Matiere[]> {
+    getMatiereActives(): Observable<Matiere[]> {
         return this.api
             .get<any>('/matieres')
             .pipe(map((res) => res?.data ?? []));
     }
 
-    getAllMatieres(): Observable<Matiere[]> {
+    getAllMatiere(): Observable<Matiere[]> {
         return this.api
             .get<any>('/matieres')
             .pipe(map((res) => res?.data ?? []));
     }
 
-    getMatieresByNiveau(niveau: string): Observable<Matiere[]> {
+    getMatiereByNiveau(niveau: string): Observable<Matiere[]> {
         return this.api
             .get<any>(`/matieres/niveau/${niveau}`)
             .pipe(map((res) => res?.data ?? []));
     }
 
-    getMatieresByClasse(classe: string): Observable<Matiere[]> {
+    getMatiereByClasse(classe: string): Observable<Matiere[]> {
         return this.api
             .get<any>(`/matieres/classe/${encodeURIComponent(classe)}`)
             .pipe(map((res) => res?.data ?? []));
