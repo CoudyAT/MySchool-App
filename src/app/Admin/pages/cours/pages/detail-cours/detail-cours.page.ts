@@ -11,6 +11,13 @@ import { ChapterService } from 'src/app/features/services/chapter.service';
 import { LessonService } from 'src/app/features/services/lesson.service';
 import { ExerciseService } from 'src/app/features/services/exercise.service';
 import { MatiereService } from 'src/app/features/services/matiere.service';
+import { getDownloadURL, getStorage, listAll, ref } from 'firebase/storage';
+
+interface StorageVideo {
+  name: string;
+  path: string;
+  url: string;
+}
 
 @Component({
   selector: 'app-detail-cours',
@@ -40,7 +47,12 @@ export class DetailCoursPage implements OnInit {
   matieres: Matiere[] = [];
   selectedMatiereId: string | null = null;
   isLinkingMatiere = false;
-
+  selectedEditChapterVideo: StorageVideo | null = null;
+  storageVideos: StorageVideo[] = [];
+  isVideoPickerOpen = false;
+  isLoadingVideos = false;
+  selectedChapterVideo: StorageVideo | null = null;
+  isVideoPickerForEdit = false;
   matieresFiltrees: Matiere[] = [];
   linkedMatiere: Matiere | undefined = undefined;
 
@@ -103,6 +115,49 @@ export class DetailCoursPage implements OnInit {
         this.loadChapters();
       },
     });
+  }
+
+  async openChapterVideoPicker() {
+    this.isVideoPickerOpen = true;
+    this.isLoadingVideos = true;
+
+    try {
+      const storage = getStorage();
+      const folderRef = ref(storage, 'VIDEOS/');
+      const result = await listAll(folderRef);
+
+      this.storageVideos = await Promise.all(
+        result.items.map(async (item) => {
+          const url = await getDownloadURL(item);
+          return { name: item.name, path: item.fullPath, url };
+        })
+      );
+    } catch (err) {
+      console.error('Erreur chargement vidéos :', err);
+      this.presentToast('Impossible de charger les vidéos', 'danger');
+    } finally {
+      this.isLoadingVideos = false;
+    }
+  }
+
+  selectChapterVideo(video: StorageVideo) {
+    if (this.isVideoPickerForEdit) {
+      this.selectEditChapterVideo(video);
+    } else {
+      this.selectedChapterVideo = video;
+      this.newChapter.duration = video.url;
+    }
+    this.isVideoPickerForEdit = false;
+    this.isVideoPickerOpen = false;
+  }
+
+  removeChapterVideo() {
+    this.selectedChapterVideo = null;
+    this.newChapter.duration = '';
+  }
+
+  closeChapterVideoPicker() {
+    this.isVideoPickerOpen = false;
   }
 
   private loadMatieres() {
@@ -231,6 +286,7 @@ export class DetailCoursPage implements OnInit {
       lessonsIds: [],
       exercisesIds: [],
     };
+    this.selectedChapterVideo = null;
     this.selectedLessonId = '';
     this.selectedExerciseId = '';
     this.isAddChapterModalOpen = true;
@@ -250,6 +306,18 @@ export class DetailCoursPage implements OnInit {
       description: chapter.description || '',
       duration: chapter.duration || ''
     };
+
+    // Si le chapitre a déjà une vidéo (url dans duration)
+    if (chapter.duration && chapter.duration.startsWith('http')) {
+      this.selectedEditChapterVideo = {
+        name: chapter.duration.split('%2F').pop()?.split('?')[0] || 'Vidéo actuelle',
+        path: chapter.duration,
+        url: chapter.duration
+      };
+    } else {
+      this.selectedEditChapterVideo = null;
+    }
+
     this.isEditChapterModalOpen = true;
   }
 
@@ -258,8 +326,19 @@ export class DetailCoursPage implements OnInit {
     this.isEditChapterModalOpen = false;
     // Optionnel : reset editingChapter
     this.editingChapter = { id: '', title: '', order: 1, description: '', duration: '' };
+    this.selectedEditChapterVideo = null;
   }
 
+  selectEditChapterVideo(video: StorageVideo) {
+    this.selectedEditChapterVideo = video;
+    this.editingChapter.duration = video.url;
+    this.isVideoPickerOpen = false;
+  }
+
+  removeEditChapterVideo() {
+    this.selectedEditChapterVideo = null;
+    this.editingChapter.duration = '';
+  }
   updateChapter() {
     if (this.isSubmitting) return;
     this.isSubmitting = true;

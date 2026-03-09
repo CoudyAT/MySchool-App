@@ -310,21 +310,42 @@
             placeholder="Décrivez brièvement le contenu de ce chapitre..."></textarea>
         </div>
 
-        <!-- Durée estimée -->
         <div class="form-group">
-          <label for="chapterDuration">Durée estimée</label>
-          <input type="text" id="chapterDuration" name="duration" [(ngModel)]="newChapter.duration" class="form-input"
-            placeholder="Ex: 2h30">
-        </div>
-      </div>
+          <label class="form-label">Vidéo du chapitre</label>
 
-      <div class="modal-footer">
-        <button type="button" class="btn-secondary" (click)="closeAddChapterModal()">
-          Annuler
-        </button>
-        <button type="submit" class="btn-primary" [disabled]="chapterForm.invalid || isSubmitting">
-          {{ isSubmitting ? 'Création en cours...' : 'Créer le chapitre' }}
-        </button>
+          <!-- Vidéo sélectionnée -->
+          <div *ngIf="selectedChapterVideo"
+            style="margin: 8px 0; padding: 12px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <video [src]="selectedChapterVideo.url" controls style="width: 120px; border-radius: 6px;"
+                preload="metadata"></video>
+              <div>
+                <strong>{{ selectedChapterVideo.name }}</strong><br>
+                <small style="color: #666;">{{ selectedChapterVideo.path }}</small>
+              </div>
+            </div>
+            <div style="margin-top: 10px; display: flex; gap: 8px;">
+              <ion-button size="small" fill="outline" (click)="openChapterVideoPicker()">Changer</ion-button>
+              <ion-button size="small" color="danger" fill="outline" (click)="removeChapterVideo()">Retirer</ion-button>
+            </div>
+          </div>
+
+          <!-- Aucune vidéo -->
+          <div *ngIf="!selectedChapterVideo" (click)="openChapterVideoPicker()" style="border: 2px dashed #aaa; border-radius: 8px; padding: 24px;
+                 text-align: center; cursor: pointer; background: #f8f9fa;">
+            <p style="margin: 0 0 8px; font-size: 1rem; color: #555;">Aucune vidéo sélectionnée</p>
+            <ion-button size="small">Choisir une vidéo</ion-button>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" (click)="closeAddChapterModal()">
+            Annuler
+          </button>
+          <button type="submit" class="btn-primary" [disabled]="chapterForm.invalid || isSubmitting">
+            {{ isSubmitting ? 'Création en cours...' : 'Créer le chapitre' }}
+          </button>
+        </div>
       </div>
     </form>
   </div>
@@ -385,6 +406,61 @@
         </button>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- MODAL AJOUT DE VIDEO -->
+<div *ngIf="isVideoPickerOpen" class="modal-overlay" (click)="closeChapterVideoPicker()" style="z-index: 2000;">
+  <div class="modal-content" (click)="$event.stopPropagation()"
+    style="max-width: 720px; background: white; border-radius: 12px; overflow: hidden;">
+
+    <div
+      style="padding: 16px 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+      <h3 style="margin: 0;">Choisir une vidéo depuis Firebase Storage</h3>
+      <button (click)="closeChapterVideoPicker()"
+        style="background: none; border: none; font-size: 1.2rem; cursor: pointer;">✕</button>
+    </div>
+
+    <div style="max-height: 420px; overflow-y: auto; padding: 16px;">
+      <div *ngIf="isLoadingVideos" style="text-align: center; padding: 40px;">
+        Chargement des vidéos...
+      </div>
+
+      <div *ngIf="!isLoadingVideos && storageVideos.length === 0"
+        style="text-align: center; padding: 40px; color: #777;">
+        Aucune vidéo trouvée dans le dossier VIDEOS/
+      </div>
+
+      <div *ngIf="!isLoadingVideos && storageVideos.length > 0"
+        style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px;">
+
+        <div *ngFor="let video of storageVideos" (click)="selectChapterVideo(video)"
+          [style.border]="selectedChapterVideo?.path === video.path ? '2px solid #007aff' : '1px solid #ddd'"
+          style="border-radius: 8px; overflow: hidden; cursor: pointer; background: white;">
+
+          <div style="position: relative;">
+            <video [src]="video.url" preload="metadata" style="width: 100%; height: 120px; object-fit: cover;"></video>
+            <div style="position: absolute; inset: 0; background: rgba(0,0,0,0.35);
+              display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
+              ▶
+            </div>
+          </div>
+
+          <div style="padding: 8px; font-size: 0.85rem;">
+            <div style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+              {{ video.name }}
+            </div>
+            <div style="color: #888; font-size: 0.75rem; margin-top: 2px;">
+              {{ video.path }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding: 12px 16px; border-top: 1px solid #eee; text-align: right;">
+      <ion-button fill="outline" (click)="closeChapterVideoPicker()">Annuler</ion-button>
+    </div>
   </div>
 </div>
 
@@ -482,11 +558,34 @@
           </textarea>
         </div>
 
-        <!-- Durée estimée -->
         <div class="form-group">
-          <label for="editChapterDuration">Durée estimée</label>
-          <input type="text" id="editChapterDuration" name="duration" [(ngModel)]="editingChapter.duration"
-            class="form-input" placeholder="Ex: 2h30">
+          <label class="form-label">Vidéo du chapitre</label>
+
+          <!-- Vidéo sélectionnée -->
+          <div *ngIf="selectedEditChapterVideo"
+            style="margin: 8px 0; padding: 12px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <video [src]="selectedEditChapterVideo.url" controls style="width: 120px; border-radius: 6px;"
+                preload="metadata"></video>
+              <div>
+                <strong>{{ selectedEditChapterVideo.name }}</strong><br>
+                <small style="color: #666;">{{ selectedEditChapterVideo.path }}</small>
+              </div>
+            </div>
+            <div style="margin-top: 10px; display: flex; gap: 8px;">
+              <ion-button size="small" fill="outline"
+                (click)="isVideoPickerForEdit = true; openChapterVideoPicker()">Changer</ion-button>
+              <ion-button size="small" color="danger" fill="outline"
+                (click)="removeEditChapterVideo()">Retirer</ion-button>
+            </div>
+          </div>
+
+          <!-- Aucune vidéo -->
+          <div *ngIf="!selectedEditChapterVideo" (click)="isVideoPickerForEdit = true; openChapterVideoPicker()" style="border: 2px dashed #aaa; border-radius: 8px; padding: 24px;
+                 text-align: center; cursor: pointer; background: #f8f9fa;">
+            <p style="margin: 0 0 8px; font-size: 1rem; color: #555;">Aucune vidéo sélectionnée</p>
+            <ion-button size="small">Choisir une vidéo</ion-button>
+          </div>
         </div>
       </div>
 

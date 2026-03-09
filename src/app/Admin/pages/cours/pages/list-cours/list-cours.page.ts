@@ -8,6 +8,7 @@ import { Course } from 'src/app/models/course.model';
 import { Instructor } from 'src/app/models/instructor.model';
 import { InstructorService } from 'src/app/features/services/instructorService';
 import { AlertController, ToastController } from '@ionic/angular';
+
 @Component({
   selector: 'app-list-cours',
   templateUrl: './list-cours.page.html',
