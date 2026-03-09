@@ -207,12 +207,74 @@
   color: #10b981;
 }
 
-/* ==================== Filters Section ==================== */
+// ── Filtres (même style que page matières) ────────────────────────────────
+
 .filters-section {
   display: flex;
-  gap: 16px;
-  margin-bottom: 24px;
   flex-wrap: wrap;
+  gap: 16px 24px;
+  margin-bottom: 28px;
+  align-items: flex-end;
+}
+
+.filter-group {
+  flex: 1;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #4b5563;
+    margin-bottom: 4px;
+  }
+}
+
+.filter-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: white;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 11px 36px 11px 14px;
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  transition: all 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12);
+  }
+
+  &:hover {
+    border-color: #9ca3af;
+  }
+}
+
+// Si tu veux un conteneur plus "Ionic-like" ou plus large
+.filter-container {
+  display: flex;
+  flex-direction: column;
+  min-width: 160px;
+
+  .filter-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: #4b5563;
+  }
+
+  select {
+    @extend .filter-select; // réutilise exactement le même style
+  }
 }
 
 .search-wrapper {
@@ -223,8 +285,25 @@
 .search-container {
   position: relative;
   width: 100%;
-  color: black;
 }
+
+.search-input {
+  width: 100%;
+  padding: 12px 12px 12px 40px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+  background-color: white;
+
+  &:focus {
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  }
+}
+
+
 
 .search-icon {
   position: absolute;
@@ -233,23 +312,6 @@
   transform: translateY(-50%);
   pointer-events: none;
   color: #9ca3af;
-}
-
-.search-input {
-  width: 100%;
-  padding: 12px 40px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  font-size: 14px;
-  outline: none;
-  transition: all 0.2s ease;
-  box-sizing: border-box;
-  background-color: white;
-}
-
-.search-input:focus {
-  border-color: #10b981;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
 
 .clear-button {
@@ -293,6 +355,36 @@
 
 .select:focus {
   outline: none;
+}
+
+.delete-course-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #ef4444; // rouge danger
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #dc2626;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
 }
 
 /* ==================== Empty State ==================== */
@@ -751,7 +843,7 @@
   justify-content: center;
   z-index: 1000;
   padding: 20px;
-  color : #000000;
+  color: #000000;
 }
 
 .modal-content {

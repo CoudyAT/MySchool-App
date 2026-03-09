@@ -266,7 +266,7 @@ export class AddCoursComponent implements OnInit {
 
   // async importCoursesFromJson() {
   //   try {
-  //     const data = await firstValueFrom(this.http.get<any[]>('assets/csv.json'));
+  //     const data = await firstValueFrom(this.http.get<any[]>('assets/csvjson.json'));
   //     console.log(`📊 ${data.length} lignes à traiter`);
 
   //     // 1️⃣ REGROUPER par cours ET par niveau
@@ -315,6 +315,7 @@ export class AddCoursComponent implements OnInit {
   //         // Trouver la matière
   //         const matiere = this.matieres.find(
   //           m => m.nom?.toLowerCase().trim() === firstItem["Matière"]?.toLowerCase().trim()
+  //             && m.classe?.toLowerCase().trim() === niveauIsolé?.toLowerCase().trim()
   //         );
 
   //         if (!instructor) {

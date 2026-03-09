@@ -61,7 +61,7 @@ export class PremiumCourseSelectionPage implements OnInit, OnDestroy {
     private router: Router,
     private firestore: Firestore,
   ) {
-    addIcons({checkmarkCircle,lockClosedOutline,arrowForwardOutline,});
+    addIcons({ checkmarkCircle, lockClosedOutline, arrowForwardOutline, });
   }
 
   ngOnInit() {
@@ -166,7 +166,7 @@ export class PremiumCourseSelectionPage implements OnInit, OnDestroy {
           this.alreadySubscribedMatieres = matieres;
         }
       },
-      error: () => {},
+      error: () => { },
     });
   }
 
