@@ -67,7 +67,7 @@ export class DashboardPage implements OnInit {
       users: this.userService.getAllUsers(),
       courses: this.courseService.getAllCourses(),
       instructors: this.instructorService.getInstructors(),
-      subjects: this.matiereService.getAllMatieres(),
+      subjects: this.matiereService.getAllMatiere(),
       payments: this.paymentService.getAllPayments(),
       enrollments: this.enrollmentService.getAllEnrollments()
     }).subscribe({

@@ -207,34 +207,54 @@
               Le nom est obligatoire
             </div>
           </div>
-
-          <!-- Classe -->
-          <div class="form-group">
-            <label for="modalClasse">Classe</label>
-            <input type="text" id="modalClasse" name="classe" [(ngModel)]="modalMatiere.classe" required
-              #classeCtrl="ngModel" class="form-input" placeholder="6ème A">
-            <div *ngIf="classeCtrl.invalid && classeCtrl.touched" class="error-text">
-              La classe est obligatoire
-            </div>
-          </div>
-
           <!-- Niveau scolaire -->
           <div class="form-group">
             <label for="modalNiveau">Niveau scolaire</label>
-            <select id="modalNiveau" name="niveauScolaire" [(ngModel)]="modalMatiere.niveauScolaire" required
-              #niveauCtrl="ngModel" class="form-input">
+
+            <select
+              id="modalNiveau"
+              name="niveauScolaire"
+              [(ngModel)]="modalMatiere.niveauScolaire"
+              (ngModelChange)="onNiveauEtudeChange($event)"
+              required
+              #niveauCtrl="ngModel"
+              class="form-input"
+            >
               <option value="">Sélectionner un niveau</option>
-              <option value="ELEMENTAIRE">Elementaire</option>
-              <option value="MOYEN">Moyen</option>
-              <option value="SECONDAIRE">Secondaire</option>
-              <option value="UNIVERSITAIRE">Universitaire</option>
+
+              <option *ngFor="let niveau of niveauxEtude" [value]="niveau.value">
+                {{ niveau.label }}
+              </option>
             </select>
+
             <div *ngIf="niveauCtrl.invalid && niveauCtrl.touched" class="error-text">
               Le niveau est obligatoire
             </div>
           </div>
+          <!-- Classe -->
+          <div class="form-group">
+            <label for="modalClasse">Classe</label>
 
-          <!-- Icône -->
+            <select
+              id="modalClasse"
+              name="classe"
+              [(ngModel)]="modalMatiere.classe"
+              required
+              #classeCtrl="ngModel"
+              class="form-input"
+            >
+              <option value="">Sélectionner une classe</option>
+
+              <option *ngFor="let classe of classesDisponibles" [value]="classe">
+                {{ classe }}
+              </option>
+            </select>
+
+            <div *ngIf="classeCtrl.invalid && classeCtrl.touched" class="error-text">
+              La classe est obligatoire
+            </div>
+          </div>
+          <!-- Icône 
           <div class="form-group">
             <label for="modalIcon">Icône</label>
             <input type="text" id="modalIcon" name="icon" [(ngModel)]="modalMatiere.icon" #iconCtrl="ngModel"
@@ -245,14 +265,14 @@
                 <span *ngIf="!modalMatiere.icon" class="icon-placeholder">Aucune icône</span>
               </div>
             </div>
-          </div>
+          </div> -->
 
-          <!-- Couleur -->
+          <!-- Couleur 
           <div class="form-group">
             <label for="modalColor">Couleur</label>
             <input type="color" id="modalColor" name="color" [(ngModel)]="modalMatiere.color" #colorCtrl="ngModel"
               class="form-input color-input">
-          </div>
+          </div>  -->
 
           <!-- Ordre -->
           <div class="form-group">

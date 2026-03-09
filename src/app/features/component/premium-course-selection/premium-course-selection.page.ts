@@ -141,7 +141,7 @@ export class PremiumCourseSelectionPage implements OnInit, OnDestroy {
   loadMatieres() {
     console.log('dddd', this.userClasse);
     const s = this.matiereService
-      .getMatieresByClasse(this.userClasse)
+      .getMatiereByClasse(this.userClasse)
       .subscribe({
         next: (data) => {
           this.matieres = data;

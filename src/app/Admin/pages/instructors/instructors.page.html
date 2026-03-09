@@ -46,7 +46,7 @@
         <!-- Header de la table -->
         <div class="users-list-header">
           <span>Utilisateur</span>
-          <span>Biographie</span>
+          <span>Poste</span>
           <span>Expertise</span>
           <span>Cours affiliés</span>
           <span>Note</span>
@@ -68,7 +68,11 @@
           <div class="user-cell">
             {{ inst.title || '-' }}
           </div>
-
+        <!-- Biographie (title) 
+          <div class="user-cell">
+            {{ inst.bio || '-' }}
+          </div>
+        -->
           <!-- Expertise (array → badges) -->
           <div class="user-cell">
             <div class="expertise-badges">

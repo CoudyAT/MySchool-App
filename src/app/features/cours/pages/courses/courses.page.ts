@@ -120,12 +120,14 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
   classesByNiveau: Record<string, string[]> = {
     MOYEN: ['6ème', '5ème', '4ème', '3ème (BFEM)'],
     SECONDAIRE: [
-      'Seconde S',
-      'Seconde L',
-      'Première S',
-      'Première L',
-      'Terminale S',
-      'Terminale L',
+      'Seconde',
+      'Première',
+      'Première S2',
+      'Terminale L1',
+      'Terminale L2',
+      "Terminale L'",
+      'Terminale S1',
+      'Terminale S2',
     ],
     UNIVERSITAIRE: [
       'Licence 1',
@@ -967,7 +969,6 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
       },
     });
   }
-
 
   private finishMatiereLoading() {
     this.showMatiereSelection = true;

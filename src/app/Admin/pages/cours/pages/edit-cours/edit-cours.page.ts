@@ -338,7 +338,7 @@ export class EditCoursPage implements OnInit {
   }
 
   loadMatieres() {
-    this.matiereService.getMatieresActives().subscribe({
+    this.matiereService.getMatiereActives().subscribe({
       next: (data) => {
         this.matieres = data || [];
         this.updateMatieresFiltrees();

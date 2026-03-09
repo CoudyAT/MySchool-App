@@ -30,6 +30,37 @@ export class MatieresPage implements OnInit {
 
   isLoading = false;
 
+  niveauxEtude = [
+    { value: 'ELEMENTAIRE', label: 'Élémentaire' },
+    { value: 'MOYEN', label: 'Moyen (Collège)' },
+    { value: 'SECONDAIRE', label: 'Secondaire (Lycée)' },
+    { value: 'UNIVERSITAIRE', label: 'Universitaire' },
+  ];
+
+  classesParNiveau: { [key: string]: string[] } = {
+    ELEMENTAIRE: ['CI', 'CP', 'CE1', 'CE2', 'CM1', 'CM2'],
+    MOYEN: ['6ème', '5ème', '4ème', '3ème (BFEM)'],
+    SECONDAIRE: [
+      'Seconde S',
+      'Seconde L',
+      'Première L1',
+      'Première L2',
+      'Première S1',
+      'Première S2',
+      "Terminale L'",
+      'Terminale L1',
+      'Terminale L2',
+      'Terminale S1',
+      'Terminale S2',
+      'Terminale G',
+      'Terminale TECHNIQUE',
+      'Terminale STEG',
+    ],
+    UNIVERSITAIRE: ['Licence 1', 'Licence 2', 'Licence 3', 'Master 1', 'Master 2'],
+  };
+
+  classesDisponibles: string[] = [];
+
   // Classes uniques pour le filtre
   uniqueClasses: string[] = [];
 
@@ -50,7 +81,7 @@ export class MatieresPage implements OnInit {
   constructor(
     private matiereService: MatiereService,
     private toastCtrl: ToastController,
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.loadMatieres();
@@ -61,7 +92,7 @@ export class MatieresPage implements OnInit {
   // ─────────────────────────────────────────────────────────
   loadMatieres() {
     this.isLoading = true;
-    this.matiereService.getAllMatieres().subscribe({
+    this.matiereService.getAllMatiere().subscribe({
       next: (matieres) => {
         this.allMatieres = matieres || [];
         this.filteredMatieres = [...this.allMatieres];
@@ -94,14 +125,21 @@ export class MatieresPage implements OnInit {
 
   private updateAvailableClasses() {
     this.filteredUniqueClasses = this.allMatieres
-      .filter(m => !this.selectedNiveau || m.niveauScolaire === this.selectedNiveau)
-      .map(m => m.classe)
+      .filter(
+        (m) => !this.selectedNiveau || m.niveauScolaire === this.selectedNiveau,
+      )
+      .map((m) => m.classe)
       .filter((c): c is string => !!c);
 
-    this.filteredUniqueClasses = [...new Set(this.filteredUniqueClasses)].sort();
+    this.filteredUniqueClasses = [
+      ...new Set(this.filteredUniqueClasses),
+    ].sort();
 
     // Option très utile : si la classe sélectionnée n'est plus valide → on la reset
-    if (this.selectedClasse && !this.filteredUniqueClasses.includes(this.selectedClasse)) {
+    if (
+      this.selectedClasse &&
+      !this.filteredUniqueClasses.includes(this.selectedClasse)
+    ) {
       this.selectedClasse = '';
     }
   }
@@ -160,6 +198,22 @@ export class MatieresPage implements OnInit {
     return pages;
   }
 
+  onNiveauEtudeChange(niveau: string) {
+    if (niveau && this.classesParNiveau[niveau]) {
+      this.classesDisponibles = this.classesParNiveau[niveau];
+
+      // reset classe si elle ne correspond plus
+      if (
+        this.modalMatiere.classe &&
+        !this.classesDisponibles.includes(this.modalMatiere.classe)
+      ) {
+        this.modalMatiere.classe = '';
+      }
+    } else {
+      this.classesDisponibles = [];
+    }
+  }
+
   // ─────────────────────────────────────────────────────────
   // Recherche et filtres
   // ─────────────────────────────────────────────────────────
@@ -214,12 +268,12 @@ export class MatieresPage implements OnInit {
   }
 
   get availableClasses(): string[] {
-    const filtered = this.allMatieres.filter(m =>
-      !this.selectedNiveau || m.niveauScolaire === this.selectedNiveau
+    const filtered = this.allMatieres.filter(
+      (m) => !this.selectedNiveau || m.niveauScolaire === this.selectedNiveau,
     );
 
     const classes = filtered
-      .map(m => m.classe)
+      .map((m) => m.classe)
       .filter((c): c is string => !!c);
 
     return [...new Set(classes)].sort();

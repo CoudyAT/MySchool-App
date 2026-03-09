@@ -106,7 +106,7 @@ export class DetailCoursPage implements OnInit {
   }
 
   private loadMatieres() {
-    this.matiereService.getMatieresActives().subscribe({
+    this.matiereService.getMatiereActives().subscribe({
       next: (matieres) => {
         this.matieres = matieres;
         this.updateMatieresFiltrees();
@@ -114,7 +114,7 @@ export class DetailCoursPage implements OnInit {
       error: (err) => {
         console.error('Erreur chargement matières', err);
         this.presentToast('Impossible de charger les matières', 'danger');
-      }
+      },
     });
   }
 
