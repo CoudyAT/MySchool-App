@@ -7,6 +7,7 @@ import { CourseService } from 'src/app/features/services/courseService';
 import { Course } from 'src/app/models/course.model';
 import { Instructor } from 'src/app/models/instructor.model';
 import { InstructorService } from 'src/app/features/services/instructorService';
+import { AlertController, ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-list-cours',
@@ -36,8 +37,13 @@ export class ListCoursPage implements OnInit {
   isLoading: boolean = false;
   types: string[] = ['Video', 'En ligne', 'Presentiel', 'Tuto'];
 
+  selectedNiveau: string = '';
+  selectedClasse: string = '';
 
-  constructor(private router: Router, private courseService: CourseService,) { }
+  // Liste des classes disponibles (dynamique selon le niveau sélectionné)
+  availableClasses: string[] = [];
+
+  constructor(private router: Router, private courseService: CourseService, private alertCtrl: AlertController, private toastCtrl: ToastController) { }
 
 
 
@@ -48,7 +54,6 @@ export class ListCoursPage implements OnInit {
 
   ngOnInit(): void {
     this.loadCourses();
-    this.applyFilters();
   }
 
   onCourseFormSubmit(courseData: any) {
@@ -82,24 +87,74 @@ export class ListCoursPage implements OnInit {
     });
   }
 
-  applyFilters(): void {
-    const search = this.searchText.toLowerCase().trim();
+  private updateAvailableClasses() {
+    let filtered = this.allCourses;
 
-    this.filteredCourses = this.allCourses.filter((course) => {
-      return (
-        course.title.toLowerCase().includes(search) ||
-        course.type.toLowerCase().includes(search) ||
-        course.category.toLowerCase().includes(search) ||
-        (course.instructorName || '').toLowerCase().includes(search)
-      ) && (
-          this.selectedType === 'all' ||
-          course.type === this.selectedType
-        );
-    });
-    this.totalPages = Math.ceil(
-      this.filteredCourses.length / this.itemsPerPage
-    );
+    // Si un niveau est sélectionné on filtre d'abord
+    if (this.selectedNiveau) {
+      filtered = filtered.filter(c => c.niveauScolaire === this.selectedNiveau);
+    }
+
+    // On extrait les classes uniques
+    const classes = filtered
+      .map(c => c.classe)
+      .filter((c): c is string => !!c && c.trim() !== '');
+
+    this.availableClasses = [...new Set(classes)].sort();
+
+    // Reset classe si elle n'est plus valide après changement de niveau
+    if (this.selectedClasse && !this.availableClasses.includes(this.selectedClasse)) {
+      this.selectedClasse = '';
+    }
+  }
+
+  applyFilters(): void {
+    let filtered = [...this.allCourses];
+
+    // Recherche texte
+    const search = this.searchText.toLowerCase().trim();
+    if (search) {
+      filtered = filtered.filter(course =>
+        course.title?.toLowerCase().includes(search) ||
+        course.type?.toLowerCase().includes(search) ||
+        course.category?.toLowerCase().includes(search) ||
+        (course.instructorName || '').toLowerCase().includes(search) ||
+        (course.classe || '').toLowerCase().includes(search) ||
+        (course.niveauScolaire || '').toLowerCase().includes(search)
+      );
+    }
+
+    // Filtre type
+    if (this.selectedType !== 'all') {
+      filtered = filtered.filter(c => c.type === this.selectedType);
+    }
+
+    // Filtre niveau
+    if (this.selectedNiveau) {
+      filtered = filtered.filter(c => c.niveauScolaire === this.selectedNiveau);
+    }
+
+    // Filtre classe
+    if (this.selectedClasse) {
+      filtered = filtered.filter(c => c.classe === this.selectedClasse);
+    }
+
+    this.filteredCourses = filtered;
+    this.totalCourses = this.allCourses.length;           // total global
+    this.totalPages = Math.ceil(this.filteredCourses.length / this.itemsPerPage);
+    this.currentPage = 1;
+
+    this.updateAvailableClasses();
     this.updatePagination();
+  }
+
+  onNiveauChange() {
+    this.updateAvailableClasses();
+    this.applyFilters();
+  }
+
+  onClasseChange() {
+    this.applyFilters();
   }
 
   updatePagination(): void {
@@ -189,5 +244,55 @@ export class ListCoursPage implements OnInit {
 
   closeAddCourseModal() {
     this.showAddCourseModal = false;
+  }
+
+  async confirmDeleteCourse(course: Course) {
+    const alert = await this.alertCtrl.create({
+      header: 'Confirmer la suppression',
+      message: `Voulez-vous vraiment supprimer le cours ${course.title} ? Cette action est irréversible.`,
+      cssClass: 'delete-alert',
+      buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          cssClass: 'secondary',
+        },
+        {
+          text: 'Supprimer',
+          role: 'destructive',
+          handler: () => {
+            this.deleteCourse(course.id);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  deleteCourse(courseId: string) {
+    this.courseService.deleteCourse(courseId).subscribe({
+      next: () => {
+        // Mise à jour locale
+        this.allCourses = this.allCourses.filter(c => c.id !== courseId);
+        this.applyFilters();  // rafraîchit la liste filtrée + pagination
+
+        this.showToast('Cours supprimé avec succès', 'success');
+      },
+      error: (err) => {
+        console.error('Erreur suppression cours', err);
+        this.showToast('Erreur lors de la suppression', 'danger');
+      }
+    });
+  }
+
+  async showToast(message: string, color: 'success' | 'danger' = 'success') {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 2500,
+      color,
+      position: 'top',
+    });
+    await toast.present();
   }
 }
