@@ -19,7 +19,38 @@
       placeholder="Rechercher un cours..."
       (ionInput)="searchCourse($event)"
       class="custom-search"
-    ></ion-searchbar>
+    >
+  </ion-searchbar>
+<div class="matiere-filter-section">
+  <div class="matieres-filter-grid">
+    <!-- Option "Toutes les matières" (visible seulement s'il y a des matières) -->
+    <div
+      *ngIf="filteredMatieresList.length > 0"
+      class="matiere-filter-chip"
+      [class.active]="selectedMatiereId === ''"
+      (click)="filterByMatiere({detail: {value: ''}})">
+      <ion-icon *ngIf="selectedMatiereId === ''" name="checkmark-circle-outline"></ion-icon>
+      <span>Toutes </span>
+    </div>
+
+    <!-- Chaque matière filtrée -->
+    <div
+      *ngFor="let matiere of filteredMatieresList"
+      class="matiere-filter-chip"
+      [class.active]="selectedMatiereId === matiere.id"
+      (click)="filterByMatiere({detail: {value: matiere.id}})">
+      <ion-icon *ngIf="selectedMatiereId === matiere.id" name="checkmark-circle-outline"></ion-icon>
+      <span>{{ matiere.name }}</span>
+    </div>
+
+    <!-- Message si aucune matière disponible -->
+    <div *ngIf="filteredMatieresList.length === 0" class="no-matiere-message">
+      <p>Aucune matière disponible</p>
+    </div>
+  </div>
+</div>
+
+
 
       <!-- Bandeau pour ELEMENTAIRE avec classe définie -->
       <div *ngIf="isElementaire && hasClasse" class="classe-banner">
@@ -203,6 +234,9 @@
 
             <div class="course-level">
               Niveau : {{ course.niveauScolaire || 'Débutant' }}
+            </div>
+            <div class="course-level">
+              Matieres :{{ getMatiereName(course.matiereId || '') }}
             </div>
           </ion-card-content>
         </ion-card>

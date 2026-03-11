@@ -92,11 +92,21 @@ export class PaymentService {
     );
   }
 
-  validatePromoCode(payload: {
-    code: string;
-    userId: string;
-  }): Observable<any> {
-    return this.api.post<any>('/codes-promo/validate', payload);
+  // validatePromoCode(payload: {
+  //   code: string;
+  //   // userId: string;
+  // }): Observable<any> {
+  //   return this.api.post<any>('/codes-promo/validate', payload);
+  // }
+
+  validatePromoCode(
+    code: string,
+    payload: {
+      // code: string;
+      userId: string;
+    },
+  ): Observable<any> {
+    return this.api.post<any>(`/codes-promo/validate/${code}`, payload);
   }
 
   /**
@@ -180,22 +190,27 @@ export class PaymentService {
     return cleanPhone;
   }
 
+  // Dans paymentService.ts - CORRECTION
   createSubscriptionPayment(
     userId: string,
     classe: string,
     niveauScolaire: string,
     typeAbonnement: string,
-    matieres?: any[],
+    matieres?: any[], // 👈 Déplacer matieres avant promoCode
+    promoCode?: string,
+    finalAmount?: string,
   ): Observable<any> {
     const body: any = {
       userId,
       classe,
       niveauScolaire,
       typeAbonnement,
+      promoCode: promoCode || '',
+      finalAmount,
     };
 
     // Ajouter les matières pour les abonnements MATIERE
-    if (typeAbonnement === 'MATIERE' && matieres) {
+    if (typeAbonnement === 'MATIERE' && matieres && matieres.length > 0) {
       body.matieres = matieres;
     }
 

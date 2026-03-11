@@ -4,21 +4,8 @@ import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { Course } from 'src/app/models/course.model';
 import { CourseService } from 'src/app/features/services/courseService';
-import { ToastController } from '@ionic/angular';
-import {
-  IonContent,
-  IonSearchbar,
-  IonCard,
-  IonCardContent,
-  IonIcon,
-  IonButton,
-  IonSpinner,
-  IonSegment,
-  IonLabel,
-  IonSegmentButton,
-  IonHeader,
-  IonToolbar,
-} from '@ionic/angular/standalone';
+import { ToastController, IonicModule } from '@ionic/angular';
+import { IonContent, IonSearchbar, IonSelect, IonCard, IonCardContent, IonIcon, IonButton, IonSpinner, IonSegment, IonLabel, IonSegmentButton, IonHeader, IonToolbar, IonItem, IonSelectOption } from '@ionic/angular/standalone';
 import { BottomMenuComponent } from 'src/app/shared/components/bottom-menu/bottom-menu.component';
 import { addIcons } from 'ionicons';
 import {
@@ -37,6 +24,8 @@ import {
   play,
 } from 'ionicons/icons';
 import { DesktopHeaderComponent } from 'src/app/shared/components/desktop-header/desktop-header.component';
+import { collection, getDocs } from 'firebase/firestore';
+import { Firestore } from '@angular/fire/firestore';
 
 interface AppUser {
   firstName?: string;
@@ -53,6 +42,7 @@ interface AppUser {
   styleUrls: ['./mes-cours.page.scss'],
   standalone: true,
   imports: [
+    IonItem,
     IonToolbar,
     IonHeader,
     IonSpinner,
@@ -66,8 +56,10 @@ interface AppUser {
     IonCard,
     IonSearchbar,
     IonContent,
+    IonSelect,
     BottomMenuComponent,
     DesktopHeaderComponent,
+    IonSelectOption,
   ],
 })
 export class MesCoursPage implements OnInit {
@@ -83,6 +75,12 @@ export class MesCoursPage implements OnInit {
   availableClasses: string[] = ['CP', 'CE1', 'CE2', 'CM1', 'CM2'];
   selectedClasse: string | null = null;
   isSubscribedToClasse = false;
+
+  matieresMap: any = {};
+  matieresDisponibles: string[] = [];
+  selectedMatiereId: string = '';
+  searchTerm: string = '';
+  filteredMatieresList: { id: string; name: string }[] = [];
 
   // Gestion MOYEN / SECONDAIRE / UNIVERSITAIRE
   isMoyenSecondaireUniv = false;
@@ -108,6 +106,7 @@ export class MesCoursPage implements OnInit {
     private router: Router,
     private courseService: CourseService,
     private toastCtrl: ToastController,
+    private firestore: Firestore,
   ) {
     addIcons({
       personCircleOutline,
@@ -126,10 +125,12 @@ export class MesCoursPage implements OnInit {
     });
   }
 
-  ngOnInit() {
+  async ngOnInit(): Promise<void> {
     this.loadCurrentUser();
     this.initializeUserLevel();
+    await this.loadMatieres();
     this.loadAllCoursesPreview();
+    // setTimeout(() => this.debugMatieres(), 2000);
     // this.loadCourses();
   }
 
@@ -233,6 +234,75 @@ export class MesCoursPage implements OnInit {
       : this.userNiveauScolaire || '';
   }
 
+  getMatieresList(): { id: string; name: string }[] {
+    return this.matieresDisponibles.map((id) => ({
+      id: id,
+      name: this.matieresMap[id] || 'Matière inconnue',
+    }));
+  }
+
+  getMatiereName(matiereId: string): string {
+    if (!matiereId) return 'Non spécifié';
+    return (
+      this.matieresMap[matiereId] || `Matière ${matiereId.substring(0, 8)}...`
+    );
+  }
+
+  getFilteredMatieresList(): { id: string; name: string }[] {
+    // Récupérer les IDs des matières présentes dans filteredCourses
+    const matiereIdsInFilteredCourses = new Set(
+      this.filteredCourses
+        .map((c) => c.matiereId)
+        .filter((id): id is string => !!id),
+    );
+
+    // Filtrer matieresDisponibles pour ne garder que celles présentes dans filteredCourses
+    return this.matieresDisponibles
+      .filter((id) => matiereIdsInFilteredCourses.has(id))
+      .map((id) => ({
+        id: id,
+        name: this.matieresMap[id] || 'Matière inconnue',
+      }));
+  }
+
+  generateMatieres() {
+    // Récupérer les IDs des matières depuis les cours
+    const matiereIdsFromCourses = this.allCourses
+      .map((c) => c.matiereId)
+      .filter((id): id is string => !!id);
+
+    // Récupérer les IDs déjà chargés depuis Firestore
+    const matiereIdsFromFirestore = Object.keys(this.matieresMap);
+
+    // Fusionner les deux sources (IDs uniques)
+    const allMatiereIds = Array.from(
+      new Set([...matiereIdsFromFirestore, ...matiereIdsFromCourses]),
+    );
+
+    this.matieresDisponibles = allMatiereIds;
+
+    // Pour les IDs qui viennent des cours mais pas de Firestore
+    matiereIdsFromCourses.forEach((id) => {
+      if (!this.matieresMap[id]) {
+        const courseWithMatiere = this.allCourses.find(
+          (c) => c.matiereId === id,
+        );
+        if (courseWithMatiere && courseWithMatiere.matiere) {
+          this.matieresMap[id] = courseWithMatiere.matiere;
+        } else {
+          this.matieresMap[id] = `Matière ${id.substring(0, 8)}...`;
+        }
+      }
+    });
+
+    // Initialiser filteredMatieresList
+    this.filteredMatieresList = this.getFilteredMatieresList();
+
+    console.log('📚 Matières disponibles (IDs):', this.matieresDisponibles);
+    console.log('🗺️ Matieres map (noms):', this.matieresMap);
+    console.log('🎯 Matières filtrées:', this.filteredMatieresList);
+  }
+
   extractMatieresFromCourses(classe: string) {
     this.courseService.getAllCourses().subscribe({
       next: (courses) => {
@@ -301,6 +371,49 @@ export class MesCoursPage implements OnInit {
         this.finishMatiereLoading();
       },
     });
+  }
+
+  // async loadMatieres() {
+  //   const matiereRef = collection(this.firestore, 'matiere');
+  //   const snapshot = await getDocs(matiereRef);
+
+  //   snapshot.forEach((doc) => {
+  //     const data: any = doc.data();
+  //     this.matieresMap[doc.id] = data.nom;
+  //   });
+
+  //   // créer la liste pour le filtre
+  //   this.matieresDisponibles = Object.keys(this.matieresMap);
+
+  //   console.log('Matieres map :', this.matieresMap);
+  // }
+
+  async loadMatieres() {
+    try {
+      const matiereRef = collection(this.firestore, 'matieres');
+      const snapshot = await getDocs(matiereRef);
+
+      // Clear existing data
+      this.matieresMap = {};
+      this.matieresDisponibles = [];
+
+      snapshot.forEach((doc) => {
+        const data: any = doc.data();
+        // Store mapping of ID -> name
+        this.matieresMap[doc.id] =
+          data.nom || data.name || data.title || 'Matière sans nom';
+        // Store IDs for the select options
+        this.matieresDisponibles.push(doc.id);
+      });
+
+      console.log('✅ Matieres map:', this.matieresMap);
+      console.log('✅ Matieres disponibles (IDs):', this.matieresDisponibles);
+
+      // Force change detection by creating new array
+      this.matieresDisponibles = [...this.matieresDisponibles];
+    } catch (error) {
+      console.error('❌ Error loading matieres:', error);
+    }
   }
 
   private finishMatiereLoading() {
@@ -489,28 +602,67 @@ export class MesCoursPage implements OnInit {
   //   }
   // }
 
-  searchCourse(event: any) {
-    const term = (event.target.value || '').toLowerCase().trim();
+  // searchCourse(event: any) {
+  //   const term = (event.target.value || '').toLowerCase().trim();
 
-    if (!term) {
-      // Si la recherche est vide, revenir à la liste complète
-      this.filteredCourses = [...this.allCourses];
-      this.updatePagination();
-      return;
+  //   if (!term) {
+  //     // Si la recherche est vide, revenir à la liste complète
+  //     this.filteredCourses = [...this.allCourses];
+  //     this.updatePagination();
+  //     return;
+  //   }
+
+  //   // Filtrer par titre uniquement (ou titre ET description si vous voulez)
+  //   this.filteredCourses = this.allCourses.filter(
+  //     (course) => course.title.toLowerCase().includes(term),
+  //     // Vous pouvez ajouter d'autres critères si nécessaire :
+  //     // || (course.description && course.description.toLowerCase().includes(term))
+  //     // || (course.category && course.category.toLowerCase().includes(term))
+  //   );
+
+  //   console.log(
+  //     `🔍 Recherche "${term}" : ${this.filteredCourses.length} résultat(s)`,
+  //   );
+  //   this.updatePagination();
+  // }
+
+  searchCourse(event: any) {
+    this.searchTerm = (event.target.value || '').toLowerCase().trim();
+    this.applyFilters();
+  }
+
+  filterByMatiere(event: any) {
+    this.selectedMatiereId = event.detail.value;
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    let temp = [...this.allCourses];
+
+    // 🔎 recherche
+    if (this.searchTerm) {
+      temp = temp.filter((c) =>
+        c.title?.toLowerCase().includes(this.searchTerm),
+      );
     }
 
-    // Filtrer par titre uniquement (ou titre ET description si vous voulez)
-    this.filteredCourses = this.allCourses.filter(
-      (course) => course.title.toLowerCase().includes(term),
-      // Vous pouvez ajouter d'autres critères si nécessaire :
-      // || (course.description && course.description.toLowerCase().includes(term))
-      // || (course.category && course.category.toLowerCase().includes(term))
-    );
+    // 📚 filtre matière
+    if (this.selectedMatiereId) {
+      temp = temp.filter((c) => c.matiereId === this.selectedMatiereId);
+    }
 
-    console.log(
-      `🔍 Recherche "${term}" : ${this.filteredCourses.length} résultat(s)`,
-    );
-    this.updatePagination();
+    this.filteredCourses = temp;
+
+    // Mettre à jour filteredMatieresList
+    this.filteredMatieresList = this.getFilteredMatieresList();
+
+    // Si la matière sélectionnée n'est plus dans la liste filtrée, réinitialiser
+    if (
+      this.selectedMatiereId &&
+      !this.filteredMatieresList.some((m) => m.id === this.selectedMatiereId)
+    ) {
+      this.selectedMatiereId = '';
+    }
   }
 
   resetSearch() {
@@ -690,6 +842,7 @@ export class MesCoursPage implements OnInit {
         this.allCourses = filteredCourses;
         this.allCourses = filteredCourses;
         this.filteredCourses = [...filteredCourses]; // Initialiser filteredCourses
+        this.generateMatieres(); // Générer les matières disponibles
         console.log('✅ Total cours affichés:', this.allCourses.length);
         console.log('✅ Total cours affichés:', this.allCourses.length);
         this.isCoursesLoading = false;

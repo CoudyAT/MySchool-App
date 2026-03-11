@@ -603,61 +603,89 @@ export class LoginComponent implements OnInit, AfterViewInit {
     return this.otpForm.get('otpCode')?.value || '';
   }
 
-  async handleExistingUser(phone: string) {
-    try {
-      const usersCollection = collection(this.firestore, 'utilisateur');
-      const phoneQuery = query(usersCollection, where('phone', '==', phone));
-      const snapshot = await getDocs(phoneQuery);
+async handleExistingUser(phone: string) {
+  try {
+    const usersCollection = collection(this.firestore, 'utilisateur');
+    const phoneQuery = query(usersCollection, where('phone', '==', phone));
+    const snapshot = await getDocs(phoneQuery);
 
-      if (!snapshot.empty) {
-        const userDoc = snapshot.docs[0];
-        const userData = userDoc.data();
+    if (!snapshot.empty) {
+      const userDoc = snapshot.docs[0];
+      const userData = userDoc.data();
+      const userId = userDoc.id;
 
-        // Stocker les données utilisateur
-        localStorage.setItem(
-          'currentUser',
-          JSON.stringify({
-            ...userData,
-            id: userDoc.id,
-          }),
-        );
-        localStorage.setItem('userPhone', phone);
+      // Stocker les données utilisateur
+      localStorage.setItem(
+        'currentUser',
+        JSON.stringify({
+          ...userData,
+          id: userId,
+        })
+      );
 
-        // Connexion Firebase anonyme si nécessaire
-        if (!this.auth.currentUser) {
-          await signInAnonymously(this.auth);
-        }
+      localStorage.setItem('userPhone', phone);
 
-        // Toast de bienvenue
-        const firstName = userData['firstName'] || '';
-        await this.showToast(
-          firstName ? `Bienvenue ${firstName} !` : 'Connexion réussie !',
-          'success',
-        );
-
-        // 🔹 Redirection selon le rôle
-        const roleObj = userData['role'];
-        const role = roleObj?.libelle?.toString().toLowerCase() || 'user';
-        if (role.toLowerCase() === 'admin') {
-          // Redirection vers l'admin
-          setTimeout(() => {
-            this.router.navigate(['/admin-login/users'], { replaceUrl: true });
-          }, 500);
-        } else {
-          // Redirection utilisateur normal
-          setTimeout(() => {
-            this.router.navigate(['/courses'], { replaceUrl: true });
-          }, 500);
-        }
-      } else {
-        await this.showToast('Utilisateur non trouvé', 'danger');
+      // Connexion Firebase anonyme si nécessaire
+      if (!this.auth.currentUser) {
+        await signInAnonymously(this.auth);
       }
-    } catch (error) {
-      console.error('Erreur connexion utilisateur:', error);
-      await this.showToast('Erreur lors de la connexion', 'danger');
-      throw error;
+
+      /**
+       * 🔹 Synchroniser l'abonnement utilisateur
+       */
+      try {
+        const response = await fetch(
+          `https://myschool.com/api/subscriptions/sync-status/${userId}`,
+        );
+
+        const result = await response.json();
+
+        if (result.success) {
+          localStorage.setItem(
+            'userSubscription',
+            JSON.stringify(result.data)
+          );
+        } else {
+          console.warn("Impossible de récupérer l'abonnement");
+        }
+      } catch (error) {
+        console.error("Erreur récupération abonnement", error);
+      }
+
+      // Toast de bienvenue
+      const firstName = userData['firstName'] || '';
+
+      await this.showToast(
+        firstName ? `Bienvenue ${firstName} !` : 'Connexion réussie !',
+        'success'
+      );
+
+      /**
+       * 🔹 Redirection selon le rôle
+       */
+      const roleObj = userData['role'];
+      const role = roleObj?.libelle?.toString().toLowerCase() || 'user';
+
+      if (role === 'admin') {
+        setTimeout(() => {
+          this.router.navigate(['/admin-login/users'], { replaceUrl: true });
+        }, 500);
+      } else {
+        setTimeout(() => {
+          this.router.navigate(['/courses'], { replaceUrl: true });
+        }, 500);
+      }
+
+    } else {
+      await this.showToast('Utilisateur non trouvé', 'danger');
     }
+
+  } catch (error) {
+    console.error('Erreur connexion utilisateur:', error);
+    await this.showToast('Erreur lors de la connexion', 'danger');
+    throw error;
   }
+}
 
   async handleNewUser(phone: string) {
     try {

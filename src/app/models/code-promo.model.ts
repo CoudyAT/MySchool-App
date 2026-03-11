@@ -4,6 +4,7 @@ export interface CodePromo {
   type: 'fixed' | 'percentage';
   value: number;
   expirationDate: string;
+  expiresAt?: string;
   influenceurId: string;
   commissionType: 'fixed' | 'percentage';
   commissionValue: number;

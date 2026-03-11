@@ -570,7 +570,7 @@ export class CoursDetailPage implements OnInit, OnDestroy {
    * - Si non inscrit → proposer l'abonnement selon le niveau du cours
    */
   async openChapter(chapter: Chapter, index: number) {
-    if (this.isUserEnrolled) {
+   if (this.isUserEnrolled) {
       // L'utilisateur est abonné → ouvrir le contenu
       const courseId = this.route.snapshot.paramMap.get('id');
       this.router.navigate(['/course-video', courseId], {

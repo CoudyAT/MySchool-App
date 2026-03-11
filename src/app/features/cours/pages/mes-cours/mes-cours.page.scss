@@ -1134,3 +1134,183 @@ ion-card-content {
     display: block;
   }
 }
+
+/* ==========================================
+   MATIÈRE FILTER SECTION
+   ========================================== */
+
+.matiere-filter-section {
+  margin-bottom: 24px;
+
+  @media (min-width: 768px) {
+    margin-bottom: 28px;
+  }
+
+  @media (min-width: 1024px) {
+    margin-bottom: 32px;
+  }
+
+  .filter-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    padding: 0 4px;
+
+    @media (min-width: 768px) {
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    @media (min-width: 1024px) {
+      margin-bottom: 16px;
+    }
+
+    ion-icon {
+      font-size: 18px;
+      color: #667eea;
+
+      @media (min-width: 768px) {
+        font-size: 20px;
+      }
+
+      @media (min-width: 1024px) {
+        font-size: 22px;
+      }
+    }
+
+    span {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1a1a1a;
+
+      @media (min-width: 768px) {
+        font-size: 15px;
+      }
+
+      @media (min-width: 1024px) {
+        font-size: 16px;
+      }
+    }
+  }
+}
+
+.matieres-filter-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 1px solid #e8eef5;
+
+  @media (min-width: 768px) {
+    gap: 10px;
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  @media (min-width: 1024px) {
+    gap: 12px;
+    padding: 16px;
+    border-radius: 16px;
+  }
+}
+
+.matiere-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: white;
+  border: 2px solid #e8eef5;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+
+  @media (min-width: 768px) {
+    padding: 9px 16px;
+    font-size: 14px;
+    border-radius: 22px;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 10px 18px;
+    font-size: 15px;
+    border-radius: 24px;
+  }
+
+  ion-icon {
+    font-size: 16px;
+    color: #667eea;
+
+    @media (min-width: 768px) {
+      font-size: 18px;
+    }
+
+    @media (min-width: 1024px) {
+      font-size: 20px;
+    }
+  }
+
+  &:hover {
+    border-color: #667eea;
+    background: #f0f4ff;
+    color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+  }
+
+  &.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: #667eea;
+    color: white;
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.25);
+
+    ion-icon {
+      color: white;
+    }
+  }
+}
+
+/* ==========================================
+   RESPONSIVE ADJUSTMENTS
+   ========================================== */
+
+@media (max-width: 480px) {
+  .matiere-filter-section {
+    margin-bottom: 20px;
+
+    .filter-header {
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+  }
+
+  .matieres-filter-grid {
+    gap: 6px;
+    padding: 10px;
+  }
+
+  .matiere-filter-chip {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .matieres-filter-grid {
+    gap: 14px;
+    padding: 18px;
+  }
+
+  .matiere-filter-chip {
+    padding: 11px 20px;
+    font-size: 15.5px;
+  }
+}
+
