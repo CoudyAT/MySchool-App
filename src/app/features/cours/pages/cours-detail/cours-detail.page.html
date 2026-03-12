@@ -57,18 +57,15 @@
         <ion-button
           *ngIf="isUserEnrolled"
           expand="block"
-          class="enroll-button-mobile"
+          class="subscription-btn-compact"
           (click)="continueCourse()"
         >
           <div class="button-content">
             <span class="button-main-text">Continuer le cours</span>
-            <span class="button-subtitle"
-              >Progression: {{enrollmentProgress}}%</span
-            >
           </div>
         </ion-button>
 
-        <p *ngIf="!isUserEnrolled" class="free-access-text">Consultez les chapitres et exercices ci-dessous</p>
+        <p *ngIf="isUserEnrolled" class="free-access-text">Consultez les chapitres et exercices ci-dessous</p>
       </div>
 
       <!-- ========== ONGLETS CHAPITRES ET DOCUMENTS ========== -->
@@ -96,7 +93,7 @@
         <!-- Contenu Chapitres -->
         <div class="hero-tab-content" *ngIf="heroActiveTab === 'chapters'">
           <div class="hero-chapters-list" *ngIf="chapters.length > 0">
-            <div class="hero-chapter-item" *ngFor="let chapter of chapters; let i = index" (click)="openChapter(chapter, i)" style="cursor: pointer;">
+            <div class="hero-chapter-item" *ngFor="let chapter of chapters; let i = index" (click)="openChapter(chapter.id)" style="cursor: pointer;">
               <div class="hero-chapter-number">{{ i + 1 }}</div>
               <div class="hero-chapter-info">
                 <h4 class="hero-chapter-title">{{ chapter.title }}</h4>
@@ -242,7 +239,7 @@
         </h2>
 
         <div class="chapters-list">
-          <ion-card *ngFor="let chapter of chapters; let i = index" class="chapter-card" (click)="openChapter(chapter, i)">
+          <ion-card *ngFor="let chapter of chapters; let i = index" class="chapter-card" (click)="openChapter(chapter.id)">
             <ion-card-content class="chapter-card-content">
               <div class="chapter-left">
                 <div class="chapter-number">

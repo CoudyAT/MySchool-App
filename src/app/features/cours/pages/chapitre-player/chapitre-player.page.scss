@@ -1,0 +1,670 @@
+/* ==========================================
+   HEADER
+   ========================================== */
+
+.video-header {
+  ion-toolbar {
+    --background: #ffffff;
+    --border-bottom: 1px solid #e8eef5;
+    --min-height: 60px;
+
+    ion-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #000;
+      text-align: left;
+      padding-left: 8px;
+
+      @media (min-width: 1024px) {
+        font-size: 24px;
+      }
+    }
+
+    .back-button {
+      --color: #000;
+
+      ion-icon {
+        font-size: 24px;
+      }
+    }
+  }
+}
+
+/* ==========================================
+   CONTENT
+   ========================================== */
+
+.video-content {
+  --background: #f8f9fa;
+  --padding-bottom: 60px;
+
+  @media (min-width: 1024px) {
+    --background: #ffffff;
+  }
+}
+
+/* ==========================================
+   MAIN CONTAINER
+   ========================================== */
+
+.video-container {
+  padding: 0;
+  margin: 0;
+  background: white;
+
+  @media (min-width: 1024px) {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 60px;
+    background: white;
+  }
+
+  @media (min-width: 1400px) {
+    padding: 40px 120px;
+  }
+}
+
+/* ==========================================
+   VIDEO HERO SECTION
+   ========================================== */
+
+.video-hero {
+  width: 100%;
+  position: relative;
+
+  @media (min-width: 1024px) {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ==========================================
+   VIDEO WRAPPER
+   ========================================== */
+
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  border-radius: 0;
+
+  @media (min-width: 768px) {
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  @media (min-width: 1024px) {
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.video-thumbnail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+
+  .course-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .thumbnail-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60%;
+      background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.3));
+    }
+  }
+
+  .video-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+  }
+
+  &:hover .video-overlay {
+    background: rgba(0, 0, 0, 0.35);
+  }
+}
+
+/* ==========================================
+   PLAY BUTTON
+   ========================================== */
+
+.play-button-container {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  cursor: pointer;
+}
+
+.play-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+
+  svg {
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+  }
+
+  &:hover {
+    transform: scale(1.1);
+
+    svg circle {
+      opacity: 1;
+    }
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+/* ==========================================
+   VIDEO INFO OVERLAY
+   ========================================== */
+
+.video-info-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.6));
+  padding: 24px 16px;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  @media (min-width: 768px) {
+    padding: 28px 20px;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 32px 24px;
+  }
+
+  .video-badge {
+    display: inline-flex;
+    width: fit-content;
+    background: rgba(102, 126, 234, 0.9);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  .video-duration {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+
+    ion-icon {
+      font-size: 18px;
+    }
+  }
+}
+
+/* ==========================================
+   VIDEO PLAYER
+   ========================================== */
+
+.video-player-wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  border-radius: 0;
+  background: #000;
+
+  @media (min-width: 768px) {
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  @media (min-width: 1024px) {
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.video-player {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+
+  @media (min-width: 768px) {
+    border-radius: 16px;
+  }
+
+  @media (min-width: 1024px) {
+    border-radius: 20px;
+  }
+}
+
+/* ==========================================
+   CONTENT SECTION
+   ========================================== */
+
+.content-section {
+  padding: 24px 16px;
+  background: white;
+
+  @media (min-width: 768px) {
+    padding: 32px 24px;
+    border-radius: 16px;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 0;
+    background: transparent;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+    align-items: start;
+  }
+}
+
+/* ==========================================
+   COURSE HEADER
+   ========================================== */
+
+.course-header {
+  margin-bottom: 32px;
+
+  @media (min-width: 1024px) {
+    margin-bottom: 0;
+    grid-column: 1 / 2;
+  }
+}
+
+.category-badge {
+  display: inline-flex;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+
+  @media (min-width: 768px) {
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+}
+
+.course-title {
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: #000;
+  margin: 0 0 16px 0;
+
+  @media (min-width: 768px) {
+    font-size: 36px;
+    margin-bottom: 20px;
+  }
+
+  @media (min-width: 1024px) {
+    font-size: 40px;
+    margin-bottom: 24px;
+  }
+
+  @media (min-width: 1400px) {
+    font-size: 44px;
+  }
+}
+
+/* ==========================================
+   COURSE META
+   ========================================== */
+
+.course-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+
+  @media (min-width: 768px) {
+    margin-bottom: 28px;
+    gap: 20px;
+  }
+
+  @media (min-width: 1024px) {
+    margin-bottom: 32px;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: black;
+    font-weight: 500;
+
+    ion-icon {
+      font-size: 18px;
+      color: #667eea;
+    }
+
+    @media (min-width: 768px) {
+      font-size: 15px;
+    }
+
+    @media (min-width: 1024px) {
+      font-size: 14px;
+    }
+  }
+}
+
+/* ==========================================
+   PROGRESS SECTION
+   ========================================== */
+
+.progress-section {
+  margin-bottom: 24px;
+
+  @media (min-width: 1024px) {
+    margin-bottom: 32px;
+  }
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+
+  .progress-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #000;
+
+    @media (min-width: 768px) {
+      font-size: 15px;
+    }
+  }
+
+  .progress-percentage {
+    font-size: 14px;
+    font-weight: 700;
+    color: #667eea;
+
+    @media (min-width: 768px) {
+      font-size: 15px;
+    }
+  }
+}
+
+.progress-bar {
+  height: 6px;
+  background: #e8eef5;
+  border-radius: 3px;
+  overflow: hidden;
+
+  @media (min-width: 768px) {
+    height: 8px;
+    border-radius: 4px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+}
+
+/* ==========================================
+   DESCRIPTION SECTION
+   ========================================== */
+
+.description-section {
+  margin-bottom: 32px;
+
+  @media (min-width: 1024px) {
+    margin-bottom: 0;
+    grid-column: 2 / 4;
+  }
+
+  .section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #000;
+    margin: 0 0 12px 0;
+
+    @media (min-width: 768px) {
+      font-size: 20px;
+      margin-bottom: 16px;
+    }
+
+    @media (min-width: 1024px) {
+      font-size: 18px;
+      color: #667eea;
+    }
+  }
+
+  .description-text {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #666;
+    margin: 0;
+
+    @media (min-width: 768px) {
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    @media (min-width: 1024px) {
+      font-size: 14px;
+    }
+  }
+}
+
+/* ==========================================
+   INFO GRID
+   ========================================== */
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-bottom: 28px;
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 0;
+    grid-column: 1 / -1;
+  }
+}
+
+.info-card {
+  display: flex;
+  gap: 12px;
+  padding: 14px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+
+  @media (min-width: 768px) {
+    gap: 16px;
+    padding: 16px;
+    border-radius: 14px;
+  }
+
+  @media (min-width: 1024px) {
+    flex-direction: row;
+    padding: 14px;
+    border-radius: 12px;
+  }
+
+  &:hover {
+    background: #f0f5ff;
+    transform: translateY(-2px);
+  }
+
+  .info-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    flex-shrink: 0;
+
+    ion-icon {
+      font-size: 20px;
+      color: white;
+
+      @media (min-width: 768px) {
+        font-size: 22px;
+      }
+    }
+  }
+
+  .info-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    .info-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #666;
+      margin: 0 0 2px 0;
+
+      @media (min-width: 768px) {
+        font-size: 14px;
+        margin-bottom: 4px;
+      }
+
+      @media (min-width: 1024px) {
+        font-size: 13px;
+      }
+    }
+
+    .info-value {
+      font-size: 14px;
+      font-weight: 700;
+      color: #000;
+      margin: 0;
+
+      @media (min-width: 768px) {
+        font-size: 15px;
+      }
+
+      @media (min-width: 1024px) {
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+/* ==========================================
+   ACTION BUTTON
+   ========================================== */
+
+.action-button {
+  --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --border-radius: 12px;
+  height: 48px;
+  font-weight: 600;
+  text-transform: none;
+  font-size: 16px;
+  margin-top: 24px;
+
+  @media (min-width: 768px) {
+    height: 52px;
+    font-size: 17px;
+    margin-top: 28px;
+  }
+
+  @media (min-width: 1024px) {
+    height: 56px;
+    font-size: 16px;
+    margin-top: 0;
+    --border-radius: 14px;
+    grid-column: 1 / -1;
+  }
+
+  &:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================
+   RESPONSIVE UTILITIES
+   ========================================== */
+
+@media (max-width: 1023px) {
+  .video-container {
+    padding: 0;
+  }
+
+  .content-section {
+    border-radius: 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .video-container {
+    position: sticky;
+    top: 0;
+  }
+}

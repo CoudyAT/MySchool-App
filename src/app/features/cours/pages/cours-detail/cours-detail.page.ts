@@ -52,6 +52,7 @@ import { EnrollmentService } from 'src/app/features/services/enrollmentService';
 import { ChapterService } from 'src/app/features/services/chapter.service';
 import { DesktopHeaderComponent } from 'src/app/shared/components/desktop-header/desktop-header.component';
 import { InstructorService } from 'src/app/features/services/instructorService';
+import { PaymentService } from 'src/app/features/services/paymentService';
 
 @Component({
   selector: 'app-cours-detail',
@@ -104,6 +105,7 @@ export class CoursDetailPage implements OnInit, OnDestroy {
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
     private instructorService: InstructorService,
+    private paymentService: PaymentService,
   ) {
     addIcons({
       chevronBackOutline,
@@ -135,8 +137,6 @@ export class CoursDetailPage implements OnInit, OnDestroy {
     this.loadUserData();
     this.loadCourseDetails();
   }
-
-
 
   loadUserData() {
     const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
@@ -288,7 +288,7 @@ export class CoursDetailPage implements OnInit, OnDestroy {
         this.loadInstructorData();
         // Charger autres données
         this.loadChapters(courseId);
-        this.checkUserEnrollment(courseId);
+        this.checkUserEnrollmentByPayment(this.course);
 
         this.isLoading = false;
       },
@@ -305,68 +305,104 @@ export class CoursDetailPage implements OnInit, OnDestroy {
 
     const instructorId = this.course?.instructorId;
     console.log('instructorId', this.course);
-    
+
     if (!instructorId) {
       // Pas d'instructeur associé au cours : arrêter et enlever le loader
       this.isLoading = false;
       return;
     }
 
-    this.instructorService
-      .getInstructorById(instructorId)
-      .subscribe({
-        next: async (instructor) => {
-          this.instructor = instructor;
-          console.log("jjj", this.instructor);
-          
-          this.isLoading = false;
-        },
-        error: (error) => {
-          console.error('Erreur chargement instructeur :', error);
-          this.isLoading = false;
-        },
-      });
+    this.instructorService.getInstructorById(instructorId).subscribe({
+      next: async (instructor) => {
+        this.instructor = instructor;
+        console.log('jjj', this.instructor);
+
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Erreur chargement instructeur :', error);
+        this.isLoading = false;
+      },
+    });
   }
 
-  checkUserEnrollment(courseId: string) {
-    // D'abord vérifier si l'utilisateur a un abonnement actif
+  checkUserEnrollmentByPayment(course: any) {
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
     const userId = currentUser.id || currentUser._id;
 
-    // Vérifier si l'utilisateur a un abonnement actif dans le localStorage
-    if (currentUser.hasActiveSubscription) {
-      console.log('✅ Utilisateur a un abonnement actif (localStorage)');
-      this.isUserEnrolled = true;
+    if (!userId) {
+      this.isUserEnrolled = false;
       return;
     }
 
-    // Vérifier l'abonnement via l'API
-    if (userId) {
-      console.log('je suis ici');
+    this.paymentService.getUserPayments(userId).subscribe({
+      next: (res) => {
+        if (!res.success || !res.data) {
+          this.isUserEnrolled = false;
+          return;
+        }
 
-      this.enrollmentService.checkCourseAccess(userId).subscribe({
-        next: (response) => {
-          if (response.success && response.hasAccess) {
-            console.log('✅ Utilisateur a accès via abonnement');
-            this.isUserEnrolled = true;
+        const payments = res.data;
 
-            // Mettre à jour le localStorage
-            currentUser.hasActiveSubscription = true;
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            return;
+        // garder uniquement les paiements SUCCESS
+        const successPayments = payments.filter(
+          (p: any) => p.status === 'SUCCESS',
+        );
+
+        if (successPayments.length === 0) {
+          this.isUserEnrolled = false;
+          return;
+        }
+
+        const courseMatiere = course?.category; 
+        const courseClasse = course?.classe;
+        console.log('Course matiere:', course?.category);
+        console.log('Course classe:', course?.classe);
+        console.log('Success payments:', successPayments);
+
+        const normalize = (str: string) =>
+          str
+            ?.toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '') // enlève accents
+            .trim();
+        
+
+        const hasAccess = successPayments.some((payment: any) => {
+
+          console.log('Course matière utilisée:', courseMatiere);
+          console.log('Payment matières:', payment.metadata);
+
+          // abonnement GLOBAL
+          if (payment.metadata.typeAbonnement === 'CLASSE') {
+            return true;
           }
 
-          // Sinon vérifier les enrollments individuels
-          this.checkIndividualEnrollment(courseId);
-        },
-        error: () => {
-          // En cas d'erreur API, vérifier les enrollments
-          this.checkIndividualEnrollment(courseId);
-        },
-      });
-    } else {
-      this.checkIndividualEnrollment(courseId);
-    }
+          // abonnement par MATIERE
+        if (
+          payment.metadata.typeAbonnement === 'MATIERE' &&
+          normalize(payment.metadata.classe) === normalize(courseClasse) &&
+          payment.metadata.matieres?.some(
+            (m: string) => normalize(m) === normalize(courseMatiere),
+          )
+        ) {
+          return true;
+        }
+
+          return false;
+        });
+
+        // ✅ mettre à jour la variable
+        this.isUserEnrolled = hasAccess;
+
+        console.log('Accès via paiement:', hasAccess);
+      },
+
+      error: (err) => {
+        console.error('Erreur récupération paiements', err);
+        this.isUserEnrolled = false;
+      },
+    });
   }
 
   private checkIndividualEnrollment(courseId: string) {
@@ -521,7 +557,7 @@ export class CoursDetailPage implements OnInit, OnDestroy {
   }
 
   continueCourse() {
-    if (this.course && this.currentEnrollment) {
+    if (this.course) {
       console.log('Continuer le cours:', this.course.title);
       console.log('Progression actuelle:', this.enrollmentProgress + '%');
       console.log('Continuer le cours:', this.course.id);
@@ -530,7 +566,7 @@ export class CoursDetailPage implements OnInit, OnDestroy {
       // Rediriger vers la page du cours/player
       this.router.navigate(['/course-video', courseId], {
         state: {
-          enrollment: this.currentEnrollment,
+        //  enrollment: this.currentEnrollment,
           course: this.course,
           progress: this.enrollmentProgress,
         },
@@ -569,19 +605,9 @@ export class CoursDetailPage implements OnInit, OnDestroy {
    * - Si inscrit → naviguer vers le contenu du chapitre
    * - Si non inscrit → proposer l'abonnement selon le niveau du cours
    */
-  async openChapter(chapter: Chapter, index: number) {
-   if (this.isUserEnrolled) {
-      // L'utilisateur est abonné → ouvrir le contenu
-      const courseId = this.route.snapshot.paramMap.get('id');
-      this.router.navigate(['/course-video', courseId], {
-        state: {
-          enrollment: this.currentEnrollment,
-          course: this.course,
-          progress: this.enrollmentProgress,
-          chapterIndex: index,
-          chapter: chapter,
-        },
-      });
+  async openChapter(id: string) {
+    if (this.isUserEnrolled) {
+      this.router.navigate(['/chapitre-player', id]);
       return;
     }
 
@@ -650,4 +676,6 @@ export class CoursDetailPage implements OnInit, OnDestroy {
       }
     }
   }
+
+
 }

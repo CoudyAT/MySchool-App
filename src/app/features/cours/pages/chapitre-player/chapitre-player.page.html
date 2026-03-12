@@ -1,0 +1,81 @@
+<ion-header class="video-header ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()" class="back-button">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="video-content">
+  <div class="video-container">
+
+    <!-- Hero Video Section -->
+    <div class="video-hero">
+      
+      <!-- Thumbnail + Play Button -->
+      <div class="video-wrapper" *ngIf="!showVideo">
+        <div class="video-thumbnail">
+
+          <div class="thumbnail-placeholder" *ngIf="!course.image && !course.courseImage"></div>
+          
+          <!-- Overlay Gradient -->
+          <div class="video-overlay"></div>
+
+          <!-- Play Button -->
+          <div class="play-button-container">
+            <button class="play-button" (click)="startCourse()" title="Lire la vidéo">
+              <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                <circle cx="32" cy="32" r="32" fill="white" opacity="0.95"/>
+                <path d="M28 22L45 32L28 42V22Z" fill="#667eea"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Video Info Overlay -->
+        <div class="video-info-overlay">
+          <div class="video-duration">
+            <ion-icon name="play-circle-outline"></ion-icon>
+            Cliquez pour lire
+          </div>
+        </div>
+      </div>
+
+      <!-- Video Player -->
+      <div class="video-player-wrapper" *ngIf="showVideo">
+        <video
+          width="100%"
+          controls
+          autoplay
+          class="video-player"
+        >
+          <source [src]="course.duration" type="video/mp4">
+          Votre navigateur ne supporte pas la lecture vidéo.
+        </video>
+      </div>
+
+    </div>
+
+    <!-- Content Section -->
+    <div class="content-section">
+      
+      <!-- Course Header -->
+      <div class="course-header">
+        <h1 class="course-title">{{ course.title }}</h1>
+        <!-- Course Meta -->
+        <div class="course-meta">
+          <div class="meta-item">
+            <span>Description: {{course.description }}</span>
+          </div>
+        </div>
+      </div> 
+
+
+
+
+    </div>
+
+  </div>
+</ion-content>
