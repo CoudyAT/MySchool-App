@@ -39,8 +39,8 @@ export class CodePromoPage implements OnInit {
 
   // Pagination
   currentPage = 1;
-  itemsPerPage = 5;
-  totalPages = 1;
+  itemsPerPage = 20;
+  totalPages = 100;
 
   // Modal
   isModalOpen = false;
@@ -50,7 +50,7 @@ export class CodePromoPage implements OnInit {
   constructor(
     private codePromoService: CodePromoPageService,
     private usersService: UserService,
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadCodesPromo();
@@ -140,17 +140,17 @@ export class CodePromoPage implements OnInit {
     this.modalCodePromo = code
       ? { ...code }
       : {
-          code: '',
-          type: 'fixed',
-          value: 0,
-          expirationDate: '',
-          influenceurId: '',
-          commissionType: 'fixed',
-          commissionValue: 0,
-          usageLimit: 0,
-          description: '',
-          isActive: true,
-        };
+        code: '',
+        type: 'fixed',
+        value: 0,
+        expirationDate: '',
+        influenceurId: '',
+        commissionType: 'fixed',
+        commissionValue: 0,
+        usageLimit: 0,
+        description: '',
+        isActive: true,
+      };
 
     // On garde le code original pour la vérification
     this.originalCode = code?.code || '';
