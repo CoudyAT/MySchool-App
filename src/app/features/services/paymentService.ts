@@ -92,12 +92,6 @@ export class PaymentService {
     );
   }
 
-  // validatePromoCode(payload: {
-  //   code: string;
-  //   // userId: string;
-  // }): Observable<any> {
-  //   return this.api.post<any>('/codes-promo/validate', payload);
-  // }
 
   validatePromoCode(
     code: string,

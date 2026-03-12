@@ -280,6 +280,14 @@ export const routes: Routes = [
   },
   {
     path: 'tuto',
-    loadComponent: () => import('./features/tuto/tuto/tuto.page').then(m => m.TutoPage)
+    loadComponent: () =>
+      import('./features/tuto/tuto/tuto.page').then((m) => m.TutoPage),
+  },
+  {
+    path: 'chapitre-player/:id',
+    loadComponent: () =>
+      import('./features/cours/pages/chapitre-player/chapitre-player.page').then(
+        (m) => m.ChapitrePlayerPage,
+      ),
   },
 ];
