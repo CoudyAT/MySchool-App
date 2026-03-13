@@ -324,12 +324,11 @@
         <p>Chargement des cours...</p>
       </div>
 
-      <!-- Liste des cours -->
+      <!-- Liste des cours  -->
       <div *ngIf="!isCoursesLoading" class="enrolled-courses-grid">
         <ion-card *ngFor="let course of allCourses" class="course-card" (click)="openCour(course)">
           <div class="card-image">
             <img [src]="course.image || 'assets/algo.svg'" alt="{{ course.title }}" />
-
             <div class="play-icon">
               <ion-icon name="play"></ion-icon>
             </div>
@@ -390,39 +389,39 @@
         </ion-button>
       </div>
 
-      <!-- Cours achetés - Grid 2 colonnes -->
+      <!-- Cours achetés - Grid 2 colonnes
       <div *ngIf="!isLoading && enrolledCourses.length > 0" class="enrolled-courses-grid">
-        <ion-card *ngFor="let course of enrolledCourses" class="course-card" (click)="openCourse(course)">
+        <ion-card *ngFor="let course of enrolledCourses" class="course-card" (click)="openCourse(course.id)">
 
           <div class="card-image">
-            <img [src]="course.courseDetails?.image || 'assets/algo.svg'" alt="Image du cours" class="course-image" />
-            <!-- Badge Certificat disponible -->
-            <div class="certificate-badge" *ngIf="course?.courseDetails?.certificateAvailable">
+            <img [src]="course?.image || 'assets/algo.svg'" alt="Image du cours" class="course-image" />
+            <!-- Badge Certificat disponible 
+            <div class="certificate-badge" *ngIf="course?.certificateAvailable">
               <ion-icon name="shield-checkmark"></ion-icon>
               <span>Certificat disponible</span>
             </div>
 
-            <!-- Icône play -->
+            <!-- Icône play 
             <div class="play-icon">
               <ion-icon name="play"></ion-icon>
             </div>
           </div>
 
           <ion-card-content>
-            <h3 class="course-title">{{ course.courseTitle }}</h3>
+            <h3 class="course-title">{{ course.title }}</h3>
             <div class="course-meta">
-              <span style="color: #FF9500;">{{ course.courseDetails?.exercises }} Exercices</span>
+              <span style="color: #FF9500;">{{ course?.exercises }} Exercices</span>
             </div>
-            <div class="enrollment-date" *ngIf="course.enrolledAt">
-              Inscrit le {{ getFormattedDate(course.enrolledAt) }}
+            <div class="enrollment-date" *ngIf="course.createdAt">
+              Inscrit le {{ getFormattedDate(course.createdAt) }}
             </div>
             <ion-button expand="block" size="small" class="continue-button"
-              (click)="openCourse(course); $event.stopPropagation()">
+              (click)="openCourse(course.id); $event.stopPropagation()">
               Continuer
             </ion-button>
           </ion-card-content>
         </ion-card>
-      </div>
+      </div> -->
     </div>
     <!-- Section Instructeurs -->
     <div class="instructors-section ">

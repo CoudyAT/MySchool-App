@@ -8,6 +8,7 @@ export type PaymentMethod = 'orange-money' | 'wave' | 'free-money' | 'card';
 export interface Payment {
   id?: string;
   userId: string;
+  classe?: string; 
  // enrollmentId?: string;
   courseId: string;
  // amount?: number;

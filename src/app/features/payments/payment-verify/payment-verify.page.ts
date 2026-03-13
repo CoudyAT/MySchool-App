@@ -414,7 +414,7 @@ export class PaymentVerifyPage implements OnInit {
   }
 
   /** ===============================
-   *  🔥 ACTION PAIEMENT
+   *   ACTION PAIEMENT
    *  =============================== */
 
   async proceedToPayment() {
@@ -454,18 +454,25 @@ export class PaymentVerifyPage implements OnInit {
             this.classe,
             this.niveauScolaire,
             'CLASSE',
-            undefined, // 👈 matieres = undefined (4ème paramètre)
-            this.appliedPromoCode, // 👈 promoCode (5ème paramètre)
-            this.summary.total.toString(), // 👈 finalAmount (6ème paramètre)
+            undefined, //  matieres = undefined (4ème paramètre)
+            this.appliedPromoCode, //  promoCode (5ème paramètre)
+            this.summary.total.toString(), //  finalAmount (6ème paramètre)
           ),
         );
 
-        if (response?.success && response?.data?.paymentUrl) {
+        if (!response?.success) {
           await this.hideLoader();
-          console.log('✅ URL de paiement reçue:', response.data.paymentUrl);
+          await this.showErrorAlert(response?.message || 'Action impossible');
+          return;
+        }
+
+        // ✅ paiement
+        if (response?.data?.paymentUrl) {
+          await this.hideLoader();
           window.location.href = response.data.paymentUrl;
           return;
         }
+
 
         throw new Error("URL de paiement introuvable pour l'abonnement classe");
       }
@@ -488,22 +495,36 @@ export class PaymentVerifyPage implements OnInit {
           throw new Error("Informations d'abonnement manquantes");
         }
 
-        // Pour MATIERE, on passe les matieres en 4ème paramètre et promoCode en 5ème
         const response = await firstValueFrom(
           this.paymentService.createSubscriptionPayment(
             this.userId,
             this.classe || '',
             this.niveauScolaire,
             'MATIERE',
-            this.subscriptionMatieres, // 👈 matieres (4ème paramètre)
-            this.appliedPromoCode, // 👈 promoCode (5ème paramètre)
-            this.summary.total.toString(), // 👈 finalAmount (6ème paramètre)
+            this.subscriptionMatieres, 
+            this.appliedPromoCode, 
+            this.summary.total.toString(), 
           ),
         );
 
-        if (response?.success && response?.data?.paymentUrl) {
+            console.log(
+              ' Erreur API abonnement matière:',
+              response,
+            );
+
+        if (response?.error.success === false) {
+          console.log(
+            ' Erreur API abonnement matière:',
+            response,
+          );
           await this.hideLoader();
-          console.log('✅ URL de paiement reçue:', response.data.paymentUrl);
+          await this.showErrorAlert(response?.error.message || 'Action impossible');
+          return;
+        }
+
+        // ✅ paiement
+        if (response?.data?.paymentUrl) {
+          await this.hideLoader();
           window.location.href = response.data.paymentUrl;
           return;
         }
@@ -557,11 +578,19 @@ export class PaymentVerifyPage implements OnInit {
             );
           }
 
-          if (response?.success && response?.data?.paymentUrl) {
+          if (!response?.success) {
+            await this.hideLoader();
+            await this.showErrorAlert(response?.message || 'Action impossible');
+            return;
+          }
+
+          // ✅ paiement
+          if (response?.data?.paymentUrl) {
             await this.hideLoader();
             window.location.href = response.data.paymentUrl;
             return;
           }
+
 
           throw new Error('URL de paiement introuvable');
         }
@@ -617,7 +646,9 @@ export class PaymentVerifyPage implements OnInit {
     } catch (err) {
       console.error('❌ Erreur paiement', err);
       await this.hideLoader();
-      await this.showErrorAlert('Erreur lors du paiement');
+      const errMsg =
+        (err as any)?.error?.message || (err as any)?.message || 'Action impossible';
+      await this.showErrorAlert(errMsg);
     }
   }
 

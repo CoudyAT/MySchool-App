@@ -97,10 +97,6 @@
               <div class="hero-chapter-number">{{ i + 1 }}</div>
               <div class="hero-chapter-info">
                 <h4 class="hero-chapter-title">{{ chapter.title }}</h4>
-                <p class="hero-chapter-duration" *ngIf="chapter.duration">
-                  <ion-icon name="time-outline"></ion-icon>
-                  {{ chapter.duration }} min
-                </p>
               </div>
               <div class="hero-chapter-lock" *ngIf="!isUserEnrolled">
                 <ion-icon name="lock-closed-outline"></ion-icon>

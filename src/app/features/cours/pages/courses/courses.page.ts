@@ -63,6 +63,7 @@ import { Instructor } from 'src/app/models/instructor.model';
 import { FcmService } from 'src/app/features/services/fcm.service';
 import { DesktopHeaderComponent } from 'src/app/shared/components/desktop-header/desktop-header.component';
 import { FooterComponent } from 'src/app/shared/components/footer/footer.component';
+import { PaymentService } from 'src/app/features/services/paymentService';
 
 @Component({
   selector: 'app-courses',
@@ -162,6 +163,7 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
     private instructorService: InstructorService,
     private fcmService: FcmService,
     private courseService: CourseService,
+    private paymentService: PaymentService,
   ) {
     addIcons({
       searchOutline,
@@ -222,6 +224,8 @@ export class CoursesPage implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy() {
     this.enrollmentSubscription.unsubscribe();
   }
+
+  
 
   // loadEnrolledCourses() {
   //   const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
