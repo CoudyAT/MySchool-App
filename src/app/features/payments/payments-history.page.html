@@ -55,7 +55,7 @@
           <div class="info">
             <span class="label">Date</span>
             <span class="value">
-              {{ payment.date | date:'dd/MM/yyyy à HH:mm' }}
+              {{convertTimestampToDate(payment.date) | date:'dd/MM/yyyy à HH:mm' }}
             </span>
           </div>
         </div>

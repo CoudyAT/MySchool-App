@@ -43,7 +43,7 @@ export class PaymentsHistoryPage implements OnInit {
 
   ngOnInit() {
     const localUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-    this.userId = localUser?.uid || localUser?.id || '';
+    this.userId = localUser?.id;
     if (this.userId) {
       this.paymentService.getUserPayments(this.userId).subscribe({
         next: (response) => {
@@ -63,5 +63,17 @@ export class PaymentsHistoryPage implements OnInit {
 
   goBack() {
     this.router.navigate(['/courses']);
+  }
+
+  convertTimestampToDate(timestamp: any): Date {
+    if (!timestamp) return new Date();
+
+    // Si c'est un objet Firestore avec _seconds
+    if (timestamp._seconds) {
+      return new Date(timestamp._seconds * 1000);
+    }
+
+    // Si c'est déjà une date ou un timestamp milliseconde
+    return new Date(timestamp);
   }
 }

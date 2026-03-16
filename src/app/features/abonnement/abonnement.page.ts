@@ -515,11 +515,6 @@ export class AbonnementPage implements OnInit {
           startDate: this.convertTimestampToDate(sub.startDate),
           endDate: this.convertTimestampToDate(sub.endDate),
           createdAt: this.convertTimestampToDate(sub.createdAt),
-          // Déterminer le statut basé sur la date
-          status: this.getSubscriptionStatus(
-            this.convertTimestampToDate(sub.startDate),
-            this.convertTimestampToDate(sub.endDate),
-          ),
         }));
 
         // Initialiser la liste filtrée

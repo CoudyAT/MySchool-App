@@ -460,14 +460,10 @@ export class PaymentVerifyPage implements OnInit {
           ),
         );
 
-        if (!response?.success) {
-          await this.hideLoader();
-          await this.showErrorAlert(response?.message || 'Action impossible');
-          return;
-        }
+
 
         // ✅ paiement
-        if (response?.data?.paymentUrl) {
+        if (response?.success &&response?.data?.paymentUrl) {
           await this.hideLoader();
           window.location.href = response.data.paymentUrl;
           return;
@@ -512,18 +508,8 @@ export class PaymentVerifyPage implements OnInit {
               response,
             );
 
-        if (response?.error.success === false) {
-          console.log(
-            ' Erreur API abonnement matière:',
-            response,
-          );
-          await this.hideLoader();
-          await this.showErrorAlert(response?.error.message || 'Action impossible');
-          return;
-        }
-
         // ✅ paiement
-        if (response?.data?.paymentUrl) {
+        if (response?.success && response?.data?.paymentUrl) {
           await this.hideLoader();
           window.location.href = response.data.paymentUrl;
           return;
@@ -578,14 +564,10 @@ export class PaymentVerifyPage implements OnInit {
             );
           }
 
-          if (!response?.success) {
-            await this.hideLoader();
-            await this.showErrorAlert(response?.message || 'Action impossible');
-            return;
-          }
+
 
           // ✅ paiement
-          if (response?.data?.paymentUrl) {
+          if (response?.success && response?.data?.paymentUrl) {
             await this.hideLoader();
             window.location.href = response.data.paymentUrl;
             return;

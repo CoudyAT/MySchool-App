@@ -310,9 +310,7 @@
           <tr
             *ngFor="let sub of filteredSubscriptions; let i = index"
             class="table-row"
-            [class.active]="sub.status === 'ACTIVE'"
-            [class.pending]="sub.status === 'PENDING'"
-            [class.expired]="sub.status === 'EXPIRED'">
+            >
 
             <!-- Plan -->
             <td class="col-user">
@@ -347,7 +345,7 @@
             <!-- Statut -->
             <td class="col-status">
               <span class="status-badge" [ngClass]="sub.status | lowercase">
-                {{ sub.status }}
+                               {{ sub.status === 'ACTIVE' ? 'Actif' : (sub.status === 'PENDING' ? 'En attente' : 'Expiré') }}
               </span>
             </td>
           </tr>
