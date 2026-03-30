@@ -68,6 +68,10 @@ export class MesCoursPage implements OnInit {
   categories: string[] = [];
   private subscription = new Subscription();
   allCourses: Course[] = [];
+  displayedCourses: Course[] = [];
+
+  itemsPerLoad = 20;           // Nombre de cours à charger à chaque fois
+  currentLoadedCount = 0;
 
   // Gestion des classes pour ELEMENTAIRE
   isElementaire = false;
@@ -136,6 +140,14 @@ export class MesCoursPage implements OnInit {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  get hasMoreCourses(): boolean {
+    return this.currentLoadedCount < this.filteredCourses.length;
+  }
+
+  get remainingCourses(): number {
+    return this.filteredCourses.length - this.currentLoadedCount;
   }
 
   selectClasse(classe: string) {
@@ -636,34 +648,34 @@ export class MesCoursPage implements OnInit {
     this.applyFilters();
   }
 
-  applyFilters() {
-    let temp = [...this.allCourses];
+  // applyFilters() {
+  //   let temp = [...this.allCourses];
 
-    // 🔎 recherche
-    if (this.searchTerm) {
-      temp = temp.filter((c) =>
-        c.title?.toLowerCase().includes(this.searchTerm),
-      );
-    }
+  //   // 🔎 recherche
+  //   if (this.searchTerm) {
+  //     temp = temp.filter((c) =>
+  //       c.title?.toLowerCase().includes(this.searchTerm),
+  //     );
+  //   }
 
-    // 📚 filtre matière
-    if (this.selectedMatiereId) {
-      temp = temp.filter((c) => c.matiereId === this.selectedMatiereId);
-    }
+  //   // 📚 filtre matière
+  //   if (this.selectedMatiereId) {
+  //     temp = temp.filter((c) => c.matiereId === this.selectedMatiereId);
+  //   }
 
-    this.filteredCourses = temp;
+  //   this.filteredCourses = temp;
 
-    // Mettre à jour filteredMatieresList
-    this.filteredMatieresList = this.getFilteredMatieresList();
+  //   // Mettre à jour filteredMatieresList
+  //   this.filteredMatieresList = this.getFilteredMatieresList();
 
-    // Si la matière sélectionnée n'est plus dans la liste filtrée, réinitialiser
-    if (
-      this.selectedMatiereId &&
-      !this.filteredMatieresList.some((m) => m.id === this.selectedMatiereId)
-    ) {
-      this.selectedMatiereId = '';
-    }
-  }
+  //   // Si la matière sélectionnée n'est plus dans la liste filtrée, réinitialiser
+  //   if (
+  //     this.selectedMatiereId &&
+  //     !this.filteredMatieresList.some((m) => m.id === this.selectedMatiereId)
+  //   ) {
+  //     this.selectedMatiereId = '';
+  //   }
+  // }
 
   resetSearch() {
     this.filteredCourses = [...this.allCourses];
@@ -843,6 +855,10 @@ export class MesCoursPage implements OnInit {
         this.allCourses = filteredCourses;
         this.filteredCourses = [...filteredCourses]; // Initialiser filteredCourses
         this.generateMatieres(); // Générer les matières disponibles
+
+        this.currentLoadedCount = 0;
+        this.loadMoreCourses();   // Charge les 20 premiers
+
         console.log('✅ Total cours affichés:', this.allCourses.length);
         console.log('✅ Total cours affichés:', this.allCourses.length);
         this.isCoursesLoading = false;
@@ -854,6 +870,40 @@ export class MesCoursPage implements OnInit {
     });
   }
 
+  loadMoreCourses() {
+    const nextBatch = this.itemsPerLoad;
+    const start = this.currentLoadedCount;
+    const end = Math.min(start + nextBatch, this.filteredCourses.length);
+
+    const newCourses = this.filteredCourses.slice(start, end);
+
+    this.displayedCourses = [...this.displayedCourses, ...newCourses];
+    this.currentLoadedCount = end;
+  }
+
+  // === Important : Mettre à jour quand les filtres changent ===
+  applyFilters() {
+    let temp = [...this.allCourses];
+
+    if (this.searchTerm) {
+      temp = temp.filter((c) =>
+        c.title?.toLowerCase().includes(this.searchTerm)
+      );
+    }
+
+    if (this.selectedMatiereId) {
+      temp = temp.filter((c) => c.matiereId === this.selectedMatiereId);
+    }
+
+    this.filteredCourses = temp;
+
+    // Réinitialiser l'affichage progressif quand on filtre
+    this.displayedCourses = [];
+    this.currentLoadedCount = 0;
+    this.loadMoreCourses();   // Recharge les premiers résultats filtrés
+
+    this.filteredMatieresList = this.getFilteredMatieresList();
+  }
   // onSegmentChange(event: any) {
   //   this.selectedSegment = event.detail.value;
   //   this.filterCoursesBySegment();

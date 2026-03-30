@@ -202,44 +202,46 @@
 
       <!-- Liste des cours -->
       <div *ngIf="!isCoursesLoading" class="enrolled-courses-grid">
-        <ion-card
-         *ngFor="let course of filteredCourses"
-          class="course-card"
-          (click)="openCourse(course)"
-        >
+        <ion-card *ngFor="let course of displayedCourses" class="course-card" (click)="openCourse(course)">
+          <!-- ... ton contenu de carte reste identique ... -->
           <div class="card-image">
-            <img
-              [src]="course.image || 'assets/algo.svg'"
-              alt="{{ course.title }}"
-            />
-
+            <img [src]="course.image || 'assets/algo.svg'" alt="{{ course.title }}" />
             <div class="play-icon">
               <ion-icon name="play"></ion-icon>
             </div>
-
-            <!-- Badge "Classe" -->
             <div *ngIf="isElementaire || isMoyenSecondaireUniv" class="classe-badge">
               {{ course.classe }}
             </div>
           </div>
-
+      
           <ion-card-content>
             <h3 class="course-title">{{ course.title }}</h3>
-
             <div class="course-meta">
               <span style="color: #FF9500;">
                 {{ course.exercises || 0 }} Exercices
               </span>
             </div>
-
             <div class="course-level">
               Niveau : {{ course.niveauScolaire || 'Débutant' }}
             </div>
             <div class="course-level">
-              Matieres :{{ getMatiereName(course.matiereId || '') }}
+              Matière : {{ getMatiereName(course.matiereId || '') }}
             </div>
           </ion-card-content>
         </ion-card>
+      </div>
+      
+      <!-- Bouton Voir plus -->
+      <div *ngIf="!isCoursesLoading && hasMoreCourses" class="load-more-container">
+        <ion-button expand="block" fill="outline" color="primary" (click)="loadMoreCourses()" class="voir-plus-btn">
+          <ion-icon name="chevron-down-outline" slot="start"></ion-icon>
+          Voir plus ({{ remainingCourses }} restant)
+        </ion-button>
+      </div>
+      
+      <!-- Message quand tous les cours sont affichés -->
+      <div *ngIf="!isCoursesLoading && !hasMoreCourses && displayedCourses.length > 0" class="all-loaded-message">
+        <p>Vous avez vu tous les cours disponibles</p>
       </div>
     </div>
 </ion-content>
