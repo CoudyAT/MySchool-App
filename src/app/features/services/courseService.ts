@@ -29,6 +29,18 @@ export class CourseService {
       .pipe(map((res) => res?.data ?? []));
   }
 
+  getPaginatedCourses(page: number = 1, limit: number = 100): Observable<any> {
+    return this.api.get<any>(`/courses?page=${page}&limit=${limit}`)
+      .pipe(
+        map((res) => ({
+          courses: res?.data ?? [],           
+          total: res?.total ?? 0,             
+          totalPages: res?.totalPages ?? 1,
+          hasMore: res?.hasMore ?? true      
+        }))
+      );
+  }
+
   // Récupérer les cours par catégorie
   getCoursesByCategory(category: string): Observable<Course[]> {
     return this.api.get<Course[]>(`/courses/category/${category}`);
