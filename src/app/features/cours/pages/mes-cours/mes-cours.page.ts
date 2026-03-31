@@ -70,7 +70,7 @@ export class MesCoursPage implements OnInit {
   allCourses: Course[] = [];
   displayedCourses: Course[] = [];
 
-  itemsPerLoad = 20;           // Nombre de cours à charger à chaque fois
+  itemsPerLoad = 100;           // Nombre de cours à charger à chaque fois
   currentLoadedCount = 0;
 
   // Gestion des classes pour ELEMENTAIRE
