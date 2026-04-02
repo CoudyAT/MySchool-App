@@ -10,6 +10,30 @@ ion-content {
   padding-bottom: 80px;
 }
 
+.load-more-container {
+  margin: 40px 0 20px 0;
+  text-align: center;
+}
+
+.voir-plus-btn {
+  --border-radius: 12px;
+  --border-width: 2px;
+  font-weight: 600;
+  height: 52px;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+.all-loaded-message {
+  text-align: center;
+  margin: 40px 0;
+  color: #64748b;
+  font-size: 15px;
+}
+
+.all-loaded-message p {
+  margin: 0;
+}
 /* ==========================================
    HEADER
    ========================================== */

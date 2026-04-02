@@ -23,7 +23,7 @@ export class ListCoursPage implements OnInit {
   searchText: string = '';
   selectedType: string = 'all';
   currentPage: number = 1;
-  itemsPerPage: number = 9;
+  itemsPerPage: number = 18;
   showAddCourseModal = false;
   allCourses: Course[] = [];
   filteredCourses: Course[] = [];
