@@ -1,4 +1,7 @@
 // login.component.scss
+
+// ─── Styles existants préservés ────────────────────────────────────────────────
+
 .login-container {
   --background: #f8f9fa;
   min-height: 100vh;
@@ -45,23 +48,6 @@
         width: auto;
       }
     }
-
-    .progress-container {
-      .custom-progress {
-        --background: #ecf0f1;
-        --progress-background: #005ADD;
-        border-radius: 10px;
-        height: 6px;
-        margin-bottom: 8px;
-      }
-
-      .step-indicator {
-        text-align: center;
-        font-size: 14px;
-        color: #7f8c8d;
-        font-weight: 500;
-      }
-    }
   }
 
   .main-content {
@@ -73,7 +59,7 @@
 
     .titles-section {
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 24px;
 
       .main-title {
         font-size: 28px;
@@ -93,8 +79,7 @@
           color: #005ADD;
           font-weight: 600;
           cursor: pointer;
-          text-decoration: none;
-          
+
           &:hover {
             text-decoration: underline;
           }
@@ -102,9 +87,53 @@
       }
     }
 
+    // ─── Segment ──────────────────────────────────────────────────────────────
+
+    .segment-wrapper {
+      margin-bottom: 28px;
+
+      .login-segment {
+        --background: #f0f4ff;
+        border-radius: 14px;
+        padding: 4px;
+
+        ion-segment-button {
+          --color: #7f8c8d;
+          --color-checked: #005ADD;
+          --background-checked: #ffffff;
+          --border-radius: 10px;
+          --indicator-color: transparent;
+          --padding-top: 10px;
+          --padding-bottom: 10px;
+          font-weight: 600;
+          font-size: 14px;
+          transition: all 0.25s ease;
+          box-shadow: none;
+
+          &.segment-button-checked {
+            box-shadow: 0 2px 10px rgba(0, 90, 221, 0.15);
+          }
+
+          ion-icon {
+            font-size: 18px;
+            margin-bottom: 2px;
+          }
+
+          ion-label {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: none;
+            letter-spacing: 0.2px;
+          }
+        }
+      }
+    }
+
+    // ─── Formulaire commun ────────────────────────────────────────────────────
+
     .form-container-modern {
       .input-group-modern {
-        margin-bottom: 24px;
+        margin-bottom: 20px;
 
         .input-label-modern {
           display: block;
@@ -114,7 +143,7 @@
           margin-bottom: 10px;
         }
 
-        // Style pour le champ téléphone avec +221 fixe
+        // Champ téléphone avec select
         .phone-input-wrapper {
           display: flex;
           align-items: center;
@@ -124,6 +153,7 @@
           background: white;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           height: 56px;
+          gap: 0;
 
           &:focus-within {
             border-color: #005ADD;
@@ -131,49 +161,25 @@
             transform: translateY(-2px);
           }
 
-          &.has-error {
-            border-color: #e74c3c;
-            
-            &:focus-within {
-              box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.15);
-            }
-          }
-
-          .country-code {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 0 16px;
-            background: #f8f9fa;
+          .country-select {
+            max-width: 115px;
+            min-width: 115px;
             border-right: 2px solid #e0e0e0;
+            background: #f8f9fa;
             height: 100%;
-            min-width: 100px;
-            flex-shrink: 0;
-
-            .flag {
-              width: 24px;
-              height: 18px;
-              border-radius: 3px;
-              object-fit: cover;
-              border: 1px solid #e0e0e0;
-            }
-
-            .code {
-              font-weight: 600;
-              color: #2c3e50;
-              font-size: 16px;
-              letter-spacing: 0.5px;
-            }
+            font-size: 15px;
+            font-weight: 600;
+            --padding-start: 10px;
+            --padding-end: 10px;
           }
 
           .input-wrapper {
             flex: 1;
-            position: relative;
             height: 100%;
 
-            ion-input {
-              --padding-start: 16px;
-              --padding-end: 16px;
+            .phone-input {
+              --padding-start: 14px;
+              --padding-end: 14px;
               --padding-top: 0;
               --padding-bottom: 0;
               --color: #1a1a1a;
@@ -186,18 +192,85 @@
                 height: 100%;
                 border: none !important;
                 background: transparent !important;
-                box-shadow: none !important;
-              }
-
-              &::part(placeholder) {
-                font-weight: 400;
-                color: #999999;
               }
             }
           }
         }
 
-        .error-text {
+        // Champ simple (email / mot de passe)
+        .simple-input-wrapper {
+          display: flex;
+          align-items: center;
+          border: 2px solid #e0e0e0;
+          border-radius: 12px;
+          overflow: hidden;
+          background: white;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          height: 56px;
+          padding: 0 4px;
+
+          &:focus-within {
+            border-color: #005ADD;
+            box-shadow: 0 0 0 4px rgba(0, 90, 221, 0.15);
+            transform: translateY(-2px);
+          }
+
+          &.has-error {
+            border-color: #e74c3c;
+
+            &:focus-within {
+              box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.15);
+            }
+          }
+
+          .field-icon {
+            font-size: 20px;
+            color: #7f8c8d;
+            margin: 0 10px 0 14px;
+            flex-shrink: 0;
+          }
+
+          .simple-input {
+            flex: 1;
+            --padding-start: 0;
+            --padding-end: 0;
+            --padding-top: 0;
+            --padding-bottom: 0;
+            --color: #1a1a1a;
+            --placeholder-color: #999999;
+            --background: transparent;
+            font-size: 16px;
+            font-weight: 500;
+            height: 100%;
+
+            &::part(native) {
+              height: 100%;
+              border: none !important;
+              background: transparent !important;
+            }
+          }
+
+          .toggle-password-btn {
+            --color: #7f8c8d;
+            --background: transparent;
+            --padding-start: 8px;
+            --padding-end: 10px;
+            margin: 0;
+            height: 100%;
+            flex-shrink: 0;
+
+            &:hover {
+              --color: #005ADD;
+            }
+
+            ion-icon {
+              font-size: 20px;
+            }
+          }
+        }
+
+        .error-text,
+        .error-message {
           color: #e74c3c;
           font-size: 13px;
           font-weight: 500;
@@ -219,7 +292,57 @@
           margin-top: 8px;
           margin-left: 4px;
           font-style: italic;
-          line-height: 1.4;
+        }
+      }
+
+      // Lien "Mot de passe oublié"
+      .forgot-password-section {
+        text-align: right;
+        margin-top: -8px;
+        margin-bottom: 20px;
+
+        .forgot-password-link {
+          color: #005ADD;
+          font-size: 14px;
+          font-weight: 500;
+          cursor: pointer;
+          line-height: 1.5;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+
+      // Bouton principal
+      .modern-primary-button {
+        --background: linear-gradient(135deg, #005ADD 0%, #0044aa 100%);
+        --background-activated: linear-gradient(135deg, #0044aa 0%, #003388 100%);
+        --border-radius: 16px;
+        --box-shadow: 0 8px 24px rgba(0, 90, 221, 0.3);
+        height: 56px;
+        font-weight: 700;
+        font-size: 16px;
+        margin-top: 10px;
+        color: white;
+        letter-spacing: 0.5px;
+        text-transform: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+        &:hover:not([disabled]) {
+          --box-shadow: 0 12px 32px rgba(0, 90, 221, 0.4);
+          transform: translateY(-2px);
+        }
+
+        &:disabled {
+          --background: linear-gradient(135deg, #bdc3c7 0%, #95a5a6 100%);
+          --box-shadow: none;
+          cursor: not-allowed;
+        }
+
+        ion-icon {
+          margin-right: 10px;
+          font-size: 20px;
         }
       }
 
@@ -236,11 +359,6 @@
           margin: 0 0 8px 0;
           color: #666666;
           font-size: 15px;
-          line-height: 1.5;
-
-          &:last-child {
-            margin-bottom: 0;
-          }
 
           &.phone-display {
             font-size: 18px;
@@ -251,60 +369,6 @@
             padding: 10px 20px;
             border-radius: 12px;
             display: inline-block;
-            letter-spacing: 0.5px;
-          }
-        }
-      }
-
-      .otp-input-container {
-        margin-bottom: 20px;
-
-        .otp-inputs {
-          display: flex;
-          gap: 12px;
-          justify-content: center;
-          margin-bottom: 16px;
-
-          .otp-input {
-            width: 56px;
-            height: 68px;
-            border: 2px solid #e0e0e0;
-            border-radius: 16px;
-            text-align: center;
-            font-size: 28px;
-            font-weight: 700;
-            color: #1a1a1a;
-            background: white;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            caret-color: #005ADD;
-
-            &:focus {
-              border-color: #005ADD;
-              box-shadow: 0 0 0 4px rgba(0, 90, 221, 0.2);
-              outline: none;
-              transform: translateY(-2px);
-            }
-
-            &.filled {
-              border-color: #005ADD;
-              background: rgba(0, 90, 221, 0.05);
-            }
-
-            &::placeholder {
-              color: #bdc3c7;
-              font-size: 20px;
-            }
-
-            // Supprimer les flèches sur les inputs number
-            &::-webkit-inner-spin-button,
-            &::-webkit-outer-spin-button {
-              -webkit-appearance: none;
-              margin: 0;
-            }
-
-            &[type=number] {
-              -moz-appearance: textfield;
-            }
           }
         }
       }
@@ -345,26 +409,15 @@
           cursor: pointer;
           padding: 14px 28px;
           border-radius: 12px;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          transition: all 0.3s ease;
           box-shadow: 0 4px 12px rgba(0, 90, 221, 0.25);
           display: inline-flex;
           align-items: center;
           gap: 8px;
 
-          &:hover:not(:disabled) {
+          &:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(0, 90, 221, 0.35);
-          }
-
-          &:active:not(:disabled) {
-            transform: translateY(0);
-          }
-
-          &:disabled {
-            background: #bdc3c7;
-            color: #7f8c8d;
-            cursor: not-allowed;
-            box-shadow: none;
           }
 
           &::before {
@@ -374,312 +427,22 @@
           }
         }
       }
-
-      // Style pour le bouton "Modifier le numéro"
-      .edit-number-button {
-        --background: transparent;
-        --color: #666666;
-        --border-color: #e0e0e0;
-        --border-width: 1px;
-        --border-style: solid;
-        --border-radius: 12px;
-        height: 44px;
-        font-weight: 500;
-        font-size: 15px;
-        margin-bottom: 20px;
-        text-transform: none;
-
-        &:hover {
-          --background: rgba(0, 90, 221, 0.05);
-          --color: #005ADD;
-        }
-
-        ion-icon {
-          margin-right: 8px;
-          font-size: 18px;
-        }
-      }
-
-      .modern-primary-button {
-        --background: linear-gradient(135deg, #005ADD 0%, #0044aa 100%);
-        --background-activated: linear-gradient(135deg, #0044aa 0%, #003388 100%);
-        --border-radius: 16px;
-        --box-shadow: 0 8px 24px rgba(0, 90, 221, 0.3);
-        height: 56px;
-        font-weight: 700;
-        font-size: 16px;
-        margin-top: 10px;
-        color: white;
-        letter-spacing: 0.5px;
-        text-transform: none;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-        &:hover:not([disabled]) {
-          --box-shadow: 0 12px 32px rgba(0, 90, 221, 0.4);
-          transform: translateY(-2px);
-        }
-
-        &:active:not([disabled]) {
-          transform: translateY(0);
-        }
-
-        &:disabled {
-          --background: linear-gradient(135deg, #bdc3c7 0%, #95a5a6 100%);
-          --box-shadow: none;
-          cursor: not-allowed;
-          transform: none !important;
-        }
-
-        ion-icon {
-          margin-right: 10px;
-          font-size: 20px;
-        }
-
-        // Animation de chargement
-        &.loading {
-          position: relative;
-          color: transparent !important;
-
-          &::after {
-            content: "";
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border: 2px solid white;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            left: calc(50% - 10px);
-            top: calc(50% - 10px);
-          }
-        }
-      }
-    }
-
-    // Section de bas de page
-    .footer-section {
-      margin-top: 40px;
-      text-align: center;
-      padding-top: 20px;
-      border-top: 1px solid #e8e8e8;
-
-      .footer-text {
-        color: #7f8c8d;
-        font-size: 14px;
-        margin: 0;
-        line-height: 1.5;
-
-        a {
-          color: #005ADD;
-          text-decoration: none;
-          font-weight: 500;
-          
-          &:hover {
-            text-decoration: underline;
-          }
-        }
-      }
     }
   }
 }
 
-// Animations
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
-  }
-}
+// ─── OTP champ unique ──────────────────────────────────────────────────────────
 
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-// Style pour le reCAPTCHA invisible
-#recaptcha-container {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-  width: 0;
-  height: 0;
-}
-
-// État de chargement
-.loading-state {
-  .modern-primary-button,
-  .resend-link {
-    position: relative;
-    color: transparent !important;
-
-    &::after {
-      content: "";
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      border: 2px solid currentColor;
-      border-top-color: transparent;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      left: calc(50% - 10px);
-      top: calc(50% - 10px);
-    }
-  }
-}
-
-// Responsive
-@media (max-width: 480px) {
-  .login-container {
-    .header-section {
-      padding: 16px;
-
-      .logo-container .logo {
-        height: 35px;
-      }
-    }
-
-    .main-content {
-      padding: 20px 16px;
-
-      .titles-section {
-        margin-bottom: 24px;
-
-        .main-title {
-          font-size: 24px;
-        }
-
-        .subtitle {
-          font-size: 14px;
-        }
-      }
-
-      .form-container-modern {
-        .input-group-modern {
-          .phone-input-wrapper {
-            height: 52px;
-
-            .country-code {
-              padding: 0 12px;
-              min-width: 90px;
-              gap: 8px;
-
-              .flag {
-                width: 20px;
-                height: 15px;
-              }
-
-              .code {
-                font-size: 15px;
-              }
-            }
-
-            .input-wrapper ion-input {
-              --padding-start: 12px;
-              --padding-end: 12px;
-              font-size: 15px;
-            }
-          }
-        }
-
-        .otp-input-container .otp-inputs {
-          gap: 8px;
-
-          .otp-input {
-            width: 48px;
-            height: 60px;
-            font-size: 24px;
-            border-radius: 14px;
-          }
-        }
-
-        .otp-instructions {
-          padding: 16px;
-
-          p {
-            font-size: 14px;
-
-            &.phone-display {
-              font-size: 16px;
-              padding: 8px 16px;
-            }
-          }
-        }
-
-        .resend-section .resend-link {
-          padding: 12px 24px;
-          font-size: 14px;
-        }
-
-        .modern-primary-button {
-          height: 52px;
-          font-size: 15px;
-        }
-      }
-    }
-  }
-}
-
-// Pour les très petits écrans
-@media (max-width: 360px) {
-  .login-container {
-    .main-content {
-      .form-container-modern {
-        .otp-input-container .otp-inputs {
-          gap: 6px;
-
-          .otp-input {
-            width: 44px;
-            height: 56px;
-            font-size: 22px;
-          }
-        }
-
-        .phone-input-wrapper .country-code {
-          min-width: 85px;
-          padding: 0 10px;
-          
-          .code {
-            font-size: 14px;
-          }
-        }
-      }
-    }
-  }
-}
-
-
-// Ajoutez ces styles après les styles existants
-
-/* Styles pour le champ OTP simplifié */
 .single-otp-container {
   position: relative;
   margin-bottom: 16px;
-  
+
   .single-otp-input {
     --background: #ffffff;
     --color: #1a1a1a;
     --placeholder-color: #999999;
     --padding-start: 16px;
-    --padding-end: 70px; // Espace pour l'indicateur
-    --padding-top: 16px;
-    --padding-bottom: 16px;
+    --padding-end: 70px;
     --border-radius: 16px;
     --border-width: 2px;
     --border-color: #e0e0e0;
@@ -689,40 +452,21 @@
     letter-spacing: 8px;
     text-align: center;
     height: 64px;
-    
-    &:focus {
-      --border-color: #005ADD;
-      box-shadow: 0 0 0 4px rgba(0, 90, 221, 0.15);
-    }
-    
-    &.has-error {
-      --border-color: #e74c3c;
-      
-      &:focus {
-        box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.15);
-      }
-    }
-    
+
     &::part(native) {
       font-size: 20px;
       font-weight: 600;
       letter-spacing: 8px;
       text-align: center;
-      
-      // Pour masquer le texte (mode password)
-      &[type="password"] {
-        font-family: monospace;
-        letter-spacing: 12px;
-      }
     }
-    
+
     ion-icon[slot="start"] {
       color: #005ADD;
       font-size: 24px;
       margin-right: 12px;
     }
   }
-  
+
   .length-indicator {
     position: absolute;
     right: 16px;
@@ -735,7 +479,7 @@
     font-weight: 600;
     color: #7f8c8d;
     border: 1px solid #e0e0e0;
-    
+
     .length-text {
       font-family: monospace;
     }
@@ -747,20 +491,19 @@
   justify-content: flex-end;
   margin-top: 8px;
   margin-bottom: 16px;
-  
+
   .visibility-btn {
     --color: #666666;
-    --background: transparent;
     font-size: 14px;
     font-weight: 500;
     margin: 0;
     --padding-start: 0;
     --padding-end: 0;
-    
+
     &:hover {
       --color: #005ADD;
     }
-    
+
     ion-icon {
       font-size: 16px;
       margin-right: 6px;
@@ -776,14 +519,14 @@
   background: #f8f9fa;
   border-radius: 12px;
   border: 1px solid #e0e0e0;
-  
+
   ion-checkbox {
     --size: 20px;
     --checkbox-background-checked: #005ADD;
     --border-color-checked: #005ADD;
     margin-right: 12px;
   }
-  
+
   .auto-verify-label {
     font-size: 14px;
     color: #666666;
@@ -798,86 +541,158 @@
   font-style: italic;
 }
 
-// Animation pour le champ OTP
+// ─── reCAPTCHA ────────────────────────────────────────────────────────────────
+
+#recaptcha-container {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+}
+
+// ─── Animations ───────────────────────────────────────────────────────────────
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-  20%, 40%, 60%, 80% { transform: translateX(5px); }
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-5px);
+  }
+
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(5px);
+  }
 }
 
 .single-otp-input.has-error {
   animation: shake 0.5s ease-in-out;
 }
 
-// Responsive
+// ─── Responsive ───────────────────────────────────────────────────────────────
+
 @media (max-width: 480px) {
+  .login-container {
+    .header-section {
+      padding: 16px;
+
+      .logo-container .logo {
+        height: 35px;
+      }
+    }
+
+    .main-content {
+      padding: 20px 16px;
+
+      .titles-section {
+        margin-bottom: 18px;
+
+        .main-title {
+          font-size: 24px;
+        }
+
+        .subtitle {
+          font-size: 14px;
+        }
+      }
+
+      .segment-wrapper {
+        margin-bottom: 22px;
+
+        .login-segment ion-segment-button {
+          --padding-top: 8px;
+          --padding-bottom: 8px;
+
+          ion-label {
+            font-size: 12px;
+          }
+
+          ion-icon {
+            font-size: 16px;
+          }
+        }
+      }
+
+      .form-container-modern {
+        .input-group-modern {
+          .phone-input-wrapper {
+            height: 52px;
+          }
+
+          .simple-input-wrapper {
+            height: 52px;
+          }
+
+          .modern-primary-button {
+            height: 52px;
+            font-size: 15px;
+          }
+        }
+      }
+    }
+  }
+
   .single-otp-container {
     .single-otp-input {
-      --padding-start: 12px;
       --padding-end: 60px;
       height: 56px;
       font-size: 18px;
-      
+
       &::part(native) {
         font-size: 18px;
         letter-spacing: 6px;
       }
     }
-    
+
     .length-indicator {
       right: 12px;
       padding: 3px 10px;
       font-size: 12px;
     }
   }
-  
-  .auto-verify-option {
-    padding: 12px;
-    
-    .auto-verify-label {
-      font-size: 13px;
-    }
-  }
 }
 
-// Pour les très petits écrans
 @media (max-width: 360px) {
-  .single-otp-container {
-    .single-otp-input {
-      height: 52px;
+  .single-otp-container .single-otp-input {
+    height: 52px;
+    font-size: 16px;
+
+    &::part(native) {
       font-size: 16px;
-      
-      &::part(native) {
-        font-size: 16px;
-        letter-spacing: 4px;
-      }
+      letter-spacing: 4px;
     }
   }
-}
-
-.phone-input-wrapper {
-  display: flex;
-  gap: 8px;
-}
-
-.country-select {
-  max-width: 110px;
-}
-
-.phone-input {
-  flex: 1;
-}
-
-.phone-hint {
-  font-size: 0.8rem;
-  color: var(--ion-color-medium);
-  margin-top: 4px;
-  padding-left: 8px;
-}
-
-.error-message {
-  color: var(--ion-color-danger);
-  font-size: 0.8rem;
-  margin-top: 4px;
-  padding-left: 8px;
 }

@@ -1,13 +1,13 @@
 <!-- login.component.html -->
 <ion-content class="login-container" [fullscreen]="true">
   <div class="login-wrapper">
+
     <!-- Header -->
     <div class="header-section">
       <div class="nav-section">
         <ion-button fill="clear" color="dark" routerLink="/" class="back-button" *ngIf="!otpSent">
           <ion-icon name="chevron-back"></ion-icon>
         </ion-button>
-
         <ion-button fill="clear" color="dark" class="back-button" (click)="editPhoneNumber()" *ngIf="otpSent">
           <ion-icon name="chevron-back"></ion-icon>
         </ion-button>
@@ -24,163 +24,119 @@
         <h1 class="main-title">
           {{ otpSent ? 'Vérifiez votre numéro' : 'Bienvenue dans MySchool' }}
         </h1>
-        <p class="subtitle">
-          <span *ngIf="!otpSent">
-            Connectez-vous ou
-            <span class="create-account-link" (click)="goToSignup()">
-              créez un compte
-            </span>
-          </span>
-          <span *ngIf="otpSent">
-            Entrez le code à 6 chiffres envoyé par SMS
-          </span>
+        <p class="subtitle" *ngIf="!otpSent">
+          Connectez-vous ou
+          <span class="create-account-link" (click)="goToSignup()">créez un compte</span>
+        </p>
+        <p class="subtitle" *ngIf="otpSent">
+          Entrez le code à 6 chiffres envoyé par SMS
         </p>
       </div>
 
-      <!-- Étape 1: Saisie du téléphone 
-      <div *ngIf="!otpSent" class="step-content active">
+      <!-- ===== SEGMENT (visible uniquement sur l'écran principal, pas OTP) ===== -->
+      <div class="segment-wrapper" *ngIf="!otpSent">
+        <ion-segment [(ngModel)]="loginMode" (ionChange)="onLoginModeChange()" class="login-segment">
+          <ion-segment-button value="phone">
+            <ion-icon name="call-outline"></ion-icon>
+            <ion-label>Téléphone</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="email">
+            <ion-icon name="mail-outline"></ion-icon>
+            <ion-label>Email</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+      </div>
+
+      <!-- ===== MODE TÉLÉPHONE ===== -->
+      <div *ngIf="!otpSent && loginMode === 'phone'" class="step-content input-group-modern">
         <form [formGroup]="phoneForm" class="form-container-modern">
           <div class="input-group-modern">
-            <label class="input-label-modern">Numéro de téléphone </label>
+            <label class="input-label-modern">Numéro de téléphone</label>
+
             <div class="phone-input-wrapper">
+              <ion-select formControlName="countryCode" interface="popover" class="country-select" (ionChange)="onCountryCodeChange()">
+                <ion-select-option value="+221">🇸🇳 +221</ion-select-option>
+                <ion-select-option value="+33">🇫🇷 +33</ion-select-option>
+                <ion-select-option value="+1">🇺🇸 +1</ion-select-option>
+                <ion-select-option value="+225">🇨🇮 +225</ion-select-option>
+              </ion-select>
+
               <div class="input-wrapper">
-                <ion-input #phoneInput type="tel" formControlName="phone" placeholder="77 123 45 67"
-                  (ionInput)="onPhoneInput($event)" (keyup.enter)="sendOtp()" class="phone-input">
-                </ion-input>
+                <ion-input #phoneInput type="tel" formControlName="phone" placeholder="771234567"
+                  (keyup.enter)="sendOtp()" (ionInput)="onPhoneInput($event)" class="phone-input"></ion-input>
               </div>
             </div>
-            <div class="error-text" *ngIf="isFieldInvalid()">
+
+            <div *ngIf="isFieldInvalid()" class="error-message">
               {{ getFieldError() }}
             </div>
-            <div class="phone-hint">
-              Format: +221 77 123 45 67
+            <div class="phone-hint" *ngIf="phoneForm.get('countryCode')?.value === '+221'">
+              Format: 77 123 45 67 (9 chiffres)
             </div>
           </div>
 
-          <ion-button expand="block" class="modern-primary-button" [disabled]="!phoneForm.valid || loading"
-            (click)="sendOtp()">
+          <ion-button expand="block" class="modern-primary-button" (click)="sendOtp()"
+            [disabled]="!phoneForm.valid || loading">
             <ion-icon name="send-outline" slot="start" *ngIf="!loading"></ion-icon>
             {{ loading ? 'Envoi en cours...' : 'Recevoir le code' }}
           </ion-button>
         </form>
-      </div> -->
+      </div>
 
-    <div *ngIf="!otpSent" class="step-content input-group-modern">
-      <form [formGroup]="phoneForm" class="form-container-modern">
-        <div class="input-group-modern">
-          <label class="input-label-modern">Numéro de téléphone</label>
+      <!-- ===== MODE EMAIL / MOT DE PASSE ===== -->
+      <div *ngIf="!otpSent && loginMode === 'email'" class="step-content input-group-modern">
+        <form [formGroup]="emailForm" class="form-container-modern">
 
-          <div class="phone-input-wrapper">
-            <!-- SELECT INDICATIF -->
-            <ion-select
-              formControlName="countryCode"
-              interface="popover"
-              class="country-select"
-              (ionChange)="onCountryCodeChange()"
-            >
-              <ion-select-option value="+221">🇸🇳 +221</ion-select-option>
-              <ion-select-option value="+33">🇫🇷 +33</ion-select-option>
-              <ion-select-option value="+1">🇺🇸 +1</ion-select-option>
-              <ion-select-option value="+225">🇨🇮 +225</ion-select-option>
-            </ion-select>
-
-            <!-- INPUT NUMERO -->
-            <div class="input-wrapper">
-              <ion-input
-                #phoneInput
-                type="tel"
-                formControlName="phone"
-                placeholder="771234567"
-                (keyup.enter)="sendOtp()"
-                (ionInput)="onPhoneInput($event)"
-                class="phone-input"
-              >
-              </ion-input>
-            </div>
-          </div>
-
-          <!-- Message d'erreur -->
-          <div *ngIf="isFieldInvalid()" class="error-message">
-            {{ getFieldError() }}
-          </div>
-          
-          <!-- Hint selon l'indicatif -->
-          <div class="phone-hint" *ngIf="phoneForm.get('countryCode')?.value === '+221'">
-            Format: 77 123 45 67 (9 chiffres)
-          </div>
-        </div>
-
-        <ion-button 
-          expand="block" 
-          class="modern-primary-button" 
-          (click)="sendOtp()"
-          [disabled]="!phoneForm.valid || loading"
-        >
-          <ion-icon name="send-outline" slot="start" *ngIf="!loading"></ion-icon>
-          {{ loading ? 'Envoi en cours...' : 'Recevoir le code' }}
-        </ion-button>
-      </form>
-    </div>
-
-
-      <!-- Étape 2: Vérification OTP
-      <div *ngIf="otpSent" class="step-content active">
-        <form [formGroup]="otpForm" class="form-container-modern">
-          <div class="otp-instructions">
-            <p>Code envoyé au numéro :</p>
-            <p class="phone-display">{{ displayedPhone }}</p>
-          </div>
+          <!-- Email -->
           <div class="input-group-modern">
-            <label class="input-label-modern">Code de vérification</label>
-                <div class="otp-input-container">
-                  <div class="otp-inputs">
-                    <input
-                      *ngFor="let i of [0,1,2,3,4,5]; let idx = index"
-                      type="text"
-                      maxlength="1"
-                      [formControlName]="'digit' + i"
-                      class="otp-input"
-                      [attr.id]="'otp-input-' + idx"
-                      (input)="onOtpInput($event, idx)"
-                      (keydown.backspace)="onOtpBackspace($event, idx)"
-                      (keydown)="onOtpKeyDown($event, idx)"
-                      [attr.inputmode]="'numeric'"
-                      pattern="[0-9]*"
-                      autocomplete="one-time-code">
-                  </div>
-                </div>
-            <div class="error-text" *ngIf="otpError">
-              {{ otpError }}
+            <label class="input-label-modern">Adresse email</label>
+            <div class="simple-input-wrapper" [class.has-error]="isEmailFieldInvalid('email')">
+              <ion-icon name="mail-outline" class="field-icon"></ion-icon>
+              <ion-input type="email" formControlName="email" placeholder="exemple@email.com"
+                (keyup.enter)="loginWithEmail()" class="simple-input"></ion-input>
+            </div>
+            <div *ngIf="isEmailFieldInvalid('email')" class="error-message">
+              {{ getEmailFieldError('email') }}
             </div>
           </div>
 
-          <div class="timer-section" *ngIf="countdown > 0">
-            <p class="timer-text">
-              Renvoyer le code dans <span class="timer">{{ countdown }}s</span>
-            </p>
+          <!-- Mot de passe -->
+          <div class="input-group-modern">
+            <label class="input-label-modern">Mot de passe</label>
+            <div class="simple-input-wrapper" [class.has-error]="isEmailFieldInvalid('password')">
+              <ion-icon name="lock-closed-outline" class="field-icon"></ion-icon>
+              <ion-input [type]="showPassword ? 'text' : 'password'" formControlName="password"
+                placeholder="Votre mot de passe" (keyup.enter)="loginWithEmail()" class="simple-input"></ion-input>
+              <ion-button fill="clear" class="toggle-password-btn" (click)="togglePasswordVisibility()">
+                <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+              </ion-button>
+            </div>
+            <div *ngIf="isEmailFieldInvalid('password')" class="error-message">
+              {{ getEmailFieldError('password') }}
+            </div>
           </div>
 
-          <div class="resend-section" *ngIf="countdown === 0">
-            <button 
-              type="button" 
-              class="resend-link" 
-              (click)="resendOtp()">
-              Renvoyer le code
-            </button>
+          <!-- Lien mot de passe oublié -->
+          <div class="forgot-password-section">
+            <span class="forgot-password-link" (click)="goToForgotPassword()">
+              Mot de passe oublié ?
+            </span>
           </div>
 
-          <ion-button
-            expand="block"
-            class="modern-primary-button"
-            [disabled]="!isOtpComplete() || verifying"
-            (click)="verifyOtp()">
-            <ion-icon name="checkmark-outline" slot="start" *ngIf="!verifying"></ion-icon>
-            {{ verifying ? 'Vérification...' : 'Vérifier le code' }}
+          <!-- Message d'erreur général -->
+          <div class="error-text" *ngIf="emailLoginError">
+            {{ emailLoginError }}
+          </div>
+
+          <ion-button expand="block" class="modern-primary-button" (click)="loginWithEmail()"
+            [disabled]="!emailForm.valid || emailLoading">
+            <ion-icon name="log-in-outline" slot="start" *ngIf="!emailLoading"></ion-icon>
+            {{ emailLoading ? 'Connexion...' : 'Se connecter' }}
           </ion-button>
         </form>
-      </div>  -->
+      </div>
 
-
+      <!-- ===== ÉTAPE OTP (inchangée) ===== -->
       <div *ngIf="otpSent" class="step-content active">
         <form [formGroup]="otpForm" class="form-container-modern">
           <div class="otp-instructions">
@@ -192,7 +148,6 @@
           <div class="input-group-modern">
             <label class="input-label-modern">Code de vérification</label>
 
-            <!-- UN SEUL CHAMP SIMPLE -->
             <div class="single-otp-container">
               <ion-input #otpInput type="text" formControlName="otpCode" placeholder="123456" maxlength="6"
                 [inputmode]="'numeric'" pattern="[0-9]*" autocomplete="one-time-code" class="single-otp-input"
@@ -201,21 +156,16 @@
                 <ion-icon name="key-outline" slot="start"></ion-icon>
               </ion-input>
 
-              <!-- Indicateur de longueur -->
               <div class="length-indicator">
                 <span class="length-text">{{ otpForm.get('otpCode')?.value?.length || 0 }}/6</span>
               </div>
             </div>
 
-            <div class="error-text" *ngIf="otpError">
-              {{ otpError }}
-            </div>
+            <div class="error-text" *ngIf="otpError">{{ otpError }}</div>
 
-            <!-- Bouton pour afficher/masquer le code -->
             <div class="toggle-visibility">
               <ion-button fill="clear" size="small" (click)="toggleOtpVisibility()" class="visibility-btn">
-                <ion-icon [name]="showOtpText ? 'eye-off-outline' : 'eye-outline'" slot="start">
-                </ion-icon>
+                <ion-icon [name]="showOtpText ? 'eye-off-outline' : 'eye-outline'" slot="start"></ion-icon>
                 {{ showOtpText ? 'Masquer' : 'Afficher' }}
               </ion-button>
             </div>
@@ -239,7 +189,6 @@
             {{ verifying ? 'Vérification...' : 'Vérifier le code' }}
           </ion-button>
 
-          <!-- Option de vérification automatique -->
           <div class="auto-verify-option">
             <ion-checkbox [(ngModel)]="autoVerify" (ionChange)="onAutoVerifyChange()"></ion-checkbox>
             <ion-label class="auto-verify-label">Vérifier automatiquement quand le code est complet</ion-label>
@@ -247,7 +196,6 @@
         </form>
       </div>
 
-      <!-- Container reCAPTCHA invisible -->
       <div id="recaptcha-container"></div>
     </div>
   </div>
