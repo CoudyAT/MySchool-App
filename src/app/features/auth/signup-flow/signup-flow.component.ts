@@ -75,6 +75,7 @@ import { nations } from 'src/app/shared/utils/nations';
 interface UserData {
   firstName: string;
   lastName: string;
+  email: string;
   country: string;
   address: string;
   phone: string;
@@ -259,6 +260,7 @@ export class SignupFlowComponent implements OnInit {
   userData: UserData = {
     firstName: '',
     lastName: '',
+    email: '',
     country: '',
     address: '',
     phone: '',
@@ -282,30 +284,7 @@ export class SignupFlowComponent implements OnInit {
     private toastCtrl: ToastController,
     private platform: Platform,
   ) {
-    addIcons({
-      chevronBack,
-      person,
-      calendarOutline,
-      closeCircle,
-      lockClosedOutline,
-      location,
-      school,
-      businessOutline,
-      checkmarkCircle,
-      sync,
-      keyOutline,
-      callOutline,
-      business,
-      informationCircleOutline,
-      arrowForward,
-      flagOutline,
-      alertCircleOutline,
-      locationOutline,
-      mapOutline,
-      calendar,
-      call,
-      library,
-    });
+    addIcons({chevronBack,person,calendarOutline,closeCircle,lockClosedOutline,location,school,businessOutline,checkmarkCircle,sync,keyOutline,callOutline,business,informationCircleOutline,arrowForward,flagOutline,alertCircleOutline,locationOutline,mapOutline,calendar,call,library,});
 
     // Date maximale : 18 ans en arrière
     const today = new Date();
@@ -373,6 +352,7 @@ export class SignupFlowComponent implements OnInit {
       ],
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
+      email: ['', [Validators.required, Validators.email]],
       birthDate: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]],
@@ -713,6 +693,7 @@ export class SignupFlowComponent implements OnInit {
       case 1:
         this.userData.firstName = this.personalInfoForm.value.firstName;
         this.userData.lastName = this.personalInfoForm.value.lastName;
+        this.userData.email = this.personalInfoForm.value.email;
         this.userData.birthDate = this.personalInfoForm.value.birthDate;
         this.userData.password = this.personalInfoForm.value.password;
 
