@@ -14,6 +14,10 @@ import {
   ConfirmationResult,
 } from '@angular/fire/auth';
 
+import { IonSegment, IonSegmentButton } from '@ionic/angular/standalone';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from '@angular/fire/auth';
+import { mailOutline, eyeOutline, eyeOffOutline } from 'ionicons/icons';
+
 import {
   Firestore,
   collection,
@@ -67,6 +71,7 @@ import {
   lockClosedOutline,
   callOutline,
   closeCircle,
+  close,
   informationCircleOutline,
   keyOutline,
 } from 'ionicons/icons';
@@ -110,6 +115,8 @@ interface UserData {
     IonProgressBar,
     IonIcon,
     IonSpinner,
+    IonSegment,
+    IonSegmentButton,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
@@ -275,6 +282,12 @@ export class SignupFlowComponent implements OnInit {
     classe: '',
   };
 
+  authMode: 'phone' | 'email' = 'email';
+  emailAuthForm!: FormGroup;
+  isCheckingEmail = false;
+  showEmailPassword = false;
+  emailUserExists = false;
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -284,7 +297,7 @@ export class SignupFlowComponent implements OnInit {
     private toastCtrl: ToastController,
     private platform: Platform,
   ) {
-    addIcons({chevronBack,person,calendarOutline,closeCircle,lockClosedOutline,location,school,businessOutline,checkmarkCircle,sync,keyOutline,callOutline,business,informationCircleOutline,arrowForward,flagOutline,alertCircleOutline,locationOutline,mapOutline,calendar,call,library,});
+    addIcons({ chevronBack, callOutline, mailOutline, lockClosedOutline, person,close, calendarOutline, closeCircle, location, school, businessOutline, checkmarkCircle, sync, keyOutline, business, informationCircleOutline, arrowForward, flagOutline, alertCircleOutline, locationOutline, mapOutline, calendar, call, library, eyeOutline, eyeOffOutline });
 
     // Date maximale : 18 ans en arrière
     const today = new Date();
@@ -328,7 +341,23 @@ export class SignupFlowComponent implements OnInit {
     });
   }
 
+  onAuthModeChange() {
+    this.otpSent = false;
+    this.emailUserExists = false;
+    this.emailAuthForm.reset();
+    this.welcomeForm.reset({ countryCode: '+221' });
+  }
+  onSegmentChange(event: any) {
+    this.authMode = event.detail.value;
+    this.onAuthModeChange();
+  }
+
   initForms() {
+    this.emailAuthForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+    });
+
     this.welcomeForm = this.fb.group({
       countryCode: ['+221', Validators.required],
       phone: [
@@ -370,6 +399,70 @@ export class SignupFlowComponent implements OnInit {
     });
   }
 
+  async handleEmailAuth() {
+    if (!this.emailAuthForm.valid || this.isCheckingEmail) return;
+
+    this.isCheckingEmail = true;
+    const { email, password } = this.emailAuthForm.value;
+
+    try {
+      // 1. Vérifier si l'utilisateur existe dans Firestore
+      const usersCollection = collection(this.firestore, 'utilisateur');
+      const emailQuery = query(usersCollection, where('email', '==', email));
+      const snapshot = await getDocs(emailQuery);
+
+      if (!snapshot.empty) {
+        // ── Utilisateur existant : tentative de connexion ──
+        this.emailUserExists = true;
+        const userDoc = snapshot.docs[0];
+        const userData = userDoc.data();
+
+        // Vérification mot de passe en base (votre logique actuelle)
+        if (userData['password'] !== password) {
+          await this.showToast('Email ou mot de passe incorrect', 'danger');
+          return;
+        }
+
+        // Connexion Firebase Auth
+        try {
+          await signInWithEmailAndPassword(this.auth, email, password);
+        } catch (firebaseError: any) {
+          // L'utilisateur existe en Firestore mais pas dans Firebase Auth :
+          // on le crée silencieusement
+          if (firebaseError.code === 'auth/user-not-found') {
+            await createUserWithEmailAndPassword(this.auth, email, password);
+          }
+        }
+
+        localStorage.setItem(
+          'currentUser',
+          JSON.stringify({ ...userData, id: userDoc.id })
+        );
+
+        await this.showToast(`Bienvenue ${userData['firstName'] || ''} !`, 'success');
+        setTimeout(() => { window.location.href = '/courses'; }, 800);
+
+      } else {
+        // ── Nouvel utilisateur : passer à l'étape suivante ──
+        this.emailUserExists = false;
+        this.userData.email = email;
+        this.userData.password = password;
+
+        // Pré-remplir le formulaire personnel
+        this.personalInfoForm.patchValue({ email, password });
+
+        this.currentStep = 1;
+        await this.showToast('Création de votre compte...', 'primary');
+      }
+
+    } catch (error: any) {
+      console.error('Erreur auth email:', error);
+      await this.showToast('Erreur lors de la vérification', 'danger');
+    } finally {
+      this.isCheckingEmail = false;
+    }
+  }
+
   // =====================
   // Étape 1: Vérifier si connexion ou inscription
   // =====================
@@ -389,7 +482,7 @@ export class SignupFlowComponent implements OnInit {
       if (this.phoneInput?.nativeElement) {
         try {
           this.phoneInput.nativeElement.setFocus();
-        } catch (e) {}
+        } catch (e) { }
       }
     }, 100);
   }
@@ -486,7 +579,7 @@ export class SignupFlowComponent implements OnInit {
       if (this.phoneInput?.nativeElement) {
         try {
           this.phoneInput.nativeElement.setFocus();
-        } catch (e) {}
+        } catch (e) { }
       }
     }, 300);
   }
@@ -658,7 +751,11 @@ export class SignupFlowComponent implements OnInit {
   validateCurrentStep(): boolean {
     switch (this.currentStep) {
       case 0:
-        return this.welcomeForm.valid;
+        if (this.authMode === 'phone') {
+          return this.welcomeForm.valid;
+        } else {
+          return this.emailAuthForm.valid;
+        }
       case 1:
         return this.personalInfoForm.valid && !this.passwordsMismatch();
       case 2:
@@ -907,7 +1004,7 @@ export class SignupFlowComponent implements OnInit {
           'recaptcha-container',
           {
             size: 'invisible',
-            callback: () => {},
+            callback: () => { },
             'expired-callback': () => {
               console.log('reCAPTCHA expiré');
             },
@@ -932,7 +1029,7 @@ export class SignupFlowComponent implements OnInit {
         if (this.otpInput?.nativeElement) {
           try {
             this.otpInput.nativeElement.setFocus();
-          } catch (e) {}
+          } catch (e) { }
         }
       }, 300);
     } catch (error: any) {
@@ -1119,6 +1216,7 @@ export class SignupFlowComponent implements OnInit {
 
     try {
       const phone = this.personalInfoForm.value.phone;
+      const email = this.personalInfoForm.value.email || this.userData.email || '';
       const password = this.personalInfoForm.value.password;
       const confirmPassword = this.personalInfoForm.value.confirmPassword;
 
@@ -1145,7 +1243,14 @@ export class SignupFlowComponent implements OnInit {
         await this.showToast('Un compte existe déjà avec ce numéro', 'danger');
         return;
       }
-
+      if (this.authMode === 'email' && email) {
+        const emailQuery = query(usersCollection, where('email', '==', email));
+        const snap = await getDocs(emailQuery);
+        if (!snap.empty) {
+          await this.showToast('Un compte existe déjà avec cet email', 'danger');
+          return;
+        }
+      }
       // Créer un utilisateur anonyme Firebase
       let authUser = this.auth.currentUser;
       if (!authUser) {
@@ -1153,10 +1258,13 @@ export class SignupFlowComponent implements OnInit {
         authUser = userCredential.user;
       }
 
+      
+
       // Préparer les données utilisateur
       const userDataToSave: any = {
         uid: authUser.uid,
         phone: phone,
+        email: email,
         password,
         firstName: this.userData.firstName || '',
         lastName: this.userData.lastName || '',
@@ -1168,7 +1276,7 @@ export class SignupFlowComponent implements OnInit {
         acceptTerms: this.userData.acceptTerms,
         acceptPrivacy: this.userData.acceptPrivacy,
         level: 'beginner',
-        login: phone,
+        login: email || phone,
         createdAt: new Date(),
         role: { libelle: 'student' },
         specializationId: null,
@@ -1189,7 +1297,8 @@ export class SignupFlowComponent implements OnInit {
           id: userRef.id,
         }),
       );
-      localStorage.setItem('userPhone', phone);
+      if (email) localStorage.setItem('userEmail', email);
+      if (phone) localStorage.setItem('userPhone', phone);
 
       await this.showToast('Inscription réussie !', 'success');
       setTimeout(() => {

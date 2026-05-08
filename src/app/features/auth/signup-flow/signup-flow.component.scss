@@ -1515,5 +1515,37 @@ body{
   color: #7f8c8d;
 }
 
+.auth-segment-wrapper {
+  margin-bottom: 28px;
+}
 
+.auth-segment {
+  --background: #f0f4ff;
+  border-radius: 12px;
+  padding: 4px;
+
+  ion-segment-button {
+    --color: #7f8c8d;
+    --color-checked: #005ADD;
+    --background-checked: #ffffff;
+    --indicator-color: transparent;
+    --border-radius: 10px;
+    --padding-top: 10px;
+    --padding-bottom: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: none;
+    box-shadow: none;
+    transition: all 0.3s ease;
+
+    &.segment-button-checked {
+      box-shadow: 0 2px 8px rgba(0, 90, 221, 0.15);
+    }
+
+    ion-icon {
+      font-size: 18px;
+      margin-bottom: 2px;
+    }
+  }
+}
 

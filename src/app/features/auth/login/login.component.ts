@@ -29,6 +29,7 @@ import {
   ConfirmationResult,
   signInAnonymously,
   signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
 } from '@angular/fire/auth';
 import {
   IonContent,
@@ -87,7 +88,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   @ViewChild('otpInput') otpInput!: ElementRef<HTMLIonInputElement>;
 
   // ─── Mode de connexion ───────────────────────────────────────────────────────
-  loginMode: 'phone' | 'email' = 'phone';
+  loginMode: 'phone' | 'email' = 'email';
 
   // ─── Formulaires ────────────────────────────────────────────────────────────
   phoneForm!: FormGroup;
@@ -215,59 +216,69 @@ export class LoginComponent implements OnInit, AfterViewInit {
     const { email, password } = this.emailForm.value;
 
     try {
-      // 1. Authentification Firebase
-      const credential = await signInWithEmailAndPassword(this.auth, email, password);
-      const firebaseUser = credential.user;
-
-      // 2. Recherche de l'utilisateur dans Firestore par email
+      // 1. Vérifier d'abord dans Firestore
       const usersCollection = collection(this.firestore, 'utilisateur');
       const emailQuery = query(usersCollection, where('email', '==', email));
       const snapshot = await getDocs(emailQuery);
 
-      if (!snapshot.empty) {
-        const userDoc = snapshot.docs[0];
-        const userData = userDoc.data();
-        const userId = userDoc.id;
-
-        localStorage.setItem('currentUser', JSON.stringify({ ...userData, id: userId }));
-
-        // 3. Synchronisation de l'abonnement
-        try {
-          const response = await fetch(`https://myschool.com/api/subscriptions/sync-status/${userId}`);
-          const result = await response.json();
-          if (result.success) {
-            localStorage.setItem('userSubscription', JSON.stringify(result.data));
-          }
-        } catch (err) {
-          console.warn('Impossible de récupérer l\'abonnement', err);
-        }
-
-        const firstName = userData['firstName'] || '';
-        await this.showToast(firstName ? `Bienvenue ${firstName} !` : 'Connexion réussie !', 'success');
-
-        // 4. Redirection selon le rôle
-        const role = userData['role']?.libelle?.toString().toLowerCase() || 'user';
-        const route = role === 'admin' ? '/admin-login/users' : '/courses';
-        setTimeout(() => this.router.navigate([route], { replaceUrl: true }), 500);
-
-      } else {
-        // Utilisateur Firebase mais pas dans Firestore → inscription incomplète
-        await this.showToast('Aucun compte trouvé pour cet email.', 'warning');
+      if (snapshot.empty) {
         this.emailLoginError = 'Aucun compte associé à cet email.';
+        await this.showToast('Aucun compte trouvé pour cet email.', 'warning');
+        return;
       }
+
+      const userDoc = snapshot.docs[0];
+      const userData = userDoc.data();
+      const userId = userDoc.id;
+
+      // 2. Vérifier le mot de passe stocké en Firestore (fallback)
+      if (userData['password'] !== password) {
+        this.emailLoginError = 'Email ou mot de passe incorrect.';
+        await this.showToast('Email ou mot de passe incorrect.', 'danger');
+        return;
+      }
+
+      // 3. Tenter Firebase Auth — créer le compte s'il n'existe pas encore
+      try {
+        await signInWithEmailAndPassword(this.auth, email, password);
+      } catch (firebaseError: any) {
+        if (
+          firebaseError.code === 'auth/user-not-found' ||
+          firebaseError.code === 'auth/invalid-credential' ||
+          firebaseError.code === 'auth/invalid-login-credentials'
+        ) {
+          // Le compte n'existe pas dans Firebase Auth → on le crée maintenant
+          await createUserWithEmailAndPassword(this.auth, email, password);
+        } else {
+          throw firebaseError;
+        }
+      }
+
+      // 4. Connexion réussie
+      localStorage.setItem(
+        'currentUser',
+        JSON.stringify({ ...userData, id: userId })
+      );
+
+      const firstName = userData['firstName'] || '';
+      await this.showToast(
+        firstName ? `Bienvenue ${firstName} !` : 'Connexion réussie !',
+        'success'
+      );
+
+      const role = userData['role']?.libelle?.toString().toLowerCase() || 'user';
+      const route = role === 'admin' ? '/admin-login/users' : '/courses';
+      setTimeout(() => this.router.navigate([route], { replaceUrl: true }), 500);
 
     } catch (error: any) {
       console.error('Erreur connexion email:', error);
-
       const errorMap: Record<string, string> = {
-        'auth/user-not-found': 'Aucun compte trouvé pour cet email.',
         'auth/wrong-password': 'Mot de passe incorrect.',
         'auth/invalid-email': 'Adresse email invalide.',
         'auth/user-disabled': 'Ce compte a été désactivé.',
-        'auth/too-many-requests': 'Trop de tentatives. Veuillez réessayer plus tard.',
-        'auth/invalid-credential': 'Email ou mot de passe incorrect.',
+        'auth/too-many-requests': 'Trop de tentatives. Réessayez plus tard.',
+        'auth/email-already-in-use': 'Cet email est déjà utilisé.',
       };
-
       this.emailLoginError = errorMap[error.code] || 'Erreur lors de la connexion.';
       await this.showToast(this.emailLoginError, 'danger');
     } finally {
